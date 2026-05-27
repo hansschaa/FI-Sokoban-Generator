@@ -1,0 +1,28 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/solver_benchmark.dir/link.d"
+  "CMakeFiles/solver_benchmark.dir/src/constant.cpp.o"
+  "CMakeFiles/solver_benchmark.dir/src/constant.cpp.o.d"
+  "CMakeFiles/solver_benchmark.dir/src/draw.cpp.o"
+  "CMakeFiles/solver_benchmark.dir/src/draw.cpp.o.d"
+  "CMakeFiles/solver_benchmark.dir/src/game_node.cpp.o"
+  "CMakeFiles/solver_benchmark.dir/src/game_node.cpp.o.d"
+  "CMakeFiles/solver_benchmark.dir/src/game_solver.cpp.o"
+  "CMakeFiles/solver_benchmark.dir/src/game_solver.cpp.o.d"
+  "CMakeFiles/solver_benchmark.dir/src/locked.cpp.o"
+  "CMakeFiles/solver_benchmark.dir/src/locked.cpp.o.d"
+  "CMakeFiles/solver_benchmark.dir/src/main_benchmark.cpp.o"
+  "CMakeFiles/solver_benchmark.dir/src/main_benchmark.cpp.o.d"
+  "CMakeFiles/solver_benchmark.dir/src/my_memory.cpp.o"
+  "CMakeFiles/solver_benchmark.dir/src/my_memory.cpp.o.d"
+  "CMakeFiles/solver_benchmark.dir/src/point.cpp.o"
+  "CMakeFiles/solver_benchmark.dir/src/point.cpp.o.d"
+  "CMakeFiles/solver_benchmark.dir/src/repeat.cpp.o"
+  "CMakeFiles/solver_benchmark.dir/src/repeat.cpp.o.d"
+  "solver_benchmark"
+  "solver_benchmark.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/solver_benchmark.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

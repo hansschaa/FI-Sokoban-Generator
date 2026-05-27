@@ -230,44 +230,124 @@ void game_solver::set_lambda_function(){
 
 }
 
-vector<game_node> game_solver::test_template(int input){
+SolverStats game_solver::test_template(
+    int input,
+    std::vector<game_node>& solution
+) {
+
     auto vec = Astar_init();
+
     vars_init(init);
 
     auto heuristic = [&](const game_node* a, const game_node*) {
+
         int f = 0;
-        for (auto i = a->box_list.begin(); i != a->box_list.end(); i++) {
+
+        for (auto i = a->box_list.begin();
+             i != a->box_list.end();
+             i++) {
+
             auto p = *i;
+
             f += vec[p.x][p.y];
         }
+
         return f;
     };
 
     Solver_template<vector<game_node>, game_node, Method::a_star> gsolver0;
     Solver_template<vector<game_node>, game_node, Method::dfs> gsolver1;
     Solver_template<vector<game_node>, game_node, Method::bfs> gsolver2;
-    vector<game_node> resx;
+
     printf("compute start!!\n");
+
     auto t1 = chrono::high_resolution_clock::now();
+
     if (input == 0)
     {
-        resx = gsolver0.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal, heuristic);
+        solution = gsolver0.solve(
+            &init,
+            nullptr,
+            get_neighbors,
+            is_visited,
+            mark_visited,
+            is_equal,
+            heuristic
+        );
     }
     else if (input == 1)
     {
-        resx = gsolver1.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal);
+        solution = gsolver1.solve(
+            &init,
+            nullptr,
+            get_neighbors,
+            is_visited,
+            mark_visited,
+            is_equal
+        );
     }
     else if (input == 2)
     {
-        resx = gsolver2.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal);
+        solution = gsolver2.solve(
+            &init,
+            nullptr,
+            get_neighbors,
+            is_visited,
+            mark_visited,
+            is_equal
+        );
     }
-    else{}
+
     auto t2 = chrono::high_resolution_clock::now();
+
     printf("compute complete!!\n");
-    printf("time cost %fs\n", chrono::duration<double>(t2 - t1).count());
-    printf("push box %d times\n", int(resx.size()));
-    printf("all status %d\n", int(rpt.zobrist_hash.size()));
+
+    SolverStats stats;
+
+    stats.runtime_sec =
+        chrono::duration<double>(t2 - t1).count();
+
+    stats.pushes =
+        solution.size();
+
+    stats.explored_states =
+        rpt.zobrist_hash.size();
+
+    //
+    // Detectar status
+    //
+
+    if(input == 0 && gsolver0.did_timeout()) {
+
+        stats.status =
+            SolveStatus::TIMEOUT;
+
+    }
+    else if(input == 1 && gsolver1.did_timeout()) {
+
+        stats.status =
+            SolveStatus::TIMEOUT;
+
+    }
+    else if(input == 2 && gsolver2.did_timeout()) {
+
+        stats.status =
+            SolveStatus::TIMEOUT;
+
+    }
+    else if(solution.empty()) {
+
+        stats.status =
+            SolveStatus::UNSOLVABLE;
+
+    }
+    else {
+
+        stats.status =
+            SolveStatus::SOLVED;
+    }
+
     vars_clear(init);
 
-    return resx;
+    return stats;
 }

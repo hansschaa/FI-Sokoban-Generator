@@ -66,7 +66,12 @@ int main() {
 
     game_solver ga(temp, mm, nn, memval);
 
-    auto ss = ga.test_template(iinput);
+    std::vector<game_node> solution;
+
+    auto stats =
+        ga.test_template(iinput, solution);
+
+    auto ss = solution;
 
     printf("press Enter to show solves\n");
 

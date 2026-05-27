@@ -6,6 +6,7 @@
 #include "my_memory.h"
 #include <string>
 #include <functional>
+#include <vector>
 
 class detect_legal {
 public:
@@ -16,6 +17,19 @@ public:
     detect_legal();
     bool can_get(point& des);
     bool can_box_move(point& box, point& person);
+};
+
+enum class SolveStatus {
+    SOLVED,
+    UNSOLVABLE,
+    TIMEOUT
+};
+
+struct SolverStats {
+    double runtime_sec;
+    int pushes;
+    int explored_states;
+    SolveStatus status;
 };
 
 class game_solver {
@@ -39,5 +53,5 @@ private:
 
 public:
     game_solver(std::string& game_map, unsigned int mm, unsigned int nn, int memval);
-    std::vector<game_node> test_template(int x);
+    SolverStats test_template(int input, std::vector<game_node>& solution);
 };
