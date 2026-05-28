@@ -2,59 +2,79 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.10.1)
 
 project(skb_solver)
 
-if(NOT DEFINED TARGET_OS)
-    set(TARGET_OS "native")
-endif()
+#
+# C++ standard
+#
 
-# 根据目标平台设置交叉编译工具链
-if(TARGET_OS STREQUAL "windows")
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-    # Windows 交叉编译设置
-    SET(CMAKE_SYSTEM_NAME Windows)
-    SET(CMAKE_SYSTEM_PROCESSOR x86_64)
+#
+# Debug build
+#
 
-    SET(CMAKE_C_COMPILER x86_64-w64-mingw32-gcc)
-    SET(CMAKE_CXX_COMPILER x86_64-w64-mingw32-g++)
+set(CMAKE_BUILD_TYPE Debug)
 
-elseif(TARGET_OS STREQUAL "linux")
+#
+# Debug flags
+#
 
-    # Linux ARM 交叉编译设置
-    SET(CMAKE_SYSTEM_NAME Linux)
-    SET(CMAKE_SYSTEM_PROCESSOR aarch64)
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 
-    SET(CMAKE_C_COMPILER aarch64-linux-gnu-gcc)
-    SET(CMAKE_CXX_COMPILER aarch64-linux-gnu-g++)
+#
+# Includes
+#
 
-else()
-
-    # 本机编译
-endif()
-
-SET(CMAKE_BUILD_TYPE "Release")
-
-INCLUDE_DIRECTORIES(
+include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 #
-# Sources comunes
+# Cross compilation (optional)
 #
 
-FILE(GLOB_RECURSE MY_SRC
+if(NOT DEFINED TARGET_OS)
+    set(TARGET_OS "native")
+endif()
+
+if(TARGET_OS STREQUAL "windows")
+
+    set(CMAKE_SYSTEM_NAME Windows)
+    set(CMAKE_SYSTEM_PROCESSOR x86_64)
+
+    set(CMAKE_C_COMPILER x86_64-w64-mingw32-gcc)
+    set(CMAKE_CXX_COMPILER x86_64-w64-mingw32-g++)
+
+elseif(TARGET_OS STREQUAL "linux")
+
+    set(CMAKE_SYSTEM_NAME Linux)
+    set(CMAKE_SYSTEM_PROCESSOR aarch64)
+
+    set(CMAKE_C_COMPILER aarch64-linux-gnu-gcc)
+    set(CMAKE_CXX_COMPILER aarch64-linux-gnu-g++)
+
+endif()
+
+#
+# Collect all source files
+#
+
+file(GLOB_RECURSE MY_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
 )
 
 #
-# Remover los mains para evitar conflicto
+# Remove main files to avoid duplicate symbols
 #
 
 list(REMOVE_ITEM MY_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_benchmark.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_evolution.cpp
 )
 
 #
-# Solver interactivo original
+# Interactive solver executable
 #
 
 add_executable(
@@ -64,7 +84,7 @@ add_executable(
 )
 
 #
-# Solver benchmark automático
+# Benchmark executable
 #
 
 add_executable(
@@ -74,7 +94,17 @@ add_executable(
 )
 
 #
-# Flags
+# Evolutionary generator executable
+#
+
+add_executable(
+    evolution_generator
+    src/main_evolution.cpp
+    ${MY_SRC}
+)
+
+#
+# Common compiler flags
 #
 
 target_compile_options(
@@ -83,7 +113,8 @@ target_compile_options(
     -Wall
     -Wextra
     -pedantic
-    -O3
+    -g
+    -O0
 )
 
 target_compile_options(
@@ -92,23 +123,16 @@ target_compile_options(
     -Wall
     -Wextra
     -pedantic
-    -O3
+    -g
+    -O0
 )
 
-#
-# Static linking
-#
-
-target_link_options(
-    sokoban_solver
+target_compile_options(
+    evolution_generator
     PRIVATE
-    -static
-    -s
-)
-
-target_link_options(
-    solver_benchmark
-    PRIVATE
-    -static
-    -s
+    -Wall
+    -Wextra
+    -pedantic
+    -g
+    -O0
 )
