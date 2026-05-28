@@ -2,24 +2,21 @@
 
 #include <vector>
 #include <string>
+#include <cstdlib>
+#include "pair.h"
 
-struct Pair {
-
-    int i;
-    int j;
-
-    bool operator==(const Pair& other) const {
-        return i == other.i && j == other.j;
-    }
-};
+//
+// FOR SOLVER
+// NO NEWLINES
+//
 
 inline std::string board_to_string(
     const std::vector<std::vector<char>>& board)
 {
     std::string result;
 
-    for (auto& row : board) {
-
+    for (const auto& row : board)
+    {
         for (char c : row)
             result += c;
     }
@@ -27,15 +24,69 @@ inline std::string board_to_string(
     return result;
 }
 
+//
+// FOR PRINTING
+// WITH NEWLINES
+//
+
+inline std::string board_to_pretty_string(
+    const std::vector<std::vector<char>>& board)
+{
+    std::string result;
+
+    for (const auto& row : board)
+    {
+        for (char c : row)
+            result += c;
+
+        result += '\n';
+    }
+
+    return result;
+}
+
+//
+// COUNT BOXES
+//
+
 inline int count_boxes(
     const std::vector<std::vector<char>>& board)
 {
     int count = 0;
 
-    for (auto& row : board)
+    for (const auto& row : board)
+    {
         for (char c : row)
+        {
             if (c == '$' || c == '*')
                 count++;
+        }
+    }
 
     return count;
+}
+
+//
+// RANDOM PLACEMENT
+//
+
+inline void placeRandom(
+    std::vector<std::vector<char>>& board,
+    char c)
+{
+    while (true)
+    {
+        int x =
+            rand() % board.size();
+
+        int y =
+            rand() % board[0].size();
+
+        if (board[x][y] == ' ')
+        {
+            board[x][y] = c;
+
+            return;
+        }
+    }
 }

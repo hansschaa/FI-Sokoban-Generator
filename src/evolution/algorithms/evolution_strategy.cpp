@@ -1,10 +1,12 @@
 #include "../../../include/evolution/algorithms/evolution_strategy.h"
 
 #include <iostream>
+#include <algorithm>
 #include <cmath>
+#include <cstdlib>
 
 Individual EvolutionStrategy::run(
-    Individual current)
+    std::vector<Individual>& population)
 {
     //
     // RESET STATE
@@ -20,106 +22,195 @@ Individual EvolutionStrategy::run(
     // INITIAL EVALUATION
     //
 
-    std::cout << "EVALUATING INITIAL\n";
+    std::cout << "EVALUATING INITIAL POPULATION\n";
 
-    evaluator.evaluate(current);
+    for (auto& ind : population)
+    {
+        evaluator.evaluate(ind);
 
-    evaluations++;
+        evaluations++;
+    }
 
-    std::cout << "INITIAL EVALUATED\n";
+    std::cout << "INITIAL POPULATION EVALUATED\n";
 
     //
-    // GLOBAL BEST
+    // FIND INITIAL BEST
     //
 
-    Individual best = current;
+    Individual best = population[0];
 
-    double bestFitness =
-        best.fitness;
+    for (auto& ind : population)
+    {
+        if (ind.fitness > best.fitness)
+        {
+            best = ind;
+        }
+    }
 
     //
     // MAIN LOOP
     //
 
-    while (true) {
-
+    while (true)
+    {
         std::cout
-            << "GEN " << generation
-            << " | BEST " << bestFitness
+            << "\nGEN " << generation
+            << " | BEST " << best.fitness
             << " | STAG " << stagnationCount
             << " | EVALS " << evaluations
-            << "\n";
+            << std::endl;
 
         //
-        // CREATE OFFSPRING
+        // OFFSPRING POPULATION
         //
 
-        Individual child = current;
+        std::vector<Individual> offspring;
 
         //
-        // MUTATION
+        // GENERATE λ CHILDREN
         //
 
-        std::cout << "MUTATING\n";
-
-        mutation.apply(child);
-
-        //
-        // EVALUATION
-        //
-
-        std::cout << "EVALUATING CHILD\n";
-
-        evaluator.evaluate(child);
-
-        evaluations++;
-
-        std::cout << "CHILD EVALUATED\n";
-
-        //
-        // INVALID FITNESS CHECK
-        //
-
-        if (std::isnan(child.fitness))
+        for (int i = 0; i < lambda; i++)
         {
-            std::cout
-                << "INVALID FITNESS\n";
+            //
+            // RANDOM PARENT SELECTION
+            //
 
-            continue;
+            int parentIndex =
+                rand() % population.size();
+
+            Individual child =
+                population[parentIndex];
+
+            //
+            // MUTATION
+            //
+
+            //
+            // RANDOM MUTATION
+            //
+
+            int mutationType =
+                rand() % 3;
+
+            if (mutationType == 0)
+            {
+                //
+                // MOVE MUTATION
+                //
+
+                moveMutation.apply(child);
+
+                std::cout
+                    << "MOVE MUTATION\n";
+            }
+            else if (mutationType == 1)
+            {
+                //
+                // ADD MUTATION
+                //
+
+                addMutation.apply(child);
+
+                std::cout
+                    << "ADD MUTATION\n";
+            }
+            else
+            {
+                //
+                // REMOVE MUTATION
+                //
+
+                removeMutation.apply(child);
+
+                std::cout
+                    << "REMOVE MUTATION\n";
+            }
+
+            //
+            // EVALUATION
+            //
+
+            evaluator.evaluate(child);
+
+            evaluations++;
+
+            //
+            // INVALID FITNESS
+            //
+
+            if (std::isnan(child.fitness))
+            {
+                std::cout
+                    << "INVALID FITNESS\n";
+
+                continue;
+            }
+
+            //
+            // SAVE CHILD
+            //
+
+            offspring.push_back(child);
+
+            //
+            // GLOBAL BEST UPDATE
+            //
+
+            if (child.fitness > best.fitness)
+            {
+                best = child;
+
+                stagnationCount = 0;
+
+                std::cout
+                    << "NEW BEST = "
+                    << best.fitness
+                    << std::endl;
+            }
         }
 
         //
-        // REPLACEMENT
-        // (1+1)-ES elitist replacement
+        // IF NO IMPROVEMENT
         //
 
-        if (child.fitness > current.fitness)
-        {
-            current = child;
-
-            std::cout
-                << "PARENT REPLACED\n";
-        }
+        stagnationCount++;
 
         //
-        // GLOBAL BEST UPDATE
+        // COMBINE POPULATIONS
+        // (μ + λ)-ES
         //
 
-        if (child.fitness > bestFitness)
+        std::vector<Individual> combined =
+            population;
+
+        combined.insert(
+            combined.end(),
+            offspring.begin(),
+            offspring.end());
+
+        //
+        // SORT BY FITNESS DESC
+        //
+
+        std::sort(
+            combined.begin(),
+            combined.end(),
+            [](const Individual& a,
+               const Individual& b)
         {
-            best = child;
+            return a.fitness > b.fitness;
+        });
 
-            bestFitness =
-                child.fitness;
+        //
+        // SELECT BEST μ
+        //
 
-            stagnationCount = 0;
+        population.clear();
 
-            std::cout
-                << "NEW BEST FOUND\n";
-        }
-        else
+        for (int i = 0; i < mu; i++)
         {
-            stagnationCount++;
+            population.push_back(combined[i]);
         }
 
         //
@@ -130,7 +221,7 @@ Individual EvolutionStrategy::run(
         if (evaluations >= maxEvaluations)
         {
             std::cout
-                << "Termination: MAX_EVALUATIONS"
+                << "\nTermination: MAX_EVALUATIONS"
                 << std::endl;
 
             break;
@@ -144,7 +235,7 @@ Individual EvolutionStrategy::run(
         if (stagnationCount >= stagnationLimit)
         {
             std::cout
-                << "Termination: STAGNATION"
+                << "\nTermination: STAGNATION"
                 << std::endl;
 
             break;
@@ -157,9 +248,10 @@ Individual EvolutionStrategy::run(
     // FINAL REPORT
     //
 
-    std::cout << "\nFINAL BEST FITNESS: "
-              << best.fitness
-              << std::endl;
+    std::cout
+        << "\nFINAL BEST FITNESS = "
+        << best.fitness
+        << std::endl;
 
     return best;
 }

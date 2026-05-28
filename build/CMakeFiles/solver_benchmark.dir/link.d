@@ -6,6 +6,8 @@ solver_benchmark: \
   CMakeFiles/solver_benchmark.dir/src/constant.cpp.o \
   CMakeFiles/solver_benchmark.dir/src/draw.cpp.o \
   CMakeFiles/solver_benchmark.dir/src/evolution/algorithms/evolution_strategy.cpp.o \
+  CMakeFiles/solver_benchmark.dir/src/evolution/algorithms/genetic_algorithm.cpp.o \
+  CMakeFiles/solver_benchmark.dir/src/evolution/crossover/board_crossover.cpp.o \
   CMakeFiles/solver_benchmark.dir/src/evolution/evaluator.cpp.o \
   CMakeFiles/solver_benchmark.dir/src/evolution/mutations/add_mutation.cpp.o \
   CMakeFiles/solver_benchmark.dir/src/evolution/mutations/move_mutation.cpp.o \
@@ -58,6 +60,10 @@ CMakeFiles/solver_benchmark.dir/src/constant.cpp.o:
 CMakeFiles/solver_benchmark.dir/src/draw.cpp.o:
 
 CMakeFiles/solver_benchmark.dir/src/evolution/algorithms/evolution_strategy.cpp.o:
+
+CMakeFiles/solver_benchmark.dir/src/evolution/algorithms/genetic_algorithm.cpp.o:
+
+CMakeFiles/solver_benchmark.dir/src/evolution/crossover/board_crossover.cpp.o:
 
 CMakeFiles/solver_benchmark.dir/src/evolution/evaluator.cpp.o:
 

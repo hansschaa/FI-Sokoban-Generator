@@ -6,6 +6,8 @@ sokoban_solver: \
   CMakeFiles/sokoban_solver.dir/src/constant.cpp.o \
   CMakeFiles/sokoban_solver.dir/src/draw.cpp.o \
   CMakeFiles/sokoban_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.o \
+  CMakeFiles/sokoban_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o \
+  CMakeFiles/sokoban_solver.dir/src/evolution/crossover/board_crossover.cpp.o \
   CMakeFiles/sokoban_solver.dir/src/evolution/evaluator.cpp.o \
   CMakeFiles/sokoban_solver.dir/src/evolution/mutations/add_mutation.cpp.o \
   CMakeFiles/sokoban_solver.dir/src/evolution/mutations/move_mutation.cpp.o \
@@ -58,6 +60,10 @@ CMakeFiles/sokoban_solver.dir/src/constant.cpp.o:
 CMakeFiles/sokoban_solver.dir/src/draw.cpp.o:
 
 CMakeFiles/sokoban_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.o:
+
+CMakeFiles/sokoban_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o:
+
+CMakeFiles/sokoban_solver.dir/src/evolution/crossover/board_crossover.cpp.o:
 
 CMakeFiles/sokoban_solver.dir/src/evolution/evaluator.cpp.o:
 

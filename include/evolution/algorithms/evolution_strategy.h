@@ -3,6 +3,10 @@
 #include "../individual.h"
 #include "../evaluator.h"
 #include "../mutations/move_mutation.h"
+#include "../mutations/add_mutation.h"
+#include "../mutations/remove_mutation.h"
+
+#include <vector>
 
 class EvolutionStrategy {
 
@@ -10,15 +14,40 @@ private:
 
     Evaluator evaluator;
 
-    MoveMutation mutation;
+    MoveMutation moveMutation;
+
+    AddMutation addMutation;
+
+    RemoveMutation removeMutation;
 
 public:
 
-    int maxEvaluations = 100;
+    //
+    // μ + λ PARAMETERS
+    //
 
-    int stagnationLimit = 20;
+    int mu = 15;
+
+    int lambda = 60;
+
+    //
+    // TERMINATION
+    //
+
+    int maxEvaluations = 5000;
+
+    int stagnationLimit = 500;
+
+    //
+    // RUNTIME STATE
+    //
 
     int evaluations = 0;
 
-    Individual run(Individual current);
+    //
+    // MAIN ALGORITHM
+    //
+
+    Individual run(
+        std::vector<Individual>& population);
 };

@@ -245,6 +245,66 @@ src/evolution/algorithms/evolution_strategy.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/evolution/algorithms/evolution_strategy.cpp.s
 .PHONY : src/evolution/algorithms/evolution_strategy.cpp.s
 
+src/evolution/algorithms/genetic_algorithm.o: src/evolution/algorithms/genetic_algorithm.cpp.o
+.PHONY : src/evolution/algorithms/genetic_algorithm.o
+
+# target to build an object file
+src/evolution/algorithms/genetic_algorithm.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/evolution/algorithms/genetic_algorithm.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/evolution/algorithms/genetic_algorithm.cpp.o
+.PHONY : src/evolution/algorithms/genetic_algorithm.cpp.o
+
+src/evolution/algorithms/genetic_algorithm.i: src/evolution/algorithms/genetic_algorithm.cpp.i
+.PHONY : src/evolution/algorithms/genetic_algorithm.i
+
+# target to preprocess a source file
+src/evolution/algorithms/genetic_algorithm.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/evolution/algorithms/genetic_algorithm.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/evolution/algorithms/genetic_algorithm.cpp.i
+.PHONY : src/evolution/algorithms/genetic_algorithm.cpp.i
+
+src/evolution/algorithms/genetic_algorithm.s: src/evolution/algorithms/genetic_algorithm.cpp.s
+.PHONY : src/evolution/algorithms/genetic_algorithm.s
+
+# target to generate assembly for a file
+src/evolution/algorithms/genetic_algorithm.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/evolution/algorithms/genetic_algorithm.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/evolution/algorithms/genetic_algorithm.cpp.s
+.PHONY : src/evolution/algorithms/genetic_algorithm.cpp.s
+
+src/evolution/crossover/board_crossover.o: src/evolution/crossover/board_crossover.cpp.o
+.PHONY : src/evolution/crossover/board_crossover.o
+
+# target to build an object file
+src/evolution/crossover/board_crossover.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/evolution/crossover/board_crossover.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/evolution/crossover/board_crossover.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/evolution/crossover/board_crossover.cpp.o
+.PHONY : src/evolution/crossover/board_crossover.cpp.o
+
+src/evolution/crossover/board_crossover.i: src/evolution/crossover/board_crossover.cpp.i
+.PHONY : src/evolution/crossover/board_crossover.i
+
+# target to preprocess a source file
+src/evolution/crossover/board_crossover.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/evolution/crossover/board_crossover.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/evolution/crossover/board_crossover.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/evolution/crossover/board_crossover.cpp.i
+.PHONY : src/evolution/crossover/board_crossover.cpp.i
+
+src/evolution/crossover/board_crossover.s: src/evolution/crossover/board_crossover.cpp.s
+.PHONY : src/evolution/crossover/board_crossover.s
+
+# target to generate assembly for a file
+src/evolution/crossover/board_crossover.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/evolution/crossover/board_crossover.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/evolution/crossover/board_crossover.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/evolution/crossover/board_crossover.cpp.s
+.PHONY : src/evolution/crossover/board_crossover.cpp.s
+
 src/evolution/evaluator.o: src/evolution/evaluator.cpp.o
 .PHONY : src/evolution/evaluator.o
 
@@ -637,6 +697,12 @@ help:
 	@echo "... src/evolution/algorithms/evolution_strategy.o"
 	@echo "... src/evolution/algorithms/evolution_strategy.i"
 	@echo "... src/evolution/algorithms/evolution_strategy.s"
+	@echo "... src/evolution/algorithms/genetic_algorithm.o"
+	@echo "... src/evolution/algorithms/genetic_algorithm.i"
+	@echo "... src/evolution/algorithms/genetic_algorithm.s"
+	@echo "... src/evolution/crossover/board_crossover.o"
+	@echo "... src/evolution/crossover/board_crossover.i"
+	@echo "... src/evolution/crossover/board_crossover.s"
 	@echo "... src/evolution/evaluator.o"
 	@echo "... src/evolution/evaluator.i"
 	@echo "... src/evolution/evaluator.s"
