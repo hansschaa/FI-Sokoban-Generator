@@ -96,11 +96,15 @@ Individual GeneticAlgorithm::run(
 
     while (true)
     {
+        bool improved = false;
+
         std::cout
             << "EVALS "
             << evaluations
             << " | BEST "
             << best.fitness
+            << " | STAG "
+            << stagnation
             << std::endl;
 
         //
@@ -157,7 +161,7 @@ Individual GeneticAlgorithm::run(
             {
                 best = child;
 
-                stagnation = 0;
+                improved = true;
 
                 std::cout
                     << "NEW BEST "
@@ -168,13 +172,54 @@ Individual GeneticAlgorithm::run(
             offspring.push_back(child);
         }
 
-        stagnation++;
-
         //
-        // GENERATIONAL REPLACEMENT
+        // STAGNATION UPDATE
         //
 
-        population = offspring;
+        if (improved)
+        {
+            stagnation = 0;
+        }
+        else
+        {
+            stagnation++;
+        }
+
+        //
+        // SORT OFFSPRING
+        //
+
+        std::sort(
+            offspring.begin(),
+            offspring.end(),
+            [](const Individual& a,
+               const Individual& b)
+        {
+            return a.fitness > b.fitness;
+        });
+
+        //
+        // ELITIST GENERATIONAL REPLACEMENT
+        //
+
+        population.clear();
+
+        //
+        // KEEP GLOBAL BEST
+        //
+
+        population.push_back(best);
+
+        //
+        // FILL REST
+        //
+
+        for (int i = 0;
+             i < offspringSize - 1;
+             i++)
+        {
+            population.push_back(offspring[i]);
+        }
 
         //
         // TERMINATION

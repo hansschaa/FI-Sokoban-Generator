@@ -11,6 +11,8 @@
 
 #include "../include/game_solver.h"
 
+#include "../include/evolution/algorithms/simulated_annealing.h"
+
 int main(int argc, char** argv)
 {
     srand(time(nullptr));
@@ -224,6 +226,39 @@ int main(int argc, char** argv)
 
         best =
             ga.run(population);
+    }
+
+    else if (algorithm == "SA")
+    {
+        SimulatedAnnealing sa;
+
+        sa.initialTemperature = 100.0;
+
+        sa.coolingRate = 0.01;
+
+        sa.maxEvaluations = 500;
+
+        //
+        // MUTATION OPERATOR
+        //
+
+        MoveMutation moveMutation;
+
+        sa.mutation =
+            &moveMutation;
+
+        //
+        // INITIAL SOLUTION
+        //
+
+        Individual initial =
+            population[0];
+
+        std::cout
+            << "\nRUNNING SIMULATED ANNEALING\n";
+
+        best =
+            sa.run(initial);
     }
 
     //

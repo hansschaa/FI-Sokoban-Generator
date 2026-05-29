@@ -53,6 +53,8 @@ Individual EvolutionStrategy::run(
 
     while (true)
     {
+        bool improved = false;
+
         std::cout
             << "\nGEN " << generation
             << " | BEST " << best.fitness
@@ -83,10 +85,6 @@ Individual EvolutionStrategy::run(
                 population[parentIndex];
 
             //
-            // MUTATION
-            //
-
-            //
             // RANDOM MUTATION
             //
 
@@ -95,10 +93,6 @@ Individual EvolutionStrategy::run(
 
             if (mutationType == 0)
             {
-                //
-                // MOVE MUTATION
-                //
-
                 moveMutation.apply(child);
 
                 std::cout
@@ -106,10 +100,6 @@ Individual EvolutionStrategy::run(
             }
             else if (mutationType == 1)
             {
-                //
-                // ADD MUTATION
-                //
-
                 addMutation.apply(child);
 
                 std::cout
@@ -117,10 +107,6 @@ Individual EvolutionStrategy::run(
             }
             else
             {
-                //
-                // REMOVE MUTATION
-                //
-
                 removeMutation.apply(child);
 
                 std::cout
@@ -161,7 +147,7 @@ Individual EvolutionStrategy::run(
             {
                 best = child;
 
-                stagnationCount = 0;
+                improved = true;
 
                 std::cout
                     << "NEW BEST = "
@@ -171,10 +157,17 @@ Individual EvolutionStrategy::run(
         }
 
         //
-        // IF NO IMPROVEMENT
+        // STAGNATION UPDATE
         //
 
-        stagnationCount++;
+        if (improved)
+        {
+            stagnationCount = 0;
+        }
+        else
+        {
+            stagnationCount++;
+        }
 
         //
         // COMBINE POPULATIONS
