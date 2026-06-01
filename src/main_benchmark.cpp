@@ -79,7 +79,7 @@ int main(int argc, char** argv) {
     cout << "algorithm=" << alg << endl;
     cout << "runtime_sec=" << stats.runtime_sec << endl;
     cout << "solution_length=" << stats.pushes << endl;
-    cout << "explored_states=" << stats.explored_states << endl;
+    cout << "explored_states=" << stats.generated_states << endl;
     cout << "status=";
 
     if(stats.status == SolveStatus::SOLVED)

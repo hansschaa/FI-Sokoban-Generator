@@ -28,8 +28,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/evolution_generator.dir/src/locked.cpp.o.d"
   "CMakeFiles/evolution_generator.dir/src/main_evolution.cpp.o"
   "CMakeFiles/evolution_generator.dir/src/main_evolution.cpp.o.d"
-  "CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.o"
-  "CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.o.d"
   "CMakeFiles/evolution_generator.dir/src/my_memory.cpp.o"
   "CMakeFiles/evolution_generator.dir/src/my_memory.cpp.o.d"
   "CMakeFiles/evolution_generator.dir/src/point.cpp.o"

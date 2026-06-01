@@ -71,6 +71,7 @@ list(REMOVE_ITEM MY_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_benchmark.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_evolution.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_test_solver.cpp
 )
 
 #
@@ -140,10 +141,6 @@ target_compile_options(
 #
 # Test solver executable
 #
-
-list(REMOVE_ITEM MY_SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_test_solver.cpp
-)
 
 add_executable(
     test_solver

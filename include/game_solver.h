@@ -27,11 +27,32 @@ enum class SolveStatus {
 };
 
 struct SolverStats {
-    double runtime_sec;
-    int pushes;
-    int generated_states;
-    int explored_states;   // FIX: faltaba; usado en evaluator.cpp y main_benchmark.cpp
+
     SolveStatus status;
+
+    double runtime_sec = 0.0;
+
+    int pushes = 0;
+
+    size_t generated_states = 0;
+
+    // Estadísticas de búsqueda
+
+    long expanded_nodes = 0;
+
+    long total_children = 0;
+    long effective_children = 0;
+
+    long repeated_nodes = 0;
+    long deadlocks = 0;
+
+    double branching_real = 0.0;
+    double branching_effective = 0.0;
+    double branching_classic = 0.0;
+
+    double redundancy = 0.0;
+
+    size_t closed_list_length = 0;
 };
 
 class game_solver {
@@ -52,6 +73,13 @@ private:
     std::vector<std::vector<int>> Astar_init();
     void vars_init(game_node& input);
     void vars_clear(game_node& input);
+
+    // Contadores que se llenan durante la búsqueda (equivalentes a movesHistory de Java)
+    long stat_expanded_nodes    = 0;
+    long stat_total_children    = 0;
+    long stat_effective_children = 0;
+    long stat_repeated_nodes    = 0;
+    long stat_deadlocks         = 0;
 
 public:
     game_solver(std::string& game_map, unsigned int mm, unsigned int nn, int memval);

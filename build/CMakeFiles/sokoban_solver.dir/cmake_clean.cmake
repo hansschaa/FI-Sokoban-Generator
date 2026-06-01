@@ -28,8 +28,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/sokoban_solver.dir/src/locked.cpp.o.d"
   "CMakeFiles/sokoban_solver.dir/src/main.cpp.o"
   "CMakeFiles/sokoban_solver.dir/src/main.cpp.o.d"
-  "CMakeFiles/sokoban_solver.dir/src/main_test_solver.cpp.o"
-  "CMakeFiles/sokoban_solver.dir/src/main_test_solver.cpp.o.d"
   "CMakeFiles/sokoban_solver.dir/src/my_memory.cpp.o"
   "CMakeFiles/sokoban_solver.dir/src/my_memory.cpp.o.d"
   "CMakeFiles/sokoban_solver.dir/src/point.cpp.o"

@@ -56,7 +56,7 @@ double Evaluator::evaluate(
             break;
         case FitnessType::EXPANDED_NODES:
             individual.fitness =
-                stats.explored_states;
+                stats.generated_states;
             break;
         case FitnessType::SOLUTION_LENGTH:
             individual.fitness =
@@ -65,7 +65,7 @@ double Evaluator::evaluate(
         case FitnessType::EFFECTIVE_BRANCHING_FACTOR:
             individual.fitness =
                 computeEffectiveBranchingFactor(
-                    stats.explored_states,
+                    stats.generated_states,
                     solution.size());
             break;
     }

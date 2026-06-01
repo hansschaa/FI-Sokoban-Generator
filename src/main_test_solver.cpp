@@ -26,8 +26,14 @@ std::vector<std::vector<char>> load_board(const std::string& filename)
     return board;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+    if (argc < 2)
+    {
+        std::cerr << "Uso: ./test_solver <ruta/al/level.txt>\n";
+        return 1;
+    }
+
     //
     // LEER TABLERO DESDE ARCHIVO
     //
@@ -36,7 +42,7 @@ int main()
 
     try
     {
-        board = load_board("level.txt");
+        board = load_board(argv[1]);
     }
     catch (const std::exception& e)
     {
@@ -89,16 +95,54 @@ int main()
     // MOSTRAR STATS
     //
 
-    std::cout << "--- RESULTADO ---\n";
-    std::cout << "status:          "
-              << (stats.status == SolveStatus::SOLVED ? "SOLVED" : "UNSOLVABLE")
-              << "\n";
+    std::cout << "\n--- RESULTADO ---\n";
 
-    std::cout << "pushes:          " << stats.pushes << "\n";
-    std::cout << "explored_states: " << stats.explored_states << "\n";
-    std::cout << "runtime_sec:     " << stats.runtime_sec << "\n";
-    std::cout << "pasos solucion:  " << solution.size() << "\n";
-    std::cout << "-----------------\n";
+    std::cout << "status:               "
+            << (stats.status == SolveStatus::SOLVED ? "SOLVED" :
+                stats.status == SolveStatus::TIMEOUT ? "TIMEOUT" :
+                "UNSOLVABLE")
+            << "\n";
+
+    std::cout << "pushes:               " << stats.pushes << "\n";
+    std::cout << "runtime_sec:          " << stats.runtime_sec << "\n";
+
+    std::cout << "generated_states:     "
+            << stats.generated_states << "\n";
+
+    std::cout << "expanded_nodes:       "
+            << stats.expanded_nodes << "\n";
+
+    std::cout << "total_children:       "
+            << stats.total_children << "\n";
+
+    std::cout << "effective_children:   "
+            << stats.effective_children << "\n";
+
+    std::cout << "repeated_nodes:       "
+            << stats.repeated_nodes << "\n";
+
+    std::cout << "deadlocks:            "
+            << stats.deadlocks << "\n";
+
+    std::cout << "branching_real:       "
+            << stats.branching_real << "\n";
+
+    std::cout << "branching_effective:  "
+            << stats.branching_effective << "\n";
+
+    std::cout << "branching_classic:    "
+            << stats.branching_classic << "\n";
+
+    std::cout << "redundancy:           "
+            << stats.redundancy << "\n";
+
+    std::cout << "closed_list_length:   "
+            << stats.closed_list_length << "\n";
+
+    std::cout << "solution_nodes:       "
+            << solution.size() << "\n";
+
+    std::cout << "----------------------\n";
 
     return 0;
 }

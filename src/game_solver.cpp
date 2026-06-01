@@ -1,5 +1,6 @@
 #include <deque>
 #include <cstdio>
+#include <cmath>
 #include <chrono>
 #include "game_solver.h"
 #include "constant.h"
@@ -122,6 +123,11 @@ void game_solver::vars_init(game_node& input){
     rpt.init(input);
     lk.init();
     game_mem.clear();
+    stat_expanded_nodes     = 0;
+    stat_total_children     = 0;
+    stat_effective_children = 0;
+    stat_repeated_nodes     = 0;
+    stat_deadlocks          = 0;
 }
 
 void game_solver::vars_clear(game_node& input){
@@ -285,11 +291,16 @@ void game_solver::set_lambda_function(){
     };
 
     get_neighbors = [&](const game_node* n_min, std::function<void(const game_node*)> callback) {
+        stat_expanded_nodes++;          // un nodo expandido = Java: localExpandedNodes++
+
         detect_legal test(n_min);
         for (auto item = n_min->box_list.begin(); item != n_min->box_list.end(); item++) {
             auto box = *item;
             for (auto direction : four_direction) {
                 auto new_point = box + direction;
+
+                stat_total_children++;  // intento de push = Java: totalChildren++
+
                 if (test.can_get(new_point)) {
                     if (test.can_box_move(box, new_point)) {
                         auto new_box_point = *item * 2 - new_point;
@@ -297,16 +308,23 @@ void game_solver::set_lambda_function(){
                         n_min->get_moved(*item, new_box_point, temp_box2);
                         vector<vector<char>> temp_matrix2;
                         temp_box2->get_matrix0(temp_matrix2);
-                        if (lk.is_locked(new_box_point, temp_matrix2)  || rpt.is_repeat2(temp_box2)) {
-                            //todo
+
+                        if (lk.is_locked(new_box_point, temp_matrix2)) {
+                            stat_deadlocks++;           // Java: deadlocksCount++
                             temp_box2->~game_node();
                             game_mem.deallocate(temp_box2);
-                        }
-
-                        else {
+                        } else if (rpt.is_repeat2(temp_box2)) {
+                            stat_repeated_nodes++;      // Java: repeatedChildren++
+                            temp_box2->~game_node();
+                            game_mem.deallocate(temp_box2);
+                        } else {
+                            stat_effective_children++;  // Java: totalEffectiveChildren++
                             callback(temp_box2);
                         }
-                    }}}}
+                    }
+                }
+            }
+        }
     };
 
     is_equal = [](const game_node* a, const game_node*) -> bool {
@@ -397,6 +415,33 @@ SolverStats game_solver::test_template(
 
     stats.generated_states =
         rpt.zobrist_hash.size();
+
+    // Contadores directos (equivalentes directos de movesHistory en Java)
+    stats.expanded_nodes     = stat_expanded_nodes;
+    stats.total_children     = stat_total_children;
+    stats.effective_children = stat_effective_children;
+    stats.repeated_nodes     = stat_repeated_nodes;
+    stats.deadlocks          = stat_deadlocks;
+    stats.closed_list_length = rpt.zobrist_hash.size();
+
+    // Métricas derivadas — mismo cálculo que Java en forwardSearch
+    // branchingReal    = totalChildren        / expandedNodes
+    // branchingEffective = totalEffectiveChildren / expandedNodes
+    // branchingClassic = expandedNodes ^ (1 / depth)
+    // redundancy       = totalChildren / repeatedNodes  (0 si no hubo repetidos)
+    if (stat_expanded_nodes > 0) {
+        stats.branching_real      = (double)stat_total_children     / stat_expanded_nodes;
+        stats.branching_effective = (double)stat_effective_children / stat_expanded_nodes;
+    }
+
+    int depth = (int)solution.size();
+    if (depth > 0) {
+        stats.branching_classic = std::pow((double)stat_expanded_nodes, 1.0 / depth);
+    }
+
+    stats.redundancy = (stat_repeated_nodes > 0)
+        ? (double)stat_total_children / stat_repeated_nodes
+        : 0.0;
 
     // FIX: antes se repetía if(input==0) ... elif(input==1) ... para did_timeout.
     // Ahora se consulta did_timeout() de cada solver solo si fue el que se usó,

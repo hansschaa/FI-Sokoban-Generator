@@ -674,9 +674,6 @@ src/main_test_solver.o: src/main_test_solver.cpp.o
 
 # target to build an object file
 src/main_test_solver.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/main_test_solver.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/main_test_solver.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/main_test_solver.cpp.o
 .PHONY : src/main_test_solver.cpp.o
 
@@ -685,9 +682,6 @@ src/main_test_solver.i: src/main_test_solver.cpp.i
 
 # target to preprocess a source file
 src/main_test_solver.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/main_test_solver.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/main_test_solver.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/main_test_solver.cpp.i
 .PHONY : src/main_test_solver.cpp.i
 
@@ -696,9 +690,6 @@ src/main_test_solver.s: src/main_test_solver.cpp.s
 
 # target to generate assembly for a file
 src/main_test_solver.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/main_test_solver.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/main_test_solver.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/main_test_solver.cpp.s
 .PHONY : src/main_test_solver.cpp.s
 
