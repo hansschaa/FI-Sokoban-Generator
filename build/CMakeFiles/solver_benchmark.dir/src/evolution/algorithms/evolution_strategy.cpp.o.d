@@ -54,7 +54,8 @@ CMakeFiles/solver_benchmark.dir/src/evolution/algorithms/evolution_strategy.cpp.
  /usr/lib/gcc/x86_64-linux-gnu/15/include/stddef.h \
  /usr/include/c++/15/bits/uses_allocator.h \
  /usr/include/c++/15/bits/uses_allocator_args.h /usr/include/c++/15/tuple \
- /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/../../../include/evolution/algorithms/../evaluator.h \
+ /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/../../../include/evolution/algorithms/../evaluator/evaluator.h \
+ /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/../../../include/evolution/algorithms/../evaluator/fitness_type.h \
  /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/../../../include/evolution/algorithms/../mutations/move_mutation.h \
  /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/../../../include/evolution/algorithms/../mutations/mutation.h \
  /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/../../../include/evolution/algorithms/../mutations/../utils/pair.h \

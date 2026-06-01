@@ -7,11 +7,11 @@ class MoveMutation : public Mutation
 {
 public:
 
-    void apply(Individual& ind) override;
+    bool apply(Individual& ind) override;
 
 private:
 
-    void moveCharacter(
+    bool moveCharacter(
         std::vector<std::vector<char>>& board,
         char target);
 
@@ -21,4 +21,8 @@ private:
 
     Pair getRandomEmpty(
         const std::vector<std::vector<char>>& board);
+
+    Pair getRandomDestination(
+        const std::vector<std::vector<char>>& board,
+        char target);
 };

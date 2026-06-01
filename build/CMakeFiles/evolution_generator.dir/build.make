@@ -142,10 +142,24 @@ CMakeFiles/evolution_generator.dir/src/evolution/algorithms/genetic_algorithm.cp
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/evolution_generator.dir/src/evolution/algorithms/genetic_algorithm.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/genetic_algorithm.cpp -o CMakeFiles/evolution_generator.dir/src/evolution/algorithms/genetic_algorithm.cpp.s
 
+CMakeFiles/evolution_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.o: CMakeFiles/evolution_generator.dir/flags.make
+CMakeFiles/evolution_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.o: /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/simulated_annealing.cpp
+CMakeFiles/evolution_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.o: CMakeFiles/evolution_generator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/evolution_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/evolution_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.o -MF CMakeFiles/evolution_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.o.d -o CMakeFiles/evolution_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.o -c /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/simulated_annealing.cpp
+
+CMakeFiles/evolution_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/evolution_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/simulated_annealing.cpp > CMakeFiles/evolution_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.i
+
+CMakeFiles/evolution_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/evolution_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/simulated_annealing.cpp -o CMakeFiles/evolution_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.s
+
 CMakeFiles/evolution_generator.dir/src/evolution/crossover/board_crossover.cpp.o: CMakeFiles/evolution_generator.dir/flags.make
 CMakeFiles/evolution_generator.dir/src/evolution/crossover/board_crossover.cpp.o: /home/hanss/automatic-sokoban-solver/src/evolution/crossover/board_crossover.cpp
 CMakeFiles/evolution_generator.dir/src/evolution/crossover/board_crossover.cpp.o: CMakeFiles/evolution_generator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/evolution_generator.dir/src/evolution/crossover/board_crossover.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/evolution_generator.dir/src/evolution/crossover/board_crossover.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/evolution_generator.dir/src/evolution/crossover/board_crossover.cpp.o -MF CMakeFiles/evolution_generator.dir/src/evolution/crossover/board_crossover.cpp.o.d -o CMakeFiles/evolution_generator.dir/src/evolution/crossover/board_crossover.cpp.o -c /home/hanss/automatic-sokoban-solver/src/evolution/crossover/board_crossover.cpp
 
 CMakeFiles/evolution_generator.dir/src/evolution/crossover/board_crossover.cpp.i: cmake_force
@@ -156,24 +170,24 @@ CMakeFiles/evolution_generator.dir/src/evolution/crossover/board_crossover.cpp.s
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/evolution_generator.dir/src/evolution/crossover/board_crossover.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/evolution/crossover/board_crossover.cpp -o CMakeFiles/evolution_generator.dir/src/evolution/crossover/board_crossover.cpp.s
 
-CMakeFiles/evolution_generator.dir/src/evolution/evaluator.cpp.o: CMakeFiles/evolution_generator.dir/flags.make
-CMakeFiles/evolution_generator.dir/src/evolution/evaluator.cpp.o: /home/hanss/automatic-sokoban-solver/src/evolution/evaluator.cpp
-CMakeFiles/evolution_generator.dir/src/evolution/evaluator.cpp.o: CMakeFiles/evolution_generator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/evolution_generator.dir/src/evolution/evaluator.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/evolution_generator.dir/src/evolution/evaluator.cpp.o -MF CMakeFiles/evolution_generator.dir/src/evolution/evaluator.cpp.o.d -o CMakeFiles/evolution_generator.dir/src/evolution/evaluator.cpp.o -c /home/hanss/automatic-sokoban-solver/src/evolution/evaluator.cpp
+CMakeFiles/evolution_generator.dir/src/evolution/evaluator/evaluator.cpp.o: CMakeFiles/evolution_generator.dir/flags.make
+CMakeFiles/evolution_generator.dir/src/evolution/evaluator/evaluator.cpp.o: /home/hanss/automatic-sokoban-solver/src/evolution/evaluator/evaluator.cpp
+CMakeFiles/evolution_generator.dir/src/evolution/evaluator/evaluator.cpp.o: CMakeFiles/evolution_generator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/evolution_generator.dir/src/evolution/evaluator/evaluator.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/evolution_generator.dir/src/evolution/evaluator/evaluator.cpp.o -MF CMakeFiles/evolution_generator.dir/src/evolution/evaluator/evaluator.cpp.o.d -o CMakeFiles/evolution_generator.dir/src/evolution/evaluator/evaluator.cpp.o -c /home/hanss/automatic-sokoban-solver/src/evolution/evaluator/evaluator.cpp
 
-CMakeFiles/evolution_generator.dir/src/evolution/evaluator.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/evolution_generator.dir/src/evolution/evaluator.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/evolution/evaluator.cpp > CMakeFiles/evolution_generator.dir/src/evolution/evaluator.cpp.i
+CMakeFiles/evolution_generator.dir/src/evolution/evaluator/evaluator.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/evolution_generator.dir/src/evolution/evaluator/evaluator.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/evolution/evaluator/evaluator.cpp > CMakeFiles/evolution_generator.dir/src/evolution/evaluator/evaluator.cpp.i
 
-CMakeFiles/evolution_generator.dir/src/evolution/evaluator.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/evolution_generator.dir/src/evolution/evaluator.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/evolution/evaluator.cpp -o CMakeFiles/evolution_generator.dir/src/evolution/evaluator.cpp.s
+CMakeFiles/evolution_generator.dir/src/evolution/evaluator/evaluator.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/evolution_generator.dir/src/evolution/evaluator/evaluator.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/evolution/evaluator/evaluator.cpp -o CMakeFiles/evolution_generator.dir/src/evolution/evaluator/evaluator.cpp.s
 
 CMakeFiles/evolution_generator.dir/src/evolution/mutations/add_mutation.cpp.o: CMakeFiles/evolution_generator.dir/flags.make
 CMakeFiles/evolution_generator.dir/src/evolution/mutations/add_mutation.cpp.o: /home/hanss/automatic-sokoban-solver/src/evolution/mutations/add_mutation.cpp
 CMakeFiles/evolution_generator.dir/src/evolution/mutations/add_mutation.cpp.o: CMakeFiles/evolution_generator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/evolution_generator.dir/src/evolution/mutations/add_mutation.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/evolution_generator.dir/src/evolution/mutations/add_mutation.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/evolution_generator.dir/src/evolution/mutations/add_mutation.cpp.o -MF CMakeFiles/evolution_generator.dir/src/evolution/mutations/add_mutation.cpp.o.d -o CMakeFiles/evolution_generator.dir/src/evolution/mutations/add_mutation.cpp.o -c /home/hanss/automatic-sokoban-solver/src/evolution/mutations/add_mutation.cpp
 
 CMakeFiles/evolution_generator.dir/src/evolution/mutations/add_mutation.cpp.i: cmake_force
@@ -187,7 +201,7 @@ CMakeFiles/evolution_generator.dir/src/evolution/mutations/add_mutation.cpp.s: c
 CMakeFiles/evolution_generator.dir/src/evolution/mutations/move_mutation.cpp.o: CMakeFiles/evolution_generator.dir/flags.make
 CMakeFiles/evolution_generator.dir/src/evolution/mutations/move_mutation.cpp.o: /home/hanss/automatic-sokoban-solver/src/evolution/mutations/move_mutation.cpp
 CMakeFiles/evolution_generator.dir/src/evolution/mutations/move_mutation.cpp.o: CMakeFiles/evolution_generator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/evolution_generator.dir/src/evolution/mutations/move_mutation.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/evolution_generator.dir/src/evolution/mutations/move_mutation.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/evolution_generator.dir/src/evolution/mutations/move_mutation.cpp.o -MF CMakeFiles/evolution_generator.dir/src/evolution/mutations/move_mutation.cpp.o.d -o CMakeFiles/evolution_generator.dir/src/evolution/mutations/move_mutation.cpp.o -c /home/hanss/automatic-sokoban-solver/src/evolution/mutations/move_mutation.cpp
 
 CMakeFiles/evolution_generator.dir/src/evolution/mutations/move_mutation.cpp.i: cmake_force
@@ -201,7 +215,7 @@ CMakeFiles/evolution_generator.dir/src/evolution/mutations/move_mutation.cpp.s: 
 CMakeFiles/evolution_generator.dir/src/evolution/mutations/remove_mutation.cpp.o: CMakeFiles/evolution_generator.dir/flags.make
 CMakeFiles/evolution_generator.dir/src/evolution/mutations/remove_mutation.cpp.o: /home/hanss/automatic-sokoban-solver/src/evolution/mutations/remove_mutation.cpp
 CMakeFiles/evolution_generator.dir/src/evolution/mutations/remove_mutation.cpp.o: CMakeFiles/evolution_generator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/evolution_generator.dir/src/evolution/mutations/remove_mutation.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/evolution_generator.dir/src/evolution/mutations/remove_mutation.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/evolution_generator.dir/src/evolution/mutations/remove_mutation.cpp.o -MF CMakeFiles/evolution_generator.dir/src/evolution/mutations/remove_mutation.cpp.o.d -o CMakeFiles/evolution_generator.dir/src/evolution/mutations/remove_mutation.cpp.o -c /home/hanss/automatic-sokoban-solver/src/evolution/mutations/remove_mutation.cpp
 
 CMakeFiles/evolution_generator.dir/src/evolution/mutations/remove_mutation.cpp.i: cmake_force
@@ -215,7 +229,7 @@ CMakeFiles/evolution_generator.dir/src/evolution/mutations/remove_mutation.cpp.s
 CMakeFiles/evolution_generator.dir/src/game_node.cpp.o: CMakeFiles/evolution_generator.dir/flags.make
 CMakeFiles/evolution_generator.dir/src/game_node.cpp.o: /home/hanss/automatic-sokoban-solver/src/game_node.cpp
 CMakeFiles/evolution_generator.dir/src/game_node.cpp.o: CMakeFiles/evolution_generator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/evolution_generator.dir/src/game_node.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/evolution_generator.dir/src/game_node.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/evolution_generator.dir/src/game_node.cpp.o -MF CMakeFiles/evolution_generator.dir/src/game_node.cpp.o.d -o CMakeFiles/evolution_generator.dir/src/game_node.cpp.o -c /home/hanss/automatic-sokoban-solver/src/game_node.cpp
 
 CMakeFiles/evolution_generator.dir/src/game_node.cpp.i: cmake_force
@@ -229,7 +243,7 @@ CMakeFiles/evolution_generator.dir/src/game_node.cpp.s: cmake_force
 CMakeFiles/evolution_generator.dir/src/game_solver.cpp.o: CMakeFiles/evolution_generator.dir/flags.make
 CMakeFiles/evolution_generator.dir/src/game_solver.cpp.o: /home/hanss/automatic-sokoban-solver/src/game_solver.cpp
 CMakeFiles/evolution_generator.dir/src/game_solver.cpp.o: CMakeFiles/evolution_generator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/evolution_generator.dir/src/game_solver.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/evolution_generator.dir/src/game_solver.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/evolution_generator.dir/src/game_solver.cpp.o -MF CMakeFiles/evolution_generator.dir/src/game_solver.cpp.o.d -o CMakeFiles/evolution_generator.dir/src/game_solver.cpp.o -c /home/hanss/automatic-sokoban-solver/src/game_solver.cpp
 
 CMakeFiles/evolution_generator.dir/src/game_solver.cpp.i: cmake_force
@@ -243,7 +257,7 @@ CMakeFiles/evolution_generator.dir/src/game_solver.cpp.s: cmake_force
 CMakeFiles/evolution_generator.dir/src/locked.cpp.o: CMakeFiles/evolution_generator.dir/flags.make
 CMakeFiles/evolution_generator.dir/src/locked.cpp.o: /home/hanss/automatic-sokoban-solver/src/locked.cpp
 CMakeFiles/evolution_generator.dir/src/locked.cpp.o: CMakeFiles/evolution_generator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/evolution_generator.dir/src/locked.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/evolution_generator.dir/src/locked.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/evolution_generator.dir/src/locked.cpp.o -MF CMakeFiles/evolution_generator.dir/src/locked.cpp.o.d -o CMakeFiles/evolution_generator.dir/src/locked.cpp.o -c /home/hanss/automatic-sokoban-solver/src/locked.cpp
 
 CMakeFiles/evolution_generator.dir/src/locked.cpp.i: cmake_force
@@ -254,10 +268,24 @@ CMakeFiles/evolution_generator.dir/src/locked.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/evolution_generator.dir/src/locked.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/locked.cpp -o CMakeFiles/evolution_generator.dir/src/locked.cpp.s
 
+CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.o: CMakeFiles/evolution_generator.dir/flags.make
+CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.o: /home/hanss/automatic-sokoban-solver/src/main_test_solver.cpp
+CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.o: CMakeFiles/evolution_generator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.o -MF CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.o.d -o CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.o -c /home/hanss/automatic-sokoban-solver/src/main_test_solver.cpp
+
+CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/main_test_solver.cpp > CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.i
+
+CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/main_test_solver.cpp -o CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.s
+
 CMakeFiles/evolution_generator.dir/src/my_memory.cpp.o: CMakeFiles/evolution_generator.dir/flags.make
 CMakeFiles/evolution_generator.dir/src/my_memory.cpp.o: /home/hanss/automatic-sokoban-solver/src/my_memory.cpp
 CMakeFiles/evolution_generator.dir/src/my_memory.cpp.o: CMakeFiles/evolution_generator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/evolution_generator.dir/src/my_memory.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/evolution_generator.dir/src/my_memory.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/evolution_generator.dir/src/my_memory.cpp.o -MF CMakeFiles/evolution_generator.dir/src/my_memory.cpp.o.d -o CMakeFiles/evolution_generator.dir/src/my_memory.cpp.o -c /home/hanss/automatic-sokoban-solver/src/my_memory.cpp
 
 CMakeFiles/evolution_generator.dir/src/my_memory.cpp.i: cmake_force
@@ -271,7 +299,7 @@ CMakeFiles/evolution_generator.dir/src/my_memory.cpp.s: cmake_force
 CMakeFiles/evolution_generator.dir/src/point.cpp.o: CMakeFiles/evolution_generator.dir/flags.make
 CMakeFiles/evolution_generator.dir/src/point.cpp.o: /home/hanss/automatic-sokoban-solver/src/point.cpp
 CMakeFiles/evolution_generator.dir/src/point.cpp.o: CMakeFiles/evolution_generator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/evolution_generator.dir/src/point.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/evolution_generator.dir/src/point.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/evolution_generator.dir/src/point.cpp.o -MF CMakeFiles/evolution_generator.dir/src/point.cpp.o.d -o CMakeFiles/evolution_generator.dir/src/point.cpp.o -c /home/hanss/automatic-sokoban-solver/src/point.cpp
 
 CMakeFiles/evolution_generator.dir/src/point.cpp.i: cmake_force
@@ -285,7 +313,7 @@ CMakeFiles/evolution_generator.dir/src/point.cpp.s: cmake_force
 CMakeFiles/evolution_generator.dir/src/repeat.cpp.o: CMakeFiles/evolution_generator.dir/flags.make
 CMakeFiles/evolution_generator.dir/src/repeat.cpp.o: /home/hanss/automatic-sokoban-solver/src/repeat.cpp
 CMakeFiles/evolution_generator.dir/src/repeat.cpp.o: CMakeFiles/evolution_generator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/evolution_generator.dir/src/repeat.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/evolution_generator.dir/src/repeat.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/evolution_generator.dir/src/repeat.cpp.o -MF CMakeFiles/evolution_generator.dir/src/repeat.cpp.o.d -o CMakeFiles/evolution_generator.dir/src/repeat.cpp.o -c /home/hanss/automatic-sokoban-solver/src/repeat.cpp
 
 CMakeFiles/evolution_generator.dir/src/repeat.cpp.i: cmake_force
@@ -303,14 +331,16 @@ evolution_generator_OBJECTS = \
 "CMakeFiles/evolution_generator.dir/src/draw.cpp.o" \
 "CMakeFiles/evolution_generator.dir/src/evolution/algorithms/evolution_strategy.cpp.o" \
 "CMakeFiles/evolution_generator.dir/src/evolution/algorithms/genetic_algorithm.cpp.o" \
+"CMakeFiles/evolution_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.o" \
 "CMakeFiles/evolution_generator.dir/src/evolution/crossover/board_crossover.cpp.o" \
-"CMakeFiles/evolution_generator.dir/src/evolution/evaluator.cpp.o" \
+"CMakeFiles/evolution_generator.dir/src/evolution/evaluator/evaluator.cpp.o" \
 "CMakeFiles/evolution_generator.dir/src/evolution/mutations/add_mutation.cpp.o" \
 "CMakeFiles/evolution_generator.dir/src/evolution/mutations/move_mutation.cpp.o" \
 "CMakeFiles/evolution_generator.dir/src/evolution/mutations/remove_mutation.cpp.o" \
 "CMakeFiles/evolution_generator.dir/src/game_node.cpp.o" \
 "CMakeFiles/evolution_generator.dir/src/game_solver.cpp.o" \
 "CMakeFiles/evolution_generator.dir/src/locked.cpp.o" \
+"CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.o" \
 "CMakeFiles/evolution_generator.dir/src/my_memory.cpp.o" \
 "CMakeFiles/evolution_generator.dir/src/point.cpp.o" \
 "CMakeFiles/evolution_generator.dir/src/repeat.cpp.o"
@@ -323,21 +353,23 @@ evolution_generator: CMakeFiles/evolution_generator.dir/src/constant.cpp.o
 evolution_generator: CMakeFiles/evolution_generator.dir/src/draw.cpp.o
 evolution_generator: CMakeFiles/evolution_generator.dir/src/evolution/algorithms/evolution_strategy.cpp.o
 evolution_generator: CMakeFiles/evolution_generator.dir/src/evolution/algorithms/genetic_algorithm.cpp.o
+evolution_generator: CMakeFiles/evolution_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.o
 evolution_generator: CMakeFiles/evolution_generator.dir/src/evolution/crossover/board_crossover.cpp.o
-evolution_generator: CMakeFiles/evolution_generator.dir/src/evolution/evaluator.cpp.o
+evolution_generator: CMakeFiles/evolution_generator.dir/src/evolution/evaluator/evaluator.cpp.o
 evolution_generator: CMakeFiles/evolution_generator.dir/src/evolution/mutations/add_mutation.cpp.o
 evolution_generator: CMakeFiles/evolution_generator.dir/src/evolution/mutations/move_mutation.cpp.o
 evolution_generator: CMakeFiles/evolution_generator.dir/src/evolution/mutations/remove_mutation.cpp.o
 evolution_generator: CMakeFiles/evolution_generator.dir/src/game_node.cpp.o
 evolution_generator: CMakeFiles/evolution_generator.dir/src/game_solver.cpp.o
 evolution_generator: CMakeFiles/evolution_generator.dir/src/locked.cpp.o
+evolution_generator: CMakeFiles/evolution_generator.dir/src/main_test_solver.cpp.o
 evolution_generator: CMakeFiles/evolution_generator.dir/src/my_memory.cpp.o
 evolution_generator: CMakeFiles/evolution_generator.dir/src/point.cpp.o
 evolution_generator: CMakeFiles/evolution_generator.dir/src/repeat.cpp.o
 evolution_generator: CMakeFiles/evolution_generator.dir/build.make
 evolution_generator: CMakeFiles/evolution_generator.dir/compiler_depend.ts
 evolution_generator: CMakeFiles/evolution_generator.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Linking CXX executable evolution_generator"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Linking CXX executable evolution_generator"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/evolution_generator.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -167,7 +167,8 @@ CMakeFiles/evolution_generator.dir/src/main_evolution.cpp.o: \
  /usr/include/c++/15/bits/vector.tcc /usr/include/c++/15/ctime \
  /home/hanss/automatic-sokoban-solver/src/../include/evolution/algorithms/evolution_strategy.h \
  /home/hanss/automatic-sokoban-solver/src/../include/evolution/algorithms/../individual.h \
- /home/hanss/automatic-sokoban-solver/src/../include/evolution/algorithms/../evaluator.h \
+ /home/hanss/automatic-sokoban-solver/src/../include/evolution/algorithms/../evaluator/evaluator.h \
+ /home/hanss/automatic-sokoban-solver/src/../include/evolution/algorithms/../evaluator/fitness_type.h \
  /home/hanss/automatic-sokoban-solver/src/../include/evolution/algorithms/../mutations/move_mutation.h \
  /home/hanss/automatic-sokoban-solver/src/../include/evolution/algorithms/../mutations/mutation.h \
  /home/hanss/automatic-sokoban-solver/src/../include/evolution/algorithms/../mutations/../utils/pair.h \
@@ -198,7 +199,9 @@ CMakeFiles/evolution_generator.dir/src/main_evolution.cpp.o: \
  /usr/include/c++/15/bits/enable_special_members.h \
  /home/hanss/automatic-sokoban-solver/src/../include/locked.h \
  /home/hanss/automatic-sokoban-solver/src/../include/my_memory.h \
+ /home/hanss/automatic-sokoban-solver/src/../include/method.h \
  /usr/include/c++/15/functional /usr/include/c++/15/bits/std_function.h \
  /usr/include/c++/15/unordered_map \
  /usr/include/c++/15/bits/unordered_map.h /usr/include/c++/15/array \
- /usr/include/c++/15/compare
+ /usr/include/c++/15/compare \
+ /home/hanss/automatic-sokoban-solver/src/../include/evolution/algorithms/simulated_annealing.h

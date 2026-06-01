@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../individual.h"
-#include "../evaluator.h"
+#include "../evaluator/evaluator.h"
 #include "../mutations/move_mutation.h"
 #include "../mutations/add_mutation.h"
 #include "../mutations/remove_mutation.h"

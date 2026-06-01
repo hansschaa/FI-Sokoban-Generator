@@ -136,3 +136,27 @@ target_compile_options(
     -g
     -O0
 )
+
+#
+# Test solver executable
+#
+
+list(REMOVE_ITEM MY_SRC
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_test_solver.cpp
+)
+
+add_executable(
+    test_solver
+    src/main_test_solver.cpp
+    ${MY_SRC}
+)
+
+target_compile_options(
+    test_solver
+    PRIVATE
+    -Wall
+    -Wextra
+    -pedantic
+    -g
+    -O0
+)

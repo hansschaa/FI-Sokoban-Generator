@@ -52,7 +52,7 @@ int main() {
     std::cin >> input;
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     if (input == '0' || input == '1' || input == '2') {
-        iinput = input - '0'; // 将字符转换为对应的整数
+        iinput = input - '0';
     }
     else {
         printf("wrong input!!\n");
@@ -69,7 +69,7 @@ int main() {
     std::vector<game_node> solution;
 
     auto stats =
-        ga.test_template(iinput, solution);
+        ga.test_template(int_to_method(iinput), solution);
 
     auto ss = solution;
 

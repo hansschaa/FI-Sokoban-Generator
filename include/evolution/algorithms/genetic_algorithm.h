@@ -3,13 +3,13 @@
 #include <vector>
 
 #include "../individual.h"
-#include "../evaluator.h"
 
 #include "../mutations/move_mutation.h"
 #include "../mutations/add_mutation.h"
 #include "../mutations/remove_mutation.h"
 
 #include "../crossover/board_crossover.h"
+#include "../evaluator/evaluator.h"
 
 class GeneticAlgorithm
 {
@@ -24,6 +24,8 @@ public:
     int maxEvaluations = 500;
 
     int stagnationLimit = 20;
+
+    int maxFailedAttempts = 10;
 
     //
     // STATE
@@ -55,6 +57,6 @@ public:
     Individual tournamentSelection(
         const std::vector<Individual>& population);
 
-    Individual applyRandomMutation(
-        Individual child);
+    bool applyRandomMutation(
+        Individual& child); 
 };

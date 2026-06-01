@@ -110,6 +110,7 @@ CMakeFiles/sokoban_solver.dir/src/game_solver.cpp.o: \
  /usr/include/c++/15/bits/enable_special_members.h \
  /home/hanss/automatic-sokoban-solver/include/locked.h \
  /home/hanss/automatic-sokoban-solver/include/my_memory.h \
+ /home/hanss/automatic-sokoban-solver/include/method.h \
  /usr/include/c++/15/string /usr/include/c++/15/bits/stringfwd.h \
  /usr/include/c++/15/bits/char_traits.h \
  /usr/include/c++/15/bits/postypes.h /usr/include/c++/15/cwchar \

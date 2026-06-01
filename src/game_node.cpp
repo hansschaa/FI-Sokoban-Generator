@@ -40,14 +40,15 @@ vector<vector<char>> game_node::get_matrix2()const {
         }
     }
     for (auto item_box = box_list.begin();item_box != box_list.end();item_box++) {
-        end_vec[(*item_box).x][(*item_box).y]?
-         result[(*item_box).x][(*item_box).y] = REDBOX:
-         result[(*item_box).x][(*item_box).y] = BOX;
+        //
+        // READ end_vec, do NOT mutate it — method is const
+        //
+        bool onGoal = end_vec[(*item_box).x][(*item_box).y];
+        result[(*item_box).x][(*item_box).y] = onGoal ? REDBOX : BOX;
     }
-    
-    end_vec[person_point.x][person_point.y]?
-     result[person_point.x][person_point.y]=PERSONF:
-     result[person_point.x][person_point.y]=PERSON;
+
+    bool playerOnGoal = end_vec[person_point.x][person_point.y];
+    result[person_point.x][person_point.y] = playerOnGoal ? PERSONF : PERSON;
     return result;
 }
 
@@ -55,7 +56,12 @@ bool game_node::operator==(const game_node &a)const {
     if (a.box_list == box_list) {
         vector<vector<char>> temp_matrix2;
         get_matrix0(temp_matrix2);
-        maze_solver<Method::a_star, bool> maze;
+        // FIX: antes usaba Method::a_star para verificar si dos posiciones
+        // de jugador son equivalentes (mismo componente conexo).
+        // A* es innecesario aquí: solo se necesita saber si b puede llegar
+        // a a, lo cual es una pregunta de alcanzabilidad → BFS es suficiente
+        // y significativamente más barato.
+        maze_solver<Method::bfs, bool> maze;
         return maze.solve(temp_matrix2, a.person_point, person_point);
     }
     return false;

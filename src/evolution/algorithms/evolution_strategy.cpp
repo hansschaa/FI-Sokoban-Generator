@@ -91,26 +91,43 @@ Individual EvolutionStrategy::run(
             int mutationType =
                 rand() % 3;
 
+            bool success = false;
+
             if (mutationType == 0)
             {
-                moveMutation.apply(child);
+                success =
+                    moveMutation.apply(child);
 
                 std::cout
                     << "MOVE MUTATION\n";
             }
             else if (mutationType == 1)
             {
-                addMutation.apply(child);
+                success =
+                    addMutation.apply(child);
 
                 std::cout
                     << "ADD MUTATION\n";
             }
             else
             {
-                removeMutation.apply(child);
+                success =
+                    removeMutation.apply(child);
 
                 std::cout
                     << "REMOVE MUTATION\n";
+            }
+
+            //
+            // INVALID MUTATION
+            //
+
+            if (!success)
+            {
+                std::cout
+                    << "INVALID MUTATION\n";
+
+                continue;
             }
 
             //
@@ -160,6 +177,17 @@ Individual EvolutionStrategy::run(
         // STAGNATION UPDATE
         //
 
+        if (offspring.empty())
+        {
+            std::cout
+                << "WARNING: ALL "
+                << lambda
+                << " CHILDREN FAILED IN GEN "
+                << generation
+                << " (mutation invalid or NaN fitness)"
+                << std::endl;
+        }
+
         if (improved)
         {
             stagnationCount = 0;
@@ -197,11 +225,16 @@ Individual EvolutionStrategy::run(
 
         //
         // SELECT BEST μ
+        // Guard against combined being smaller than mu
+        // (can happen if all offspring failed every generation)
         //
 
         population.clear();
 
-        for (int i = 0; i < mu; i++)
+        int toSelect =
+            std::min(mu, (int)combined.size());
+
+        for (int i = 0; i < toSelect; i++)
         {
             population.push_back(combined[i]);
         }

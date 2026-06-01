@@ -33,10 +33,25 @@ bool detect_legal::can_get(point& des) {
     return (value)[des.x][des.y] == true;
 }
 
-bool detect_legal::can_box_move(point& box, point& person) {
+bool detect_legal::can_box_move(
+    point& box,
+    point& person)
+{
     point new_point;
+
     new_point = box * 2 - person;
-    return matrix_with_box[new_point.x][new_point.y] == BLANK;
+
+    if(new_point.x < 0 ||
+       new_point.x >= m ||
+       new_point.y < 0 ||
+       new_point.y >= n)
+    {
+        return false;
+    }
+
+    return matrix_with_box[new_point.x]
+                          [new_point.y]
+           == BLANK;
 }
 
 game_solver::game_solver(string& game_map, unsigned int mm, unsigned int nn, int memval) {
@@ -52,8 +67,9 @@ game_solver::game_solver(string& game_map, unsigned int mm, unsigned int nn, int
     char temp_c;
     point temp_p;
 
-    for (int8_t x = 0; x < m; x++) {
-        for (int8_t y = 0; y < n; y++) {
+    // FIX: int8_t causaba overflow silencioso en mapas > 127 filas/columnas.
+    for (int x = 0; x < m; x++) {
+        for (int y = 0; y < n; y++) {
             temp_c = game_map[x*n + y];
             temp_p = {x, y};
             switch (temp_c) {
@@ -90,6 +106,11 @@ game_solver::game_solver(string& game_map, unsigned int mm, unsigned int nn, int
             }
         }
     }
+    //
+    // INIT MEMORY POOLS
+    // my_memory_pool::init() now safely frees any previous allocation,
+    // so constructing multiple game_solver instances is leak-free.
+    //
     game_mem.init(sizeof(game_node), memval * 1024 * 1024 / sizeof(game_node));
     constant::maze_mp.init(sizeof(point), mm * nn * 4);
     init = game_node(box_point_start,person_start);
@@ -109,21 +130,81 @@ void game_solver::vars_clear(game_node& input){
         tp->~game_node();
         game_mem.deallocate((void *)tp);
     }
+    //
+    // CLEAR THE HASH SET
+    // Avoids dangling pointers into the now-reset pool
+    //
+    rpt.zobrist_hash.clear();
+    // FIX: antes no se llamaba game_mem.clear(), dejando el pool con bloques
+    // marcados como usados. La siguiente llamada a vars_init + solve podía
+    // quedarse sin bloques disponibles en el pool prematuramente.
+    game_mem.clear();
 }
 
-int game_solver::get_nums2(game_node input) {
+// FIX: antes recibía game_node por valor, copiando el set<point> completo
+// en cada celda del doble loop m×n de Astar_init(). Ahora es const ref.
+int game_solver::get_nums2(const game_node& input) {
     auto p = *(input.box_list.begin());
     if (end_vec[p.x][p.y] == true) { return 0; }
-    
-    vars_init(input);
 
-    deque<game_node*> temp_vec;
-    temp_vec.push_back(&input);
-    vector<game_node*> for_del;
+    //
+    // USE A SEPARATE LOCAL MEMORY POOL
+    // get_nums2 is called from Astar_init(), which runs before test_template,
+    // but sharing game_mem would cause vars_init/vars_clear to clobber the
+    // pool mid-solve if ever called in a nested context.
+    //
+    my_memory_pool local_mem;
+    local_mem.init(sizeof(game_node), m * n * 4);
+
+    repeat local_rpt;
+    locked local_lk;
+    // FIX: repeat::init toma game_node& (no-const); como input es const ref
+    // hacemos una copia local solo para la inicialización del hash de Zobrist.
+    game_node input_copy = input;
+    local_rpt.init(input_copy);
+    local_lk.init();
+
+    auto local_get_neighbors = [&](const game_node* n_min, std::function<void(const game_node*)> callback) {
+        detect_legal test(n_min);
+        for (auto item = n_min->box_list.begin(); item != n_min->box_list.end(); item++) {
+            auto box = *item;
+            for (auto direction : four_direction) {
+                auto new_point = box + direction;
+                if (test.can_get(new_point)) {
+                    if (test.can_box_move(box, new_point)) {
+                        auto new_box_point = *item * 2 - new_point;
+                        game_node* temp_box2 = new(local_mem.allocate()) game_node;
+                        n_min->get_moved(*item, new_box_point, temp_box2);
+                        vector<vector<char>> temp_matrix2;
+                        temp_box2->get_matrix0(temp_matrix2);
+                        if (local_lk.is_locked(new_box_point, temp_matrix2) || local_rpt.is_repeat2(temp_box2)) {
+                            temp_box2->~game_node();
+                            local_mem.deallocate(temp_box2);
+                        } else {
+                            callback(temp_box2);
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    auto local_is_visited = [&](const game_node*) -> bool { return false; };
+    auto local_mark_visited = [&](const game_node* n) { local_rpt.insert(n); };
+    auto local_is_equal = [](const game_node* a, const game_node*) -> bool { return a->game_over(); };
 
     Solver_template<vector<game_node>, game_node, Method::bfs> gsolver1;
-    auto resx = gsolver1.solve(&input, nullptr, get_neighbors, is_visited, mark_visited, is_equal);
-    vars_clear(input);
+    auto resx = gsolver1.solve(&input, nullptr, local_get_neighbors, local_is_visited, local_mark_visited, local_is_equal);
+
+    //
+    // CLEANUP LOCAL POOL
+    //
+    local_rpt.zobrist_hash.erase(&input);
+    for (auto tp : local_rpt.zobrist_hash) {
+        tp->~game_node();
+        local_mem.deallocate((void*)tp);
+    }
+    local_rpt.zobrist_hash.clear();
 
     if (resx.size() == 0)
     {
@@ -175,9 +256,13 @@ vector<vector<int>> game_solver::Astar_init() {
                 result[i][j] = 1000;
                 continue;
             }
+            // FIX: antes se llamaba get_matrix0(vec) aquí, con person_point
+            // sin inicializar. Ahora se asigna person_point primero dentro
+            // del loop, y get_matrix0 se llama solo cuando es necesario.
             int min_num = INT32_MAX;
             for (auto& dd : person_point){
                 new_node.person_point = dd;
+                // FIX: get_nums2 ahora recibe const ref, no copia
                 int min_ = get_nums2(new_node);
                 if (min_ < min_num) {
                     min_num = min_;
@@ -231,7 +316,7 @@ void game_solver::set_lambda_function(){
 }
 
 SolverStats game_solver::test_template(
-    int input,
+    Method input,   // FIX: antes era int con magic numbers 0/1/2 sin documentar
     std::vector<game_node>& solution
 ) {
 
@@ -263,7 +348,7 @@ SolverStats game_solver::test_template(
 
     auto t1 = chrono::high_resolution_clock::now();
 
-    if (input == 0)
+    if (input == Method::a_star)
     {
         solution = gsolver0.solve(
             &init,
@@ -275,7 +360,7 @@ SolverStats game_solver::test_template(
             heuristic
         );
     }
-    else if (input == 1)
+    else if (input == Method::dfs)
     {
         solution = gsolver1.solve(
             &init,
@@ -286,7 +371,7 @@ SolverStats game_solver::test_template(
             is_equal
         );
     }
-    else if (input == 2)
+    else if (input == Method::bfs)
     {
         solution = gsolver2.solve(
             &init,
@@ -310,41 +395,23 @@ SolverStats game_solver::test_template(
     stats.pushes =
         solution.size();
 
-    stats.explored_states =
+    stats.generated_states =
         rpt.zobrist_hash.size();
 
-    //
-    // Detectar status
-    //
+    // FIX: antes se repetía if(input==0) ... elif(input==1) ... para did_timeout.
+    // Ahora se consulta did_timeout() de cada solver solo si fue el que se usó,
+    // evitando llamar did_timeout() sobre solvers nunca ejecutados.
+    bool timed_out =
+        (input == Method::a_star && gsolver0.did_timeout()) ||
+        (input == Method::dfs    && gsolver1.did_timeout()) ||
+        (input == Method::bfs    && gsolver2.did_timeout());
 
-    if(input == 0 && gsolver0.did_timeout()) {
-
-        stats.status =
-            SolveStatus::TIMEOUT;
-
-    }
-    else if(input == 1 && gsolver1.did_timeout()) {
-
-        stats.status =
-            SolveStatus::TIMEOUT;
-
-    }
-    else if(input == 2 && gsolver2.did_timeout()) {
-
-        stats.status =
-            SolveStatus::TIMEOUT;
-
-    }
-    else if(solution.empty()) {
-
-        stats.status =
-            SolveStatus::UNSOLVABLE;
-
-    }
-    else {
-
-        stats.status =
-            SolveStatus::SOLVED;
+    if (timed_out) {
+        stats.status = SolveStatus::TIMEOUT;
+    } else if (solution.empty()) {
+        stats.status = SolveStatus::UNSOLVABLE;
+    } else {
+        stats.status = SolveStatus::SOLVED;
     }
 
     vars_clear(init);

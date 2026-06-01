@@ -57,4 +57,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/sokoban_solver.dir/DependInfo.cmake"
   "CMakeFiles/solver_benchmark.dir/DependInfo.cmake"
   "CMakeFiles/evolution_generator.dir/DependInfo.cmake"
+  "CMakeFiles/test_solver.dir/DependInfo.cmake"
   )

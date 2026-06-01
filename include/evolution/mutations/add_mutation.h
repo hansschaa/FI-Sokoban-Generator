@@ -6,5 +6,6 @@ class AddMutation : public Mutation
 {
 public:
 
-    void apply(Individual& individual) override;
+    bool apply(Individual& individual) override;
+    
 };

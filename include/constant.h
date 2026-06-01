@@ -1,15 +1,9 @@
 #pragma once
-
+#include "method.h"
 #include "point.h"
 #include "my_memory.h"
 #include <vector>
 #include <cstdint>
-
-enum class Method {
-    bfs,
-    dfs,
-    a_star
-};
 
 namespace constant {
     extern int8_t m;

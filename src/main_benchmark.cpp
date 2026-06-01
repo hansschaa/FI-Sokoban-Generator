@@ -71,31 +71,15 @@ int main(int argc, char** argv) {
     std::vector<game_node> solution;
 
     SolverStats stats =
-        ga.test_template(alg, solution);
+        ga.test_template(int_to_method(alg), solution);
 
     auto end = chrono::high_resolution_clock::now();
 
-    double runtime =
-        chrono::duration<double>(end - start).count();
-
     cout << "board=" << boardfile << endl;
-
-    cout << "algorithm="
-        << alg
-        << endl;
-
-    cout << "runtime_sec="
-        << stats.runtime_sec
-        << endl;
-
-    cout << "solution_length="
-        << stats.pushes
-        << endl;
-
-    cout << "explored_states="
-        << stats.explored_states
-        << endl;
-
+    cout << "algorithm=" << alg << endl;
+    cout << "runtime_sec=" << stats.runtime_sec << endl;
+    cout << "solution_length=" << stats.pushes << endl;
+    cout << "explored_states=" << stats.explored_states << endl;
     cout << "status=";
 
     if(stats.status == SolveStatus::SOLVED)

@@ -1,7 +1,10 @@
 #include <cstdio>
 #include "point.h"
 
-point::point(int8_t xx, int8_t yy) {
+// FIX: int8_t limita coordenadas a [-128, 127].
+// Mapas de más de 127 filas/columnas causaban overflow silencioso.
+// Se usa int16_t: soporta hasta 32767, suficiente para cualquier puzzle Sokoban.
+point::point(int16_t xx, int16_t yy) {
     x = xx;
     y = yy;
 }
@@ -21,7 +24,8 @@ point point::operator-(const point &a)const{
     return result;
 }
 
-point point::operator*(int8_t m) const{
+// FIX: el multiplicador también era int8_t — mismo problema de overflow.
+point point::operator*(int16_t m) const{
     point result(x*m, y*m);
     return result;
 }

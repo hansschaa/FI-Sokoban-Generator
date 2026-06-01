@@ -31,14 +31,20 @@ Individual SimulatedAnnealing::run(
     Individual initial)
 {
     //
-    // INITIAL EVALUATION
+    // SKIP RE-EVALUATION IF ALREADY EVALUATED
+    // The individual comes pre-evaluated from main
     //
 
-    evaluator.evaluate(initial);
+    if (initial.fitness == 0.0)
+    {
+        evaluator.evaluate(initial);
+    }
 
-    evaluations = 1;
+    evaluations = 0;
 
     int stagnation = 0;
+
+    int failedAttempts = 0;
 
     //
     // CURRENT + BEST
@@ -82,18 +88,50 @@ Individual SimulatedAnnealing::run(
         int mutationType =
             rand() % 3;
 
+        bool success = false;
+
         if (mutationType == 0)
         {
-            moveMutation.apply(neighbor);
+            success =
+                moveMutation.apply(neighbor);
         }
         else if (mutationType == 1)
         {
-            addMutation.apply(neighbor);
+            success =
+                addMutation.apply(neighbor);
         }
         else
         {
-            removeMutation.apply(neighbor);
+            success =
+                removeMutation.apply(neighbor);
         }
+
+        //
+        // INVALID MUTATION
+        // Track consecutive failures to avoid infinite loop
+        //
+
+        if (!success)
+        {
+            failedAttempts++;
+
+            if (failedAttempts >= maxFailedAttempts)
+            {
+                std::cout
+                    << "TERMINATION: MAX FAILED ATTEMPTS"
+                    << std::endl;
+
+                break;
+            }
+
+            continue;
+        }
+
+        //
+        // RESET FAILED ATTEMPTS ON SUCCESS
+        //
+
+        failedAttempts = 0;
 
         //
         // EVALUATE

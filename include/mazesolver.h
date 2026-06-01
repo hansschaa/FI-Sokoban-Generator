@@ -1,5 +1,6 @@
 #pragma once
 
+#include "method.h"        // FIX: Method debe incluirse antes de solver_template.h
 #include "point.h"
 #include "constant.h"
 #include "solver_template.h"
@@ -11,9 +12,9 @@
 template<Method tmethod, typename Return_Type>
 class maze_solver {
 private:
-    const std::vector<std::vector<char>>* grid;//todo: need comfirm
+    const std::vector<std::vector<char>>* grid;
 public:
-    std::vector<std::vector<bool>> zero_matrix;//todo: need check
+    std::vector<std::vector<bool>> zero_matrix;
     maze_solver(){}
     Return_Type solve(const std::vector<std::vector<char>>& _grid, const point& start, const point& end)
     {

@@ -6,9 +6,10 @@ class Crossover
 {
 public:
 
-    virtual Individual apply(
+    virtual bool apply(
         const Individual& parent1,
-        const Individual& parent2) = 0;
+        const Individual& parent2,
+        Individual& child) = 0;
 
     virtual ~Crossover() = default;
 };

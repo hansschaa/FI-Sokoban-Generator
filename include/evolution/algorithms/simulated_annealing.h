@@ -1,8 +1,12 @@
 #pragma once
 
 #include "../individual.h"
-#include "../evaluator.h"
 #include "../mutations/mutation.h"
+#include "../evaluator/evaluator.h"
+
+#include "../mutations/move_mutation.h"
+#include "../mutations/add_mutation.h"
+#include "../mutations/remove_mutation.h"
 
 class SimulatedAnnealing
 {
@@ -20,11 +24,19 @@ public:
 
     int maxEvaluations = 1000;
 
+    int stagnationLimit = 200;
+
+    int maxFailedAttempts = 100;
+
+    MoveMutation moveMutation;
+
+    AddMutation addMutation;
+
+    RemoveMutation removeMutation;
+
     //
     // COMPONENTS
     //
-
-    Mutation* mutation = nullptr;
 
     Evaluator evaluator;
 
@@ -44,7 +56,7 @@ public:
 private:
 
     double acceptanceProbability(
-        int currentScore,
-        int newScore,
+        double currentScore,
+        double newScore,
         double temperature);
 };

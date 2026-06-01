@@ -31,26 +31,25 @@ Individual GeneticAlgorithm::tournamentSelection(
 // RANDOM MUTATION
 //
 
-Individual GeneticAlgorithm::applyRandomMutation(
-    Individual child)
+bool GeneticAlgorithm::applyRandomMutation(
+    Individual& child)
 {
     int r =
         rand() % 3;
 
     if (r == 0)
     {
-        moveMutation.apply(child);
+        return
+            moveMutation.apply(child);
     }
     else if (r == 1)
     {
-        addMutation.apply(child);
-    }
-    else
-    {
-        removeMutation.apply(child);
+        return
+            addMutation.apply(child);
     }
 
-    return child;
+    return
+        removeMutation.apply(child);
 }
 
 //
@@ -62,6 +61,9 @@ Individual GeneticAlgorithm::run(
 {
     evaluations = 0;
 
+    const int populationSize =
+        population.size();
+
     int stagnation = 0;
 
     //
@@ -71,7 +73,6 @@ Individual GeneticAlgorithm::run(
     for (auto& ind : population)
     {
         evaluator.evaluate(ind);
-
         evaluations++;
     }
 
@@ -94,7 +95,9 @@ Individual GeneticAlgorithm::run(
     // MAIN LOOP
     //
 
-    while (true)
+    while (
+        evaluations < maxEvaluations &&
+        stagnation < stagnationLimit)
     {
         bool improved = false;
 
@@ -108,19 +111,28 @@ Individual GeneticAlgorithm::run(
             << std::endl;
 
         //
-        // NEW POPULATION
+        // OFFSPRING
         //
 
         std::vector<Individual> offspring;
 
         //
         // GENERATE CHILDREN
+        // Loop por intentos totales, no por hijos generados,
+        // para que crossover/mutacion fallidos no consuman slots
         //
 
-        for (int i = 0;
-             i < offspringSize;
-             i++)
+        int generated    = 0;
+        int totalAttempts = 0;
+        const int maxAttempts = offspringSize * 10;
+
+        while (
+            generated < offspringSize &&
+            evaluations < maxEvaluations &&
+            totalAttempts < maxAttempts)
         {
+            totalAttempts++;
+
             //
             // SELECTION
             //
@@ -135,15 +147,30 @@ Individual GeneticAlgorithm::run(
             // CROSSOVER
             //
 
-            Individual child =
-                crossover.apply(p1, p2);
+            Individual child;
+
+            bool valid =
+                crossover.apply(
+                    p1,
+                    p2,
+                    child);
+
+            if (!valid)
+            {
+                continue;
+            }
 
             //
             // MUTATION
             //
 
-            child =
+            bool success =
                 applyRandomMutation(child);
+
+            if (!success)
+            {
+                continue;
+            }
 
             //
             // EVALUATION
@@ -152,6 +179,8 @@ Individual GeneticAlgorithm::run(
             evaluator.evaluate(child);
 
             evaluations++;
+
+            generated++;
 
             //
             // UPDATE BEST
@@ -172,8 +201,20 @@ Individual GeneticAlgorithm::run(
             offspring.push_back(child);
         }
 
+        if (totalAttempts >= maxAttempts)
+        {
+            std::cout
+                << "WARNING: OFFSPRING GENERATION HIT ATTEMPT LIMIT ("
+                << maxAttempts
+                << "), GENERATED "
+                << generated
+                << "/"
+                << offspringSize
+                << std::endl;
+        }
+
         //
-        // STAGNATION UPDATE
+        // STAGNATION
         //
 
         if (improved)
@@ -186,6 +227,19 @@ Individual GeneticAlgorithm::run(
         }
 
         //
+        // NO VALID OFFSPRING
+        //
+
+        if (offspring.empty())
+        {
+            std::cout
+                << "WARNING: NO VALID OFFSPRING"
+                << std::endl;
+
+            continue;
+        }
+
+        //
         // SORT OFFSPRING
         //
 
@@ -194,12 +248,13 @@ Individual GeneticAlgorithm::run(
             offspring.end(),
             [](const Individual& a,
                const Individual& b)
-        {
-            return a.fitness > b.fitness;
-        });
+            {
+                return a.fitness >
+                       b.fitness;
+            });
 
         //
-        // ELITIST GENERATIONAL REPLACEMENT
+        // ELITIST REPLACEMENT
         //
 
         population.clear();
@@ -211,37 +266,94 @@ Individual GeneticAlgorithm::run(
         population.push_back(best);
 
         //
-        // FILL REST
+        // ADD BEST OFFSPRING
         //
 
         for (int i = 0;
-             i < offspringSize - 1;
+             i < (int)offspring.size() &&
+             (int)population.size() < populationSize;
              i++)
         {
-            population.push_back(offspring[i]);
+            population.push_back(
+                offspring[i]);
         }
 
         //
-        // TERMINATION
+        // RECOVER POPULATION SIZE
         //
 
-        if (evaluations >= maxEvaluations)
         {
-            std::cout
-                << "TERMINATION: MAX EVALUATIONS"
+            int recoveryFailed = 0;
+
+            while (
+                (int)population.size() <
+                populationSize &&
+                evaluations < maxEvaluations)
+            {
+                Individual clone =
+                    best;
+
+                bool success =
+                    applyRandomMutation(clone);
+
+                if (!success)
+                {
+                    recoveryFailed++;
+
+                    if (recoveryFailed >= maxFailedAttempts)
+                    {
+                        std::cout
+                            << "WARNING: RECOVERY GAVE UP AFTER "
+                            << maxFailedAttempts
+                            << " FAILED MUTATIONS"
+                            << std::endl;
+
+                        break;
+                    }
+
+                    continue;
+                }
+
+                recoveryFailed = 0;
+
+                evaluator.evaluate(clone);
+
+                evaluations++;
+
+                population.push_back(clone);
+            }
+        }
+
+        //
+        // SAFETY
+        //
+
+        if (population.empty())
+        {
+            std::cerr
+                << "ERROR: population collapsed"
                 << std::endl;
 
             break;
         }
+    }
 
-        if (stagnation >= stagnationLimit)
-        {
-            std::cout
-                << "TERMINATION: STAGNATION"
-                << std::endl;
+    //
+    // TERMINATION REPORT
+    //
 
-            break;
-        }
+    if (evaluations >= maxEvaluations)
+    {
+        std::cout
+            << "TERMINATION: MAX EVALUATIONS"
+            << std::endl;
+    }
+
+    if (stagnation >= stagnationLimit)
+    {
+        std::cout
+            << "TERMINATION: STAGNATION"
+            << std::endl;
     }
 
     return best;

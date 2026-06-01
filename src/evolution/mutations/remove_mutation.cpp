@@ -3,22 +3,15 @@
 #include "../../../include/evolution/utils/pair.h"
 #include "../../../include/evolution/utils/board_utils.h"
 
-#include "../../../include/game_solver.h"
-
 #include <vector>
 #include <cstdlib>
 
-void RemoveMutation::apply(
+bool RemoveMutation::apply(
     Individual& individual)
 {
-    auto original =
-        individual.board;
-
-    auto& b =
-        individual.board;
+    auto& b = individual.board;
 
     std::vector<Pair> boxes;
-
     std::vector<Pair> goals;
 
     //
@@ -29,15 +22,13 @@ void RemoveMutation::apply(
     {
         for (int j = 0; j < (int)b[i].size(); j++)
         {
-            if (b[i][j] == '$')
-            {
-                boxes.push_back({i, j});
-            }
+            char c = b[i][j];
 
-            else if (b[i][j] == '.')
-            {
+            if (c == '$' || c == '*')
+                boxes.push_back({i, j});
+
+            if (c == '.' || c == '+' || c == '*')
                 goals.push_back({i, j});
-            }
         }
     }
 
@@ -47,62 +38,52 @@ void RemoveMutation::apply(
 
     if (boxes.size() <= 1 ||
         goals.size() <= 1)
-    {
-        return;
-    }
+        return false;
 
     //
     // REMOVE RANDOM BOX
     //
 
-    Pair bpos =
-        boxes[rand() % boxes.size()];
+    Pair bpos = boxes[rand() % boxes.size()];
+    char bc   = b[bpos.i][bpos.j];
 
-    b[bpos.i][bpos.j] = ' ';
+    if (bc == '*')
+        b[bpos.i][bpos.j] = '.';   // box on goal → restore goal
+    else
+        b[bpos.i][bpos.j] = ' ';
 
     //
     // REMOVE RANDOM GOAL
+    // Exclude the cell already modified above
     //
 
-    Pair gpos =
-        goals[rand() % goals.size()];
+    std::vector<Pair> remainingGoals;
 
-    b[gpos.i][gpos.j] = ' ';
+    for (auto& g : goals)
+        if (!(g.i == bpos.i && g.j == bpos.j))
+            remainingGoals.push_back(g);
 
-    //
-    // VALIDATE SOLVABILITY
-    //
-
-    std::string level =
-        board_to_string(b);
-
-    unsigned int rows =
-        b.size();
-
-    unsigned int cols =
-        b[0].size();
-
-    game_solver solver(
-        level,
-        rows,
-        cols,
-        512);
-
-    std::vector<game_node> solution;
-
-    auto stats =
-        solver.test_template(
-            1,
-            solution);
-
-    //
-    // REVERT IF UNSOLVABLE
-    //
-
-    if (stats.status !=
-        SolveStatus::SOLVED)
+    if (remainingGoals.empty())
     {
-        individual.board =
-            original;
+        //
+        // ROLLBACK
+        //
+
+        b[bpos.i][bpos.j] = bc;
+        return false;
     }
+
+    Pair gpos = remainingGoals[rand() % remainingGoals.size()];
+    char gc   = b[gpos.i][gpos.j];
+
+    if      (gc == '+') b[gpos.i][gpos.j] = '@';   // player on goal → restore player
+    else if (gc == '*') b[gpos.i][gpos.j] = '$';   // box on goal → restore box
+    else                b[gpos.i][gpos.j] = ' ';
+
+    //
+    // STRUCTURAL VALIDATION ONLY
+    // Solvability is checked by the evaluator
+    //
+
+    return true;
 }

@@ -7,8 +7,9 @@ sokoban_solver: \
   CMakeFiles/sokoban_solver.dir/src/draw.cpp.o \
   CMakeFiles/sokoban_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.o \
   CMakeFiles/sokoban_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o \
+  CMakeFiles/sokoban_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.o \
   CMakeFiles/sokoban_solver.dir/src/evolution/crossover/board_crossover.cpp.o \
-  CMakeFiles/sokoban_solver.dir/src/evolution/evaluator.cpp.o \
+  CMakeFiles/sokoban_solver.dir/src/evolution/evaluator/evaluator.cpp.o \
   CMakeFiles/sokoban_solver.dir/src/evolution/mutations/add_mutation.cpp.o \
   CMakeFiles/sokoban_solver.dir/src/evolution/mutations/move_mutation.cpp.o \
   CMakeFiles/sokoban_solver.dir/src/evolution/mutations/remove_mutation.cpp.o \
@@ -44,7 +45,6 @@ sokoban_solver: \
   /usr/lib/gcc/x86_64-linux-gnu/15/libgcc.a \
   /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o \
   /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o \
-  /usr/lib/x86_64-linux-gnu/libm.so.6 \
   /lib64/ld-linux-x86-64.so.2
 
 /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o:
@@ -63,9 +63,11 @@ CMakeFiles/sokoban_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.o:
 
 CMakeFiles/sokoban_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o:
 
+CMakeFiles/sokoban_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.o:
+
 CMakeFiles/sokoban_solver.dir/src/evolution/crossover/board_crossover.cpp.o:
 
-CMakeFiles/sokoban_solver.dir/src/evolution/evaluator.cpp.o:
+CMakeFiles/sokoban_solver.dir/src/evolution/evaluator/evaluator.cpp.o:
 
 CMakeFiles/sokoban_solver.dir/src/evolution/mutations/add_mutation.cpp.o:
 
@@ -136,7 +138,5 @@ CMakeFiles/sokoban_solver.dir/src/repeat.cpp.o:
 /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o:
 
 /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o:
-
-/usr/lib/x86_64-linux-gnu/libm.so.6:
 
 /lib64/ld-linux-x86-64.so.2:

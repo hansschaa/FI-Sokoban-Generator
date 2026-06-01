@@ -3,23 +3,13 @@
 #include "../../../include/evolution/utils/pair.h"
 #include "../../../include/evolution/utils/board_utils.h"
 
-#include "../../../include/game_solver.h"
-
 #include <vector>
 #include <cstdlib>
 
-void AddMutation::apply(
+bool AddMutation::apply(
     Individual& individual)
 {
-    //
-    // BACKUP ORIGINAL BOARD
-    //
-
-    auto original =
-        individual.board;
-
-    auto& b =
-        individual.board;
+    auto& b = individual.board;
 
     std::vector<Pair> emptyCells;
 
@@ -28,90 +18,39 @@ void AddMutation::apply(
     //
 
     for (int i = 0; i < (int)b.size(); i++)
-    {
         for (int j = 0; j < (int)b[i].size(); j++)
-        {
             if (b[i][j] == ' ')
-            {
                 emptyCells.push_back({i, j});
-            }
-        }
-    }
 
     //
-    // NEED 2 CELLS
+    // NEED AT LEAST 2 EMPTY CELLS
     //
 
     if (emptyCells.size() < 2)
-    {
-        return;
-    }
+        return false;
 
     //
-    // RANDOM BOX
+    // PLACE RANDOM BOX
     //
 
-    int idx1 =
-        rand() % emptyCells.size();
-
-    Pair p1 =
-        emptyCells[idx1];
-
+    int idx1 = rand() % emptyCells.size();
+    Pair p1  = emptyCells[idx1];
     b[p1.i][p1.j] = '$';
 
-    //
-    // REMOVE USED CELL
-    //
-
-    emptyCells.erase(
-        emptyCells.begin() + idx1);
+    emptyCells.erase(emptyCells.begin() + idx1);
 
     //
-    // RANDOM GOAL
+    // PLACE RANDOM GOAL
     //
 
-    int idx2 =
-        rand() % emptyCells.size();
-
-    Pair p2 =
-        emptyCells[idx2];
-
+    int idx2 = rand() % emptyCells.size();
+    Pair p2  = emptyCells[idx2];
     b[p2.i][p2.j] = '.';
 
     //
-    // VALIDATE SOLVABILITY
+    // STRUCTURAL VALIDATION ONLY
+    // Solvability is checked by the evaluator
     //
 
-    std::string level =
-        board_to_string(b);
-
-    unsigned int rows =
-        b.size();
-
-    unsigned int cols =
-        b[0].size();
-
-    game_solver solver(
-        level,
-        rows,
-        cols,
-        512);
-
-    std::vector<game_node> solution;
-
-    auto stats =
-        solver.test_template(
-            1,
-            solution);
-
-    //
-    // REVERT IF UNSOLVABLE
-    //
-
-    if (stats.status !=
-        SolveStatus::SOLVED)
-    {
-        individual.board =
-            original;
-    }
+    return true;
 }

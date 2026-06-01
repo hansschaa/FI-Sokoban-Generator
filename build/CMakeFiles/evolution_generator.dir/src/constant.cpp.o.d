@@ -2,6 +2,7 @@ CMakeFiles/evolution_generator.dir/src/constant.cpp.o: \
  /home/hanss/automatic-sokoban-solver/src/constant.cpp \
  /usr/include/stdc-predef.h \
  /home/hanss/automatic-sokoban-solver/include/constant.h \
+ /home/hanss/automatic-sokoban-solver/include/method.h \
  /home/hanss/automatic-sokoban-solver/include/point.h \
  /usr/include/c++/15/cstdint \
  /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \

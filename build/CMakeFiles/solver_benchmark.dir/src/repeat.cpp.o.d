@@ -105,4 +105,5 @@ CMakeFiles/solver_benchmark.dir/src/repeat.cpp.o: \
  /usr/include/c++/15/bits/hashtable_policy.h \
  /usr/include/c++/15/bits/enable_special_members.h \
  /home/hanss/automatic-sokoban-solver/include/constant.h \
+ /home/hanss/automatic-sokoban-solver/include/method.h \
  /home/hanss/automatic-sokoban-solver/include/my_memory.h

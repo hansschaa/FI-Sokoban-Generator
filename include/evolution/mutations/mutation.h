@@ -6,5 +6,5 @@ class Mutation {
 
 public:
 
-    virtual void apply(Individual& ind) = 0;
+    virtual bool apply(Individual&) = 0;
 };

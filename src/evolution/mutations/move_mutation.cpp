@@ -1,14 +1,14 @@
 #include "../../../include/evolution/mutations/move_mutation.h"
+
 #include "../../../include/evolution/utils/pair.h"
 #include "../../../include/evolution/utils/board_utils.h"
-#include "../../../include/game_solver.h"
 
 #include <cstdlib>
 #include <iostream>
 
 std::vector<Pair> MoveMutation::getPositions(
     const std::vector<std::vector<char>>& board,
-    char c)
+    char target)
 {
     std::vector<Pair> positions;
 
@@ -16,10 +16,22 @@ std::vector<Pair> MoveMutation::getPositions(
     {
         for (size_t j = 0; j < board[i].size(); j++)
         {
-            if (board[i][j] == c)
+            char c = board[i][j];
+
+            if (target == '@')
             {
-                positions.push_back(
-                    {(int)i, (int)j});
+                if (c == '@' || c == '+')
+                    positions.push_back({(int)i, (int)j});
+            }
+            else if (target == '$')
+            {
+                if (c == '$' || c == '*')
+                    positions.push_back({(int)i, (int)j});
+            }
+            else if (target == '.')
+            {
+                if (c == '.' || c == '+' || c == '*')
+                    positions.push_back({(int)i, (int)j});
             }
         }
     }
@@ -27,117 +39,134 @@ std::vector<Pair> MoveMutation::getPositions(
     return positions;
 }
 
-Pair MoveMutation::getRandomEmpty(
-    const std::vector<std::vector<char>>& board)
+//
+// GET RANDOM CELL VALID FOR TARGET
+// @ and $ can move to ' ' or '.'
+// . can move to ' ', '@', '$'
+//
+
+Pair MoveMutation::getRandomDestination(
+    const std::vector<std::vector<char>>& board,
+    char target)
 {
-    std::vector<Pair> empty;
+    std::vector<Pair> candidates;
 
     for (size_t i = 0; i < board.size(); i++)
     {
         for (size_t j = 0; j < board[i].size(); j++)
         {
-            if (board[i][j] == ' ')
+            char c = board[i][j];
+
+            if (target == '@' || target == '$')
             {
-                empty.push_back(
-                    {(int)i, (int)j});
+                //
+                // CAN LAND ON EMPTY OR GOAL
+                //
+
+                if (c == ' ' || c == '.')
+                    candidates.push_back({(int)i, (int)j});
+            }
+            else if (target == '.')
+            {
+                //
+                // CAN LAND ON EMPTY, PLAYER, OR BOX
+                //
+
+                if (c == ' ' || c == '@' || c == '$')
+                    candidates.push_back({(int)i, (int)j});
             }
         }
     }
 
-    return empty[rand() % empty.size()];
+    if (candidates.empty())
+        return {-1, -1};
+
+    return candidates[rand() % candidates.size()];
 }
 
-void MoveMutation::moveCharacter(
+bool MoveMutation::moveCharacter(
     std::vector<std::vector<char>>& board,
     char target)
 {
-    auto positions =
-        getPositions(board, target);
+    auto positions = getPositions(board, target);
 
     if (positions.empty())
-        return;
+        return false;
 
     Pair selected =
         positions[rand() % positions.size()];
 
-    Pair empty =
-        getRandomEmpty(board);
+    Pair dest =
+        getRandomDestination(board, target);
+
+    if (dest.i == -1)
+        return false;
 
     //
-    // REMOVE OLD
+    // SAME CELL → NO-OP
     //
 
-    board[selected.i][selected.j] = ' ';
+    if (selected.i == dest.i &&
+        selected.j == dest.j)
+        return false;
+
+    char src = board[selected.i][selected.j];
+    char dst = board[dest.i][dest.j];
 
     //
-    // PLACE NEW
+    // CLEAR SOURCE CELL
     //
 
-    board[empty.i][empty.j] =
-        target;
+    if (src == '+')
+        board[selected.i][selected.j] = '.';   // player was on goal → restore goal
+    else if (src == '*')
+        board[selected.i][selected.j] = '.';   // box was on goal → restore goal
+    else
+        board[selected.i][selected.j] = ' ';
+
+    //
+    // PLACE ENTITY AT DESTINATION
+    // Handle composite states correctly
+    //
+
+    if (target == '@')
+    {
+        board[dest.i][dest.j] =
+            (dst == '.') ? '+' : '@';
+    }
+    else if (target == '$')
+    {
+        board[dest.i][dest.j] =
+            (dst == '.') ? '*' : '$';
+    }
+    else if (target == '.')
+    {
+        if      (dst == '@') board[dest.i][dest.j] = '+';
+        else if (dst == '$') board[dest.i][dest.j] = '*';
+        else                 board[dest.i][dest.j] = '.';
+    }
+
+    return true;
 }
 
-void MoveMutation::apply(Individual& ind)
+bool MoveMutation::apply(
+    Individual& ind)
 {
-    //
-    // KEEP ORIGINAL
-    //
+    int type = rand() % 3;
 
-    auto original =
-        ind.board;
-
-    //
-    // RANDOM TYPE
-    // 0 = player
-    // 1 = box
-    // 2 = goal
-    //
-
-    int type =
-        rand() % 3;
+    bool changed = false;
 
     if (type == 0)
-    {
-        moveCharacter(ind.board, '@');
-    }
+        changed = moveCharacter(ind.board, '@');
     else if (type == 1)
-    {
-        moveCharacter(ind.board, '$');
-    }
+        changed = moveCharacter(ind.board, '$');
     else
-    {
-        moveCharacter(ind.board, '.');
-    }
+        changed = moveCharacter(ind.board, '.');
 
     //
-    // VALIDATE WITH SOLVER
+    // STRUCTURAL VALIDATION ONLY
+    // Solvability is checked by the evaluator
     //
 
-    std::string level =
-        board_to_string(ind.board);
-
-    game_solver solver(
-        level,
-        ind.board.size(),
-        ind.board[0].size(),
-        512);
-
-    std::vector<game_node> solution;
-
-    auto stats =
-        solver.test_template(1, solution);
-
-    //
-    // REJECT INVALID
-    //
-
-    if (stats.status != SolveStatus::SOLVED)
-    {
-        ind.board = original;
-    }
-    else
-    {
-        ind.fitness =
-            stats.pushes;
-    }
+    return changed;
 }

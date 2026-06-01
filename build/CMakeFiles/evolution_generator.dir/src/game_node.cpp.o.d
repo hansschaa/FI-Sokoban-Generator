@@ -71,6 +71,7 @@ CMakeFiles/evolution_generator.dir/src/game_node.cpp.o: \
  /usr/include/c++/15/bits/stl_multiset.h \
  /usr/include/c++/15/bits/erase_if.h \
  /home/hanss/automatic-sokoban-solver/include/mazesolver.h \
+ /home/hanss/automatic-sokoban-solver/include/method.h \
  /home/hanss/automatic-sokoban-solver/include/constant.h \
  /home/hanss/automatic-sokoban-solver/include/my_memory.h \
  /home/hanss/automatic-sokoban-solver/include/solver_template.h \

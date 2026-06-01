@@ -1,8 +1,8 @@
 CMakeFiles/solver_benchmark.dir/src/evolution/evaluator.cpp.o: \
  /home/hanss/automatic-sokoban-solver/src/evolution/evaluator.cpp \
  /usr/include/stdc-predef.h \
- /home/hanss/automatic-sokoban-solver/src/evolution/../../include/evolution/evaluator.h \
- /home/hanss/automatic-sokoban-solver/src/evolution/../../include/evolution/individual.h \
+ /home/hanss/automatic-sokoban-solver/src/evolution/../../include/evolution/evaluator/evaluator.h \
+ /home/hanss/automatic-sokoban-solver/src/evolution/../../include/evolution/evaluator/../individual.h \
  /usr/include/c++/15/vector /usr/include/c++/15/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
@@ -54,6 +54,7 @@ CMakeFiles/solver_benchmark.dir/src/evolution/evaluator.cpp.o: \
  /usr/lib/gcc/x86_64-linux-gnu/15/include/stddef.h \
  /usr/include/c++/15/bits/uses_allocator.h \
  /usr/include/c++/15/bits/uses_allocator_args.h /usr/include/c++/15/tuple \
+ /home/hanss/automatic-sokoban-solver/src/evolution/../../include/evolution/evaluator/fitness_type.h \
  /home/hanss/automatic-sokoban-solver/src/evolution/../../include/game_solver.h \
  /home/hanss/automatic-sokoban-solver/src/evolution/../../include/game_node.h \
  /home/hanss/automatic-sokoban-solver/src/evolution/../../include/point.h \

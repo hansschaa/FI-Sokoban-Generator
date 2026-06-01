@@ -54,7 +54,6 @@ CMakeFiles/sokoban_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o: 
  /usr/include/c++/15/bits/uses_allocator.h \
  /usr/include/c++/15/bits/uses_allocator_args.h /usr/include/c++/15/tuple \
  /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/../../../include/evolution/algorithms/../individual.h \
- /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/../../../include/evolution/algorithms/../evaluator.h \
  /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/../../../include/evolution/algorithms/../mutations/move_mutation.h \
  /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/../../../include/evolution/algorithms/../mutations/mutation.h \
  /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/../../../include/evolution/algorithms/../mutations/../utils/pair.h \
@@ -62,6 +61,8 @@ CMakeFiles/sokoban_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o: 
  /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/../../../include/evolution/algorithms/../mutations/remove_mutation.h \
  /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/../../../include/evolution/algorithms/../crossover/board_crossover.h \
  /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/../../../include/evolution/algorithms/../crossover/crossover.h \
+ /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/../../../include/evolution/algorithms/../evaluator/evaluator.h \
+ /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/../../../include/evolution/algorithms/../evaluator/fitness_type.h \
  /usr/include/c++/15/algorithm /usr/include/c++/15/bits/stl_algo.h \
  /usr/include/c++/15/bits/algorithmfwd.h \
  /usr/include/c++/15/bits/stl_heap.h \

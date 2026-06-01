@@ -30,8 +30,8 @@ int main(int argc, char** argv)
         std::cout
             << "Usage:\n"
             << "./evolution_generator ES\n"
-            << "./evolution_generator GA\n";
-
+            << "./evolution_generator GA\n"
+            << "./evolution_generator SA\n";
         return 1;
     }
 
@@ -70,7 +70,7 @@ int main(int argc, char** argv)
     //
 
     std::vector<Individual> population;
-
+    Evaluator evaluator;
     const int POP_SIZE = 10;
 
     //
@@ -81,7 +81,9 @@ int main(int argc, char** argv)
     {
         bool valid = false;
 
-        while (!valid)
+        int attempts = 0;
+
+        while (!valid && attempts < 10000)
         {
             //
             // COPY SHELL
@@ -91,13 +93,18 @@ int main(int argc, char** argv)
 
             //
             // PLACE ELEMENTS
+            // Random number of boxes (1-3) for initial diversity
             //
+
+            int numBoxes = 1 + rand() % 3;
 
             placeRandom(board, '@');
 
-            placeRandom(board, '$');
-
-            placeRandom(board, '.');
+            for (int k = 0; k < numBoxes; k++)
+            {
+                placeRandom(board, '$');
+                placeRandom(board, '.');
+            }
 
             //
             // CONVERT TO STRING
@@ -136,7 +143,7 @@ int main(int argc, char** argv)
 
             auto stats =
                 solver.test_template(
-                    1,
+                    Method::a_star,
                     solution);
 
             //
@@ -150,12 +157,8 @@ int main(int argc, char** argv)
 
                 ind.board = board;
 
-                //
-                // INITIAL FITNESS
-                //
-
                 ind.fitness =
-                    stats.pushes;
+                    evaluator.evaluate(ind);
 
                 population.push_back(ind);
 
@@ -175,8 +178,32 @@ int main(int argc, char** argv)
                     << board_to_pretty_string(board)
                     << std::endl;
             }
+
+            attempts++;
+        }
+
+        if (!valid)
+        {
+            std::cerr
+                << "Could not generate valid individual\n";
         }
     }
+
+    //
+    // POPULATION SAFETY CHECK
+    //
+
+    if (population.empty())
+    {
+        std::cerr
+            << "ERROR: could not generate any valid individual. Aborting.\n";
+        return 1;
+    }
+
+    std::cout
+        << "\nPOPULATION READY: "
+        << population.size()
+        << " individuals\n";
 
     //
     // FINAL BEST
@@ -238,14 +265,7 @@ int main(int argc, char** argv)
 
         sa.maxEvaluations = 500;
 
-        //
-        // MUTATION OPERATOR
-        //
-
-        MoveMutation moveMutation;
-
-        sa.mutation =
-            &moveMutation;
+        sa.stagnationLimit = 15;
 
         //
         // INITIAL SOLUTION
@@ -273,7 +293,7 @@ int main(int argc, char** argv)
             << "\n";
 
         std::cout
-            << "Use ES or GA\n";
+            << "Use ES, GA or SA\n";
 
         return 1;
     }

@@ -4,6 +4,7 @@
 #include "repeat.h"
 #include "locked.h"
 #include "my_memory.h"
+#include "method.h"        // FIX: Method antes que cualquier uso suyo
 #include <string>
 #include <functional>
 #include <vector>
@@ -13,7 +14,7 @@ public:
     std::vector<std::vector<bool>> value;
     std::vector<std::vector<char>> matrix_with_box;
     detect_legal(const game_node* node);
-    detect_legal(std::vector<std::vector<char>>& matrix,point& start);
+    detect_legal(std::vector<std::vector<char>>& matrix, point& start);
     detect_legal();
     bool can_get(point& des);
     bool can_box_move(point& box, point& person);
@@ -28,7 +29,8 @@ enum class SolveStatus {
 struct SolverStats {
     double runtime_sec;
     int pushes;
-    int explored_states;
+    int generated_states;
+    int explored_states;   // FIX: faltaba; usado en evaluator.cpp y main_benchmark.cpp
     SolveStatus status;
 };
 
@@ -44,7 +46,7 @@ private:
     std::function<void(const game_node*)> mark_visited;
     std::function<bool(const game_node*, const game_node*)> is_equal;
 
-    int get_nums2(game_node input);
+    int get_nums2(const game_node& input);   // FIX: const ref, evita copiar set<point>
     void set_lambda_function();
     std::vector<point> get_legal_point(std::vector<std::vector<char>>& vec, point p);
     std::vector<std::vector<int>> Astar_init();
@@ -53,5 +55,5 @@ private:
 
 public:
     game_solver(std::string& game_map, unsigned int mm, unsigned int nn, int memval);
-    SolverStats test_template(int input, std::vector<game_node>& solution);
+    SolverStats test_template(Method input, std::vector<game_node>& solution);  // FIX: Method en lugar de int
 };

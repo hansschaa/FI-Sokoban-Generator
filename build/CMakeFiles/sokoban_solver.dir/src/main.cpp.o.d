@@ -190,6 +190,7 @@ CMakeFiles/sokoban_solver.dir/src/main.cpp.o: \
  /usr/include/c++/15/bits/enable_special_members.h \
  /home/hanss/automatic-sokoban-solver/include/locked.h \
  /home/hanss/automatic-sokoban-solver/include/my_memory.h \
+ /home/hanss/automatic-sokoban-solver/include/method.h \
  /usr/include/c++/15/functional /usr/include/c++/15/bits/std_function.h \
  /usr/include/c++/15/unordered_map \
  /usr/include/c++/15/bits/unordered_map.h /usr/include/c++/15/array \
