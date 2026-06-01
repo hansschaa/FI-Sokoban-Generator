@@ -28,9 +28,11 @@ std::vector<std::vector<char>> load_board(const std::string& filename)
 
 int main(int argc, char* argv[])
 {
-    if (argc < 2)
+    if (argc < 3)
     {
-        std::cerr << "Uso: ./test_solver <ruta/al/level.txt>\n";
+        std::cerr << "Uso: ./test_solver <ruta/al/level.txt> <heuristica>\n"
+                  << "  heuristica: simple | hungarian\n"
+                  << "Ejemplo: ./test_solver ../levels/level1.txt hungarian\n";
         return 1;
     }
 
@@ -47,6 +49,30 @@ int main(int argc, char* argv[])
     catch (const std::exception& e)
     {
         std::cerr << e.what() << std::endl;
+        return 1;
+    }
+
+    //
+    // PARSEAR HEURISTICA
+    //
+
+    std::string heuristic_arg = argv[2];
+    Heuristic heuristic;
+
+    if (heuristic_arg == "hungarian")
+    {
+        heuristic = Heuristic::hungarian;
+        std::cout << "Heuristica: Hungarian (asignacion optima caja->objetivo)\n";
+    }
+    else if (heuristic_arg == "simple")
+    {
+        heuristic = Heuristic::simple;
+        std::cout << "Heuristica: Simple (suma individual)\n";
+    }
+    else
+    {
+        std::cerr << "Heuristica desconocida: \"" << heuristic_arg << "\"\n"
+                  << "Opciones validas: simple | hungarian\n";
         return 1;
     }
 
@@ -89,7 +115,7 @@ int main(int argc, char* argv[])
 
     std::cout << "Resolviendo con A*...\n\n";
 
-    auto stats = solver.test_template(Method::a_star, solution);
+    auto stats = solver.test_template(Method::a_star, heuristic, solution);
 
     //
     // MOSTRAR STATS

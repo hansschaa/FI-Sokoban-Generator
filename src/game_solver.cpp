@@ -8,6 +8,7 @@
 #include "repeat.h"
 #include "solver_template.h"
 #include "mazesolver.h"
+#include "hungarian.h"
 
 using namespace constant;
 using namespace std;
@@ -245,38 +246,71 @@ vector<point> game_solver::get_legal_point(vector<vector<char>>& vec, point p) {
 }
 
 vector<vector<int>> game_solver::Astar_init() {
-    vector<vector<int>> result(m,vector<int>(n,0));
+    // dist[i][j] = mínimo de pushes para llevar una caja desde (i,j)
+    // hasta el objetivo más cercano. Se usa para la heurística simple.
+    vector<vector<int>> result(m, vector<int>(n, 0));
 
-    for (int i = 0; i <m; i++) {
-        for (int j = 0; j < n; j++) {
-            if (blank_matrix[i][j] == WALL) {
-                result[i][j] = 1000;
-                continue;
-            }
-            game_node new_node;
-            new_node.box_list.insert(point(i,j));
-            vector<vector<char>>vec;
-            new_node.get_matrix0(vec);
-            auto person_point = get_legal_point(vec, point(i,j));
-            if (person_point.empty()) {
-                result[i][j] = 1000;
-                continue;
-            }
-            // FIX: antes se llamaba get_matrix0(vec) aquí, con person_point
-            // sin inicializar. Ahora se asigna person_point primero dentro
-            // del loop, y get_matrix0 se llama solo cuando es necesario.
-            int min_num = INT32_MAX;
-            for (auto& dd : person_point){
-                new_node.person_point = dd;
-                // FIX: get_nums2 ahora recibe const ref, no copia
-                int min_ = get_nums2(new_node);
-                if (min_ < min_num) {
-                    min_num = min_;
+    // Cachear posiciones de objetivos
+    goal_positions.clear();
+    for (int i = 0; i < m; i++)
+        for (int j = 0; j < n; j++)
+            if (end_vec[i][j])
+                goal_positions.push_back(point(i, j));
+
+    // Backup del end_vec global para poder modificarlo temporalmente
+    auto saved_end_vec = end_vec;
+
+    int num_goals = goal_positions.size();
+
+    // dist_to_goal[goal_idx][x][y] = pushes mínimos para llevar
+    // una caja en (x,y) al objetivo goal_idx específico.
+    // Se calcula desactivando todos los demás objetivos temporalmente.
+    dist_to_goal.assign(num_goals,
+        vector<vector<int>>(m, vector<int>(n, 1000)));
+
+    for (int g = 0; g < num_goals; g++) {
+        // Activar solo el objetivo g
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                end_vec[i][j] = false;
+        end_vec[goal_positions[g].x][goal_positions[g].y] = true;
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (blank_matrix[i][j] == WALL) continue;
+
+                game_node new_node;
+                new_node.box_list.insert(point(i, j));
+                vector<vector<char>> vec;
+                new_node.get_matrix0(vec);
+                auto person_point = get_legal_point(vec, point(i, j));
+                if (person_point.empty()) continue;
+
+                int min_num = INT32_MAX;
+                for (auto& dd : person_point) {
+                    new_node.person_point = dd;
+                    int d = get_nums2(new_node);
+                    if (d < min_num) min_num = d;
                 }
+                dist_to_goal[g][i][j] = (min_num == INT32_MAX) ? 1000 : min_num;
             }
-            result[i][j] = min_num;
         }
     }
+
+    // Restaurar end_vec original
+    end_vec = saved_end_vec;
+
+    // Tabla simple: mínimo entre todos los objetivos (para heurística simple)
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            if (blank_matrix[i][j] == WALL) { result[i][j] = 1000; continue; }
+            int best = 1000;
+            for (int g = 0; g < num_goals; g++)
+                best = std::min(best, dist_to_goal[g][i][j]);
+            result[i][j] = best;
+        }
+    }
+
     return result;
 }
 
@@ -334,7 +368,8 @@ void game_solver::set_lambda_function(){
 }
 
 SolverStats game_solver::test_template(
-    Method input,   // FIX: antes era int con magic numbers 0/1/2 sin documentar
+    Method input,
+    Heuristic heuristic_type,
     std::vector<game_node>& solution
 ) {
 
@@ -344,18 +379,29 @@ SolverStats game_solver::test_template(
 
     auto heuristic = [&](const game_node* a, const game_node*) {
 
-        int f = 0;
+        if (heuristic_type == Heuristic::hungarian) {
+            // Asignación óptima caja→objetivo: cada cost[i][j] es la distancia
+            // real de la caja i al objetivo j (no al más cercano).
+            int num_boxes = (int)a->box_list.size();
+            int num_goals = (int)goal_positions.size();
+            int sz = std::max(num_boxes, num_goals);
 
-        for (auto i = a->box_list.begin();
-             i != a->box_list.end();
-             i++) {
+            vector<vector<int>> cost(sz, vector<int>(sz, 0));
+            int i = 0;
+            for (auto it = a->box_list.begin(); it != a->box_list.end(); ++it, ++i)
+                for (int j = 0; j < num_goals; j++)
+                    cost[i][j] = dist_to_goal[j][it->x][it->y];
 
-            auto p = *i;
-
-            f += vec[p.x][p.y];
+            Hungarian h(cost);
+            return h.solve();
         }
-
-        return f;
+        else {
+            // Heurística simple: suma individual (original)
+            int f = 0;
+            for (auto i = a->box_list.begin(); i != a->box_list.end(); i++)
+                f += vec[i->x][i->y];
+            return f;
+        }
     };
 
     Solver_template<vector<game_node>, game_node, Method::a_star> gsolver0;

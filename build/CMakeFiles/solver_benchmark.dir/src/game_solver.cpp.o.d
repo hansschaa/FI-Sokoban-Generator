@@ -189,4 +189,5 @@ CMakeFiles/solver_benchmark.dir/src/game_solver.cpp.o: \
  /usr/include/c++/15/pstl/glue_algorithm_defs.h \
  /usr/include/c++/15/pstl/execution_defs.h /usr/include/c++/15/stack \
  /usr/include/c++/15/bits/stl_stack.h \
- /home/hanss/automatic-sokoban-solver/include/mazesolver.h
+ /home/hanss/automatic-sokoban-solver/include/mazesolver.h \
+ /home/hanss/automatic-sokoban-solver/include/hungarian.h

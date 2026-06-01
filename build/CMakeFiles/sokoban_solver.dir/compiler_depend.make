@@ -2152,6 +2152,7 @@ CMakeFiles/sokoban_solver.dir/src/game_solver.cpp.o: /home/hanss/automatic-sokob
   /home/hanss/automatic-sokoban-solver/include/constant.h \
   /home/hanss/automatic-sokoban-solver/include/game_node.h \
   /home/hanss/automatic-sokoban-solver/include/game_solver.h \
+  /home/hanss/automatic-sokoban-solver/include/hungarian.h \
   /home/hanss/automatic-sokoban-solver/include/locked.h \
   /home/hanss/automatic-sokoban-solver/include/mazesolver.h \
   /home/hanss/automatic-sokoban-solver/include/method.h \
@@ -3135,6 +3136,8 @@ CMakeFiles/sokoban_solver.dir/src/constant.cpp.o:
 CMakeFiles/sokoban_solver.dir/src/main.cpp.o:
 
 /home/hanss/automatic-sokoban-solver/src/locked.cpp:
+
+/home/hanss/automatic-sokoban-solver/include/hungarian.h:
 
 /home/hanss/automatic-sokoban-solver/src/game_solver.cpp:
 

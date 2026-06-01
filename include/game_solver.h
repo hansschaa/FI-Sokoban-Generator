@@ -55,6 +55,11 @@ struct SolverStats {
     size_t closed_list_length = 0;
 };
 
+enum class Heuristic {
+    simple,    // suma individual vec[box.x][box.y] (original)
+    hungarian  // asignación óptima caja→objetivo (lower bound real)
+};
+
 class game_solver {
 
 private:
@@ -67,7 +72,7 @@ private:
     std::function<void(const game_node*)> mark_visited;
     std::function<bool(const game_node*, const game_node*)> is_equal;
 
-    int get_nums2(const game_node& input);   // FIX: const ref, evita copiar set<point>
+    int get_nums2(const game_node& input);
     void set_lambda_function();
     std::vector<point> get_legal_point(std::vector<std::vector<char>>& vec, point p);
     std::vector<std::vector<int>> Astar_init();
@@ -75,13 +80,24 @@ private:
     void vars_clear(game_node& input);
 
     // Contadores que se llenan durante la búsqueda (equivalentes a movesHistory de Java)
-    long stat_expanded_nodes    = 0;
-    long stat_total_children    = 0;
+    long stat_expanded_nodes     = 0;
+    long stat_total_children     = 0;
     long stat_effective_children = 0;
-    long stat_repeated_nodes    = 0;
-    long stat_deadlocks         = 0;
+    long stat_repeated_nodes     = 0;
+    long stat_deadlocks          = 0;
+
+    // Posiciones de objetivos, cacheadas en Astar_init() para la heurística Hungarian
+    std::vector<point> goal_positions;
+
+    // dist_to_goal[g][x][y] = pushes mínimos de una caja en (x,y) al objetivo g
+    std::vector<std::vector<std::vector<int>>> dist_to_goal;
 
 public:
     game_solver(std::string& game_map, unsigned int mm, unsigned int nn, int memval);
-    SolverStats test_template(Method input, std::vector<game_node>& solution);  // FIX: Method en lugar de int
+    SolverStats test_template(Method method, Heuristic heuristic, std::vector<game_node>& solution);
+
+    // Sobrecarga para compatibilidad con código existente — usa heurística simple
+    SolverStats test_template(Method method, std::vector<game_node>& solution) {
+        return test_template(method, Heuristic::simple, solution);
+    }
 };
