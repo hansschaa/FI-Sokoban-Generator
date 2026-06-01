@@ -178,7 +178,12 @@ private:
         const std::tuple<int, int, const Node*>& a,
         const std::tuple<int, int, const Node*>& b)
     {
-        return std::get<0>(a) > std::get<0>(b);
+        // Desempate por g: preferir el nodo con mayor g (más profundo).
+        // Esto orienta la búsqueda hacia la solución en lugar de explorar
+        // nodos de igual f pero más superficiales (más lejos del goal).
+        if (std::get<0>(a) != std::get<0>(b))
+            return std::get<0>(a) > std::get<0>(b); // menor f primero
+        return std::get<1>(a) < std::get<1>(b);     // mayor g primero (tie-break)
     }
 
     static bool compare_pairs(
