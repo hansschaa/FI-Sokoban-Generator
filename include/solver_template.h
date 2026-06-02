@@ -15,11 +15,16 @@ class Solver_template {
 bool timeout_reached = false;
 
 public:
+    using Node = NodeType;
+    using Result = ResultType;
+
+    // Nodos que quedaron en la open list sin expandir al momento del timeout.
+    // El caller debe destruirlos y desalocarlos antes del siguiente run.
+    std::vector<const Node*> orphan_nodes;
+
     bool did_timeout() const {
         return timeout_reached;
     }
-    using Node = NodeType;
-    using Result = ResultType;
     Result solve (
     const Node* start,
     const Node* goal,
@@ -78,6 +83,16 @@ public:
 
             if (elapsed > max_seconds) {
                 timeout_reached = true;
+                // Drenar la open list: los nodos que quedaron sin expandir
+                // fueron alojados en el pool pero no están en zobrist_hash,
+                // así que el caller no puede destruirlos sin esta lista.
+                if constexpr (alg == Method::a_star) {
+                    while (!container.empty()) {
+                        auto [f, g, node] = container.top();
+                        container.pop();
+                        orphan_nodes.push_back(node);
+                    }
+                }
                 return get_default_result();
             }
 
@@ -178,12 +193,7 @@ private:
         const std::tuple<int, int, const Node*>& a,
         const std::tuple<int, int, const Node*>& b)
     {
-        // Desempate por g: preferir el nodo con mayor g (más profundo).
-        // Esto orienta la búsqueda hacia la solución en lugar de explorar
-        // nodos de igual f pero más superficiales (más lejos del goal).
-        if (std::get<0>(a) != std::get<0>(b))
-            return std::get<0>(a) > std::get<0>(b); // menor f primero
-        return std::get<1>(a) < std::get<1>(b);     // mayor g primero (tie-break)
+        return std::get<0>(a) > std::get<0>(b);
     }
 
     static bool compare_pairs(

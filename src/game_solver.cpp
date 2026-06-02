@@ -257,8 +257,14 @@ vector<vector<int>> game_solver::Astar_init() {
             if (end_vec[i][j])
                 goal_positions.push_back(point(i, j));
 
-    // Backup del end_vec global para poder modificarlo temporalmente
+    // Backup del end_vec global para poder modificarlo temporalmente.
+    // RAII: se restaura aunque get_nums2 lance una excepción.
     auto saved_end_vec = end_vec;
+    struct EndVecGuard {
+        vector<vector<bool>>& target;
+        vector<vector<bool>>  saved;
+        ~EndVecGuard() { target = std::move(saved); }
+    } guard{ end_vec, saved_end_vec };
 
     int num_goals = goal_positions.size();
 
@@ -297,8 +303,7 @@ vector<vector<int>> game_solver::Astar_init() {
         }
     }
 
-    // Restaurar end_vec original
-    end_vec = saved_end_vec;
+    // end_vec restaurado automáticamente por EndVecGuard al salir del scope.
 
     // Tabla simple: mínimo entre todos los objetivos (para heurística simple)
     for (int i = 0; i < m; i++) {
@@ -496,6 +501,18 @@ SolverStats game_solver::test_template(
         (input == Method::a_star && gsolver0.did_timeout()) ||
         (input == Method::dfs    && gsolver1.did_timeout()) ||
         (input == Method::bfs    && gsolver2.did_timeout());
+
+    // FIX: los nodos en la open list al momento del timeout no están en
+    // zobrist_hash, así que vars_clear() no los destruía → leak del set<point>
+    // interno de cada game_node. Se drenan aquí antes de limpiar el pool.
+    if (timed_out && input == Method::a_star) {
+        for (const game_node* n : gsolver0.orphan_nodes) {
+            if (rpt.zobrist_hash.count(n) == 0) { // no destruir dos veces
+                n->~game_node();
+                game_mem.deallocate(const_cast<game_node*>(n));
+            }
+        }
+    }
 
     if (timed_out) {
         stats.status = SolveStatus::TIMEOUT;
