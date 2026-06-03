@@ -67,6 +67,26 @@ inline int count_boxes(
 }
 
 //
+// COUNT FREE CELLS
+// Counts navigable cells: ' ', '@', '$', '.', '*', '+'
+// Excludes walls '#'
+// Use on the shell (before placing elements) to get connectivity.
+//
+
+inline int count_free_cells(
+    const std::vector<std::vector<char>>& board)
+{
+    int count = 0;
+
+    for (const auto& row : board)
+        for (char c : row)
+            if (c != '#')
+                count++;
+
+    return count;
+}
+
+//
 // RANDOM PLACEMENT
 //
 

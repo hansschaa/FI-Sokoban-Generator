@@ -5,17 +5,32 @@
 
 #include <vector>
 #include <cstdlib>
+#include <algorithm>
 
 bool AddMutation::apply(
     Individual& individual)
 {
     auto& b = individual.board;
 
-    std::vector<Pair> emptyCells;
+    //
+    // DYNAMIC BOX LIMIT
+    // max_boxes scales with the navigable space of the current board.
+    // 1 box per 15 free cells, clamped to [3, 6].
+    // Minimum of 3 ensures small shells aren't trivially easy.
+    // Maximum of 6 prevents overcrowding on large shells.
+    //
+
+    const int free_cells = count_free_cells(b);
+    const int max_boxes  = std::max(3, std::min(6, free_cells / 15));
+
+    if (count_boxes(b) >= max_boxes)
+        return false;
 
     //
     // FIND EMPTY CELLS
     //
+
+    std::vector<Pair> emptyCells;
 
     for (int i = 0; i < (int)b.size(); i++)
         for (int j = 0; j < (int)b[i].size(); j++)

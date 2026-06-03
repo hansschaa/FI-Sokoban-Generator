@@ -2,6 +2,7 @@
 
 #include "../../../include/evolution/utils/board_utils.h"
 
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
 
@@ -150,7 +151,7 @@ void BoardCrossover::applyRegion(
 
 // ─────────────────────────────────────────────────────────────────────────────
 // REPAIR ILLEGAL
-// Fixes player count, box/goal imbalance, enforces maxBoxes
+// Fixes player count, box/goal imbalance, enforces dynamic maxBoxes
 // Does NOT call the solver
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -165,26 +166,21 @@ void BoardCrossover::repairIllegal(
 
     if (players == 0)
     {
-        Pair e =
-            getRandomEmpty(board);
+        Pair e = getRandomEmpty(board);
 
         if (e.i != -1)
-        {
             board[e.i][e.j] = '@';
-        }
     }
     else if (players > 1)
     {
         int removed = 0;
 
         for (int i = 0;
-             i < (int)board.size() &&
-             removed < players - 1;
+             i < (int)board.size() && removed < players - 1;
              i++)
         {
             for (int j = 0;
-                 j < (int)board[i].size() &&
-                 removed < players - 1;
+                 j < (int)board[i].size() && removed < players - 1;
                  j++)
             {
                 if (board[i][j] == '@')
@@ -202,25 +198,32 @@ void BoardCrossover::repairIllegal(
     }
 
     //
+    // DYNAMIC MAX BOXES
+    // 1 box per 15 free cells, clamped to [3, 6].
+    // Minimum of 3 ensures small shells aren't trivially easy.
+    // Maximum of 6 prevents overcrowding on large shells.
+    // Calculated from the current board state so it adapts
+    // as the board fills up during evolution.
+    //
+
+    const int free_cells = count_free_cells(board);
+    const int maxBoxes   = std::max(3, std::min(6, free_cells / 15));
+
+    //
     // ENFORCE MAX BOXES
     //
 
-    int boxes =
-        countBoxes(board);
-
-    int goals =
-        countGoals(board);
+    int boxes = countBoxes(board);
+    int goals = countGoals(board);
 
     while (boxes > maxBoxes)
     {
         for (int i = 0;
-             i < (int)board.size() &&
-             boxes > maxBoxes;
+             i < (int)board.size() && boxes > maxBoxes;
              i++)
         {
             for (int j = 0;
-                 j < (int)board[i].size() &&
-                 boxes > maxBoxes;
+                 j < (int)board[i].size() && boxes > maxBoxes;
                  j++)
             {
                 if (board[i][j] == '$')
@@ -242,13 +245,11 @@ void BoardCrossover::repairIllegal(
     while (goals > maxBoxes)
     {
         for (int i = 0;
-             i < (int)board.size() &&
-             goals > maxBoxes;
+             i < (int)board.size() && goals > maxBoxes;
              i++)
         {
             for (int j = 0;
-                 j < (int)board[i].size() &&
-                 goals > maxBoxes;
+                 j < (int)board[i].size() && goals > maxBoxes;
                  j++)
             {
                 if (board[i][j] == '.')
@@ -269,21 +270,14 @@ void BoardCrossover::repairIllegal(
     // FIX BOX / GOAL IMBALANCE
     //
 
-    boxes =
-        countBoxes(board);
-
-    goals =
-        countGoals(board);
+    boxes = countBoxes(board);
+    goals = countGoals(board);
 
     while (boxes > goals)
     {
-        Pair e =
-            getRandomEmpty(board);
+        Pair e = getRandomEmpty(board);
 
-        if (e.i == -1)
-        {
-            break;
-        }
+        if (e.i == -1) break;
 
         board[e.i][e.j] = '.';
         goals++;
@@ -291,13 +285,9 @@ void BoardCrossover::repairIllegal(
 
     while (goals > boxes)
     {
-        Pair e =
-            getRandomEmpty(board);
+        Pair e = getRandomEmpty(board);
 
-        if (e.i == -1)
-        {
-            break;
-        }
+        if (e.i == -1) break;
 
         board[e.i][e.j] = '$';
         boxes++;
@@ -307,34 +297,21 @@ void BoardCrossover::repairIllegal(
     // ENSURE AT LEAST ONE BOX AND ONE GOAL
     //
 
-    boxes =
-        countBoxes(board);
-
-    goals =
-        countGoals(board);
+    boxes = countBoxes(board);
+    goals = countGoals(board);
 
     if (boxes == 0)
     {
-        Pair e1 =
-            getRandomEmpty(board);
+        Pair e1 = getRandomEmpty(board);
 
-        if (e1.i == -1)
-        {
-            return;
-        }
+        if (e1.i == -1) return;
 
-        std::vector<std::vector<char>> temp =
-            board;
-
+        std::vector<std::vector<char>> temp = board;
         temp[e1.i][e1.j] = '$';
 
-        Pair e2 =
-            getRandomEmpty(temp);
+        Pair e2 = getRandomEmpty(temp);
 
-        if (e2.i == -1)
-        {
-            return;
-        }
+        if (e2.i == -1) return;
 
         board[e1.i][e1.j] = '$';
         board[e2.i][e2.j] = '.';
@@ -342,26 +319,16 @@ void BoardCrossover::repairIllegal(
 
     if (goals == 0)
     {
-        Pair e1 =
-            getRandomEmpty(board);
+        Pair e1 = getRandomEmpty(board);
 
-        if (e1.i == -1)
-        {
-            return;
-        }
+        if (e1.i == -1) return;
 
-        std::vector<std::vector<char>> temp =
-            board;
-
+        std::vector<std::vector<char>> temp = board;
         temp[e1.i][e1.j] = '.';
 
-        Pair e2 =
-            getRandomEmpty(temp);
+        Pair e2 = getRandomEmpty(temp);
 
-        if (e2.i == -1)
-        {
-            return;
-        }
+        if (e2.i == -1) return;
 
         board[e1.i][e1.j] = '.';
         board[e2.i][e2.j] = '$';
@@ -371,18 +338,14 @@ void BoardCrossover::repairIllegal(
     // ENSURE EXACTLY ONE PLAYER
     //
 
-    players =
-        countPlayers(board);
+    players = countPlayers(board);
 
     if (players == 0)
     {
-        Pair e =
-            getRandomEmpty(board);
+        Pair e = getRandomEmpty(board);
 
         if (e.i != -1)
-        {
             board[e.i][e.j] = '@';
-        }
     }
 }
 
@@ -407,8 +370,7 @@ bool BoardCrossover::apply(
     // GET INTERESTING REGIONS FROM PARENT2
     //
 
-    auto regions =
-        getInterestingRegions(parent2.board);
+    auto regions = getInterestingRegions(parent2.board);
 
     if (regions.empty())
     {
@@ -420,8 +382,7 @@ bool BoardCrossover::apply(
     // SELECT AND APPLY RANDOM REGION
     //
 
-    const CrossPair& selected =
-        regions[rand() % regions.size()];
+    const CrossPair& selected = regions[rand() % regions.size()];
 
     applyRegion(child.board, parent2.board, selected);
 

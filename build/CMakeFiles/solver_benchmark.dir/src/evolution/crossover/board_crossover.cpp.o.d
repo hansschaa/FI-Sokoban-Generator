@@ -123,7 +123,14 @@ CMakeFiles/solver_benchmark.dir/src/evolution/crossover/board_crossover.cpp.o: \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
  /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
  /usr/include/c++/15/bits/charconv.h \
- /usr/include/c++/15/bits/basic_string.tcc /usr/include/c++/15/iostream \
+ /usr/include/c++/15/bits/basic_string.tcc /usr/include/c++/15/algorithm \
+ /usr/include/c++/15/bits/stl_algo.h \
+ /usr/include/c++/15/bits/algorithmfwd.h \
+ /usr/include/c++/15/bits/stl_heap.h \
+ /usr/include/c++/15/bits/uniform_int_dist.h \
+ /usr/include/c++/15/bits/stl_tempbuf.h \
+ /usr/include/c++/15/pstl/glue_algorithm_defs.h \
+ /usr/include/c++/15/pstl/execution_defs.h /usr/include/c++/15/iostream \
  /usr/include/c++/15/ostream /usr/include/c++/15/bits/ostream.h \
  /usr/include/c++/15/ios /usr/include/c++/15/exception \
  /usr/include/c++/15/bits/exception_ptr.h \

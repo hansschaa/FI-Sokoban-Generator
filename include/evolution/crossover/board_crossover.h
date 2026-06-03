@@ -15,13 +15,6 @@ public:
 
     int crossoverSpacing = 2;
 
-    //
-    // MAX BOXES
-    // Limit to avoid unsolvable boards
-    //
-
-    int maxBoxes = 7;
-
     bool apply(
         const Individual& parent1,
         const Individual& parent2,

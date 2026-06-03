@@ -2,6 +2,7 @@
 #include <vector>
 #include <ctime>
 #include <string>
+#include <algorithm>
 
 #include "../include/evolution/algorithms/evolution_strategy.h"
 #include "../include/evolution/algorithms/genetic_algorithm.h"
@@ -44,7 +45,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    std::string algorithm = argv[1];
+    std::string algorithm  = argv[1];
     std::string fitness_arg = argv[2];
 
     //
@@ -98,11 +99,19 @@ int main(int argc, char** argv)
     };
 
     //
-    // SHOW SHELL
+    // max_boxes: upper bound available to mutation operators that add boxes.
+    // The initial population always starts with 1 box; complexity grows
+    // through evolution, not initialization.
     //
 
-    std::cout << "\nBOARD SHELL:\n";
-    std::cout << board_to_pretty_string(shell) << std::endl;
+    const int free_cells = count_free_cells(shell);
+    const int max_boxes  = std::max(1, std::min(6, free_cells / 15));
+
+    std::cout
+        << "\nBOARD SHELL:\n"
+        << board_to_pretty_string(shell)
+        << "Free cells: " << free_cells
+        << "  |  Max boxes for mutation: " << max_boxes << "\n\n";
 
     //
     // INITIAL POPULATION
@@ -121,14 +130,19 @@ int main(int argc, char** argv)
 
     for (int i = 0; i < POP_SIZE; i++)
     {
-        bool valid = false;
-        int attempts = 0;
+        bool valid    = false;
+        int attempts  = 0;
 
         while (!valid && attempts < 10000)
         {
             auto board = shell;
 
-            int numBoxes = 1 + rand() % 3;
+            //
+            // All initial individuals start with 1 box.
+            // Complexity grows through evolution, not initialization.
+            //
+
+            int numBoxes = 1;
 
             placeRandom(board, '@');
 
@@ -138,10 +152,9 @@ int main(int argc, char** argv)
                 placeRandom(board, '.');
             }
 
-            std::string level = board_to_string(board);
-
-            unsigned int rows = board.size();
-            unsigned int cols = board[0].size();
+            std::string  level = board_to_string(board);
+            unsigned int rows  = board.size();
+            unsigned int cols  = board[0].size();
 
             game_solver solver(level, rows, cols, 512);
 
@@ -159,9 +172,10 @@ int main(int argc, char** argv)
                 valid = true;
 
                 std::cout
-                    << "\nVALID INDIVIDUAL " << i << "\n"
-                    << "FITNESS = " << ind.fitness << "\n"
-                    << board_to_pretty_string(board) << std::endl;
+                    << "VALID INDIVIDUAL " << i
+                    << "  |  boxes=" << numBoxes
+                    << "  |  fitness=" << ind.fitness << "\n"
+                    << board_to_pretty_string(board) << "\n";
             }
 
             attempts++;
@@ -169,7 +183,7 @@ int main(int argc, char** argv)
 
         if (!valid)
         {
-            std::cerr << "Could not generate valid individual\n";
+            std::cerr << "Could not generate valid individual " << i << "\n";
         }
     }
 
@@ -183,7 +197,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    std::cout << "\nPOPULATION READY: " << population.size() << " individuals\n";
+    std::cout << "POPULATION READY: " << population.size() << " individuals\n\n";
 
     //
     // FINAL BEST
@@ -198,12 +212,12 @@ int main(int argc, char** argv)
     if (algorithm == "ES")
     {
         EvolutionStrategy es;
-        es.mu               = 5;
-        es.lambda           = 7;
-        es.maxEvaluations   = 500;
-        es.stagnationLimit  = 15;
+        es.mu              = 5;
+        es.lambda          = 10;  // igualado a GA para comparación justa
+        es.maxEvaluations  = 500;
+        es.stagnationLimit = 15;
 
-        std::cout << "\nRUNNING MU + LAMBDA ES\n";
+        std::cout << "RUNNING MU + LAMBDA ES\n";
         best = es.run(population);
     }
     else if (algorithm == "GA")
@@ -213,7 +227,7 @@ int main(int argc, char** argv)
         ga.maxEvaluations  = 500;
         ga.stagnationLimit = 15;
 
-        std::cout << "\nRUNNING GENETIC ALGORITHM\n";
+        std::cout << "RUNNING GENETIC ALGORITHM\n";
         best = ga.run(population);
     }
     else if (algorithm == "SA")
@@ -224,15 +238,22 @@ int main(int argc, char** argv)
         sa.maxEvaluations     = 500;
         sa.stagnationLimit    = 15;
 
-        Individual initial = population[0];
+        //
+        // START FROM BEST INDIVIDUAL
+        // Avoids dependency on random ordering of the initial population.
+        //
+        Individual initial = *std::max_element(
+            population.begin(), population.end(),
+            [](const Individual& a, const Individual& b) {
+                return a.fitness < b.fitness;
+            });
 
-        std::cout << "\nRUNNING SIMULATED ANNEALING\n";
+        std::cout << "RUNNING SIMULATED ANNEALING\n";
         best = sa.run(initial);
     }
     else
     {
-        std::cout << "Unknown algorithm: " << algorithm << "\n";
-        std::cout << "Use ES, GA or SA\n";
+        std::cerr << "Unknown algorithm: " << algorithm << "\nUse ES, GA or SA\n";
         return 1;
     }
 
@@ -242,9 +263,9 @@ int main(int argc, char** argv)
 
     std::cout
         << "\n========================\n"
-        << "FINAL BEST FITNESS = " << best.fitness << std::endl
+        << "FINAL BEST FITNESS = " << best.fitness << "\n"
         << "\nBEST BOARD:\n"
-        << board_to_pretty_string(best.board) << std::endl;
+        << board_to_pretty_string(best.board) << "\n";
 
     return 0;
 }
