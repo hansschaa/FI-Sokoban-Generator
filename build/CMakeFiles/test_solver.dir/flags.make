@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/hanss/automatic-sokoban-solver/include
 
-CXX_FLAGS = -g -O0 -std=gnu++17 -Wall -Wextra -pedantic -g -O0
+CXX_FLAGS = -O3 -march=native -flto -DNDEBUG -std=gnu++17 -Wall -Wextra -pedantic -O3 -march=native -flto -DNDEBUG
 

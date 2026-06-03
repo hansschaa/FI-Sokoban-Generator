@@ -28,6 +28,7 @@ int main(int argc, char** argv)
     //
     // fitness: pushes | expanded | solution_length | branching
     //
+    // ./evolution_generator ES pushes
 
     if (argc < 3)
     {

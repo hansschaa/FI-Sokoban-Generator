@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10.1)
+cmake_minimum_required(VERSION 3.10.1)
 
 project(skb_solver)
 
@@ -10,16 +10,16 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #
-# Debug build
+# Release build
 #
 
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
 
 #
-# Debug flags
+# Release flags
 #
 
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -flto -DNDEBUG")
 
 #
 # Includes
@@ -105,40 +105,6 @@ add_executable(
 )
 
 #
-# Common compiler flags
-#
-
-target_compile_options(
-    sokoban_solver
-    PRIVATE
-    -Wall
-    -Wextra
-    -pedantic
-    -g
-    -O0
-)
-
-target_compile_options(
-    solver_benchmark
-    PRIVATE
-    -Wall
-    -Wextra
-    -pedantic
-    -g
-    -O0
-)
-
-target_compile_options(
-    evolution_generator
-    PRIVATE
-    -Wall
-    -Wextra
-    -pedantic
-    -g
-    -O0
-)
-
-#
 # Test solver executable
 #
 
@@ -148,12 +114,31 @@ add_executable(
     ${MY_SRC}
 )
 
-target_compile_options(
+#
+# Common compiler flags
+#
+
+foreach(target
+    sokoban_solver
+    solver_benchmark
+    evolution_generator
     test_solver
-    PRIVATE
-    -Wall
-    -Wextra
-    -pedantic
-    -g
-    -O0
 )
+    target_compile_options(
+        ${target}
+        PRIVATE
+        -Wall
+        -Wextra
+        -pedantic
+        -O3
+        -march=native
+        -flto
+        -DNDEBUG
+    )
+
+    target_link_options(
+        ${target}
+        PRIVATE
+        -flto
+    )
+endforeach()

@@ -58,10 +58,6 @@ double Evaluator::evaluate(
             individual.fitness =
                 stats.generated_states;
             break;
-        case FitnessType::SOLUTION_LENGTH:
-            individual.fitness =
-                solution.size();
-            break;
         case FitnessType::EFFECTIVE_BRANCHING_FACTOR:
             individual.fitness =
                 computeEffectiveBranchingFactor(
