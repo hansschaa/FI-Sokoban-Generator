@@ -127,17 +127,48 @@ bool PathSimulator::SimState::is_pattern2_deadlock() const {
 
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
-            if (grid[y][x] != '$') continue;
+            char c = grid[y][x];
 
+            // --- NUEVO: DETECCIÓN DE DEADLOCK 2x2 ---
+            // Revisa si hay 4 cajas formando un cuadrado (2x2)
+            if ((c == '$' || c == '*') && y + 1 < h && x + 1 < w) {
+                char c_right = grid[y][x + 1];
+                char c_down  = grid[y + 1][x];
+                char c_diag  = grid[y + 1][x + 1];
+
+                // Si las 3 casillas vecinas también tienen cajas
+                if ((c_right == '$' || c_right == '*') && 
+                    (c_down  == '$' || c_down  == '*') && 
+                    (c_diag  == '$' || c_diag  == '*')) {
+                    
+                    // Si al menos UNA caja no está en una meta ('$'), el bloque 2x2 es un deadlock
+                    if (c == '$' || c_right == '$' || c_down == '$' || c_diag == '$') {
+                        return true;
+                    }
+                }
+            }
+            // ----------------------------------------
+
+            // Solo hacemos las detecciones de paredes si la celda actual es una caja normal
+            if (c != '$') continue;
+
+            // 1. Deadlock de Esquina (Corner)
             bool up = is_wall(y - 1, x);
             bool down = is_wall(y + 1, x);
             bool left = is_wall(y, x - 1);
             bool right = is_wall(y, x + 1);
 
-            if ((up && left) || (up && right) || (down && left) || (down && right)) return true;
+            if ((up && left) || (up && right) || (down && left) || (down && right)) {
+                return true;
+            }
 
-            if ((left || right) && ((y + 1 < h && grid[y + 1][x] == '$') || (y - 1 >= 0 && grid[y - 1][x] == '$'))) return true;
-            if ((up || down) && ((x + 1 < w && grid[y][x + 1] == '$') || (x - 1 >= 0 && grid[y][x - 1] == '$'))) return true;
+            // 2. Deadlock de Borde con 2 Cajas (Edge 2-Box)
+            if ((left || right) && ((y + 1 < h && grid[y + 1][x] == '$') || (y - 1 >= 0 && grid[y - 1][x] == '$'))) {
+                return true;
+            }
+            if ((up || down) && ((x + 1 < w && grid[y][x + 1] == '$') || (x - 1 >= 0 && grid[y][x - 1] == '$'))) {
+                return true;
+            }
         }
     }
     return false;

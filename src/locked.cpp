@@ -163,6 +163,34 @@ locked::locked() {}
 
 bool locked::is_locked(point& box, vector<vector<char>>& matrix_with_box) {
     if (side_point[box.x][box.y] == true) { return true; }
+
+    // --- NUEVO: DETECCIÓN DE DEADLOCK 2x2 ---
+    // Revisa los 4 posibles cuadrados 2x2 a los que pertenece la caja recién empujada
+    int dr[] = {0, -1, 0, -1};
+    int dc[] = {0, 0, -1, -1};
+
+    for (int i = 0; i < 4; i++) {
+        int r = box.x + dr[i];
+        int c = box.y + dc[i];
+
+        // Verificamos que el bloque 2x2 esté completamente dentro del mapa
+        if (r >= 0 && r + 1 < m && c >= 0 && c + 1 < n) {
+            
+            // Si las 4 casillas contienen una caja
+            if (matrix_with_box[r][c] == BOX && matrix_with_box[r + 1][c] == BOX &&
+                matrix_with_box[r][c + 1] == BOX && matrix_with_box[r + 1][c + 1] == BOX) {
+
+                // Es deadlock irreversible si al menos UNA caja no está sobre una meta
+                if (end_vec[r][c] == false || end_vec[r + 1][c] == false ||
+                    end_vec[r][c + 1] == false || end_vec[r + 1][c + 1] == false) {
+                    return true;
+                }
+            }
+        }
+    }
+    // ----------------------------------------
+
+    // Solo retornamos false (estado seguro en meta) si pasó la prueba del 2x2
     if (end_vec[box.x][box.y] == true) {
         return false;
     }
