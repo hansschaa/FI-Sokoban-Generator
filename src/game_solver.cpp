@@ -245,73 +245,127 @@ vector<point> game_solver::get_legal_point(vector<vector<char>>& vec, point p) {
     return result;
 }
 
+// ---------------------------------------------------------------------------
+// reverse_push_bfs: BFS inverso desde un único objetivo.
+//
+// Complejidad: O(celdas × 4) por objetivo, frente a O(celdas × BFS_completo)
+// del enfoque anterior basado en get_nums2.
+//
+// Modelo del push inverso:
+//   Push normal  : jugador en (box - dir) empuja caja de box a box + dir.
+//   Push inverso : la caja vino de box_prev = box - dir;
+//                  el jugador estaba en box_prev - dir = box - 2*dir.
+//   Estado BFS   : (pos_caja, dirección_del_push) — 4 estados por celda.
+//
+// Admisibilidad: se verifica solo geometría de muros (no alcanzabilidad real
+// del jugador). Esto puede subestimar el costo real, lo que mantiene la
+// heurística admisible (nunca sobreestima → A* sigue siendo óptimo).
+// ---------------------------------------------------------------------------
+static void reverse_push_bfs(
+    const point& goal,
+    const vector<vector<char>>& blank_matrix,
+    int m, int n,
+    vector<vector<int>>& dist   // dist[m][n], debe estar inicializado a 1000
+) {
+    const int INF = 1000;
+
+    // dist_state[x][y][d] = coste mínimo al objetivo partiendo de
+    // (caja en (x,y), llegó empujada en dirección four_direction[d]).
+    vector<vector<array<int,4>>> dist_state(
+        m, vector<array<int,4>>(n, {INF, INF, INF, INF}));
+
+    struct State { point box; int dir_idx; };
+    deque<State> q;
+
+    // Semillas: caja ya en el objetivo, puede haber llegado desde cualquier dir.
+    for (int d = 0; d < 4; d++) {
+        // El jugador debía estar en (goal - four_direction[d]) para empujar
+        // la caja en la dirección d hasta el objetivo.
+        point player_needed = goal - four_direction[d];
+        if (player_needed.x < 0 || player_needed.x >= m ||
+            player_needed.y < 0 || player_needed.y >= n) continue;
+        if (blank_matrix[player_needed.x][player_needed.y] == WALL) continue;
+
+        if (dist_state[goal.x][goal.y][d] == INF) {
+            dist_state[goal.x][goal.y][d] = 0;
+            q.push_back({goal, d});
+        }
+    }
+
+    while (!q.empty()) {
+        auto [box, dir_idx] = q.front();
+        q.pop_front();
+
+        int cur_cost = dist_state[box.x][box.y][dir_idx];
+
+        // Para cada posible dirección de push que trajo la caja hasta box_prev:
+        for (int push_d = 0; push_d < 4; push_d++) {
+            point box_prev = box - four_direction[push_d];
+            if (box_prev.x < 0 || box_prev.x >= m ||
+                box_prev.y < 0 || box_prev.y >= n) continue;
+            if (blank_matrix[box_prev.x][box_prev.y] == WALL) continue;
+
+            // El jugador necesitaba estar al lado opuesto del push.
+            point player_prev = box_prev - four_direction[push_d];
+            if (player_prev.x < 0 || player_prev.x >= m ||
+                player_prev.y < 0 || player_prev.y >= n) continue;
+            if (blank_matrix[player_prev.x][player_prev.y] == WALL) continue;
+
+            int new_cost = cur_cost + 1;
+            if (new_cost < dist_state[box_prev.x][box_prev.y][push_d]) {
+                dist_state[box_prev.x][box_prev.y][push_d] = new_cost;
+                q.push_back({box_prev, push_d});
+            }
+        }
+    }
+
+    // Condensar: dist[x][y] = mínimo sobre las 4 direcciones de llegada.
+    for (int i = 0; i < m; i++)
+        for (int j = 0; j < n; j++) {
+            int best = INF;
+            for (int d = 0; d < 4; d++)
+                best = min(best, dist_state[i][j][d]);
+            dist[i][j] = best;
+        }
+}
+
+// ---------------------------------------------------------------------------
+// Astar_init — versión optimizada con BFS inverso.
+//
+// Antes: O(G × C × BFS_completo) — para un tablero 10×10 con 4 objetivos
+//        esto equivalía a ~400 BFS completos solo en la inicialización.
+// Ahora: O(G × C × 4) — un único BFS inverso por objetivo.
+// ---------------------------------------------------------------------------
 vector<vector<int>> game_solver::Astar_init() {
-    // dist[i][j] = mínimo de pushes para llevar una caja desde (i,j)
-    // hasta el objetivo más cercano. Se usa para la heurística simple.
     vector<vector<int>> result(m, vector<int>(n, 0));
 
-    // Cachear posiciones de objetivos
     goal_positions.clear();
     for (int i = 0; i < m; i++)
         for (int j = 0; j < n; j++)
             if (end_vec[i][j])
                 goal_positions.push_back(point(i, j));
 
-    // Backup del end_vec global para poder modificarlo temporalmente.
-    // RAII: se restaura aunque get_nums2 lance una excepción.
-    auto saved_end_vec = end_vec;
-    struct EndVecGuard {
-        vector<vector<bool>>& target;
-        vector<vector<bool>>  saved;
-        ~EndVecGuard() { target = std::move(saved); }
-    } guard{ end_vec, saved_end_vec };
+    int num_goals = (int)goal_positions.size();
 
-    int num_goals = goal_positions.size();
-
-    // dist_to_goal[goal_idx][x][y] = pushes mínimos para llevar
-    // una caja en (x,y) al objetivo goal_idx específico.
-    // Se calcula desactivando todos los demás objetivos temporalmente.
     dist_to_goal.assign(num_goals,
         vector<vector<int>>(m, vector<int>(n, 1000)));
 
     for (int g = 0; g < num_goals; g++) {
-        // Activar solo el objetivo g
-        for (int i = 0; i < m; i++)
-            for (int j = 0; j < n; j++)
-                end_vec[i][j] = false;
-        end_vec[goal_positions[g].x][goal_positions[g].y] = true;
-
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (blank_matrix[i][j] == WALL) continue;
-
-                game_node new_node;
-                new_node.box_list.insert(point(i, j));
-                vector<vector<char>> vec;
-                new_node.get_matrix0(vec);
-                auto person_point = get_legal_point(vec, point(i, j));
-                if (person_point.empty()) continue;
-
-                int min_num = INT32_MAX;
-                for (auto& dd : person_point) {
-                    new_node.person_point = dd;
-                    int d = get_nums2(new_node);
-                    if (d < min_num) min_num = d;
-                }
-                dist_to_goal[g][i][j] = (min_num == INT32_MAX) ? 1000 : min_num;
-            }
-        }
+        reverse_push_bfs(
+            goal_positions[g],
+            blank_matrix,
+            m, n,
+            dist_to_goal[g]
+        );
     }
 
-    // end_vec restaurado automáticamente por EndVecGuard al salir del scope.
-
-    // Tabla simple: mínimo entre todos los objetivos (para heurística simple)
+    // Tabla simple: mínimo entre objetivos (para heurística simple).
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
             if (blank_matrix[i][j] == WALL) { result[i][j] = 1000; continue; }
             int best = 1000;
             for (int g = 0; g < num_goals; g++)
-                best = std::min(best, dist_to_goal[g][i][j]);
+                best = min(best, dist_to_goal[g][i][j]);
             result[i][j] = best;
         }
     }
@@ -413,8 +467,6 @@ SolverStats game_solver::test_template(
     Solver_template<vector<game_node>, game_node, Method::dfs> gsolver1;
     Solver_template<vector<game_node>, game_node, Method::bfs> gsolver2;
 
-    printf("compute start!!\n");
-
     auto t1 = chrono::high_resolution_clock::now();
 
     if (input == Method::a_star)
@@ -453,8 +505,6 @@ SolverStats game_solver::test_template(
     }
 
     auto t2 = chrono::high_resolution_clock::now();
-
-    printf("compute complete!!\n");
 
     SolverStats stats;
 

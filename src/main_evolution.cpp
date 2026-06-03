@@ -21,22 +21,65 @@ int main(int argc, char** argv)
     // ARGUMENT CHECK
     //
     // Usage:
-    // ./evolution_generator ES
-    // ./evolution_generator GA
+    // ./evolution_generator ES   <fitness>
+    // ./evolution_generator GA   <fitness>
+    // ./evolution_generator SA   <fitness>
+    //
+    // fitness: pushes | expanded | solution_length | branching
     //
 
-    if (argc < 2)
+    if (argc < 3)
     {
         std::cout
             << "Usage:\n"
-            << "./evolution_generator ES\n"
-            << "./evolution_generator GA\n"
-            << "./evolution_generator SA\n";
+            << "./evolution_generator ES  <fitness>\n"
+            << "./evolution_generator GA  <fitness>\n"
+            << "./evolution_generator SA  <fitness>\n"
+            << "\n"
+            << "fitness options:\n"
+            << "  pushes           number of box pushes in solution\n"
+            << "  expanded         total states generated\n"
+            << "  solution_length  number of nodes in solution path\n"
+            << "  branching        effective branching factor\n";
         return 1;
     }
 
-    std::string algorithm =
-        argv[1];
+    std::string algorithm = argv[1];
+    std::string fitness_arg = argv[2];
+
+    //
+    // PARSE FITNESS TYPE
+    //
+
+    FitnessType fitnessType;
+
+    if (fitness_arg == "pushes")
+    {
+        fitnessType = FitnessType::PUSHES;
+        std::cout << "Fitness: PUSHES\n";
+    }
+    else if (fitness_arg == "expanded")
+    {
+        fitnessType = FitnessType::EXPANDED_NODES;
+        std::cout << "Fitness: EXPANDED_NODES\n";
+    }
+    else if (fitness_arg == "solution_length")
+    {
+        fitnessType = FitnessType::SOLUTION_LENGTH;
+        std::cout << "Fitness: SOLUTION_LENGTH\n";
+    }
+    else if (fitness_arg == "branching")
+    {
+        fitnessType = FitnessType::EFFECTIVE_BRANCHING_FACTOR;
+        std::cout << "Fitness: EFFECTIVE_BRANCHING_FACTOR\n";
+    }
+    else
+    {
+        std::cerr
+            << "Unknown fitness: \"" << fitness_arg << "\"\n"
+            << "Valid options: pushes | expanded | solution_length | branching\n";
+        return 1;
+    }
 
     std::cout << "START\n";
 
@@ -58,19 +101,18 @@ int main(int argc, char** argv)
     // SHOW SHELL
     //
 
-    std::cout
-        << "\nBOARD SHELL:\n";
-
-    std::cout
-        << board_to_pretty_string(shell)
-        << std::endl;
+    std::cout << "\nBOARD SHELL:\n";
+    std::cout << board_to_pretty_string(shell) << std::endl;
 
     //
     // INITIAL POPULATION
     //
 
     std::vector<Individual> population;
+
     Evaluator evaluator;
+    evaluator.fitnessType = fitnessType;
+
     const int POP_SIZE = 10;
 
     //
@@ -80,21 +122,11 @@ int main(int argc, char** argv)
     for (int i = 0; i < POP_SIZE; i++)
     {
         bool valid = false;
-
         int attempts = 0;
 
         while (!valid && attempts < 10000)
         {
-            //
-            // COPY SHELL
-            //
-
             auto board = shell;
-
-            //
-            // PLACE ELEMENTS
-            // Random number of boxes (1-3) for initial diversity
-            //
 
             int numBoxes = 1 + rand() % 3;
 
@@ -106,77 +138,30 @@ int main(int argc, char** argv)
                 placeRandom(board, '.');
             }
 
-            //
-            // CONVERT TO STRING
-            // IMPORTANT:
-            // NO NEWLINES
-            //
+            std::string level = board_to_string(board);
 
-            std::string level =
-                board_to_string(board);
+            unsigned int rows = board.size();
+            unsigned int cols = board[0].size();
 
-            //
-            // SOLVER DIMENSIONS
-            //
-
-            unsigned int rows =
-                board.size();
-
-            unsigned int cols =
-                board[0].size();
-
-            //
-            // CREATE SOLVER
-            //
-
-            game_solver solver(
-                level,
-                rows,
-                cols,
-                512);
-
-            //
-            // SOLVE
-            //
+            game_solver solver(level, rows, cols, 512);
 
             std::vector<game_node> solution;
 
-            auto stats =
-                solver.test_template(
-                    Method::a_star,
-                    solution);
+            auto stats = solver.test_template(Method::a_star, solution);
 
-            //
-            // ACCEPT ONLY SOLVABLE
-            //
-
-            if (stats.status ==
-                SolveStatus::SOLVED)
+            if (stats.status == SolveStatus::SOLVED)
             {
                 Individual ind;
-
-                ind.board = board;
-
-                ind.fitness =
-                    evaluator.evaluate(ind);
+                ind.board   = board;
+                ind.fitness = evaluator.evaluate(ind);
 
                 population.push_back(ind);
-
                 valid = true;
 
                 std::cout
-                    << "\nVALID INDIVIDUAL "
-                    << i
-                    << "\n";
-
-                std::cout
-                    << "FITNESS = "
-                    << ind.fitness
-                    << "\n";
-
-                std::cout
-                    << board_to_pretty_string(board)
-                    << std::endl;
+                    << "\nVALID INDIVIDUAL " << i << "\n"
+                    << "FITNESS = " << ind.fitness << "\n"
+                    << board_to_pretty_string(board) << std::endl;
             }
 
             attempts++;
@@ -184,8 +169,7 @@ int main(int argc, char** argv)
 
         if (!valid)
         {
-            std::cerr
-                << "Could not generate valid individual\n";
+            std::cerr << "Could not generate valid individual\n";
         }
     }
 
@@ -195,15 +179,11 @@ int main(int argc, char** argv)
 
     if (population.empty())
     {
-        std::cerr
-            << "ERROR: could not generate any valid individual. Aborting.\n";
+        std::cerr << "ERROR: could not generate any valid individual. Aborting.\n";
         return 1;
     }
 
-    std::cout
-        << "\nPOPULATION READY: "
-        << population.size()
-        << " individuals\n";
+    std::cout << "\nPOPULATION READY: " << population.size() << " individuals\n";
 
     //
     // FINAL BEST
@@ -212,89 +192,47 @@ int main(int argc, char** argv)
     Individual best;
 
     //
-    // RUN ES
+    // RUN ALGORITHM
     //
 
     if (algorithm == "ES")
     {
         EvolutionStrategy es;
+        es.mu               = 5;
+        es.lambda           = 7;
+        es.maxEvaluations   = 500;
+        es.stagnationLimit  = 15;
 
-        es.mu = 5;
-
-        es.lambda = 7;
-
-        es.maxEvaluations = 500;
-
-        es.stagnationLimit = 15;
-
-        std::cout
-            << "\nRUNNING MU + LAMBDA ES\n";
-
-        best =
-            es.run(population);
+        std::cout << "\nRUNNING MU + LAMBDA ES\n";
+        best = es.run(population);
     }
-
-    //
-    // RUN GA
-    //
-
     else if (algorithm == "GA")
     {
         GeneticAlgorithm ga;
-
-        ga.offspringSize = 10;
-
-        ga.maxEvaluations = 500;
-
+        ga.offspringSize   = 10;
+        ga.maxEvaluations  = 500;
         ga.stagnationLimit = 15;
 
-        std::cout
-            << "\nRUNNING GENETIC ALGORITHM\n";
-
-        best =
-            ga.run(population);
+        std::cout << "\nRUNNING GENETIC ALGORITHM\n";
+        best = ga.run(population);
     }
-
     else if (algorithm == "SA")
     {
         SimulatedAnnealing sa;
-
         sa.initialTemperature = 100.0;
+        sa.coolingRate        = 0.01;
+        sa.maxEvaluations     = 500;
+        sa.stagnationLimit    = 15;
 
-        sa.coolingRate = 0.01;
+        Individual initial = population[0];
 
-        sa.maxEvaluations = 500;
-
-        sa.stagnationLimit = 15;
-
-        //
-        // INITIAL SOLUTION
-        //
-
-        Individual initial =
-            population[0];
-
-        std::cout
-            << "\nRUNNING SIMULATED ANNEALING\n";
-
-        best =
-            sa.run(initial);
+        std::cout << "\nRUNNING SIMULATED ANNEALING\n";
+        best = sa.run(initial);
     }
-
-    //
-    // INVALID ARGUMENT
-    //
-
     else
     {
-        std::cout
-            << "Unknown algorithm: "
-            << algorithm
-            << "\n";
-
-        std::cout
-            << "Use ES, GA or SA\n";
-
+        std::cout << "Unknown algorithm: " << algorithm << "\n";
+        std::cout << "Use ES, GA or SA\n";
         return 1;
     }
 
@@ -303,19 +241,10 @@ int main(int argc, char** argv)
     //
 
     std::cout
-        << "\n========================\n";
-
-    std::cout
-        << "FINAL BEST FITNESS = "
-        << best.fitness
-        << std::endl;
-
-    std::cout
-        << "\nBEST BOARD:\n";
-
-    std::cout
-        << board_to_pretty_string(best.board)
-        << std::endl;
+        << "\n========================\n"
+        << "FINAL BEST FITNESS = " << best.fitness << std::endl
+        << "\nBEST BOARD:\n"
+        << board_to_pretty_string(best.board) << std::endl;
 
     return 0;
 }
