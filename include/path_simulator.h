@@ -8,6 +8,7 @@
 #include <iostream>
 
 struct PathBranchingStats {
+
     int branching_real_total_nodes = 0;
     int branching_real_min = 2147483647;
     int branching_real_max = -2147483648;
@@ -20,6 +21,9 @@ struct PathBranchingStats {
     int total_children_generated = 0;
     long repeated_nodes = 0;
     int deadlocks = 0;
+
+    int box_lines = 0;  
+    int box_changes = 0; 
 
     double get_branching_real_avg() const {
         return states == 0 ? 0.0 : (double)branching_real_total_nodes / states;

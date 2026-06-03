@@ -339,6 +339,9 @@ int main(int argc, char** argv)
         std::cout << "repeated_nodes:                  " << champ_stats.path_stats.repeated_nodes << "\n";
         std::cout << "deadlocks:                       " << champ_stats.path_stats.deadlocks << "\n";
         std::cout << "redundancy:                      " << champ_stats.path_stats.get_redundancy() << "\n";
+    
+        std::cout << "box_lines:                       " << champ_stats.path_stats.box_lines << "\n";
+        std::cout << "box_changes:                     " << champ_stats.path_stats.box_changes << "\n";
     }
     std::cout << "=========================================\n";
 

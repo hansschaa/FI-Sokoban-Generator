@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
 
     if (stats.path_stats_calculated) {
         std::cout << "states (pasos en path):  " << stats.path_stats.states << "\n";
-        
+
         std::cout << "branching_real_total_nodes:      " << stats.path_stats.branching_real_total_nodes << "\n";
         std::cout << "branching_real_min:              " << stats.path_stats.branching_real_min << "\n";
         std::cout << "branching_real_max:              " << stats.path_stats.branching_real_max << "\n";
@@ -143,6 +143,10 @@ int main(int argc, char* argv[])
         std::cout << "repeated_nodes:                  " << stats.path_stats.repeated_nodes << "\n";
         std::cout << "deadlocks:                       " << stats.path_stats.deadlocks << "\n";
         std::cout << "redundancy:                      " << stats.path_stats.get_redundancy() << "\n";
+    
+        std::cout << "box_lines:                       " << stats.path_stats.box_lines << "\n";
+        std::cout << "box_changes:                     " << stats.path_stats.box_changes << "\n";
+        
     }
     std::cout << "=========================================\n";
 

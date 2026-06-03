@@ -180,6 +180,11 @@ PathBranchingStats PathSimulator::compute_stats(const string& flat_initial_board
 
     // --- Compute Real Branching ---
     auto cur_real = make_unique<SimState>(initial);
+    
+    // Variables de rastreo espacial para la caja activa
+    int last_box_x = -1, last_box_y = -1;
+    char last_push_dir = ' ';
+
     for (char step : lurd) {
         vector<char> moves = cur_real->get_legal_movements();
         int children = moves.size();
@@ -189,53 +194,53 @@ PathBranchingStats PathSimulator::compute_stats(const string& flat_initial_board
         stats.branching_real_max = max(stats.branching_real_max, children);
         stats.states++;
 
+        // --- NUEVO: CÁLCULO DE BOX LINES Y BOX CHANGES ---
+        // En Sokoban estándar, un empuje siempre se anota en mayúscula
+        if (isupper(step)) {
+            int px = -1, py = -1;
+            // 1. Encontrar al jugador antes de que ocurra el empuje
+            for (int y = 0; y < cur_real->h; ++y) {
+                for (int x = 0; x < cur_real->w; ++x) {
+                    if (cur_real->grid[y][x] == '@' || cur_real->grid[y][x] == '+') {
+                        px = x; py = y; break;
+                    }
+                }
+                if (px != -1) break;
+            }
+
+            int dx = 0, dy = 0;
+            if (step == 'U') { dx = 0; dy = -1; }
+            else if (step == 'D') { dx = 0; dy = 1; }
+            else if (step == 'L') { dx = -1; dy = 0; }
+            else if (step == 'R') { dx = 1; dy = 0; }
+
+            // 2. Coordenadas de la caja ANTES de ser empujada
+            int bx = px + dx;
+            int by = py + dy;
+
+            // 3. Evaluar identidad y vector de la caja
+            if (bx != last_box_x || by != last_box_y) {
+                // Es una caja físicamente distinta a la del último empuje
+                if (last_push_dir != ' ') {
+                    stats.box_changes++; // Solo cuenta si no es el primer empuje del nivel
+                }
+                stats.box_lines++; // Rompe la línea anterior
+            } else {
+                // Es exactamente la misma caja de antes
+                if (step != last_push_dir) {
+                    stats.box_lines++; // Misma caja, pero cambió de dirección
+                }
+            }
+
+            // 4. Actualizar la "memoria" a donde aterrizará la caja DESPUÉS del empuje
+            last_box_x = bx + dx;
+            last_box_y = by + dy;
+            last_push_dir = step;
+        }
+        // --------------------------------------------------
+
         cur_real = cur_real->apply_move(step);
         if (!cur_real) break;
-    }
-    if (stats.branching_real_min == 2147483647) {
-        stats.branching_real_min = 0;
-        stats.branching_real_max = 0;
-    }
-
-    // --- Compute Effective Branching ---
-    auto cur_eff = make_unique<SimState>(initial);
-    unordered_set<string> seen_children;
-
-    for (char step : lurd) {
-        if (!isalpha(step)) continue;
-
-        vector<char> moves = cur_eff->get_legal_movements();
-        int effective_this_state = 0;
-
-        for (char m : moves) {
-            stats.total_children_generated++;
-
-            auto child = cur_eff->apply_move(m);
-            if (!child) continue;
-
-            string key = child->to_string_key();
-
-            if (seen_children.count(key)) {
-                stats.repeated_nodes++;
-                continue;
-            }
-
-            seen_children.insert(key);
-
-            if (child->is_pattern2_deadlock()) {
-                stats.deadlocks++;
-                continue;
-            }
-
-            effective_this_state++;
-        }
-
-        stats.branching_effective_total_nodes += effective_this_state;
-        stats.branching_effective_min = min(stats.branching_effective_min, effective_this_state);
-        stats.branching_effective_max = max(stats.branching_effective_max, effective_this_state);
-
-        cur_eff = cur_eff->apply_move(step);
-        if (!cur_eff) break;
     }
 
     if (stats.branching_effective_min == 2147483647) {
