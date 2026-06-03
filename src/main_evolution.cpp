@@ -216,7 +216,7 @@ int main(int argc, char** argv)
         es.mu              = 5;
         es.lambda          = 10;  // igualado a GA para comparación justa
         es.maxEvaluations  = 500;
-        es.stagnationLimit = 15;
+        es.stagnationLimit = 5;
 
         std::cout << "RUNNING MU + LAMBDA ES\n";
         best = es.run(population);
@@ -267,6 +267,80 @@ int main(int argc, char** argv)
         << "FINAL BEST FITNESS = " << best.fitness << "\n"
         << "\nBEST BOARD:\n"
         << board_to_pretty_string(best.board) << "\n";
+
+
+    //
+    // ========================================================
+    // ANÁLISIS PROFUNDO DEL MEJOR INDIVIDUO (CAMPEÓN EVOLUTIVO)
+    // ========================================================
+    //
+
+    std::cout << "\nIniciando analisis profundo del campeon...\n";
+
+    std::string champion_level = board_to_string(best.board);
+    unsigned int champ_rows = best.board.size();
+    unsigned int champ_cols = best.board.empty() ? 0 : best.board[0].size();
+
+    // Crear un solver exclusivamente para el campeón
+    game_solver champ_solver(champion_level, champ_rows, champ_cols, 512);
+    std::vector<game_node> champ_solution;
+
+    // Ejecutar A* con Heurística Húngara y activando el simulador de Path (Flag = true)
+    auto champ_stats = champ_solver.test_template(Method::a_star, Heuristic::hungarian, champ_solution, true);
+
+    std::cout << "\n=========================================\n";
+    std::cout << "  DUMP COMPLETO DE STATS (TABLERO FINAL) \n";
+    std::cout << "=========================================\n";
+
+    // AÑADIDO: Imprimir el mapa visual del mejor individuo
+    std::cout << "[TABLERO GENERADO]\n";
+    std::cout << board_to_pretty_string(best.board) << "\n";
+
+    std::cout << "[STATUS Y SOLUCION]\n";
+    std::cout << "status:                  "
+              << (champ_stats.status == SolveStatus::SOLVED    ? "SOLVED"     :
+                  champ_stats.status == SolveStatus::TIMEOUT   ? "TIMEOUT"    :
+                                                                 "UNSOLVABLE")
+              << "\n";
+    std::cout << "lurd_path:               " << champ_stats.lurd_path << "\n";
+    std::cout << "runtime_sec:             " << champ_stats.runtime_sec << "\n";
+    std::cout << "pushes:                  " << champ_stats.pushes << "\n";
+    
+    std::cout << "\n[ESTADISTICAS DE BUSQUEDA A*]\n";
+    std::cout << "generated_states:        " << champ_stats.generated_states << "\n";
+    std::cout << "expanded_nodes:          " << champ_stats.expanded_nodes << "\n";
+    std::cout << "total_children:          " << champ_stats.total_children << "\n";
+    std::cout << "effective_children:      " << champ_stats.effective_children << "\n";
+    std::cout << "repeated_nodes:          " << champ_stats.repeated_nodes << "\n";
+    std::cout << "deadlocks:               " << champ_stats.deadlocks << "\n";
+    std::cout << "branching_real:          " << champ_stats.branching_real << "\n";
+    std::cout << "branching_effective:     " << champ_stats.branching_effective << "\n";
+    std::cout << "branching_classic:       " << champ_stats.branching_classic << "\n";
+    std::cout << "redundancy:              " << champ_stats.redundancy << "\n";
+    std::cout << "closed_list_length:      " << champ_stats.closed_list_length << "\n";
+
+    std::cout << "\n[ESTADISTICAS CALCULADAS DESDE LURD (SIMULADOR)]\n";
+    std::cout << "path_stats_calculated:   " << (champ_stats.path_stats_calculated ? "true" : "false") << "\n";
+
+    if (champ_stats.path_stats_calculated) {
+        std::cout << "states (pasos en path):  " << champ_stats.path_stats.states << "\n";
+        
+        std::cout << "branching_real_total_nodes:      " << champ_stats.path_stats.branching_real_total_nodes << "\n";
+        std::cout << "branching_real_min:              " << champ_stats.path_stats.branching_real_min << "\n";
+        std::cout << "branching_real_max:              " << champ_stats.path_stats.branching_real_max << "\n";
+        std::cout << "branching_real_avg:              " << champ_stats.path_stats.get_branching_real_avg() << "\n";
+        
+        std::cout << "branching_effective_total_nodes: " << champ_stats.path_stats.branching_effective_total_nodes << "\n";
+        std::cout << "branching_effective_min:         " << champ_stats.path_stats.branching_effective_min << "\n";
+        std::cout << "branching_effective_max:         " << champ_stats.path_stats.branching_effective_max << "\n";
+        std::cout << "branching_effective_avg:         " << champ_stats.path_stats.get_branching_effective_avg() << "\n";
+
+        std::cout << "total_children_generated:        " << champ_stats.path_stats.total_children_generated << "\n";
+        std::cout << "repeated_nodes:                  " << champ_stats.path_stats.repeated_nodes << "\n";
+        std::cout << "deadlocks:                       " << champ_stats.path_stats.deadlocks << "\n";
+        std::cout << "redundancy:                      " << champ_stats.path_stats.get_redundancy() << "\n";
+    }
+    std::cout << "=========================================\n";
 
     return 0;
 }
