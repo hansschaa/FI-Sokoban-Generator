@@ -8,14 +8,8 @@ class Evaluator
 public:
 
     FitnessType fitnessType =
-        FitnessType::PUSHES;
+        FitnessType::FO1_PUSHES; // Valor por defecto, puede ser cambiado antes de evaluar
 
     double evaluate(
         Individual& individual);
-
-private:
-
-    double computeEffectiveBranchingFactor(
-        double expanded,
-        double depth);
 };

@@ -55,31 +55,31 @@ int main(int argc, char** argv)
 
     FitnessType fitnessType;
 
-    if (fitness_arg == "pushes")
+    if (fitness_arg == "FO1" || fitness_arg == "pushes")
     {
-        fitnessType = FitnessType::PUSHES;
-        std::cout << "Fitness: PUSHES\n";
+        fitnessType = FitnessType::FO1_PUSHES;
+        std::cout << "Fitness: FO1 (Pushes)\n";
     }
-    else if (fitness_arg == "expanded")
+    else if (fitness_arg == "FO2" || fitness_arg == "astar_bf")
     {
-        fitnessType = FitnessType::EXPANDED_NODES;
-        std::cout << "Fitness: EXPANDED_NODES\n";
+        fitnessType = FitnessType::FO2_ASTAR_EFF_BF;
+        std::cout << "Fitness: FO2 (A* Effective Branching Factor)\n";
     }
-    else if (fitness_arg == "solution_length")
+    else if (fitness_arg == "FO3" || fitness_arg == "sol_bf")
     {
-        fitnessType = FitnessType::SOLUTION_LENGTH;
-        std::cout << "Fitness: SOLUTION_LENGTH\n";
+        fitnessType = FitnessType::FO3_SOL_EFF_BF;
+        std::cout << "Fitness: FO3 (Solution Effective Branching Factor)\n";
     }
-    else if (fitness_arg == "branching")
+    else if (fitness_arg == "FO4" || fitness_arg == "deadlocks")
     {
-        fitnessType = FitnessType::EFFECTIVE_BRANCHING_FACTOR;
-        std::cout << "Fitness: EFFECTIVE_BRANCHING_FACTOR\n";
+        fitnessType = FitnessType::FO4_DEADLOCKS;
+        std::cout << "Fitness: FO4 (Deadlocks)\n";
     }
     else
     {
         std::cerr
             << "Unknown fitness: \"" << fitness_arg << "\"\n"
-            << "Valid options: pushes | expanded | solution_length | branching\n";
+            << "Valid options: FO1 | FO2 | FO3 | FO4\n";
         return 1;
     }
 
@@ -296,54 +296,7 @@ int main(int argc, char** argv)
     std::cout << "[TABLERO GENERADO]\n";
     std::cout << board_to_pretty_string(best.board) << "\n";
 
-    std::cout << "[STATUS Y SOLUCION]\n";
-    std::cout << "status:                  "
-              << (champ_stats.status == SolveStatus::SOLVED    ? "SOLVED"     :
-                  champ_stats.status == SolveStatus::TIMEOUT   ? "TIMEOUT"    :
-                                                                 "UNSOLVABLE")
-              << "\n";
-    std::cout << "lurd_path:               " << champ_stats.lurd_path << "\n";
-    std::cout << "runtime_sec:             " << champ_stats.runtime_sec << "\n";
-    std::cout << "pushes:                  " << champ_stats.pushes << "\n";
-    
-    std::cout << "\n[ESTADISTICAS DE BUSQUEDA A*]\n";
-    std::cout << "generated_states:        " << champ_stats.generated_states << "\n";
-    std::cout << "expanded_nodes:          " << champ_stats.expanded_nodes << "\n";
-    std::cout << "total_children:          " << champ_stats.total_children << "\n";
-    std::cout << "effective_children:      " << champ_stats.effective_children << "\n";
-    std::cout << "repeated_nodes:          " << champ_stats.repeated_nodes << "\n";
-    std::cout << "deadlocks:               " << champ_stats.deadlocks << "\n";
-    std::cout << "branching_real:          " << champ_stats.branching_real << "\n";
-    std::cout << "branching_effective:     " << champ_stats.branching_effective << "\n";
-    std::cout << "branching_classic:       " << champ_stats.branching_classic << "\n";
-    std::cout << "redundancy:              " << champ_stats.redundancy << "\n";
-    std::cout << "closed_list_length:      " << champ_stats.closed_list_length << "\n";
-
-    std::cout << "\n[ESTADISTICAS CALCULADAS DESDE LURD (SIMULADOR)]\n";
-    std::cout << "path_stats_calculated:   " << (champ_stats.path_stats_calculated ? "true" : "false") << "\n";
-
-    if (champ_stats.path_stats_calculated) {
-        std::cout << "states (pasos en path):  " << champ_stats.path_stats.states << "\n";
-        
-        std::cout << "branching_real_total_nodes:      " << champ_stats.path_stats.branching_real_total_nodes << "\n";
-        std::cout << "branching_real_min:              " << champ_stats.path_stats.branching_real_min << "\n";
-        std::cout << "branching_real_max:              " << champ_stats.path_stats.branching_real_max << "\n";
-        std::cout << "branching_real_avg:              " << champ_stats.path_stats.get_branching_real_avg() << "\n";
-        
-        std::cout << "branching_effective_total_nodes: " << champ_stats.path_stats.branching_effective_total_nodes << "\n";
-        std::cout << "branching_effective_min:         " << champ_stats.path_stats.branching_effective_min << "\n";
-        std::cout << "branching_effective_max:         " << champ_stats.path_stats.branching_effective_max << "\n";
-        std::cout << "branching_effective_avg:         " << champ_stats.path_stats.get_branching_effective_avg() << "\n";
-
-        std::cout << "total_children_generated:        " << champ_stats.path_stats.total_children_generated << "\n";
-        std::cout << "repeated_nodes:                  " << champ_stats.path_stats.repeated_nodes << "\n";
-        std::cout << "deadlocks:                       " << champ_stats.path_stats.deadlocks << "\n";
-        std::cout << "redundancy:                      " << champ_stats.path_stats.get_redundancy() << "\n";
-    
-        std::cout << "box_lines:                       " << champ_stats.path_stats.box_lines << "\n";
-        std::cout << "box_changes:                     " << champ_stats.path_stats.box_changes << "\n";
-    }
-    std::cout << "=========================================\n";
+    print_solver_stats(champ_stats);
 
     return 0;
 }

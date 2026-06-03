@@ -2,8 +2,8 @@
 
 enum class FitnessType
 {
-    PUSHES,
-    EXPANDED_NODES,
-    SOLUTION_LENGTH,
-    EFFECTIVE_BRANCHING_FACTOR
+    FO1_PUSHES,           // (baseline) Empujes mínimos
+    FO2_ASTAR_EFF_BF,     // Branching factor efectivo promedio del A*
+    FO3_SOL_EFF_BF,       // Branching factor efectivo a lo largo de la solución (Requiere Simulador)
+    FO4_DEADLOCKS         // Cantidad de estados deadlock encontrados en la resolución
 };

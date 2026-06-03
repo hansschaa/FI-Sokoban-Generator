@@ -58,6 +58,9 @@ struct SolverStats {
     PathBranchingStats path_stats;
 };
 
+// AÑADIDO: Declaración de la función global para imprimir las stats
+void print_solver_stats(const SolverStats& stats);
+
 enum class Heuristic {
     simple,    
     hungarian  

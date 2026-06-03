@@ -4,92 +4,56 @@
 #include <cmath>
 #include <vector>
 
-double Evaluator::evaluate(
-    Individual& individual)
+double Evaluator::evaluate(Individual& individual)
 {
-    //
-    // BOARD → STRING
-    //
-    std::string level =
-        board_to_string(individual.board);
+    std::string level = board_to_string(individual.board);
+    unsigned int rows = individual.board.size();
+    unsigned int cols = individual.board[0].size();
 
-    unsigned int rows =
-        individual.board.size();
-
-    unsigned int cols =
-        individual.board[0].size();
-
-    //
-    // SOLVER
-    //
-    game_solver solver(
-        level,
-        rows,
-        cols,
-        512);
-
+    game_solver solver(level, rows, cols, 512);
     std::vector<game_node> solution;
 
-    auto stats =
-        solver.test_template(
-            Method::a_star,
-            solution);
+    // MAGIA AQUI: Solo activamos el simulador de path si el fitness es FO3
+    bool needs_path_simulator = (fitnessType == FitnessType::FO3_SOL_EFF_BF);
 
-    //
-    // UNSOLVABLE
-    //
-    if (stats.status !=
-        SolveStatus::SOLVED)
+    // Mandamos el booleano al solver
+    auto stats = solver.test_template(Method::a_star, solution, needs_path_simulator);
+
+    if (stats.status != SolveStatus::SOLVED)
     {
         individual.fitness = -1e9;
         return individual.fitness;
     }
 
-    //
-    // FITNESS
-    //
+    // EXTRAER EL FITNESS CORRECTO
     switch (fitnessType)
     {
-        case FitnessType::PUSHES:
-            individual.fitness =
-                stats.pushes;
+        case FitnessType::FO1_PUSHES:
+            individual.fitness = stats.pushes;
             break;
-        case FitnessType::EXPANDED_NODES:
-            individual.fitness =
-                stats.generated_states;
+            
+        case FitnessType::FO2_ASTAR_EFF_BF:
+            // Para MINIMIZAR el Branching Effectivo usando metaheurísticas 
+            // que MAXIMIZAN, invertimos el signo.
+            // (Ej: -1.2 es "mejor" que -2.5, guiando la evolución hacia la baja).
+            individual.fitness = -stats.branching_effective;
             break;
-        case FitnessType::EFFECTIVE_BRANCHING_FACTOR:
-            individual.fitness =
-                computeEffectiveBranchingFactor(
-                    stats.generated_states,
-                    solution.size());
+            
+        case FitnessType::FO3_SOL_EFF_BF:
+            if (stats.path_stats_calculated) {
+                individual.fitness = stats.path_stats.get_branching_effective_avg();
+            } else {
+                individual.fitness = 0.0; 
+            }
+            break;
+            
+        case FitnessType::FO4_DEADLOCKS:
+            individual.fitness = stats.deadlocks;
             break;
     }
 
     return individual.fitness;
 }
 
-double Evaluator::computeEffectiveBranchingFactor(
-    double expanded,
-    double depth)
-{
-    //
-    // SIMPLE APPROXIMATION
-    //
-    // expanded ≈ 1 + b + b² + ... + b^d
-    //
-    if (depth <= 1)
-    {
-        return -1e9;
-    }
-
-    if (expanded <= 0)
-    {
-        return -1e9;
-    }
-
-    double b =
-        pow(expanded, 1.0 / depth);
-
-    return b;
-}
+// Puedes borrar computeEffectiveBranchingFactor de este archivo ya que ahora
+// usaremos las métricas precisas reales que calcula game_solver y path_simulator.

@@ -4,6 +4,7 @@
 #include <chrono>
 #include <queue>      // Añadido para el BFS de reconstruct_lurd
 #include <string>     // Añadido para std::string
+#include <iostream>
 #include "game_solver.h"
 #include "constant.h"
 #include "locked.h"
@@ -11,6 +12,7 @@
 #include "solver_template.h"
 #include "mazesolver.h"
 #include "hungarian.h"
+
 
 using namespace constant;
 using namespace std;
@@ -677,4 +679,60 @@ SolverStats game_solver::test_template(
     vars_clear(init);
 
     return stats;
+}
+
+// AÑADIDO: Implementación del printer centralizado al FINAL de game_solver.cpp
+void print_solver_stats(const SolverStats& stats) {
+    std::cout << "\n=========================================\n";
+    std::cout << "        DUMP COMPLETO DE STATS           \n";
+    std::cout << "=========================================\n";
+
+    std::cout << "[STATUS Y SOLUCION]\n";
+    std::cout << "status:                  "
+              << (stats.status == SolveStatus::SOLVED    ? "SOLVED"     :
+                  stats.status == SolveStatus::TIMEOUT   ? "TIMEOUT"    :
+                                                           "UNSOLVABLE")
+              << "\n";
+    std::cout << "lurd_path:               " << stats.lurd_path << "\n";
+    std::cout << "runtime_sec:             " << stats.runtime_sec << "\n";
+    std::cout << "pushes:                  " << stats.pushes << "\n";
+    
+    std::cout << "\n[ESTADISTICAS DE BUSQUEDA A*]\n";
+    std::cout << "generated_states:        " << stats.generated_states << "\n";
+    std::cout << "expanded_nodes:          " << stats.expanded_nodes << "\n";
+    std::cout << "total_children:          " << stats.total_children << "\n";
+    std::cout << "effective_children:      " << stats.effective_children << "\n";
+    std::cout << "repeated_nodes:          " << stats.repeated_nodes << "\n";
+    std::cout << "deadlocks:               " << stats.deadlocks << "\n";
+    std::cout << "branching_real:          " << stats.branching_real << "\n";
+    std::cout << "branching_effective:     " << stats.branching_effective << "\n";
+    std::cout << "branching_classic:       " << stats.branching_classic << "\n";
+    std::cout << "redundancy:              " << stats.redundancy << "\n";
+    std::cout << "closed_list_length:      " << stats.closed_list_length << "\n";
+
+    std::cout << "\n[ESTADISTICAS CALCULADAS DESDE LURD (SIMULADOR)]\n";
+    std::cout << "path_stats_calculated:   " << (stats.path_stats_calculated ? "true" : "false") << "\n";
+
+    if (stats.path_stats_calculated) {
+        std::cout << "states (pasos en path):  " << stats.path_stats.states << "\n";
+        
+        std::cout << "box_lines:                       " << stats.path_stats.box_lines << "\n";
+        std::cout << "box_changes:                     " << stats.path_stats.box_changes << "\n";
+        
+        std::cout << "branching_real_total_nodes:      " << stats.path_stats.branching_real_total_nodes << "\n";
+        std::cout << "branching_real_min:              " << stats.path_stats.branching_real_min << "\n";
+        std::cout << "branching_real_max:              " << stats.path_stats.branching_real_max << "\n";
+        std::cout << "branching_real_avg:              " << stats.path_stats.get_branching_real_avg() << "\n";
+        
+        std::cout << "branching_effective_total_nodes: " << stats.path_stats.branching_effective_total_nodes << "\n";
+        std::cout << "branching_effective_min:         " << stats.path_stats.branching_effective_min << "\n";
+        std::cout << "branching_effective_max:         " << stats.path_stats.branching_effective_max << "\n";
+        std::cout << "branching_effective_avg:         " << stats.path_stats.get_branching_effective_avg() << "\n";
+
+        std::cout << "total_children_generated:        " << stats.path_stats.total_children_generated << "\n";
+        std::cout << "repeated_nodes:                  " << stats.path_stats.repeated_nodes << "\n";
+        std::cout << "deadlocks:                       " << stats.path_stats.deadlocks << "\n";
+        std::cout << "redundancy:                      " << stats.path_stats.get_redundancy() << "\n";
+    }
+    std::cout << "=========================================\n";
 }
