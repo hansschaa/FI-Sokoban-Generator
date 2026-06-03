@@ -4,7 +4,8 @@
 #include "repeat.h"
 #include "locked.h"
 #include "my_memory.h"
-#include "method.h"        // FIX: Method antes que cualquier uso suyo
+#include "method.h"        
+#include "path_simulator.h" // AÑADIDO: Simulador de Branching
 #include <string>
 #include <functional>
 #include <vector>
@@ -30,7 +31,7 @@ struct SolverStats {
 
     SolveStatus status;
 
-    std::string lurd_path; // Añadido para la secuencia LURD
+    std::string lurd_path;
 
     double runtime_sec = 0.0;
 
@@ -38,28 +39,28 @@ struct SolverStats {
 
     size_t generated_states = 0;
 
-    // Estadísticas de búsqueda
-
+    // Estadísticas de búsqueda originales A*
     long expanded_nodes = 0;
-
     long total_children = 0;
     long effective_children = 0;
-
     long repeated_nodes = 0;
     long deadlocks = 0;
 
     double branching_real = 0.0;
     double branching_effective = 0.0;
     double branching_classic = 0.0;
-
     double redundancy = 0.0;
 
     size_t closed_list_length = 0;
+
+    // AÑADIDO: Estadísticas calculadas desde la solución LURD
+    bool path_stats_calculated = false;
+    PathBranchingStats path_stats;
 };
 
 enum class Heuristic {
-    simple,    // suma individual vec[box.x][box.y] (original)
-    hungarian  // asignación óptima caja→objetivo (lower bound real)
+    simple,    
+    hungarian  
 };
 
 class game_solver {
@@ -81,25 +82,25 @@ private:
     void vars_init(game_node& input);
     void vars_clear(game_node& input);
 
-    // Contadores que se llenan durante la búsqueda (equivalentes a movesHistory de Java)
+    // Guardar mapa original para el simulador
+    std::string original_map_1d;
+
     long stat_expanded_nodes     = 0;
     long stat_total_children     = 0;
     long stat_effective_children = 0;
     long stat_repeated_nodes     = 0;
     long stat_deadlocks          = 0;
 
-    // Posiciones de objetivos, cacheadas en Astar_init() para la heurística Hungarian
     std::vector<point> goal_positions;
-
-    // dist_to_goal[g][x][y] = pushes mínimos de una caja en (x,y) al objetivo g
     std::vector<std::vector<std::vector<int>>> dist_to_goal;
 
 public:
     game_solver(std::string& game_map, unsigned int mm, unsigned int nn, int memval);
-    SolverStats test_template(Method method, Heuristic heuristic, std::vector<game_node>& solution);
+    
+    // AÑADIDO: Flag calc_path_branching por defecto a false
+    SolverStats test_template(Method method, Heuristic heuristic, std::vector<game_node>& solution, bool calc_path_branching = false);
 
-    // Sobrecarga para compatibilidad con código existente — usa heurística simple
-    SolverStats test_template(Method method, std::vector<game_node>& solution) {
-        return test_template(method, Heuristic::simple, solution);
+    SolverStats test_template(Method method, std::vector<game_node>& solution, bool calc_path_branching = false) {
+        return test_template(method, Heuristic::simple, solution, calc_path_branching);
     }
 };

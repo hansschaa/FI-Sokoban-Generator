@@ -30,6 +30,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/sokoban_solver.dir/src/main.cpp.o.d"
   "CMakeFiles/sokoban_solver.dir/src/my_memory.cpp.o"
   "CMakeFiles/sokoban_solver.dir/src/my_memory.cpp.o.d"
+  "CMakeFiles/sokoban_solver.dir/src/path_simulator.cpp.o"
+  "CMakeFiles/sokoban_solver.dir/src/path_simulator.cpp.o.d"
   "CMakeFiles/sokoban_solver.dir/src/point.cpp.o"
   "CMakeFiles/sokoban_solver.dir/src/point.cpp.o.d"
   "CMakeFiles/sokoban_solver.dir/src/repeat.cpp.o"

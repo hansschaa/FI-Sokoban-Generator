@@ -726,6 +726,39 @@ src/my_memory.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/my_memory.cpp.s
 .PHONY : src/my_memory.cpp.s
 
+src/path_simulator.o: src/path_simulator.cpp.o
+.PHONY : src/path_simulator.o
+
+# target to build an object file
+src/path_simulator.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/path_simulator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/path_simulator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/path_simulator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/path_simulator.cpp.o
+.PHONY : src/path_simulator.cpp.o
+
+src/path_simulator.i: src/path_simulator.cpp.i
+.PHONY : src/path_simulator.i
+
+# target to preprocess a source file
+src/path_simulator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/path_simulator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/path_simulator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/path_simulator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/path_simulator.cpp.i
+.PHONY : src/path_simulator.cpp.i
+
+src/path_simulator.s: src/path_simulator.cpp.s
+.PHONY : src/path_simulator.s
+
+# target to generate assembly for a file
+src/path_simulator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/path_simulator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/path_simulator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/path_simulator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/path_simulator.cpp.s
+.PHONY : src/path_simulator.cpp.s
+
 src/point.o: src/point.cpp.o
 .PHONY : src/point.o
 
@@ -858,6 +891,9 @@ help:
 	@echo "... src/my_memory.o"
 	@echo "... src/my_memory.i"
 	@echo "... src/my_memory.s"
+	@echo "... src/path_simulator.o"
+	@echo "... src/path_simulator.i"
+	@echo "... src/path_simulator.s"
 	@echo "... src/point.o"
 	@echo "... src/point.i"
 	@echo "... src/point.s"

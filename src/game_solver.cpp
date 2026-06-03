@@ -59,6 +59,7 @@ bool detect_legal::can_box_move(
 }
 
 game_solver::game_solver(string& game_map, unsigned int mm, unsigned int nn, int memval) {
+    original_map_1d = game_map; // AÑADIDO: Guardar string 1D para el simulador
     m = mm;
     n = nn;
     matrix0  = vector<vector<bool>>(mm, vector<bool>(nn, false));
@@ -522,7 +523,8 @@ static std::string reconstruct_lurd(const std::vector<game_node>& solution) {
 SolverStats game_solver::test_template(
     Method input,
     Heuristic heuristic_type,
-    std::vector<game_node>& solution
+    std::vector<game_node>& solution,
+    bool calc_path_branching
 ) {
 
     auto vec = Astar_init();
@@ -663,8 +665,13 @@ SolverStats game_solver::test_template(
         stats.status = SolveStatus::UNSOLVABLE;
     } else {
         stats.status = SolveStatus::SOLVED;
-        // AÑADIDO: Calcular la ruta LURD si el mapa fue resuelto
         stats.lurd_path = reconstruct_lurd(solution);
+        
+        // AÑADIDO: Si la flag es true, llamar al simulador
+        if (calc_path_branching && !stats.lurd_path.empty()) {
+            stats.path_stats = PathSimulator::compute_stats(original_map_1d, m, n, stats.lurd_path);
+            stats.path_stats_calculated = true;
+        }
     }
 
     vars_clear(init);
