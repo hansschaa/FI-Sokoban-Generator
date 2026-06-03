@@ -129,6 +129,9 @@ int main(int argc, char* argv[])
                                                            "UNSOLVABLE")
               << "\n";
 
+    // Añadido para imprimir la secuencia LURD
+    std::cout << "lurd_path:            " << stats.lurd_path           << "\n";
+
     std::cout << "pushes:               " << stats.pushes             << "\n";
     std::cout << "runtime_sec:          " << stats.runtime_sec        << "\n";
     std::cout << "generated_states:     " << stats.generated_states   << "\n";

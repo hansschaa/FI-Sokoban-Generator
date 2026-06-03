@@ -30,6 +30,8 @@ struct SolverStats {
 
     SolveStatus status;
 
+    std::string lurd_path; // Añadido para la secuencia LURD
+
     double runtime_sec = 0.0;
 
     int pushes = 0;

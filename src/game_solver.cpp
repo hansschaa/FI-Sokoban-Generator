@@ -2,6 +2,8 @@
 #include <cstdio>
 #include <cmath>
 #include <chrono>
+#include <queue>      // Añadido para el BFS de reconstruct_lurd
+#include <string>     // Añadido para std::string
 #include "game_solver.h"
 #include "constant.h"
 #include "locked.h"
@@ -426,6 +428,97 @@ void game_solver::set_lambda_function(){
 
 }
 
+// AÑADIDO: Función auxiliar para reconstruir LURD antes de test_template
+static std::string reconstruct_lurd(const std::vector<game_node>& solution) {
+    if (solution.size() <= 1) return "";
+
+    std::string full_path = "";
+
+    // Direcciones estándar y sus caracteres (Arriba, Abajo, Izquierda, Derecha)
+    point dirs[4] = {point(-1, 0), point(1, 0), point(0, -1), point(0, 1)};
+    char move_chars[4] = {'u', 'd', 'l', 'r'};
+    char push_chars[4] = {'U', 'D', 'L', 'R'};
+
+    // FIX: Iteramos en reversa porque el solver entrega la ruta [Meta ... Inicio]
+    for (int i = (int)solution.size() - 1; i >= 1; i--) {
+        const game_node& a = solution[i];     // Estado antes de empujar
+        const game_node& b = solution[i-1];   // Estado después de empujar
+
+        // 1. Identificar qué caja se movió comparando los sets
+        point box_from = point(-1, -1);
+        for (auto p : a.box_list) {
+            if (b.box_list.find(p) == b.box_list.end()) {
+                box_from = p; 
+                break;
+            }
+        }
+        point box_to = point(-1, -1);
+        for (auto p : b.box_list) {
+            if (a.box_list.find(p) == a.box_list.end()) {
+                box_to = p; 
+                break;
+            }
+        }
+
+        // 2. Determinar el vector de empuje (delta) y el caracter
+        point delta = point(box_to.x - box_from.x, box_to.y - box_from.y);
+        int dir_idx = -1;
+        for (int d = 0; d < 4; d++) {
+            if (dirs[d].x == delta.x && dirs[d].y == delta.y) {
+                dir_idx = d; break;
+            }
+        }
+
+        char push_char = push_chars[dir_idx];
+        
+        // La posición desde la cual el jugador debe empujar
+        point player_target = point(box_from.x - delta.x, box_from.y - delta.y);
+
+        // 3. Obtener matriz de colisiones para caminar
+        std::vector<std::vector<char>> grid;
+        a.get_matrix0(grid); // 'a' es el estado actual donde la caja todavía no se mueve
+
+        // 4. BFS para calcular los movimientos del jugador hasta la posición de empuje
+        std::string player_moves = "";
+        if (!(a.person_point == player_target)) {
+            std::queue<std::pair<point, std::string>> q;
+            std::vector<std::vector<bool>> visited(grid.size(), std::vector<bool>(grid[0].size(), false));
+
+            q.push({a.person_point, ""});
+            visited[a.person_point.x][a.person_point.y] = true;
+
+            while (!q.empty()) {
+                auto curr = q.front().first;
+                auto path = q.front().second;
+                q.pop();
+
+                if (curr == player_target) {
+                    player_moves = path;
+                    break;
+                }
+
+                for (int d = 0; d < 4; ++d) {
+                    point next_p = point(curr.x + dirs[d].x, curr.y + dirs[d].y);
+                    
+                    if (next_p.x >= 0 && next_p.x < (int)grid.size() && 
+                        next_p.y >= 0 && next_p.y < (int)grid[0].size()) {
+                        
+                        if (!visited[next_p.x][next_p.y] && grid[next_p.x][next_p.y] == constant::BLANK) {
+                            visited[next_p.x][next_p.y] = true;
+                            q.push({next_p, path + move_chars[d]});
+                        }
+                    }
+                }
+            }
+        }
+
+        // 5. Concatenar camino del jugador + empuje de caja
+        full_path += player_moves + push_char;
+    }
+
+    return full_path;
+}
+
 SolverStats game_solver::test_template(
     Method input,
     Heuristic heuristic_type,
@@ -570,6 +663,8 @@ SolverStats game_solver::test_template(
         stats.status = SolveStatus::UNSOLVABLE;
     } else {
         stats.status = SolveStatus::SOLVED;
+        // AÑADIDO: Calcular la ruta LURD si el mapa fue resuelto
+        stats.lurd_path = reconstruct_lurd(solution);
     }
 
     vars_clear(init);

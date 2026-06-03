@@ -134,31 +134,14 @@ CMakeFiles/sokoban_solver.dir/src/game_solver.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/timex.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
- /usr/include/c++/15/bits/parse_numbers.h \
- /home/hanss/automatic-sokoban-solver/include/game_solver.h \
- /home/hanss/automatic-sokoban-solver/include/game_node.h \
- /home/hanss/automatic-sokoban-solver/include/point.h \
+ /usr/include/c++/15/bits/parse_numbers.h /usr/include/c++/15/queue \
  /usr/include/c++/15/vector /usr/include/c++/15/bits/stl_vector.h \
  /usr/include/c++/15/bits/stl_bvector.h \
  /usr/include/c++/15/bits/functional_hash.h \
  /usr/include/c++/15/bits/hash_bytes.h \
- /usr/include/c++/15/bits/vector.tcc /usr/include/c++/15/set \
- /usr/include/c++/15/bits/stl_tree.h \
- /usr/include/c++/15/ext/aligned_buffer.h \
- /usr/include/c++/15/bits/node_handle.h \
- /usr/include/c++/15/bits/stl_set.h \
- /usr/include/c++/15/bits/stl_multiset.h \
- /usr/include/c++/15/bits/erase_if.h \
- /home/hanss/automatic-sokoban-solver/include/repeat.h \
- /usr/include/c++/15/unordered_set \
- /usr/include/c++/15/bits/unordered_set.h \
- /usr/include/c++/15/bits/hashtable.h \
- /usr/include/c++/15/bits/hashtable_policy.h \
- /usr/include/c++/15/bits/enable_special_members.h \
- /home/hanss/automatic-sokoban-solver/include/locked.h \
- /home/hanss/automatic-sokoban-solver/include/my_memory.h \
- /home/hanss/automatic-sokoban-solver/include/method.h \
- /usr/include/c++/15/string /usr/include/c++/15/bits/stringfwd.h \
+ /usr/include/c++/15/bits/vector.tcc /usr/include/c++/15/bits/stl_heap.h \
+ /usr/include/c++/15/bits/stl_queue.h /usr/include/c++/15/string \
+ /usr/include/c++/15/bits/stringfwd.h \
  /usr/include/c++/15/bits/char_traits.h \
  /usr/include/c++/15/bits/postypes.h /usr/include/c++/15/cwchar \
  /usr/include/wchar.h /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
@@ -181,16 +164,32 @@ CMakeFiles/sokoban_solver.dir/src/game_solver.cpp.o: \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
  /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
  /usr/include/c++/15/bits/charconv.h \
- /usr/include/c++/15/bits/basic_string.tcc /usr/include/c++/15/functional \
- /usr/include/c++/15/bits/std_function.h /usr/include/c++/15/typeinfo \
- /usr/include/c++/15/unordered_map \
+ /usr/include/c++/15/bits/basic_string.tcc \
+ /home/hanss/automatic-sokoban-solver/include/game_solver.h \
+ /home/hanss/automatic-sokoban-solver/include/game_node.h \
+ /home/hanss/automatic-sokoban-solver/include/point.h \
+ /usr/include/c++/15/set /usr/include/c++/15/bits/stl_tree.h \
+ /usr/include/c++/15/ext/aligned_buffer.h \
+ /usr/include/c++/15/bits/node_handle.h \
+ /usr/include/c++/15/bits/stl_set.h \
+ /usr/include/c++/15/bits/stl_multiset.h \
+ /usr/include/c++/15/bits/erase_if.h \
+ /home/hanss/automatic-sokoban-solver/include/repeat.h \
+ /usr/include/c++/15/unordered_set \
+ /usr/include/c++/15/bits/unordered_set.h \
+ /usr/include/c++/15/bits/hashtable.h \
+ /usr/include/c++/15/bits/hashtable_policy.h \
+ /usr/include/c++/15/bits/enable_special_members.h \
+ /home/hanss/automatic-sokoban-solver/include/locked.h \
+ /home/hanss/automatic-sokoban-solver/include/my_memory.h \
+ /home/hanss/automatic-sokoban-solver/include/method.h \
+ /usr/include/c++/15/functional /usr/include/c++/15/bits/std_function.h \
+ /usr/include/c++/15/typeinfo /usr/include/c++/15/unordered_map \
  /usr/include/c++/15/bits/unordered_map.h /usr/include/c++/15/array \
  /usr/include/c++/15/compare \
  /home/hanss/automatic-sokoban-solver/include/constant.h \
  /home/hanss/automatic-sokoban-solver/include/solver_template.h \
- /usr/include/c++/15/queue /usr/include/c++/15/bits/stl_heap.h \
- /usr/include/c++/15/bits/stl_queue.h /usr/include/c++/15/algorithm \
- /usr/include/c++/15/bits/stl_algo.h \
+ /usr/include/c++/15/algorithm /usr/include/c++/15/bits/stl_algo.h \
  /usr/include/c++/15/bits/algorithmfwd.h \
  /usr/include/c++/15/bits/uniform_int_dist.h \
  /usr/include/c++/15/bits/stl_tempbuf.h \
