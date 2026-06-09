@@ -4,7 +4,7 @@ CONFIG_ID=$1
 INSTANCE_ID=$2
 SEED=$3
 INSTANCE=$4
-shift 5
+shift 4
 
 EXE="../build/irace_generator"
 ALGO="ES"
