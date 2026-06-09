@@ -10,9 +10,24 @@ EXE="../build/irace_generator"
 ALGO="ES"
 FO="FO1"
 
+# --- SISTEMA DE RASTREO EN TIEMPO REAL ---
+# Este archivo guardará el historial de lo que irace ejecuta segundo a segundo
+LOG_FILE="ejecuciones_vivas.log"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 🚀 Probando Config: $CONFIG_ID | Instancia: $INSTANCE | Parámetros: $@" >> $LOG_FILE
+# ------------------------------------------
+
 # Ejecutamos y dejamos que el error se imprima en la terminal (2>&1)
 OUTPUT=$($EXE $ALGO $FO $SEED $INSTANCE "$@" 2>&1)
 EXIT_CODE=$?
+
+# --- REGISTRO DEL RESULTADO EN EL LOG ---
+if [ $EXIT_CODE -eq 0 ]; then
+    echo "    -> ✅ ÉXITO. Fitness devuelto: $OUTPUT" >> $LOG_FILE
+else
+    echo "    -> 🚨 COLAPSO/ERROR. Código de salida: $EXIT_CODE" >> $LOG_FILE
+    echo "    -> Mensaje: $OUTPUT" >> $LOG_FILE
+fi
+# ----------------------------------------
 
 if [ $EXIT_CODE -ne 0 ]; then
     echo "EL C++ FALLÓ CON EL CÓDIGO: $EXIT_CODE"

@@ -142,15 +142,15 @@ void game_solver::vars_clear(game_node& input){
         tp->~game_node();
         game_mem.deallocate((void *)tp);
     }
-    //
-    // CLEAR THE HASH SET
-    // Avoids dangling pointers into the now-reset pool
-    //
     rpt.zobrist_hash.clear();
-    // FIX: antes no se llamaba game_mem.clear(), dejando el pool con bloques
-    // marcados como usados. La siguiente llamada a vars_init + solve podía
-    // quedarse sin bloques disponibles en el pool prematuramente.
     game_mem.clear();
+
+    // --- ARREGLO DE LEAK: Vaciar y liberar capacidad de vectores anidados ---
+    goal_positions.clear();
+    goal_positions.shrink_to_fit();
+    
+    dist_to_goal.clear();
+    dist_to_goal.shrink_to_fit(); // Esto destruye todas las matrices 3D del Heap inmediatamente
 }
 
 // FIX: antes recibía game_node por valor, copiando el set<point> completo
@@ -536,8 +536,6 @@ SolverStats game_solver::test_template(
     auto heuristic = [&](const game_node* a, const game_node*) {
 
         if (heuristic_type == Heuristic::hungarian) {
-            // Asignación óptima caja→objetivo: cada cost[i][j] es la distancia
-            // real de la caja i al objetivo j (no al más cercano).
             int num_boxes = (int)a->box_list.size();
             int num_goals = (int)goal_positions.size();
             int sz = std::max(num_boxes, num_goals);
@@ -552,7 +550,6 @@ SolverStats game_solver::test_template(
             return h.solve();
         }
         else {
-            // Heurística simple: suma individual (original)
             int f = 0;
             for (auto i = a->box_list.begin(); i != a->box_list.end(); i++)
                 f += vec[i->x][i->y];
@@ -614,7 +611,6 @@ SolverStats game_solver::test_template(
     stats.generated_states =
         rpt.zobrist_hash.size();
 
-    // Contadores directos (equivalentes directos de movesHistory en Java)
     stats.expanded_nodes     = stat_expanded_nodes;
     stats.total_children     = stat_total_children;
     stats.effective_children = stat_effective_children;
@@ -622,11 +618,6 @@ SolverStats game_solver::test_template(
     stats.deadlocks          = stat_deadlocks;
     stats.closed_list_length = rpt.zobrist_hash.size();
 
-    // Métricas derivadas — mismo cálculo que Java en forwardSearch
-    // branchingReal    = totalChildren        / expandedNodes
-    // branchingEffective = totalEffectiveChildren / expandedNodes
-    // branchingClassic = expandedNodes ^ (1 / depth)
-    // redundancy       = totalChildren / repeatedNodes  (0 si no hubo repetidos)
     if (stat_expanded_nodes > 0) {
         stats.branching_real      = (double)stat_total_children     / stat_expanded_nodes;
         stats.branching_effective = (double)stat_effective_children / stat_expanded_nodes;
@@ -641,24 +632,20 @@ SolverStats game_solver::test_template(
         ? (double)stat_total_children / stat_repeated_nodes
         : 0.0;
 
-    // FIX: antes se repetía if(input==0) ... elif(input==1) ... para did_timeout.
-    // Ahora se consulta did_timeout() de cada solver solo si fue el que se usó,
-    // evitando llamar did_timeout() sobre solvers nunca ejecutados.
     bool timed_out =
         (input == Method::a_star && gsolver0.did_timeout()) ||
         (input == Method::dfs    && gsolver1.did_timeout()) ||
         (input == Method::bfs    && gsolver2.did_timeout());
 
-    // FIX: los nodos en la open list al momento del timeout no están en
-    // zobrist_hash, así que vars_clear() no los destruía → leak del set<point>
-    // interno de cada game_node. Se drenan aquí antes de limpiar el pool.
-    if (timed_out && input == Method::a_star) {
+    // --- SOLUCIÓN DE LEAK CRÍTICO: LIMPIEZA UNIVERSAL DE NODOS HUÉRFANOS (OPEN LIST) ---
+    if (input == Method::a_star) {
         for (const game_node* n : gsolver0.orphan_nodes) {
-            if (rpt.zobrist_hash.count(n) == 0) { // no destruir dos veces
+            if (n != nullptr && rpt.zobrist_hash.count(n) == 0) { // Evita destruir duplicados de Closed List
                 n->~game_node();
                 game_mem.deallocate(const_cast<game_node*>(n));
             }
         }
+        gsolver0.orphan_nodes.clear(); // Vacía el vector de soporte para liberar punteros internos
     }
 
     if (timed_out) {
@@ -669,7 +656,6 @@ SolverStats game_solver::test_template(
         stats.status = SolveStatus::SOLVED;
         stats.lurd_path = reconstruct_lurd(solution);
         
-        // AÑADIDO: Si la flag es true, llamar al simulador
         if (calc_path_branching && !stats.lurd_path.empty()) {
             stats.path_stats = PathSimulator::compute_stats(original_map_1d, m, n, stats.lurd_path);
             stats.path_stats_calculated = true;

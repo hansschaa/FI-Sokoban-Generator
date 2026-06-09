@@ -22,10 +22,9 @@ std::vector<std::vector<char>> load_board(const std::string& filename)
     std::string line;
     size_t max_cols = 0;
     
-    // 1. Leer todas las líneas y buscar cuál es el ancho máximo
     while (std::getline(file, line)) {
-        if (!line.empty() && line.back() == '\r') line.pop_back(); // Limpiar Windows
-        if (line.empty()) continue; // Ignorar líneas en blanco
+        if (!line.empty() && line.back() == '\r') line.pop_back(); 
+        if (line.empty()) continue; 
         
         lines.push_back(line);
         if (line.size() > max_cols) {
@@ -35,21 +34,16 @@ std::vector<std::vector<char>> load_board(const std::string& filename)
     
     if (lines.empty()) throw std::runtime_error("Error: El archivo del tablero esta vacio.");
     
-    // 2. Construir la matriz garantizando que sea un rectángulo perfecto
     std::vector<std::vector<char>> board;
     for (const auto& l : lines) {
         std::vector<char> row(l.begin(), l.end());
-        
-        // RELLENO MÁGICO: Si la fila es más corta que max_cols, la rellena con espacios
         row.resize(max_cols, ' '); 
-        
         board.push_back(row);
     }
     
     return board;
 }
 
-// Función auxiliar para leer parámetros inyectados por irace (ej: --maxEvals 3000)
 char* getCmdOption(char ** begin, char ** end, const std::string & option) {
     char ** itr = std::find(begin, end, option);
     if (itr != end && ++itr != end) {
@@ -71,7 +65,7 @@ int main(int argc, char** argv)
     int seed = std::stoi(argv[3]);
     std::string board_file = argv[4];
 
-    // 1. Inicializar semilla (Crítico para que irace evalúe de forma consistente)
+    // 1. Inicializar semilla dinámica para irace
     srand(seed);
 
     // 2. Parsear la Función Objetivo
@@ -85,25 +79,22 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    // 3. Leer parámetros dinámicos de calibración
+    // 3. Leer parámetros dinámicos de calibración de irace
     int maxEvals = 3000;
     int stagLimit = 200;
 
     if (char* val = getCmdOption(argv, argv + argc, "--maxEvals")) maxEvals = std::stoi(val);
     if (char* val = getCmdOption(argv, argv + argc, "--stagLimit")) stagLimit = std::stoi(val);
 
-    // 4. Configurar el tablero inicial (Shell)
+    // 4. Configurar el tablero inicial (Shell) y aplicar Flood Fill
     std::vector<std::vector<char>> shell;
     try {
         shell = load_board(board_file);
         
-        // --- INICIO DEL PARCHE: INUNDACIÓN EXTERIOR (FLOOD FILL) ---
-        // Convierte el espacio muerto exterior en muros sólidos ('#')
         int rows = shell.size();
         int cols = rows > 0 ? shell[0].size() : 0;
         std::vector<std::pair<int, int>> stack;
         
-        // 1. Agregar todos los bordes de la matriz a la pila
         for(int r = 0; r < rows; r++) { 
             stack.push_back(std::make_pair(r, 0)); 
             stack.push_back(std::make_pair(r, cols - 1)); 
@@ -113,23 +104,19 @@ int main(int argc, char** argv)
             stack.push_back(std::make_pair(rows - 1, c)); 
         }
         
-        // 2. Pintar hacia adentro hasta chocar con los muros reales
         while(!stack.empty()) {
             int r = stack.back().first;
             int c = stack.back().second;
             stack.pop_back();
             
-            // Si estamos dentro de los límites y es un espacio vacío...
             if(r >= 0 && r < rows && c >= 0 && c < cols && shell[r][c] == ' ') {
-                shell[r][c] = '#'; // Lo solidificamos
+                shell[r][c] = '#';
                 stack.push_back(std::make_pair(r + 1, c));
                 stack.push_back(std::make_pair(r - 1, c));
                 stack.push_back(std::make_pair(r, c + 1));
                 stack.push_back(std::make_pair(r, c - 1));
             }
         }
-        // --- FIN DEL PARCHE ---
-
     } catch (const std::exception& e) {
         std::cerr << e.what() << "\n";
         return 1;
@@ -140,55 +127,36 @@ int main(int argc, char** argv)
     evaluator.fitnessType = fitnessType;
     const int POP_SIZE = 10;
 
-    // 5. Generar población inicial
-    std::cout << "DEBUG: Iniciando generacion de poblacion..." << std::endl;
+    // 5. Generar población inicial optimizada (Sin doble evaluación ni logs de consola masivos)
     for (int i = 0; i < POP_SIZE; i++)
     {
-        std::cout << "DEBUG: Generando individuo " << i << "..." << std::endl;
         bool valid = false;
         int attempts = 0;
 
-        while (!valid && attempts < 100) // Reducido a 100 para evitar bucles infinitos
+        while (!valid && attempts < 100) 
         {
             auto board = shell;
             
             try {
-                // Colocación con control estricto
                 placeRandom(board, '@');
                 placeRandom(board, '$');
                 placeRandom(board, '.');
 
-                std::string level = board_to_string(board);
-                unsigned int rows = board.size();
-                unsigned int cols = rows > 0 ? board[0].size() : 0;
+                Individual ind;
+                ind.board = board;
+                
+                // El evaluador se encarga de instanciar el solver y aplicar el A* una sola vez
+                double fit = evaluator.evaluate(ind);
 
-                std::cout << "  -> Creando solver..." << std::endl;
-                game_solver solver(level, rows, cols, 512);
-                
-                std::vector<game_node> solution;
-                
-                std::cout << "  -> Resolviendo A* para este nivel:" << std::endl;
-                std::cout << level << std::endl; // <-- ESTO ES LO NUEVO
-                
-                auto stats = solver.test_template(Method::a_star, solution);
-                
-                std::cout << "  -> Status devuelto: " << (int)stats.status << std::endl;
-
-                if (stats.status == SolveStatus::SOLVED)
+                // Si el tablero tuvo solución, el fitness será válido (mayor al flag de error -1e9)
+                if (fit > -1e8)
                 {
-                    Individual ind;
-                    ind.board   = board;
-                    
-                    std::cout << "  -> Calculando fitness..." << std::endl;
-                    ind.fitness = evaluator.evaluate(ind);
-                    
+                    ind.fitness = fit;
                     population.push_back(ind);
                     valid = true;
-                    std::cout << "DEBUG: Individuo " << i << " generado con exito." << std::endl;
                 }
             } catch (const std::exception& e) {
-                // Si placeRandom lanza el error de "TABLERO LLENO", lo capturamos aquí
-                // Lo silenciamos temporalmente para no saturar la consola, a menos que sea error crítico
+                // Captura controlada de fallos de inicialización geométrica
             }
             attempts++;
         }
@@ -198,8 +166,10 @@ int main(int argc, char** argv)
             return 1;
         }
     }
+
     Individual best;
 
+    // 6. Ejecución silenciosa de las Metaheurísticas
     if (algorithm == "ES")
     {
         EvolutionStrategy es;
@@ -208,12 +178,10 @@ int main(int argc, char** argv)
         
         if (char* val = getCmdOption(argv, argv + argc, "--mu")) es.mu = std::stoi(val);
         if (char* val = getCmdOption(argv, argv + argc, "--lambda")) es.lambda = std::stoi(val);
-        // NUEVO:
         if (char* val = getCmdOption(argv, argv + argc, "--mutRate")) es.mutationRate = std::stod(val);
 
         best = es.run(population);
     }
-
     else if (algorithm == "GA")
     {
         GeneticAlgorithm ga;
@@ -222,19 +190,17 @@ int main(int argc, char** argv)
         
         if (char* val = getCmdOption(argv, argv + argc, "--offspring")) ga.offspringSize = std::stoi(val);
         if (char* val = getCmdOption(argv, argv + argc, "--maxFailed")) ga.maxFailedAttempts = std::stoi(val);
-        // NUEVO:
         if (char* val = getCmdOption(argv, argv + argc, "--mutRate")) ga.mutationRate = std::stod(val);
 
         best = ga.run(population);
     }
-
     else if (algorithm == "SA")
     {
         SimulatedAnnealing sa;
         sa.initialTemperature = 100.0;
         sa.coolingRate        = 0.01;
-        sa.maxEvaluations     = maxEvals;   // <- Inyectado
-        sa.stagnationLimit    = stagLimit;  // <- Inyectado
+        sa.maxEvaluations     = maxEvals;   
+        sa.stagnationLimit    = stagLimit;  
 
         Individual initial = *std::max_element(
             population.begin(), population.end(),
@@ -244,10 +210,7 @@ int main(int argc, char** argv)
         best = sa.run(initial);
     }
 
-    // 7. SALIDA ESTRICTA PARA IRACE (Solo el Costo)
-    // Irace por defecto busca MINIMIZAR el output devuelto por consola. 
-    // Como tus metaheurísticas están hechas para MAXIMIZAR, invertimos el signo aquí.
-    // (Ej: Si el mejor fitness es 35 pushes, devolvemos -35 para que irace busque bajarlo más).
+    // 7. SALIDA ESTRICTA PARA IRACE (Solo el costo de minimización)
     std::cout << -best.fitness << std::endl;
 
     return 0;

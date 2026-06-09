@@ -8,10 +8,6 @@
 // Minimiza la suma total de costos en una matriz n×n cuadrada.
 // Si hay más objetivos que cajas (o viceversa), se rellena con ceros.
 //
-// Uso:
-//   Hungarian h(cost_matrix);   // cost_matrix[i][j] = costo caja i → objetivo j
-//   int total = h.solve();       // retorna el costo mínimo total
-//
 class Hungarian {
 public:
     explicit Hungarian(const std::vector<std::vector<int>>& cost) {
@@ -24,6 +20,12 @@ public:
         for (int i = 0; i < rows; i++)
             for (int j = 0; j < cols; j++)
                 a[i][j] = cost[i][j];
+    }
+
+    // --- OPTIMIZACIÓN DE MEMORIA: DESTRUCTOR EXPLICÍTO ---
+    ~Hungarian() {
+        a.clear();
+        a.shrink_to_fit(); // Devuelve la memoria del Heap de forma inmediata
     }
 
     int solve() {
@@ -77,7 +79,6 @@ public:
             } while (j0);
         }
 
-        // Suma de costos de la asignación óptima
         int total = 0;
         for (int j = 1; j <= n; j++)
             if (p[j] != 0)

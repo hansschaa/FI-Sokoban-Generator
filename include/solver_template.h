@@ -18,7 +18,7 @@ public:
     using Node = NodeType;
     using Result = ResultType;
 
-    // Nodos que quedaron en la open list sin expandir al momento del timeout.
+    // Nodos que quedaron en la open list sin expandir al momento de terminar.
     // El caller debe destruirlos y desalocarlos antes del siguiente run.
     std::vector<const Node*> orphan_nodes;
 
@@ -33,7 +33,8 @@ public:
     std::function<void(const Node*)> mark_visited,
     std::function<bool(const Node*, const Node*)> is_equal,
     std::function<int(const Node*, const Node*)> heuristic = nullptr,
-    double max_seconds = 60.0
+    double max_seconds = 60.0,
+    size_t max_nodes = 50000
     ) {
         if (is_equal(start, goal)) {
             if constexpr (std::is_same_v<Result, bool>) {
@@ -75,17 +76,15 @@ public:
         }
 
         auto start_time = std::chrono::high_resolution_clock::now();
-
+        size_t generated_count = 0;
         while (!container.empty()) {
 
             auto current_time = std::chrono::high_resolution_clock::now();
             double elapsed = std::chrono::duration<double>(current_time - start_time).count();
 
-            if (elapsed > max_seconds) {
+            if (elapsed > max_seconds || generated_count > max_nodes) {
                 timeout_reached = true;
-                // Drenar la open list: los nodos que quedaron sin expandir
-                // fueron alojados en el pool pero no están en zobrist_hash,
-                // así que el caller no puede destruirlos sin esta lista.
+                // Drenar la open list en caso de TIMEOUT
                 if constexpr (alg == Method::a_star) {
                     while (!container.empty()) {
                         auto [f, g, node] = container.top();
@@ -114,6 +113,11 @@ public:
 
             if constexpr (alg == Method::a_star) {
                 if (is_visited(current)) {
+                    // --- EL PARCHE DEFINITIVO ---
+                    // Este nodo es un duplicado ya visitado. Al descartarlo con 'continue',
+                    // sale de la Open List pero no entra a la Closed List. 
+                    // DEBEMOS llamar a su destructor explícitamente para liberar el heap de su std::set.
+                    const_cast<Node*>(current)->~Node();
                     continue;
                 }
                 mark_visited(current);
@@ -122,7 +126,7 @@ public:
             bool found = false;
 
             get_neighbors(current, [&](const Node* neighbor) {
-
+                generated_count++;
                 if constexpr (alg == Method::a_star) {
                     if constexpr (!std::is_same_v<Result, bool>) {
                         if (parent.find(neighbor) == parent.end()) {
@@ -156,12 +160,30 @@ public:
             });
 
             if (found) {
+                // --- ARREGLO DE LEAK: Drenar la open list antes de salir con éxito (SOLVED) ---
+                if constexpr (alg == Method::a_star) {
+                    while (!container.empty()) {
+                        auto [f, g, node] = container.top();
+                        container.pop();
+                        orphan_nodes.push_back(node);
+                    }
+                }
+                
                 if constexpr (std::is_same_v<Result, bool>) {
                     return true;
                 }
                 else if constexpr (std::is_same_v<Result, std::vector<Node>>) {
                     return get_path(start, goal, parent);
                 }
+            }
+        }
+
+        // --- ARREGLO DE LEAK: Si la lista se vacía sin éxito (UNSOLVABLE), asegurar el vaciado ---
+        if constexpr (alg == Method::a_star) {
+            while (!container.empty()) {
+                auto [f, g, node] = container.top();
+                container.pop();
+                orphan_nodes.push_back(node);
             }
         }
 
