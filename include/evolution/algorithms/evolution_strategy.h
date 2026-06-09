@@ -30,6 +30,8 @@ public:
 
     int lambda = 60;
 
+    double mutationRate = 1.0;
+
     //
     // TERMINATION
     //

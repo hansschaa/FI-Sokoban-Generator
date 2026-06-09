@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
+#include <stdexcept> 
 #include "pair.h"
 
 //
@@ -86,27 +87,24 @@ inline int count_free_cells(
     return count;
 }
 
-//
-// RANDOM PLACEMENT
-//
-
-inline void placeRandom(
-    std::vector<std::vector<char>>& board,
-    char c)
+inline void placeRandom(std::vector<std::vector<char>>& board, char c)
 {
-    while (true)
-    {
-        int x =
-            rand() % board.size();
-
-        int y =
-            rand() % board[0].size();
-
-        if (board[x][y] == ' ')
-        {
-            board[x][y] = c;
-
-            return;
+    // 1. Buscamos todos los espacios vacíos que existen en el tablero
+    std::vector<std::pair<int, int>> vacios;
+    for (size_t r = 0; r < board.size(); r++) {
+        for (size_t c_col = 0; c_col < board[r].size(); c_col++) {
+            if (board[r][c_col] == ' ') {
+                vacios.push_back({(int)r, (int)c_col});
+            }
         }
     }
+
+    // 2. Si no hay espacios vacíos, lanzamos la excepción que atrapará main_irace.cpp
+    if (vacios.empty()) {
+        throw std::runtime_error(std::string("TABLERO LLENO al intentar poner: ") + c);
+    }
+
+    // 3. Elegimos uno al azar de los disponibles
+    int idx = rand() % vacios.size();
+    board[vacios[idx].first][vacios[idx].second] = c;
 }

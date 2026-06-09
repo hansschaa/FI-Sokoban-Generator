@@ -26,6 +26,8 @@ public:
     int stagnationLimit = 20;
 
     int maxFailedAttempts = 10;
+    
+    double mutationRate = 1.0;
 
     //
     // STATE

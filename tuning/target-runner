@@ -1,0 +1,24 @@
+#!/bin/bash
+
+CONFIG_ID=$1
+INSTANCE_ID=$2
+SEED=$3
+INSTANCE=$4
+shift 5
+
+EXE="../build/irace_generator"
+ALGO="ES"
+FO="FO1"
+
+# Ejecutamos y dejamos que el error se imprima en la terminal (2>&1)
+OUTPUT=$($EXE $ALGO $FO $SEED $INSTANCE "$@" 2>&1)
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+    echo "EL C++ FALLÓ CON EL CÓDIGO: $EXIT_CODE"
+    echo "MENSAJE DE ERROR DEL C++:"
+    echo "$OUTPUT"
+    exit 1
+fi
+
+echo "$OUTPUT"

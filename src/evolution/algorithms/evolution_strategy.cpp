@@ -88,47 +88,27 @@ Individual EvolutionStrategy::run(
             // RANDOM MUTATION
             //
 
-            int mutationType =
-                rand() % 3;
-
-            bool success = false;
-
-            if (mutationType == 0)
+            // AÑADIDO: Chequeo de probabilidad de mutación
+            double r_mut = (double)rand() / RAND_MAX;
+            
+            if (r_mut <= mutationRate) 
             {
-                success =
-                    moveMutation.apply(child);
+                int mutationType = rand() % 3;
+                bool success = false;
 
-                std::cout
-                    << "MOVE MUTATION\n";
+                if (mutationType == 0) {
+                    success = moveMutation.apply(child);
+                } else if (mutationType == 1) {
+                    success = addMutation.apply(child);
+                } else {
+                    success = removeMutation.apply(child);
+                }
+
+                if (!success) {
+                    continue;
+                }
             }
-            else if (mutationType == 1)
-            {
-                success =
-                    addMutation.apply(child);
-
-                std::cout
-                    << "ADD MUTATION\n";
-            }
-            else
-            {
-                success =
-                    removeMutation.apply(child);
-
-                std::cout
-                    << "REMOVE MUTATION\n";
-            }
-
-            //
-            // INVALID MUTATION
-            //
-
-            if (!success)
-            {
-                std::cout
-                    << "INVALID MUTATION\n";
-
-                continue;
-            }
+            // Si r_mut > mutationRate, el child es un clon exacto del padre.
 
             //
             // EVALUATION

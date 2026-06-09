@@ -1,0 +1,6 @@
+# Nombre    Flag de consola    Tipo  Rango
+maxEvals    "--maxEvals "      i     (1000, 5000)
+stagLimit   "--stagLimit "     i     (50, 500)
+mu          "--mu "            i     (2, 20)
+lambda      "--lambda "        i     (25, 60)
+mutRate     "--mutRate "       r     (0.01, 1.00)

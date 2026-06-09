@@ -164,13 +164,19 @@ Individual GeneticAlgorithm::run(
             // MUTATION
             //
 
-            bool success =
-                applyRandomMutation(child);
-
-            if (!success)
+            // AÑADIDO: Chequeo de probabilidad de mutación
+            double r_mut = (double)rand() / RAND_MAX;
+            
+            if (r_mut <= mutationRate) 
             {
-                continue;
+                bool success = applyRandomMutation(child);
+
+                if (!success)
+                {
+                    continue; // Si decide mutar y falla, descartamos el intento
+                }
             }
+            // Si r_mut > mutationRate, el child simplemente no muta y pasa tal cual (producto del crossover)
 
             //
             // EVALUATION

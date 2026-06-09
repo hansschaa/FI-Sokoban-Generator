@@ -1,0 +1,14 @@
+# Archivos de configuracion
+parameterFile = "parameters.txt"
+targetRunner = "./target-runner"
+
+# Ubicacion de los tableros de calibracion
+trainInstancesDir = "Instances"
+
+# Presupuesto (Budget)
+# maxExperiments es la cantidad maxima de veces que irace ejecutara tu C++.
+# 1000 es un buen numero inicial para un estudio piloto rapido.
+maxExperiments = 1000
+
+# Semilla global para repetibilidad del experimento de irace
+seed = 123456
