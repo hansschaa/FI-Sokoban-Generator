@@ -33,9 +33,10 @@ struct SolverStats {
 
     std::string lurd_path;
 
-    double runtime_sec = 0.0;
+    double runtime_ms = 0.0;
 
     int pushes = 0;
+    int moves;
 
     size_t generated_states = 0;
 

@@ -59,4 +59,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/evolution_generator.dir/DependInfo.cmake"
   "CMakeFiles/test_solver.dir/DependInfo.cmake"
   "CMakeFiles/irace_generator.dir/DependInfo.cmake"
+  "CMakeFiles/batch_solver.dir/DependInfo.cmake"
   )

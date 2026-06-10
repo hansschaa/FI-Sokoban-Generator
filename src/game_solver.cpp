@@ -528,13 +528,15 @@ SolverStats game_solver::test_template(
     std::vector<game_node>& solution,
     bool calc_path_branching
 ) {
+    // 1. INICIAMOS EL TIMER AQUÍ (Contabiliza el setup de la heurística y la memoria)
+    auto t_start = std::chrono::high_resolution_clock::now();
+    auto t_end = t_start; // Se sobreescribirá en el instante exacto del éxito
+    bool goal_found = false;
 
     auto vec = Astar_init();
-
     vars_init(init);
 
     auto heuristic = [&](const game_node* a, const game_node*) {
-
         if (heuristic_type == Heuristic::hungarian) {
             int num_boxes = (int)a->box_list.size();
             int num_goals = (int)goal_positions.size();
@@ -557,59 +559,45 @@ SolverStats game_solver::test_template(
         }
     };
 
+    // 2. EL CRONÓMETRO ESPÍA: Detiene el tiempo en el instante de la victoria
+    is_equal = [&t_end, &goal_found](const game_node* a, const game_node*) -> bool {
+        if (a->game_over()) {
+            if (!goal_found) { // Capturar solo la primera vez que se toca la meta
+                t_end = std::chrono::high_resolution_clock::now();
+                goal_found = true;
+            }
+            return true;
+        }
+        return false;
+    };
+
     Solver_template<vector<game_node>, game_node, Method::a_star> gsolver0;
     Solver_template<vector<game_node>, game_node, Method::dfs> gsolver1;
     Solver_template<vector<game_node>, game_node, Method::bfs> gsolver2;
 
-    auto t1 = chrono::high_resolution_clock::now();
-
-    if (input == Method::a_star)
-    {
-        solution = gsolver0.solve(
-            &init,
-            nullptr,
-            get_neighbors,
-            is_visited,
-            mark_visited,
-            is_equal,
-            heuristic
-        );
+    if (input == Method::a_star) {
+        solution = gsolver0.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal, heuristic);
     }
-    else if (input == Method::dfs)
-    {
-        solution = gsolver1.solve(
-            &init,
-            nullptr,
-            get_neighbors,
-            is_visited,
-            mark_visited,
-            is_equal
-        );
+    else if (input == Method::dfs) {
+        solution = gsolver1.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal);
     }
-    else if (input == Method::bfs)
-    {
-        solution = gsolver2.solve(
-            &init,
-            nullptr,
-            get_neighbors,
-            is_visited,
-            mark_visited,
-            is_equal
-        );
+    else if (input == Method::bfs) {
+        solution = gsolver2.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal);
     }
 
-    auto t2 = chrono::high_resolution_clock::now();
+    // 3. Si no lo resolvió (Timeout o Unsolvable), el tiempo total es hasta este punto
+    if (!goal_found) {
+        t_end = std::chrono::high_resolution_clock::now();
+    }
 
     SolverStats stats;
 
-    stats.runtime_sec =
-        chrono::duration<double>(t2 - t1).count();
+    // 4. GUARDAR EN MILISEGUNDOS EXACTOS
+    // Asegúrate de cambiar `runtime_sec` a `runtime_ms` en la cabecera del struct SolverStats
+    stats.runtime_ms = std::chrono::duration<double, std::milli>(t_end - t_start).count();
 
-    stats.pushes =
-        solution.size();
-
-    stats.generated_states =
-        rpt.zobrist_hash.size();
+    stats.pushes = solution.size();
+    stats.generated_states = rpt.zobrist_hash.size();
 
     stats.expanded_nodes     = stat_expanded_nodes;
     stats.total_children     = stat_total_children;
@@ -637,17 +625,18 @@ SolverStats game_solver::test_template(
         (input == Method::dfs    && gsolver1.did_timeout()) ||
         (input == Method::bfs    && gsolver2.did_timeout());
 
-    // --- SOLUCIÓN DE LEAK CRÍTICO: LIMPIEZA UNIVERSAL DE NODOS HUÉRFANOS (OPEN LIST) ---
+    // Limpieza de Nodos Huérfanos
     if (input == Method::a_star) {
         for (const game_node* n : gsolver0.orphan_nodes) {
-            if (n != nullptr && rpt.zobrist_hash.count(n) == 0) { // Evita destruir duplicados de Closed List
+            if (n != nullptr && rpt.zobrist_hash.count(n) == 0) { 
                 n->~game_node();
                 game_mem.deallocate(const_cast<game_node*>(n));
             }
         }
-        gsolver0.orphan_nodes.clear(); // Vacía el vector de soporte para liberar punteros internos
+        gsolver0.orphan_nodes.clear(); 
     }
 
+    // Evaluación del Estado Final (EL TIEMPO YA ESTÁ CONGELADO)
     if (timed_out) {
         stats.status = SolveStatus::TIMEOUT;
     } else if (solution.empty()) {
@@ -655,6 +644,9 @@ SolverStats game_solver::test_template(
     } else {
         stats.status = SolveStatus::SOLVED;
         stats.lurd_path = reconstruct_lurd(solution);
+        
+        // --- AÑADIDO: Contabilizar movimientos totales ---
+        stats.moves = stats.lurd_path.length(); 
         
         if (calc_path_branching && !stats.lurd_path.empty()) {
             stats.path_stats = PathSimulator::compute_stats(original_map_1d, m, n, stats.lurd_path);
@@ -667,7 +659,7 @@ SolverStats game_solver::test_template(
     return stats;
 }
 
-// AÑADIDO: Implementación del printer centralizado al FINAL de game_solver.cpp
+// Implementación del printer centralizado al FINAL de game_solver.cpp
 void print_solver_stats(const SolverStats& stats) {
     std::cout << "\n=========================================\n";
     std::cout << "        DUMP COMPLETO DE STATS           \n";
@@ -680,8 +672,9 @@ void print_solver_stats(const SolverStats& stats) {
                                                            "UNSOLVABLE")
               << "\n";
     std::cout << "lurd_path:               " << stats.lurd_path << "\n";
-    std::cout << "runtime_sec:             " << stats.runtime_sec << "\n";
+    std::cout << "runtime_ms:              " << stats.runtime_ms << "\n";
     std::cout << "pushes:                  " << stats.pushes << "\n";
+    std::cout << "moves (LURD length):     " << stats.moves << "\n"; // <--- AÑADIDO
     
     std::cout << "\n[ESTADISTICAS DE BUSQUEDA A*]\n";
     std::cout << "generated_states:        " << stats.generated_states << "\n";

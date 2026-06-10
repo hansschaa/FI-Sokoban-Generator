@@ -67,13 +67,13 @@ file(GLOB_RECURSE MY_SRC
 # Remove main files to avoid duplicate symbols
 #
 
-# Remove main files to avoid duplicate symbols
 list(REMOVE_ITEM MY_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_benchmark.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_evolution.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_test_solver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_irace.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_batch.cpp     # <- MODIFICADO: Evita conflicto en los demas binarios
 )
 
 #
@@ -119,6 +119,7 @@ add_executable(
 #
 # IRace generator executable
 #
+
 add_executable(
     irace_generator
     src/main_irace.cpp
@@ -126,16 +127,26 @@ add_executable(
 )
 
 #
+# Batch solver executable (Procesamiento por lotes .sok)
+#
+
+add_executable(
+    batch_solver
+    src/main_batch.cpp                                  # <- MODIFICADO: Añadido nuevo binario batch
+    ${MY_SRC}
+)
+
+#
 # Common compiler flags
 #
 
-# Common compiler flags
 foreach(target
     sokoban_solver
     solver_benchmark
     evolution_generator
     test_solver
     irace_generator
+    batch_solver                                        # <- MODIFICADO: Añadido al bucle de optimizacion
 )
     target_compile_options(
         ${target}

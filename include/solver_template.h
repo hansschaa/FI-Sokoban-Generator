@@ -33,8 +33,8 @@ public:
     std::function<void(const Node*)> mark_visited,
     std::function<bool(const Node*, const Node*)> is_equal,
     std::function<int(const Node*, const Node*)> heuristic = nullptr,
-    double max_seconds = 60.0,
-    size_t max_nodes = 50000
+    double max_seconds = 120.0,
+    size_t max_nodes = 500000
     ) {
         if (is_equal(start, goal)) {
             if constexpr (std::is_same_v<Result, bool>) {
@@ -82,7 +82,7 @@ public:
             auto current_time = std::chrono::high_resolution_clock::now();
             double elapsed = std::chrono::duration<double>(current_time - start_time).count();
 
-            if (elapsed > max_seconds || generated_count > max_nodes) {
+            if (elapsed > max_seconds){ //|| generated_count > max_nodes) {
                 timeout_reached = true;
                 // Drenar la open list en caso de TIMEOUT
                 if constexpr (alg == Method::a_star) {

@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
 
     cout << "board=" << boardfile << endl;
     cout << "algorithm=" << alg << endl;
-    cout << "runtime_sec=" << stats.runtime_sec << endl;
+    cout << "runtime_ms=" << stats.runtime_ms << endl;
     cout << "solution_length=" << stats.pushes << endl;
     cout << "explored_states=" << stats.generated_states << endl;
     cout << "status=";
