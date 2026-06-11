@@ -923,6 +923,45 @@ src/path_simulator.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/path_simulator.cpp.s
 .PHONY : src/path_simulator.cpp.s
 
+src/penalty.o: src/penalty.cpp.o
+.PHONY : src/penalty.o
+
+# target to build an object file
+src/penalty.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/penalty.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/penalty.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/penalty.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/penalty.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/irace_generator.dir/build.make CMakeFiles/irace_generator.dir/src/penalty.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/penalty.cpp.o
+.PHONY : src/penalty.cpp.o
+
+src/penalty.i: src/penalty.cpp.i
+.PHONY : src/penalty.i
+
+# target to preprocess a source file
+src/penalty.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/penalty.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/penalty.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/penalty.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/penalty.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/irace_generator.dir/build.make CMakeFiles/irace_generator.dir/src/penalty.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/penalty.cpp.i
+.PHONY : src/penalty.cpp.i
+
+src/penalty.s: src/penalty.cpp.s
+.PHONY : src/penalty.s
+
+# target to generate assembly for a file
+src/penalty.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/penalty.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/penalty.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/penalty.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/penalty.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/irace_generator.dir/build.make CMakeFiles/irace_generator.dir/src/penalty.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/penalty.cpp.s
+.PHONY : src/penalty.cpp.s
+
 src/point.o: src/point.cpp.o
 .PHONY : src/point.o
 
@@ -1078,6 +1117,9 @@ help:
 	@echo "... src/path_simulator.o"
 	@echo "... src/path_simulator.i"
 	@echo "... src/path_simulator.s"
+	@echo "... src/penalty.o"
+	@echo "... src/penalty.i"
+	@echo "... src/penalty.s"
 	@echo "... src/point.o"
 	@echo "... src/point.i"
 	@echo "... src/point.s"

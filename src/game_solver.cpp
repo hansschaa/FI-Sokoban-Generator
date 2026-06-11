@@ -13,7 +13,6 @@
 #include "mazesolver.h"
 #include "hungarian.h"
 
-
 using namespace constant;
 using namespace std;
 
@@ -121,6 +120,8 @@ game_solver::game_solver(string& game_map, unsigned int mm, unsigned int nn, int
     game_mem.init(sizeof(game_node), memval * 1024 * 1024 / sizeof(game_node));
     constant::maze_mp.init(sizeof(point), mm * nn * 4);
     init = game_node(box_point_start,person_start);
+    lk.init();
+    penalty_solver = Penalty(mm, nn);
     set_lambda_function();
 
 }
@@ -252,19 +253,6 @@ vector<point> game_solver::get_legal_point(vector<vector<char>>& vec, point p) {
 
 // ---------------------------------------------------------------------------
 // reverse_push_bfs: BFS inverso desde un único objetivo.
-//
-// Complejidad: O(celdas × 4) por objetivo, frente a O(celdas × BFS_completo)
-// del enfoque anterior basado en get_nums2.
-//
-// Modelo del push inverso:
-//   Push normal  : jugador en (box - dir) empuja caja de box a box + dir.
-//   Push inverso : la caja vino de box_prev = box - dir;
-//                  el jugador estaba en box_prev - dir = box - 2*dir.
-//   Estado BFS   : (pos_caja, dirección_del_push) — 4 estados por celda.
-//
-// Admisibilidad: se verifica solo geometría de muros (no alcanzabilidad real
-// del jugador). Esto puede subestimar el costo real, lo que mantiene la
-// heurística admisible (nunca sobreestima → A* sigue siendo óptimo).
 // ---------------------------------------------------------------------------
 static void reverse_push_bfs(
     const point& goal,
@@ -336,10 +324,6 @@ static void reverse_push_bfs(
 
 // ---------------------------------------------------------------------------
 // Astar_init — versión optimizada con BFS inverso.
-//
-// Antes: O(G × C × BFS_completo) — para un tablero 10×10 con 4 objetivos
-//        esto equivalía a ~400 BFS completos solo en la inicialización.
-// Ahora: O(G × C × 4) — un único BFS inverso por objetivo.
 // ---------------------------------------------------------------------------
 vector<vector<int>> game_solver::Astar_init() {
     vector<vector<int>> result(m, vector<int>(n, 0));
@@ -363,6 +347,8 @@ vector<vector<int>> game_solver::Astar_init() {
             dist_to_goal[g]
         );
     }
+
+    penalty_solver.init(goal_positions, dist_to_goal, lk.get_side_point());
 
     // Tabla simple: mínimo entre objetivos (para heurística simple).
     for (int i = 0; i < m; i++) {
@@ -407,7 +393,32 @@ void game_solver::set_lambda_function(){
                         vector<vector<char>> temp_matrix2;
                         temp_box2->get_matrix0(temp_matrix2);
 
-                        if (lk.is_locked(new_box_point, temp_matrix2)) {
+                        // --- INTEGRACIÓN DE DETECCIÓN DE DEADLOCKS ---
+                        bool is_deadlocked = false;
+
+                        if (enable_advanced_deadlocks) {
+                            // 1. Chequeo básico (O(1))
+                            bool basic_lock = lk.is_locked(new_box_point, temp_matrix2);
+                            bool freeze_lock = false;
+                            bool bipartite_lock = false;
+
+                            // 2. Chequeo Freeze Geométrico (Recursivo, rápido)
+                            if (!basic_lock) {
+                                freeze_lock = lk.is_freeze_deadlock(new_box_point, temp_matrix2);
+                            }
+
+                            // 3. Chequeo Bipartito Húngaro (Costoso, solo se ejecuta si los otros fallan)
+                            if (!basic_lock && !freeze_lock) {
+                                bipartite_lock = is_bipartite_deadlock(*temp_box2);
+                            }
+
+                            is_deadlocked = basic_lock || freeze_lock || bipartite_lock;
+                        } else {
+                            // Modo FO4: Solo poda los básicos evidentes para poder contar las trampas complejas
+                            is_deadlocked = lk.is_locked(new_box_point, temp_matrix2);
+                        }
+
+                        if (is_deadlocked) {
                             stat_deadlocks++;           // Java: deadlocksCount++
                             temp_box2->~game_node();
                             game_mem.deallocate(temp_box2);
@@ -427,11 +438,10 @@ void game_solver::set_lambda_function(){
 
     is_equal = [](const game_node* a, const game_node*) -> bool {
         return a->game_over();
-    };//todo:实际只用来判断终点，但终点和普通节点判断逻辑不同
-
+    };
 }
 
-// AÑADIDO: Función auxiliar para reconstruir LURD antes de test_template
+// Función auxiliar para reconstruir LURD antes de test_template
 static std::string reconstruct_lurd(const std::vector<game_node>& solution) {
     if (solution.size() <= 1) return "";
 
@@ -549,7 +559,10 @@ SolverStats game_solver::test_template(
                     cost[i][j] = dist_to_goal[j][it->x][it->y];
 
             Hungarian h(cost);
-            return h.solve();
+            int min_cost = h.solve();
+
+            int penalty_cost = penalty_solver.calculate_penalty(a->box_list);
+            return min_cost >= 1000 ? min_cost : min_cost + penalty_cost;
         }
         else {
             int f = 0;
@@ -593,7 +606,6 @@ SolverStats game_solver::test_template(
     SolverStats stats;
 
     // 4. GUARDAR EN MILISEGUNDOS EXACTOS
-    // Asegúrate de cambiar `runtime_sec` a `runtime_ms` en la cabecera del struct SolverStats
     stats.runtime_ms = std::chrono::duration<double, std::milli>(t_end - t_start).count();
 
     stats.pushes = solution.size();
@@ -636,7 +648,7 @@ SolverStats game_solver::test_template(
         gsolver0.orphan_nodes.clear(); 
     }
 
-    // Evaluación del Estado Final (EL TIEMPO YA ESTÁ CONGELADO)
+    // Evaluación del Estado Final
     if (timed_out) {
         stats.status = SolveStatus::TIMEOUT;
     } else if (solution.empty()) {
@@ -645,7 +657,7 @@ SolverStats game_solver::test_template(
         stats.status = SolveStatus::SOLVED;
         stats.lurd_path = reconstruct_lurd(solution);
         
-        // --- AÑADIDO: Contabilizar movimientos totales ---
+        // Contabilizar movimientos totales
         stats.moves = stats.lurd_path.length(); 
         
         if (calc_path_branching && !stats.lurd_path.empty()) {
@@ -659,7 +671,6 @@ SolverStats game_solver::test_template(
     return stats;
 }
 
-// Implementación del printer centralizado al FINAL de game_solver.cpp
 void print_solver_stats(const SolverStats& stats) {
     std::cout << "\n=========================================\n";
     std::cout << "        DUMP COMPLETO DE STATS           \n";
@@ -674,7 +685,7 @@ void print_solver_stats(const SolverStats& stats) {
     std::cout << "lurd_path:               " << stats.lurd_path << "\n";
     std::cout << "runtime_ms:              " << stats.runtime_ms << "\n";
     std::cout << "pushes:                  " << stats.pushes << "\n";
-    std::cout << "moves (LURD length):     " << stats.moves << "\n"; // <--- AÑADIDO
+    std::cout << "moves (LURD length):     " << stats.moves << "\n";
     
     std::cout << "\n[ESTADISTICAS DE BUSQUEDA A*]\n";
     std::cout << "generated_states:        " << stats.generated_states << "\n";
@@ -714,4 +725,31 @@ void print_solver_stats(const SolverStats& stats) {
         std::cout << "redundancy:                      " << stats.path_stats.get_redundancy() << "\n";
     }
     std::cout << "=========================================\n";
+}
+
+// ==============================================================================
+// DETECCIÓN DE BIPARTITE DEADLOCK (ALGORITMO HÚNGARO)
+// ==============================================================================
+bool game_solver::is_bipartite_deadlock(const game_node& node) {
+    int num_boxes = (int)node.box_list.size();
+    int num_goals = (int)goal_positions.size();
+    
+    // Matriz cuadrada requerida por el Algoritmo Húngaro
+    int sz = std::max(num_boxes, num_goals);
+    vector<vector<int>> cost(sz, vector<int>(sz, 0));
+
+    int i = 0;
+    for (auto it = node.box_list.begin(); it != node.box_list.end(); ++it, ++i) {
+        for (int j = 0; j < num_goals; j++) {
+            // Utilizamos la tabla de distancias invertidas que ya precalculaste
+            cost[i][j] = dist_to_goal[j][it->x][it->y];
+        }
+    }
+
+    Hungarian h(cost);
+    double min_cost = h.solve();
+
+    // Si el húngaro devuelve un coste altísimo (1000 es el INF de tu dist_to_goal),
+    // es físicamente imposible que todas las cajas lleguen a una meta distinta.
+    return min_cost >= 1000.0;
 }

@@ -18,6 +18,7 @@ batch_solver: \
   CMakeFiles/batch_solver.dir/src/locked.cpp.o \
   CMakeFiles/batch_solver.dir/src/my_memory.cpp.o \
   CMakeFiles/batch_solver.dir/src/path_simulator.cpp.o \
+  CMakeFiles/batch_solver.dir/src/penalty.cpp.o \
   CMakeFiles/batch_solver.dir/src/point.cpp.o \
   CMakeFiles/batch_solver.dir/src/repeat.cpp.o \
   /usr/lib/gcc/x86_64-linux-gnu/15/libstdc++.so \
@@ -85,6 +86,8 @@ CMakeFiles/batch_solver.dir/src/locked.cpp.o:
 CMakeFiles/batch_solver.dir/src/my_memory.cpp.o:
 
 CMakeFiles/batch_solver.dir/src/path_simulator.cpp.o:
+
+CMakeFiles/batch_solver.dir/src/penalty.cpp.o:
 
 CMakeFiles/batch_solver.dir/src/point.cpp.o:
 

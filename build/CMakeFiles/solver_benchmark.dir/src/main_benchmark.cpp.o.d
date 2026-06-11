@@ -221,6 +221,7 @@ CMakeFiles/solver_benchmark.dir/src/main_benchmark.cpp.o: \
  /usr/include/c++/15/bits/stl_heap.h \
  /usr/include/c++/15/bits/uniform_int_dist.h \
  /usr/include/c++/15/pstl/glue_algorithm_defs.h \
+ /home/hanss/automatic-sokoban-solver/include/penalty.h \
  /usr/include/c++/15/functional /usr/include/c++/15/bits/std_function.h \
  /usr/include/c++/15/unordered_map \
  /usr/include/c++/15/bits/unordered_map.h /usr/include/c++/15/array \

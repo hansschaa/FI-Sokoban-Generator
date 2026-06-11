@@ -18,6 +18,7 @@ solver_benchmark: \
   CMakeFiles/solver_benchmark.dir/src/locked.cpp.o \
   CMakeFiles/solver_benchmark.dir/src/my_memory.cpp.o \
   CMakeFiles/solver_benchmark.dir/src/path_simulator.cpp.o \
+  CMakeFiles/solver_benchmark.dir/src/penalty.cpp.o \
   CMakeFiles/solver_benchmark.dir/src/point.cpp.o \
   CMakeFiles/solver_benchmark.dir/src/repeat.cpp.o \
   /usr/lib/gcc/x86_64-linux-gnu/15/libstdc++.so \
@@ -85,6 +86,8 @@ CMakeFiles/solver_benchmark.dir/src/locked.cpp.o:
 CMakeFiles/solver_benchmark.dir/src/my_memory.cpp.o:
 
 CMakeFiles/solver_benchmark.dir/src/path_simulator.cpp.o:
+
+CMakeFiles/solver_benchmark.dir/src/penalty.cpp.o:
 
 CMakeFiles/solver_benchmark.dir/src/point.cpp.o:
 

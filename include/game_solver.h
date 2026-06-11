@@ -6,6 +6,7 @@
 #include "my_memory.h"
 #include "method.h"        
 #include "path_simulator.h" // AÑADIDO: Simulador de Branching
+#include "penalty.h"
 #include <string>
 #include <functional>
 #include <vector>
@@ -62,6 +63,7 @@ struct SolverStats {
 // AÑADIDO: Declaración de la función global para imprimir las stats
 void print_solver_stats(const SolverStats& stats);
 
+
 enum class Heuristic {
     simple,    
     hungarian  
@@ -98,8 +100,19 @@ private:
     std::vector<point> goal_positions;
     std::vector<std::vector<std::vector<int>>> dist_to_goal;
 
+    // --- NUEVO: Método Bipartito ---
+    bool is_bipartite_deadlock(const game_node& node);
+
+    // --- NUEVO: Resolvedor de Penalizaciones ---
+    Penalty penalty_solver;
+
 public:
     game_solver(std::string& game_map, unsigned int mm, unsigned int nn, int memval);
+
+    // --- NUEVO: FLAG METODOLÓGICO PARA EXPERIMENTOS ---
+    // true: Poda agresiva (Súper rápido, ideal para FO1, FO2, FO3)
+    // false: Solo poda básica (Lento, obligatorio para contar FO4 Deadlocks)
+    bool enable_advanced_deadlocks = false;
     
     // AÑADIDO: Flag calc_path_branching por defecto a false
     SolverStats test_template(Method method, Heuristic heuristic, std::vector<game_node>& solution, bool calc_path_branching = false);

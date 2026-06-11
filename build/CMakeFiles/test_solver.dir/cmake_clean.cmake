@@ -32,6 +32,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/test_solver.dir/src/my_memory.cpp.o.d"
   "CMakeFiles/test_solver.dir/src/path_simulator.cpp.o"
   "CMakeFiles/test_solver.dir/src/path_simulator.cpp.o.d"
+  "CMakeFiles/test_solver.dir/src/penalty.cpp.o"
+  "CMakeFiles/test_solver.dir/src/penalty.cpp.o.d"
   "CMakeFiles/test_solver.dir/src/point.cpp.o"
   "CMakeFiles/test_solver.dir/src/point.cpp.o.d"
   "CMakeFiles/test_solver.dir/src/repeat.cpp.o"

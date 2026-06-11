@@ -199,3 +199,86 @@ bool locked::is_locked(point& box, vector<vector<char>>& matrix_with_box) {
     if (around.empty()) { return false; }
     return locked_double(matrix_with_box, box, around[0]);
 }
+
+// ==============================================================================
+// DETECCIÓN DE FREEZE DEADLOCK (GEOMÉTRICO)
+// ==============================================================================
+
+// Helper local para evitar dependencias extra
+static bool is_visited_local(const point& p, const vector<point>& visited) {
+    for (const auto& v : visited) {
+        if (v.x == p.x && v.y == p.y) return true;
+    }
+    return false;
+}
+
+bool locked::is_freeze_deadlock(const point& box, const vector<vector<char>>& matrix_with_box) {
+    vector<point> visited;
+    
+    if (check_box_frozen_rec(box, matrix_with_box, visited)) {
+        // Si está congelada y NO está sobre una meta, es deadlock irreversible
+        if (end_vec[box.x][box.y] == false) {
+            return true; 
+        }
+    }
+    return false;
+}
+
+bool locked::is_axis_blocked(point box, int dx, int dy, const vector<vector<char>>& matrix, vector<point>& visited) {
+    int px = box.x + dx;
+    int py = box.y + dy;
+    int nx = box.x - dx;
+    int ny = box.y - dy;
+
+    // 1. Si cualquiera de los extremos del eje está fuera del mapa o es un muro,
+    // el eje está completamente bloqueado (no se puede empujar hacia un muro,
+    // y tampoco se puede empujar desde el lado del muro porque el jugador no cabe).
+    if (px < 0 || px >= m || py < 0 || py >= n || matrix[px][py] == WALL) {
+        return true;
+    }
+    if (nx < 0 || nx >= m || ny < 0 || ny >= n || matrix[nx][ny] == WALL) {
+        return true;
+    }
+
+    // 2. Si ambos lados son casillas de deadlock simple, tampoco se puede empujar hacia ningún lado viable
+    if (side_point[px][py] && side_point[nx][ny]) {
+        return true;
+    }
+
+    // 3. Si hay una caja en el lado positivo, el eje está bloqueado si esa caja está congelada
+    if (matrix[px][py] == BOX) {
+        point next_box(px, py);
+        if (!is_visited_local(next_box, visited)) {
+            if (check_box_frozen_rec(next_box, matrix, visited)) {
+                return true;
+            }
+        } else {
+            return true; // Bucle cerrado / apoyo mutuo
+        }
+    }
+
+    // 4. Si hay una caja en el lado negativo, el eje está bloqueado si esa caja está congelada
+    if (matrix[nx][ny] == BOX) {
+        point next_box(nx, ny);
+        if (!is_visited_local(next_box, visited)) {
+            if (check_box_frozen_rec(next_box, matrix, visited)) {
+                return true;
+            }
+        } else {
+            return true; // Bucle cerrado / apoyo mutuo
+        }
+    }
+
+    return false;
+}
+
+bool locked::check_box_frozen_rec(point box, const vector<vector<char>>& matrix, vector<point>& visited) {
+    visited.push_back(box);
+
+    // Un eje está bloqueado si no hay movimiento en ninguna de sus dos direcciones
+    bool horiz_blocked = is_axis_blocked(box, 1, 0, matrix, visited);
+    bool vert_blocked  = is_axis_blocked(box, 0, 1, matrix, visited);
+
+    // Congelada si ambos ejes están bloqueados
+    return horiz_blocked && vert_blocked;
+}

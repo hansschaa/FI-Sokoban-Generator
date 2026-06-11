@@ -16,7 +16,7 @@ struct SokobanLevel {
     std::vector<std::vector<char>> board;
 };
 
-// --- NUEVO: ALGORITMO FLOOD FILL PARA NORMALIZAR TABLEROS ---
+// --- ALGORITMO FLOOD FILL PARA NORMALIZAR TABLEROS ---
 void normalize_board(std::vector<std::vector<char>>& board) {
     if (board.empty()) return;
     
@@ -32,7 +32,6 @@ void normalize_board(std::vector<std::vector<char>>& board) {
     }
     
     // 3. Añadir un "Borde de Seguridad" de 1 celda alrededor de todo el mapa
-    // Esto garantiza que TODO el exterior esté interconectado para el Flood Fill
     max_cols += 2;
     for (auto& row : board) {
         row.insert(row.begin(), ' ');
@@ -101,7 +100,7 @@ void normalize_board(std::vector<std::vector<char>>& board) {
     board = cropped;
 }
 
-// --- PARSER ACTUALIZADO ---
+// --- PARSER ---
 std::vector<SokobanLevel> load_sok_collection(const std::string& filename)
 {
     std::ifstream file(filename);
@@ -123,7 +122,7 @@ std::vector<SokobanLevel> load_sok_collection(const std::string& filename)
 
         if (!is_board_line) {
             if (reading_board) {
-                normalize_board(current_level.board); // <--- APLICAMOS FLOOD FILL AQUI
+                normalize_board(current_level.board);
                 levels.push_back(current_level);
                 current_level = SokobanLevel();
                 reading_board = false;
@@ -135,7 +134,7 @@ std::vector<SokobanLevel> load_sok_collection(const std::string& filename)
         }
     }
     if (reading_board) {
-        normalize_board(current_level.board); // <--- Y AQUI PARA EL ÚLTIMO TABLERO
+        normalize_board(current_level.board);
         levels.push_back(current_level);
     }
     return levels;
@@ -145,9 +144,10 @@ int main(int argc, char* argv[])
 {
     if (argc < 4)
     {
-        std::cerr << "Uso: ./batch_solver <coleccion.sok> <heuristica> <archivo_salida.txt> [calc]\n"
+        std::cerr << "Uso: ./batch_solver <coleccion.sok> <heuristica> <archivo_salida.txt> [calc] [advanced]\n"
                   << "  heuristica: simple | hungarian\n"
-                  << "  calc: opcional, 'calc' activa Path Branching Simulator desde el LURD\n";
+                  << "  calc: opcional, 'calc' activa Path Branching Simulator desde el LURD\n"
+                  << "  advanced: opcional, 'advanced' o 'true' activa la deteccion avanzada de deadlocks (freeze + bipartito)\n";
         return 1;
     }
 
@@ -171,6 +171,14 @@ int main(int argc, char* argv[])
         }
     }
 
+    bool enable_advanced = false;
+    if (argc >= 6) {
+        std::string flag = argv[5];
+        if (flag == "advanced" || flag == "1" || flag == "true") {
+            enable_advanced = true;
+        }
+    }
+
     std::vector<SokobanLevel> collection;
     try {
         collection = load_sok_collection(input_file);
@@ -187,10 +195,14 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    // Cabecera TSV completa con todas tus métricas de búsqueda y del simulador LURD
-    out << "LevelName\tStatus\tRuntime_ms\tPushes\tMoves\tGeneratedStates\tExpandedNodes\t"
-        << "TotalChildren\tEffectiveChildren\tRepeatedNodes\tDeadlocks\tBranchingReal\tBranchingEffective\tBranchingClassic\tRedundancy\t"
-        << "PathStates\tPathBoxLines\tPathBoxChanges\tPathBranchingRealAvg\tPathBranchingEffectiveAvg\n";
+    // --- NUEVA CABECERA TSV CON TODAS LAS MÉTRICAS ---
+    out << "LevelName\tStatus\tLURD_Path\tRuntime_ms\tPushes\tMoves\t"
+        << "GeneratedStates\tExpandedNodes\tTotalChildren\tEffectiveChildren\tRepeatedNodes\tDeadlocks\t"
+        << "BranchingReal\tBranchingEffective\tBranchingClassic\tRedundancy\tClosedListLength\t"
+        << "PathStates\tPathBoxLines\tPathBoxChanges\t"
+        << "PathBranchingRealTotalNodes\tPathBranchingRealMin\tPathBranchingRealMax\tPathBranchingRealAvg\t"
+        << "PathBranchingEffectiveTotalNodes\tPathBranchingEffectiveMin\tPathBranchingEffectiveMax\tPathBranchingEffectiveAvg\t"
+        << "PathTotalChildrenGenerated\tPathRepeatedNodes\tPathDeadlocks\tPathRedundancy\n";
 
     int idx = 1;
     for (const auto& lvl : collection) {
@@ -201,14 +213,11 @@ int main(int argc, char* argv[])
         unsigned int rows = lvl.board.size();
         unsigned int cols = lvl.board.empty() ? 0 : lvl.board[0].size();
 
-        // Instanciamos el solver pasándole la variable lvalue string_str obligatoria por referencia
         game_solver solver(level_str, rows, cols, 512);
+        solver.enable_advanced_deadlocks = enable_advanced;
         std::vector<game_node> solution;
 
-        // Llama al solver directamente
         auto stats = solver.test_template(Method::a_star, heuristic_type, solution, calc_path_branching);
-
-        // En lugar de calcular el "duration_ms" afuera, usas la métrica interna rigurosa
         double duration_ms = stats.runtime_ms;
 
         std::string status_str = (stats.status == SolveStatus::SOLVED) ? "SOLVED" :
@@ -216,9 +225,10 @@ int main(int argc, char* argv[])
 
         std::cout << status_str << " (" << std::fixed << std::setprecision(2) << duration_ms << " ms)\n";
 
-        // Escritura de la fila de datos estructurados para Pandas
+        // --- EXPORTACIÓN DE TODAS LAS VARIABLES BASE ---
         out << lvl.name << "\t"
             << status_str << "\t"
+            << (stats.lurd_path.empty() ? "NONE" : stats.lurd_path) << "\t"
             << duration_ms << "\t"
             << stats.pushes << "\t"
             << stats.moves << "\t"
@@ -231,17 +241,32 @@ int main(int argc, char* argv[])
             << stats.branching_real << "\t"
             << stats.branching_effective << "\t"
             << stats.branching_classic << "\t"
-            << stats.redundancy << "\t";
+            << stats.redundancy << "\t"
+            << stats.closed_list_length << "\t";
 
-        // Si se calculó el Path LURD Simulator, guardamos sus desgloses; si no, dejamos valores vacíos o 0
+        // --- EXPORTACIÓN DEL SIMULADOR LURD EXPANDIDO ---
         if (stats.path_stats_calculated) {
             out << stats.path_stats.states << "\t"
                 << stats.path_stats.box_lines << "\t"
                 << stats.path_stats.box_changes << "\t"
+                << stats.path_stats.branching_real_total_nodes << "\t"
+                << stats.path_stats.branching_real_min << "\t"
+                << stats.path_stats.branching_real_max << "\t"
                 << stats.path_stats.get_branching_real_avg() << "\t"
-                << stats.path_stats.get_branching_effective_avg() << "\n";
+                << stats.path_stats.branching_effective_total_nodes << "\t"
+                << stats.path_stats.branching_effective_min << "\t"
+                << stats.path_stats.branching_effective_max << "\t"
+                << stats.path_stats.get_branching_effective_avg() << "\t"
+                << stats.path_stats.total_children_generated << "\t"
+                << stats.path_stats.repeated_nodes << "\t"
+                << stats.path_stats.deadlocks << "\t"
+                << stats.path_stats.get_redundancy() << "\n";
         } else {
-            out << "0\t0\t0\t0.0\t0.0\n";
+            // Rellenar las 15 columnas del simulador con ceros si no se calculó
+            out << "0\t0\t0\t"
+                << "0\t0.0\t0.0\t0.0\t"
+                << "0\t0.0\t0.0\t0.0\t"
+                << "0\t0\t0\t0.0\n";
         }
     }
 

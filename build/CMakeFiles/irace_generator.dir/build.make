@@ -296,10 +296,24 @@ CMakeFiles/irace_generator.dir/src/path_simulator.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/irace_generator.dir/src/path_simulator.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/path_simulator.cpp -o CMakeFiles/irace_generator.dir/src/path_simulator.cpp.s
 
+CMakeFiles/irace_generator.dir/src/penalty.cpp.o: CMakeFiles/irace_generator.dir/flags.make
+CMakeFiles/irace_generator.dir/src/penalty.cpp.o: /home/hanss/automatic-sokoban-solver/src/penalty.cpp
+CMakeFiles/irace_generator.dir/src/penalty.cpp.o: CMakeFiles/irace_generator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/irace_generator.dir/src/penalty.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/irace_generator.dir/src/penalty.cpp.o -MF CMakeFiles/irace_generator.dir/src/penalty.cpp.o.d -o CMakeFiles/irace_generator.dir/src/penalty.cpp.o -c /home/hanss/automatic-sokoban-solver/src/penalty.cpp
+
+CMakeFiles/irace_generator.dir/src/penalty.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/irace_generator.dir/src/penalty.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/penalty.cpp > CMakeFiles/irace_generator.dir/src/penalty.cpp.i
+
+CMakeFiles/irace_generator.dir/src/penalty.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/irace_generator.dir/src/penalty.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/penalty.cpp -o CMakeFiles/irace_generator.dir/src/penalty.cpp.s
+
 CMakeFiles/irace_generator.dir/src/point.cpp.o: CMakeFiles/irace_generator.dir/flags.make
 CMakeFiles/irace_generator.dir/src/point.cpp.o: /home/hanss/automatic-sokoban-solver/src/point.cpp
 CMakeFiles/irace_generator.dir/src/point.cpp.o: CMakeFiles/irace_generator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/irace_generator.dir/src/point.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/irace_generator.dir/src/point.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/irace_generator.dir/src/point.cpp.o -MF CMakeFiles/irace_generator.dir/src/point.cpp.o.d -o CMakeFiles/irace_generator.dir/src/point.cpp.o -c /home/hanss/automatic-sokoban-solver/src/point.cpp
 
 CMakeFiles/irace_generator.dir/src/point.cpp.i: cmake_force
@@ -313,7 +327,7 @@ CMakeFiles/irace_generator.dir/src/point.cpp.s: cmake_force
 CMakeFiles/irace_generator.dir/src/repeat.cpp.o: CMakeFiles/irace_generator.dir/flags.make
 CMakeFiles/irace_generator.dir/src/repeat.cpp.o: /home/hanss/automatic-sokoban-solver/src/repeat.cpp
 CMakeFiles/irace_generator.dir/src/repeat.cpp.o: CMakeFiles/irace_generator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/irace_generator.dir/src/repeat.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/irace_generator.dir/src/repeat.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/irace_generator.dir/src/repeat.cpp.o -MF CMakeFiles/irace_generator.dir/src/repeat.cpp.o.d -o CMakeFiles/irace_generator.dir/src/repeat.cpp.o -c /home/hanss/automatic-sokoban-solver/src/repeat.cpp
 
 CMakeFiles/irace_generator.dir/src/repeat.cpp.i: cmake_force
@@ -342,6 +356,7 @@ irace_generator_OBJECTS = \
 "CMakeFiles/irace_generator.dir/src/locked.cpp.o" \
 "CMakeFiles/irace_generator.dir/src/my_memory.cpp.o" \
 "CMakeFiles/irace_generator.dir/src/path_simulator.cpp.o" \
+"CMakeFiles/irace_generator.dir/src/penalty.cpp.o" \
 "CMakeFiles/irace_generator.dir/src/point.cpp.o" \
 "CMakeFiles/irace_generator.dir/src/repeat.cpp.o"
 
@@ -364,12 +379,13 @@ irace_generator: CMakeFiles/irace_generator.dir/src/game_solver.cpp.o
 irace_generator: CMakeFiles/irace_generator.dir/src/locked.cpp.o
 irace_generator: CMakeFiles/irace_generator.dir/src/my_memory.cpp.o
 irace_generator: CMakeFiles/irace_generator.dir/src/path_simulator.cpp.o
+irace_generator: CMakeFiles/irace_generator.dir/src/penalty.cpp.o
 irace_generator: CMakeFiles/irace_generator.dir/src/point.cpp.o
 irace_generator: CMakeFiles/irace_generator.dir/src/repeat.cpp.o
 irace_generator: CMakeFiles/irace_generator.dir/build.make
 irace_generator: CMakeFiles/irace_generator.dir/compiler_depend.ts
 irace_generator: CMakeFiles/irace_generator.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Linking CXX executable irace_generator"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Linking CXX executable irace_generator"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/irace_generator.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

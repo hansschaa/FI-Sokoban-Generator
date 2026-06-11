@@ -36,9 +36,9 @@ public:
     // TERMINATION
     //
 
-    int maxEvaluations = 5000;
+    int maxEvaluations = 3000;
 
-    int stagnationLimit = 500;
+    int stagnationLimit = 200;
 
     //
     // RUNTIME STATE

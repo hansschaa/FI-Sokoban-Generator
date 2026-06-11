@@ -32,6 +32,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/evolution_generator.dir/src/my_memory.cpp.o.d"
   "CMakeFiles/evolution_generator.dir/src/path_simulator.cpp.o"
   "CMakeFiles/evolution_generator.dir/src/path_simulator.cpp.o.d"
+  "CMakeFiles/evolution_generator.dir/src/penalty.cpp.o"
+  "CMakeFiles/evolution_generator.dir/src/penalty.cpp.o.d"
   "CMakeFiles/evolution_generator.dir/src/point.cpp.o"
   "CMakeFiles/evolution_generator.dir/src/point.cpp.o.d"
   "CMakeFiles/evolution_generator.dir/src/repeat.cpp.o"
