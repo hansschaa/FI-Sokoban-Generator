@@ -81,14 +81,17 @@ Individual EvolutionStrategy::run(
             int parentIndex =
                 rand() % population.size();
 
+            // Aquí el hijo hereda el genotipo Y el fitness ya calculado del padre
             Individual child =
                 population[parentIndex];
+
+            // BANDERA DE CONTROL: Asumimos que no necesita evaluación
+            bool needsEvaluation = false;
 
             //
             // RANDOM MUTATION
             //
 
-            // AÑADIDO: Chequeo de probabilidad de mutación
             double r_mut = (double)rand() / RAND_MAX;
             
             if (r_mut <= mutationRate) 
@@ -105,18 +108,24 @@ Individual EvolutionStrategy::run(
                 }
 
                 if (!success) {
+                    // Si la mutación falló, descartamos a este hijo y pasamos al siguiente
                     continue;
+                } else {
+                    // La topología del nivel cambió. AHORA SÍ debemos evaluarlo.
+                    needsEvaluation = true;
                 }
             }
-            // Si r_mut > mutationRate, el child es un clon exacto del padre.
+            // Si r_mut > mutationRate, needsEvaluation sigue siendo false.
 
             //
-            // EVALUATION
+            // EVALUATION (El filtro anti-trampa)
             //
 
-            evaluator.evaluate(child);
-
-            evaluations++;
+            if (needsEvaluation)
+            {
+                evaluator.evaluate(child);
+                evaluations++;
+            }
 
             //
             // INVALID FITNESS
@@ -126,7 +135,6 @@ Individual EvolutionStrategy::run(
             {
                 std::cout
                     << "INVALID FITNESS\n";
-
                 continue;
             }
 
@@ -143,13 +151,19 @@ Individual EvolutionStrategy::run(
             if (child.fitness > best.fitness)
             {
                 best = child;
-
                 improved = true;
 
                 std::cout
                     << "NEW BEST = "
                     << best.fitness
                     << std::endl;
+            }
+
+            // CORTE ESTRICTO DENTRO DEL BUCLE:
+            // Si alcanzamos el límite exacto en medio de la generación de la población, abortamos.
+            if (evaluations >= maxEvaluations)
+            {
+                break;
             }
         }
 
