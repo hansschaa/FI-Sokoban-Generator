@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <fstream>
 #include <utility>
+#include <stdexcept>
 
 #include "../include/evolution/algorithms/evolution_strategy.h"
 #include "../include/evolution/algorithms/genetic_algorithm.h"
@@ -62,10 +63,16 @@ int main(int argc, char** argv)
 
     std::string algorithm  = argv[1];
     std::string fitness_arg = argv[2];
-    int seed = std::stoi(argv[3]);
     std::string board_file = argv[4];
 
-    // 1. Inicializar semilla dinámica para irace
+    // 1. Inicializar semilla dinámica para irace de forma blindada
+    int seed = 0;
+    try {
+        seed = std::stoi(argv[3]);
+    } catch (const std::exception& e) {
+        std::cerr << "Error parseando la semilla (argv[3]): '" << argv[3] << "'\n";
+        return 1;
+    }
     srand(seed);
 
     // 2. Parsear la Función Objetivo
@@ -79,12 +86,9 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    // 3. Leer parámetros dinámicos de calibración de irace
-    int maxEvals = 3000;
+    // 3. Variables Fijas y Estrictas para Experimento 1
+    int maxEvals = 2000;
     int stagLimit = 200;
-
-    if (char* val = getCmdOption(argv, argv + argc, "--maxEvals")) maxEvals = std::stoi(val);
-    if (char* val = getCmdOption(argv, argv + argc, "--stagLimit")) stagLimit = std::stoi(val);
 
     // 4. Configurar el tablero inicial (Shell) y aplicar Flood Fill
     std::vector<std::vector<char>> shell;
@@ -118,7 +122,7 @@ int main(int argc, char** argv)
             }
         }
     } catch (const std::exception& e) {
-        std::cerr << e.what() << "\n";
+        std::cerr << "Error en Flood Fill o parser: " << e.what() << "\n";
         return 1;
     }
 
@@ -127,7 +131,7 @@ int main(int argc, char** argv)
     evaluator.fitnessType = fitnessType;
     const int POP_SIZE = 10;
 
-    // 5. Generar población inicial optimizada (Sin doble evaluación ni logs de consola masivos)
+    // 5. Generar población inicial optimizada
     for (int i = 0; i < POP_SIZE; i++)
     {
         bool valid = false;
@@ -145,69 +149,72 @@ int main(int argc, char** argv)
                 Individual ind;
                 ind.board = board;
                 
-                // El evaluador se encarga de instanciar el solver y aplicar el A* una sola vez
                 double fit = evaluator.evaluate(ind);
 
-                // Si el tablero tuvo solución, el fitness será válido (mayor al flag de error -1e9)
                 if (fit > -1e8)
                 {
                     ind.fitness = fit;
                     population.push_back(ind);
                     valid = true;
                 }
-            } catch (const std::exception& e) {
-                // Captura controlada de fallos de inicialización geométrica
+            } catch (...) {
+                // Silenciar errores geométricos aleatorios y reintentar
             }
             attempts++;
         }
 
         if (!valid) {
-            std::cerr << "Error: No se pudo generar un individuo valido tras los intentos." << std::endl;
+            std::cerr << "Error: No se pudo generar un individuo valido tras 50,000 intentos." << std::endl;
             return 1;
         }
     }
 
     Individual best;
 
-    // 6. Ejecución silenciosa de las Metaheurísticas
-    if (algorithm == "ES")
-    {
-        EvolutionStrategy es;
-        es.maxEvaluations  = maxEvals;
-        es.stagnationLimit = stagLimit;
-        
-        if (char* val = getCmdOption(argv, argv + argc, "--mu")) es.mu = std::stoi(val);
-        if (char* val = getCmdOption(argv, argv + argc, "--lambda")) es.lambda = std::stoi(val);
-        if (char* val = getCmdOption(argv, argv + argc, "--mutRate")) es.mutationRate = std::stod(val);
+    // 6. Ejecución silenciosa de Metaheurísticas con Parseo Blindado
+    try {
+        if (algorithm == "ES")
+        {
+            EvolutionStrategy es;
+            es.maxEvaluations  = maxEvals;
+            es.stagnationLimit = stagLimit;
+            
+            if (char* val = getCmdOption(argv, argv + argc, "--mu")) es.mu = std::stoi(val);
+            if (char* val = getCmdOption(argv, argv + argc, "--lambda")) es.lambda = std::stoi(val);
+            if (char* val = getCmdOption(argv, argv + argc, "--mutRate")) es.mutationRate = std::stod(val);
 
-        best = es.run(population);
-    }
-    else if (algorithm == "GA")
-    {
-        GeneticAlgorithm ga;
-        ga.maxEvaluations  = maxEvals;
-        ga.stagnationLimit = stagLimit;
-        
-        if (char* val = getCmdOption(argv, argv + argc, "--offspring")) ga.offspringSize = std::stoi(val);
-        if (char* val = getCmdOption(argv, argv + argc, "--maxFailed")) ga.maxFailedAttempts = std::stoi(val);
-        if (char* val = getCmdOption(argv, argv + argc, "--mutRate")) ga.mutationRate = std::stod(val);
+            best = es.run(population);
+        }
+        else if (algorithm == "GA")
+        {
+            GeneticAlgorithm ga;
+            ga.maxEvaluations  = maxEvals;
+            ga.stagnationLimit = stagLimit;
+            
+            if (char* val = getCmdOption(argv, argv + argc, "--offspring")) ga.offspringSize = std::stoi(val);
+            if (char* val = getCmdOption(argv, argv + argc, "--maxFailed")) ga.maxFailedAttempts = std::stoi(val);
+            if (char* val = getCmdOption(argv, argv + argc, "--mutRate")) ga.mutationRate = std::stod(val);
 
-        best = ga.run(population);
-    }
-    else if (algorithm == "SA")
-    {
-        SimulatedAnnealing sa;
-        sa.initialTemperature = 100.0;
-        sa.coolingRate        = 0.01;
-        sa.maxEvaluations     = maxEvals;   
-        sa.stagnationLimit    = stagLimit;  
+            best = ga.run(population);
+        }
+        else if (algorithm == "SA")
+        {
+            SimulatedAnnealing sa;
+            sa.initialTemperature = 100.0;
+            sa.coolingRate        = 0.01;
+            sa.maxEvaluations     = maxEvals;   
+            sa.stagnationLimit    = stagLimit;  
 
-        Individual initial = *std::max_element(
-            population.begin(), population.end(),
-            [](const Individual& a, const Individual& b) {
-                return a.fitness < b.fitness;
-            });
-        best = sa.run(initial);
+            Individual initial = *std::max_element(
+                population.begin(), population.end(),
+                [](const Individual& a, const Individual& b) {
+                    return a.fitness < b.fitness;
+                });
+            best = sa.run(initial);
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error critico parseando parametros (Posible texto en vez de numero): " << e.what() << "\n";
+        return 1;
     }
 
     // 7. SALIDA ESTRICTA PARA IRACE (Solo el costo de minimización)

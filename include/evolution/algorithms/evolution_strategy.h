@@ -36,7 +36,7 @@ public:
     // TERMINATION
     //
 
-    int maxEvaluations = 3000;
+    int maxEvaluations = 2000;
 
     int stagnationLimit = 200;
 
