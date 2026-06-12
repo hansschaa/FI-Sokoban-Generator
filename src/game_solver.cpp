@@ -394,9 +394,9 @@ void game_solver::set_lambda_function(){
                         temp_box2->get_matrix0(temp_matrix2);
 
                         // --- INTEGRACIÓN DE DETECCIÓN DE DEADLOCKS ---
-                        bool is_deadlocked = false;
+                        bool is_deadlocked = lk.is_locked(new_box_point, temp_matrix2);
 
-                        if (enable_advanced_deadlocks) {
+                        /*if (enable_advanced_deadlocks) {
                             // 1. Chequeo básico (O(1))
                             bool basic_lock = lk.is_locked(new_box_point, temp_matrix2);
                             bool freeze_lock = false;
@@ -416,7 +416,7 @@ void game_solver::set_lambda_function(){
                         } else {
                             // Modo FO4: Solo poda los básicos evidentes para poder contar las trampas complejas
                             is_deadlocked = lk.is_locked(new_box_point, temp_matrix2);
-                        }
+                        }*/
 
                         if (is_deadlocked) {
                             stat_deadlocks++;           // Java: deadlocksCount++
@@ -672,7 +672,7 @@ SolverStats game_solver::test_template(
 }
 
 void print_solver_stats(const SolverStats& stats) {
-    std::cout << "\n=========================================\n";
+    /*std::cout << "\n=========================================\n";
     std::cout << "        DUMP COMPLETO DE STATS           \n";
     std::cout << "=========================================\n";
 
@@ -724,7 +724,7 @@ void print_solver_stats(const SolverStats& stats) {
         std::cout << "deadlocks:                       " << stats.path_stats.deadlocks << "\n";
         std::cout << "redundancy:                      " << stats.path_stats.get_redundancy() << "\n";
     }
-    std::cout << "=========================================\n";
+    std::cout << "=========================================\n";*/
 }
 
 // ==============================================================================
@@ -736,6 +736,11 @@ bool game_solver::is_bipartite_deadlock(const game_node& node) {
     
     // Matriz cuadrada requerida por el Algoritmo Húngaro
     int sz = std::max(num_boxes, num_goals);
+
+    // --- NUEVO CORTAFUEGOS ANTI-SEGFAULT ---
+    if (sz == 0) return false; 
+    // ---------------------------------------
+
     vector<vector<int>> cost(sz, vector<int>(sz, 0));
 
     int i = 0;

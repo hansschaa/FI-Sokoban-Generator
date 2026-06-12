@@ -22,7 +22,7 @@ Individual EvolutionStrategy::run(
     // INITIAL EVALUATION
     //
 
-    std::cout << "EVALUATING INITIAL POPULATION\n";
+    //std::cout << "EVALUATING INITIAL POPULATION\n";
 
     for (auto& ind : population)
     {
@@ -31,7 +31,7 @@ Individual EvolutionStrategy::run(
         evaluations++;
     }
 
-    std::cout << "INITIAL POPULATION EVALUATED\n";
+    //std::cout << "INITIAL POPULATION EVALUATED\n";
 
     //
     // FIND INITIAL BEST
@@ -55,12 +55,12 @@ Individual EvolutionStrategy::run(
     {
         bool improved = false;
 
-        std::cout
+        /*std::cout
             << "\nGEN " << generation
             << " | BEST " << best.fitness
             << " | STAG " << stagnationCount
             << " | EVALS " << evaluations
-            << std::endl;
+            << std::endl;*/
 
         //
         // OFFSPRING POPULATION
@@ -133,9 +133,9 @@ Individual EvolutionStrategy::run(
 
             if (std::isnan(child.fitness))
             {
-                std::cout
+                /*std::cout
                     << "INVALID FITNESS\n";
-                continue;
+                continue;*/
             }
 
             //
@@ -153,10 +153,10 @@ Individual EvolutionStrategy::run(
                 best = child;
                 improved = true;
 
-                std::cout
+                /*std::cout
                     << "NEW BEST = "
                     << best.fitness
-                    << std::endl;
+                    << std::endl;*/
             }
 
             // CORTE ESTRICTO DENTRO DEL BUCLE:
@@ -173,13 +173,13 @@ Individual EvolutionStrategy::run(
 
         if (offspring.empty())
         {
-            std::cout
+            /*std::cout
                 << "WARNING: ALL "
                 << lambda
                 << " CHILDREN FAILED IN GEN "
                 << generation
                 << " (mutation invalid or NaN fitness)"
-                << std::endl;
+                << std::endl;*/
         }
 
         if (improved)
@@ -240,9 +240,9 @@ Individual EvolutionStrategy::run(
 
         if (evaluations >= maxEvaluations)
         {
-            std::cout
+            /*std::cout
                 << "\nTermination: MAX_EVALUATIONS"
-                << std::endl;
+                << std::endl;*/
 
             break;
         }
@@ -254,9 +254,9 @@ Individual EvolutionStrategy::run(
 
         if (stagnationCount >= stagnationLimit)
         {
-            std::cout
+            /*std::cout
                 << "\nTermination: STAGNATION"
-                << std::endl;
+                << std::endl;*/
 
             break;
         }
@@ -268,10 +268,10 @@ Individual EvolutionStrategy::run(
     // FINAL REPORT
     //
 
-    std::cout
+    /*std::cout
         << "\nFINAL BEST FITNESS = "
         << best.fitness
-        << std::endl;
+        << std::endl;*/
 
     return best;
 }

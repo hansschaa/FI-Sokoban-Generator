@@ -133,7 +133,7 @@ int main(int argc, char** argv)
         bool valid = false;
         int attempts = 0;
 
-        while (!valid && attempts < 100) 
+        while (!valid && attempts < 50000) 
         {
             auto board = shell;
             
