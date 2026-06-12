@@ -134,8 +134,8 @@ Individual EvolutionStrategy::run(
             if (std::isnan(child.fitness))
             {
                 /*std::cout
-                    << "INVALID FITNESS\n";
-                continue;*/
+                    << "INVALID FITNESS\n";*/
+                continue;
             }
 
             //
