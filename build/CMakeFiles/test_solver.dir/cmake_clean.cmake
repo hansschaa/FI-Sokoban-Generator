@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/test_solver.dir/link.d"
   "CMakeFiles/test_solver.dir/src/constant.cpp.o"
   "CMakeFiles/test_solver.dir/src/constant.cpp.o.d"
   "CMakeFiles/test_solver.dir/src/draw.cpp.o"

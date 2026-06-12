@@ -6,11 +6,7 @@ using namespace constant;
 using namespace std;
 
 size_t repeat::get_num::operator()(const game_node* mmm) const {
-    size_t result = 0;
-    for (auto x = mmm->box_list.begin(); x != mmm->box_list.end(); x++) {
-        result = result ^ zobrist[(*x).x][(*x).y];
-    }
-    return result;
+    return mmm->get_hash();
 }
 
 bool repeat::cmp::operator()(const game_node* mmm,const game_node* nnn) const {

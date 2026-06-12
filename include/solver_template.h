@@ -77,22 +77,25 @@ public:
 
         auto start_time = std::chrono::high_resolution_clock::now();
         size_t generated_count = 0;
+        size_t loop_count = 0;
         while (!container.empty()) {
+            loop_count++;
+            if (loop_count % 1024 == 0) {
+                auto current_time = std::chrono::high_resolution_clock::now();
+                double elapsed = std::chrono::duration<double>(current_time - start_time).count();
 
-            auto current_time = std::chrono::high_resolution_clock::now();
-            double elapsed = std::chrono::duration<double>(current_time - start_time).count();
-
-            if (elapsed > max_seconds){ //|| generated_count > max_nodes) {
-                timeout_reached = true;
-                // Drenar la open list en caso de TIMEOUT
-                if constexpr (alg == Method::a_star) {
-                    while (!container.empty()) {
-                        auto [f, g, node] = container.top();
-                        container.pop();
-                        orphan_nodes.push_back(node);
+                if (elapsed > max_seconds){ //|| generated_count > max_nodes) {
+                    timeout_reached = true;
+                    // Drenar la open list en caso de TIMEOUT
+                    if constexpr (alg == Method::a_star) {
+                        while (!container.empty()) {
+                            auto [f, g, node] = container.top();
+                            container.pop();
+                            orphan_nodes.push_back(node);
+                        }
                     }
+                    return get_default_result();
                 }
-                return get_default_result();
             }
 
             const Node* current = nullptr;

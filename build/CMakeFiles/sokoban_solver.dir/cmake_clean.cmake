@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/sokoban_solver.dir/link.d"
   "CMakeFiles/sokoban_solver.dir/src/constant.cpp.o"
   "CMakeFiles/sokoban_solver.dir/src/constant.cpp.o.d"
   "CMakeFiles/sokoban_solver.dir/src/draw.cpp.o"
