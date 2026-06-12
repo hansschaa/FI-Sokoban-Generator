@@ -15,7 +15,7 @@ bool repeat::cmp::operator()(const game_node* mmm,const game_node* nnn) const {
 
 repeat::repeat(){}
 
-void repeat::init(game_node& init) {
+void repeat::init(const game_node& init) {
     zobrist = vector<vector<size_t>>(m, vector<size_t>(n, 0));
     for (auto& a : zobrist) {
         for (auto& b : a) {

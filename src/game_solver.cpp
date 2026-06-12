@@ -171,10 +171,7 @@ int game_solver::get_nums2(const game_node& input) {
 
     repeat local_rpt;
     locked local_lk;
-    // FIX: repeat::init toma game_node& (no-const); como input es const ref
-    // hacemos una copia local solo para la inicialización del hash de Zobrist.
-    game_node input_copy = input;
-    local_rpt.init(input_copy);
+    local_rpt.init(input);
     local_lk.init();
 
     auto local_get_neighbors = [&](const game_node* n_min, std::function<void(const game_node*)> callback) {
@@ -202,7 +199,10 @@ int game_solver::get_nums2(const game_node& input) {
         }
     };
 
-    auto local_is_visited = [&](const game_node*) -> bool { return false; };
+    auto local_is_visited = [&](const game_node* n) -> bool {
+        if (n == &input) return false;
+        return local_rpt.is_repeat2(n);
+    };
     auto local_mark_visited = [&](const game_node* n) { local_rpt.insert(n); };
     auto local_is_equal = [](const game_node* a, const game_node*) -> bool { return a->game_over(); };
 
@@ -366,8 +366,9 @@ vector<vector<int>> game_solver::Astar_init() {
 
 void game_solver::set_lambda_function(){
 
-    is_visited = [&](const game_node*) -> bool {
-        return false;
+    is_visited = [&](const game_node* n) -> bool {
+        if (n == &init) return false;
+        return rpt.is_repeat2(n);
     };
 
     mark_visited = [&](const game_node* n) {
@@ -394,9 +395,9 @@ void game_solver::set_lambda_function(){
                         temp_box2->get_matrix0(temp_matrix2);
 
                         // --- INTEGRACIÓN DE DETECCIÓN DE DEADLOCKS ---
-                        bool is_deadlocked = lk.is_locked(new_box_point, temp_matrix2);
+                        bool is_deadlocked = false;
 
-                        /*if (enable_advanced_deadlocks) {
+                        if (enable_advanced_deadlocks) {
                             // 1. Chequeo básico (O(1))
                             bool basic_lock = lk.is_locked(new_box_point, temp_matrix2);
                             bool freeze_lock = false;
@@ -416,7 +417,7 @@ void game_solver::set_lambda_function(){
                         } else {
                             // Modo FO4: Solo poda los básicos evidentes para poder contar las trampas complejas
                             is_deadlocked = lk.is_locked(new_box_point, temp_matrix2);
-                        }*/
+                        }
 
                         if (is_deadlocked) {
                             stat_deadlocks++;           // Java: deadlocksCount++

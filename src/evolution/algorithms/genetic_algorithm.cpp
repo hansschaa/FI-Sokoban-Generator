@@ -101,14 +101,14 @@ Individual GeneticAlgorithm::run(
     {
         bool improved = false;
 
-        std::cout
+        /*std::cout
             << "EVALS "
             << evaluations
             << " | BEST "
             << best.fitness
             << " | STAG "
             << stagnation
-            << std::endl;
+            << std::endl;*/
 
         //
         // OFFSPRING
@@ -198,10 +198,10 @@ Individual GeneticAlgorithm::run(
 
                 improved = true;
 
-                std::cout
+                /*std::cout
                     << "NEW BEST "
                     << best.fitness
-                    << std::endl;
+                    << std::endl;*/
             }
 
             offspring.push_back(child);
@@ -209,14 +209,14 @@ Individual GeneticAlgorithm::run(
 
         if (totalAttempts >= maxAttempts)
         {
-            std::cout
+            /*std::cout
                 << "WARNING: OFFSPRING GENERATION HIT ATTEMPT LIMIT ("
                 << maxAttempts
                 << "), GENERATED "
                 << generated
                 << "/"
                 << offspringSize
-                << std::endl;
+                << std::endl;*/
         }
 
         //
@@ -238,9 +238,9 @@ Individual GeneticAlgorithm::run(
 
         if (offspring.empty())
         {
-            std::cout
+            /*std::cout
                 << "WARNING: NO VALID OFFSPRING"
-                << std::endl;
+                << std::endl;*/
 
             continue;
         }
@@ -308,11 +308,11 @@ Individual GeneticAlgorithm::run(
 
                     if (recoveryFailed >= maxFailedAttempts)
                     {
-                        std::cout
+                        /*std::cout
                             << "WARNING: RECOVERY GAVE UP AFTER "
                             << maxFailedAttempts
                             << " FAILED MUTATIONS"
-                            << std::endl;
+                            << std::endl;*/
 
                         break;
                     }
@@ -348,7 +348,7 @@ Individual GeneticAlgorithm::run(
     // TERMINATION REPORT
     //
 
-    if (evaluations >= maxEvaluations)
+    /*if (evaluations >= maxEvaluations)
     {
         std::cout
             << "TERMINATION: MAX EVALUATIONS"
@@ -360,7 +360,7 @@ Individual GeneticAlgorithm::run(
         std::cout
             << "TERMINATION: STAGNATION"
             << std::endl;
-    }
+    }*/
 
     return best;
 }

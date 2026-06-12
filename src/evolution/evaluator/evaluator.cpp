@@ -34,6 +34,8 @@ double Evaluator::evaluate(Individual& individual)
     // 1. Guardamos el tablero en el archivo temporal justo antes del peligro
     registrar_tablero_critico(individual.board);
 
+    solver.enable_advanced_deadlocks = true;
+
     // Cambia esto en tu Evaluator::evaluate para usar el matching perfecto O(n³)
     auto stats = solver.test_template(Method::a_star, Heuristic::hungarian, solution, needs_path_simulator);
 

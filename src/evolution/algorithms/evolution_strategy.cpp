@@ -72,8 +72,17 @@ Individual EvolutionStrategy::run(
         // GENERATE λ CHILDREN
         //
 
-        for (int i = 0; i < lambda; i++)
+        int generated = 0;
+        int totalAttempts = 0;
+        const int maxAttempts = lambda * 10;
+
+        while (
+            generated < lambda &&
+            evaluations < maxEvaluations &&
+            totalAttempts < maxAttempts)
         {
+            totalAttempts++;
+
             //
             // RANDOM PARENT SELECTION
             //
@@ -108,7 +117,7 @@ Individual EvolutionStrategy::run(
                 }
 
                 if (!success) {
-                    // Si la mutación falló, descartamos a este hijo y pasamos al siguiente
+                    // Si la mutación falló, descartamos este intento
                     continue;
                 } else {
                     // La topología del nivel cambió. AHORA SÍ debemos evaluarlo.
@@ -143,6 +152,7 @@ Individual EvolutionStrategy::run(
             //
 
             offspring.push_back(child);
+            generated++;
 
             //
             // GLOBAL BEST UPDATE
@@ -157,13 +167,6 @@ Individual EvolutionStrategy::run(
                     << "NEW BEST = "
                     << best.fitness
                     << std::endl;*/
-            }
-
-            // CORTE ESTRICTO DENTRO DEL BUCLE:
-            // Si alcanzamos el límite exacto en medio de la generación de la población, abortamos.
-            if (evaluations >= maxEvaluations)
-            {
-                break;
             }
         }
 

@@ -126,13 +126,21 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    int pop_size = 10;
+    if (algorithm == "ES") {
+        if (char* val = getCmdOption(argv, argv + argc, "--mu")) {
+            pop_size = std::stoi(val);
+        } else {
+            pop_size = 15; // default mu in ES
+        }
+    }
+
     std::vector<Individual> population;
     Evaluator evaluator;
     evaluator.fitnessType = fitnessType;
-    const int POP_SIZE = 10;
 
     // 5. Generar población inicial optimizada
-    for (int i = 0; i < POP_SIZE; i++)
+    for (int i = 0; i < pop_size; i++)
     {
         bool valid = false;
         int attempts = 0;

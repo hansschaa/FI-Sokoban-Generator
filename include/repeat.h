@@ -21,7 +21,7 @@ public:
     std::unordered_set<const game_node*, get_num, cmp> zobrist_hash;
 
     repeat();
-    void init(game_node& init);
+    void init(const game_node& init);
     bool is_repeat2(const game_node* temp_box2);
     void insert(const game_node* temp_box2);
 };

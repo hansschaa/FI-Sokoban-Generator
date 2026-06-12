@@ -374,7 +374,7 @@ bool BoardCrossover::apply(
 
     if (regions.empty())
     {
-        std::cout << "CROSSOVER: NO INTERESTING REGIONS\n";
+        //std::cout << "CROSSOVER: NO INTERESTING REGIONS\n";
         return false;
     }
 
@@ -392,7 +392,7 @@ bool BoardCrossover::apply(
 
     if (isStructurallyValid(child.board))
     {
-        std::cout << "CROSSOVER: SUCCESS\n";
+        //std::cout << "CROSSOVER: SUCCESS\n";
         return true;
     }
 
@@ -400,16 +400,16 @@ bool BoardCrossover::apply(
     // ATTEMPT REPAIR
     //
 
-    std::cout << "CROSSOVER: ATTEMPTING REPAIR\n";
+    //std::cout << "CROSSOVER: ATTEMPTING REPAIR\n";
 
     repairIllegal(child.board);
 
     if (isStructurallyValid(child.board))
     {
-        std::cout << "CROSSOVER: REPAIR SUCCESS\n";
+        //std::cout << "CROSSOVER: REPAIR SUCCESS\n";
         return true;
     }
 
-    std::cout << "CROSSOVER: REPAIR FAILED\n";
+    //std::cout << "CROSSOVER: REPAIR FAILED\n";
     return false;
 }

@@ -117,9 +117,9 @@ Individual SimulatedAnnealing::run(
 
             if (failedAttempts >= maxFailedAttempts)
             {
-                std::cout
+                /*std::cout
                     << "TERMINATION: MAX FAILED ATTEMPTS"
-                    << std::endl;
+                    << std::endl;*/
 
                 break;
             }
@@ -171,10 +171,10 @@ Individual SimulatedAnnealing::run(
 
             improved = true;
 
-            std::cout
+            /*std::cout
                 << "NEW BEST "
                 << best.fitness
-                << std::endl;
+                << std::endl;*/
         }
 
         //
@@ -194,7 +194,7 @@ Individual SimulatedAnnealing::run(
         // LOG
         //
 
-        std::cout
+        /*std::cout
             << "TEMP "
             << temperature
             << " | CURRENT "
@@ -203,7 +203,7 @@ Individual SimulatedAnnealing::run(
             << best.fitness
             << " | STAG "
             << stagnation
-            << std::endl;
+            << std::endl;*/
 
         //
         // COOLING
