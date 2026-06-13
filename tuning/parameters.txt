@@ -1,4 +1,5 @@
-# Nombre    Flag de consola    Tipo  Rango
-mu          "--mu "            i     (2, 15)
-lambda      "--lambda "        i     (15, 30)
-mutRate     "--mutRate "       r     (0.01, 1.00)
+# Parámetros para Algoritmo Genético (GA)
+offspring  "--offspring "  i  (10, 50)
+maxFailed  "--maxFailed "  i  (10, 50)
+mutRate    "--mutRate "    r  (0.01, 1.00)
+crossRate  "--crossRate "  r  (0.01, 1.00)

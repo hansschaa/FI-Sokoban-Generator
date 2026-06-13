@@ -148,16 +148,26 @@ Individual GeneticAlgorithm::run(
             //
 
             Individual child;
+            bool valid = false;
 
-            bool valid =
-                crossover.apply(
-                    p1,
-                    p2,
-                    child);
+            // Tirar los dados para el cruce
+            double r_cross = (double)rand() / RAND_MAX;
 
-            if (!valid)
+            if (r_cross <= crossoverRate)
             {
-                continue;
+                // Ocurre el cruce
+                valid = crossover.apply(p1, p2, child);
+                
+                if (!valid)
+                {
+                    continue; // Si falla el cruce, descartamos el intento
+                }
+            }
+            else
+            {
+                // No hay cruce: el hijo hereda directamente del padre 1
+                child = p1;
+                valid = true;
             }
 
             //

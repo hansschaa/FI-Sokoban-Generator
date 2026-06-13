@@ -7,7 +7,7 @@ INSTANCE=$4
 shift 4
 
 EXE="../build/irace_generator"
-ALGO="ES"
+ALGO="GA"  # <--- ÚNICO CAMBIO: Ahora apunta al Algoritmo Genético
 FO="FO1"
 
 # --- SISTEMA DE RASTREO EN TIEMPO REAL ---
@@ -36,4 +36,5 @@ if [ $EXIT_CODE -ne 0 ]; then
     exit 1
 fi
 
+# irace captura exclusivamente esta última línea
 echo "$OUTPUT"
