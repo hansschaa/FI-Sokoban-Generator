@@ -1,6 +1,7 @@
 #pragma once
 
 #include "point.h"
+#include <cstddef>
 #include <vector>
 #include <set>
 
