@@ -28,6 +28,7 @@ public:
     int maxFailedAttempts = 10;
     
     double mutationRate = 1.0;
+    double crossoverRate = 1.0; // Valor por defecto
 
     //
     // STATE
