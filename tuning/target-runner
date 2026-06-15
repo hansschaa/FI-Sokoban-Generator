@@ -7,7 +7,7 @@ INSTANCE=$4
 shift 4
 
 EXE="../build/irace_generator"
-ALGO="GA"  # <--- ÚNICO CAMBIO: Ahora apunta al Algoritmo Genético
+ALGO="SA"
 FO="FO1"
 
 # --- SISTEMA DE RASTREO EN TIEMPO REAL ---
