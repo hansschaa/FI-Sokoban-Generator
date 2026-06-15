@@ -1,5 +1,0 @@
-# Parámetros para Algoritmo Genético (GA)
-offspring  "--offspring "  i  (10, 50)
-maxFailed  "--maxFailed "  i  (10, 50)
-mutRate    "--mutRate "    r  (0.01, 1.00)
-crossRate  "--crossRate "  r  (0.01, 1.00)
