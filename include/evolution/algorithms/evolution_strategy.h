@@ -12,8 +12,6 @@ class EvolutionStrategy {
 
 private:
 
-    Evaluator evaluator;
-
     MoveMutation moveMutation;
 
     AddMutation addMutation;
@@ -21,6 +19,8 @@ private:
     RemoveMutation removeMutation;
 
 public:
+
+    Evaluator evaluator;
 
     //
     // μ + λ PARAMETERS

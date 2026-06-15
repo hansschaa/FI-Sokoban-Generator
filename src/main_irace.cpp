@@ -186,6 +186,7 @@ int main(int argc, char** argv)
             EvolutionStrategy es;
             es.maxEvaluations  = maxEvals;
             es.stagnationLimit = stagLimit;
+            es.evaluator.fitnessType = fitnessType;
             
             if (char* val = getCmdOption(argv, argv + argc, "--mu")) es.mu = std::stoi(val);
             if (char* val = getCmdOption(argv, argv + argc, "--lambda")) es.lambda = std::stoi(val);
@@ -198,6 +199,7 @@ int main(int argc, char** argv)
             GeneticAlgorithm ga;
             ga.maxEvaluations  = maxEvals;
             ga.stagnationLimit = stagLimit;
+            ga.evaluator.fitnessType = fitnessType;
             
             if (char* val = getCmdOption(argv, argv + argc, "--offspring")) ga.offspringSize = std::stoi(val);
             if (char* val = getCmdOption(argv, argv + argc, "--maxFailed")) ga.maxFailedAttempts = std::stoi(val);
@@ -208,10 +210,19 @@ int main(int argc, char** argv)
         else if (algorithm == "SA")
         {
             SimulatedAnnealing sa;
+            sa.maxEvaluations     = maxEvals;   
+            sa.stagnationLimit    = stagLimit;
+            sa.evaluator.fitnessType = fitnessType;  
+
+            // Valores por defecto en caso de ejecución manual
             sa.initialTemperature = 100.0;
             sa.coolingRate        = 0.01;
-            sa.maxEvaluations     = maxEvals;   
-            sa.stagnationLimit    = stagLimit;  
+            sa.maxFailedAttempts  = 50;
+
+            // PARSEO PARA IRACE
+            if (char* val = getCmdOption(argv, argv + argc, "--initTemp")) sa.initialTemperature = std::stod(val);
+            if (char* val = getCmdOption(argv, argv + argc, "--coolRate")) sa.coolingRate = std::stod(val);
+            if (char* val = getCmdOption(argv, argv + argc, "--maxFailed")) sa.maxFailedAttempts = std::stoi(val);
 
             Individual initial = *std::max_element(
                 population.begin(), population.end(),
