@@ -7,8 +7,8 @@ INSTANCE=$4
 shift 4
 
 EXE="../build/irace_generator"
-ALGO="SA"
-FO="FO1"
+ALGO="ES"
+FO="FO2"
 
 # --- SISTEMA DE RASTREO EN TIEMPO REAL ---
 # Este archivo guardará el historial de lo que irace ejecuta segundo a segundo

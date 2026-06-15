@@ -1,3 +1,4 @@
-initTemp      "--initTemp "      r   (10.0, 1000.0)
-coolRate      "--coolRate "      r   (0.0001, 0.05)
-maxFailed     "--maxFailed "     i   (10, 100)
+# Nombre    Flag de consola    Tipo  Rango
+mu          "--mu "            i     (2, 15)
+lambda      "--lambda "        i     (15, 30)
+mutRate     "--mutRate "       r     (0.01, 1.00)

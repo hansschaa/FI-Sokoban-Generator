@@ -39,7 +39,7 @@ double Evaluator::evaluate(Individual& individual)
     // Cambia esto en tu Evaluator::evaluate para usar el matching perfecto O(n³)
     auto stats = solver.test_template(Method::a_star, Heuristic::hungarian, solution, needs_path_simulator);
 
-    if (stats.status != SolveStatus::SOLVED)
+    if (stats.status != SolveStatus::SOLVED || stats.pushes == 0)
     {
         individual.fitness = -1e9;
         return individual.fitness;
