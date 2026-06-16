@@ -1,0 +1,977 @@
+[2026-06-15 21:49:14] 🚀 Probando Config: 1 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 11 --lambda 25 --mutRate 0.0931
+[2026-06-15 21:49:14] 🚀 Probando Config: 2 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 4 --lambda 17 --mutRate 0.5881
+[2026-06-15 21:49:14] 🚀 Probando Config: 3 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 15 --lambda 21 --mutRate 0.8356
+[2026-06-15 21:49:14] 🚀 Probando Config: 4 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 29 --mutRate 0.3406
+[2026-06-15 21:49:14] 🚀 Probando Config: 5 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 10 --lambda 15 --mutRate 0.4643
+[2026-06-15 21:49:14] 🚀 Probando Config: 6 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 3 --lambda 23 --mutRate 0.9593
+[2026-06-15 21:49:14] 🚀 Probando Config: 7 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 13 --lambda 27 --mutRate 0.7118
+[2026-06-15 21:49:14] 🚀 Probando Config: 8 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 6 --lambda 19 --mutRate 0.2168
+    -> ✅ ÉXITO. Fitness devuelto: -9994
+[2026-06-15 21:55:28] 🚀 Probando Config: 9 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 3 --lambda 28 --mutRate 0.0312
+    -> ✅ ÉXITO. Fitness devuelto: -3355
+[2026-06-15 21:57:40] 🚀 Probando Config: 10 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 10 --lambda 20 --mutRate 0.5262
+    -> ✅ ÉXITO. Fitness devuelto: -5495
+[2026-06-15 22:03:29] 🚀 Probando Config: 11 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 14 --lambda 24 --mutRate 0.2787
+    -> ✅ ÉXITO. Fitness devuelto: -4378
+[2026-06-15 22:07:12] 🚀 Probando Config: 12 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 7 --lambda 16 --mutRate 0.7737
+    -> ✅ ÉXITO. Fitness devuelto: -3063
+[2026-06-15 22:08:32] 🚀 Probando Config: 13 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 2 --lambda 22 --mutRate 0.4025
+    -> ✅ ÉXITO. Fitness devuelto: -11018
+[2026-06-15 22:09:51] 🚀 Probando Config: 14 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 9 --lambda 30 --mutRate 0.8975
+    -> ✅ ÉXITO. Fitness devuelto: -17903
+[2026-06-15 22:12:59] 🚀 Probando Config: 15 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 12 --lambda 18 --mutRate 0.155
+    -> ✅ ÉXITO. Fitness devuelto: -58146
+[2026-06-15 22:16:21] 🚀 Probando Config: 16 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 5 --lambda 26 --mutRate 0.65
+    -> ✅ ÉXITO. Fitness devuelto: -61169
+[2026-06-15 22:20:58] 🚀 Probando Config: 17 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 6 --lambda 27 --mutRate 0.8665
+    -> ✅ ÉXITO. Fitness devuelto: -27267
+[2026-06-15 22:21:44] 🚀 Probando Config: 18 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 13 --lambda 19 --mutRate 0.3715
+    -> ✅ ÉXITO. Fitness devuelto: -15567
+[2026-06-15 22:22:40] 🚀 Probando Config: 19 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 3 --lambda 15 --mutRate 0.124
+    -> ✅ ÉXITO. Fitness devuelto: -31700
+[2026-06-15 22:26:54] 🚀 Probando Config: 20 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 10 --lambda 23 --mutRate 0.619
+    -> ✅ ÉXITO. Fitness devuelto: -55442
+[2026-06-15 22:31:20] 🚀 Probando Config: 21 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 5 --lambda 25 --mutRate 0.4953
+    -> ✅ ÉXITO. Fitness devuelto: -9542
+[2026-06-15 22:31:59] 🚀 Probando Config: 22 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 12 --lambda 17 --mutRate 0.9903
+    -> ✅ ÉXITO. Fitness devuelto: -57525
+[2026-06-15 22:35:29] 🚀 Probando Config: 23 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 15 --lambda 29 --mutRate 0.2478
+    -> ✅ ÉXITO. Fitness devuelto: -54452
+[2026-06-15 22:40:47] 🚀 Probando Config: 24 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 21 --mutRate 0.7428
+    -> ✅ ÉXITO. Fitness devuelto: -40440
+[2026-06-15 22:41:51] 🚀 Probando Config: 25 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 9 --lambda 22 --mutRate 0.0622
+    -> ✅ ÉXITO. Fitness devuelto: -11511
+[2026-06-15 22:42:41] 🚀 Probando Config: 26 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 2 --lambda 30 --mutRate 0.5572
+    -> ✅ ÉXITO. Fitness devuelto: -5339
+[2026-06-15 22:46:01] 🚀 Probando Config: 27 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 13 --lambda 26 --mutRate 0.8047
+    -> ✅ ÉXITO. Fitness devuelto: -32928
+[2026-06-15 22:46:50] 🚀 Probando Config: 28 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 6 --lambda 18 --mutRate 0.3097
+    -> ✅ ÉXITO. Fitness devuelto: -11199
+[2026-06-15 22:52:12] 🚀 Probando Config: 29 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 14 --lambda 16 --mutRate 0.6809
+    -> ✅ ÉXITO. Fitness devuelto: -44911
+[2026-06-15 22:53:34] 🚀 Probando Config: 30 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 7 --lambda 24 --mutRate 0.1859
+    -> ✅ ÉXITO. Fitness devuelto: -33310
+[2026-06-15 22:55:28] 🚀 Probando Config: 31 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 4 --lambda 20 --mutRate 0.9284
+    -> ✅ ÉXITO. Fitness devuelto: -7423
+[2026-06-15 22:59:32] 🚀 Probando Config: 32 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 11 --lambda 28 --mutRate 0.4334
+    -> ✅ ÉXITO. Fitness devuelto: -4544
+[2026-06-15 23:01:41] 🚀 Probando Config: 33 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 2 --lambda 18 --mutRate 0.8201
+    -> ✅ ÉXITO. Fitness devuelto: -6388
+[2026-06-15 23:03:12] 🚀 Probando Config: 34 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 9 --lambda 26 --mutRate 0.3251
+    -> ✅ ÉXITO. Fitness devuelto: -60348
+[2026-06-15 23:05:12] 🚀 Probando Config: 35 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 6 --lambda 30 --mutRate 0.0776
+    -> ✅ ÉXITO. Fitness devuelto: -17981
+[2026-06-15 23:08:47] 🚀 Probando Config: 36 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 13 --lambda 22 --mutRate 0.5726
+    -> ✅ ÉXITO. Fitness devuelto: -1922
+[2026-06-15 23:10:01] 🚀 Probando Config: 37 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 15 --lambda 28 --mutRate 0.9439
+    -> ✅ ÉXITO. Fitness devuelto: -11294
+[2026-06-15 23:14:03] 🚀 Probando Config: 38 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 20 --mutRate 0.4489
+    -> ✅ ÉXITO. Fitness devuelto: -13824
+[2026-06-15 23:21:50] 🚀 Probando Config: 39 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 4 --lambda 24 --mutRate 0.6964
+    -> ✅ ÉXITO. Fitness devuelto: -50078
+[2026-06-15 23:22:03] 🚀 Probando Config: 40 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 11 --lambda 16 --mutRate 0.2014
+    -> ✅ ÉXITO. Fitness devuelto: -2362
+[2026-06-15 23:27:33] 🚀 Probando Config: 41 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 14 --lambda 23 --mutRate 0.0158
+    -> ✅ ÉXITO. Fitness devuelto: -7439
+[2026-06-15 23:27:57] 🚀 Probando Config: 42 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 7 --lambda 15 --mutRate 0.5108
+    -> ✅ ÉXITO. Fitness devuelto: -60406
+[2026-06-15 23:28:24] 🚀 Probando Config: 43 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 10 --lambda 19 --mutRate 0.7583
+    -> ✅ ÉXITO. Fitness devuelto: -36327
+[2026-06-15 23:28:57] 🚀 Probando Config: 44 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 3 --lambda 27 --mutRate 0.2633
+    -> ✅ ÉXITO. Fitness devuelto: -4977
+[2026-06-15 23:29:01] 🚀 Probando Config: 45 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 12 --lambda 29 --mutRate 0.6345
+    -> ✅ ÉXITO. Fitness devuelto: -11876
+[2026-06-15 23:30:34] 🚀 Probando Config: 46 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 5 --lambda 21 --mutRate 0.1395
+    -> ✅ ÉXITO. Fitness devuelto: -69750
+[2026-06-15 23:30:54] 🚀 Probando Config: 47 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 25 --mutRate 0.882
+    -> ✅ ÉXITO. Fitness devuelto: -7726
+[2026-06-15 23:34:08] 🚀 Probando Config: 48 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 15 --lambda 17 --mutRate 0.387
+    -> ✅ ÉXITO. Fitness devuelto: -7759
+[2026-06-15 23:43:11] 🚀 Probando Config: 49 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 13 --lambda 15 --mutRate 0.9129
+    -> ✅ ÉXITO. Fitness devuelto: -11751
+[2026-06-15 23:44:06] 🚀 Probando Config: 50 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 6 --lambda 23 --mutRate 0.4179
+    -> ✅ ÉXITO. Fitness devuelto: -9631
+[2026-06-15 23:46:38] 🚀 Probando Config: 51 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 3 --lambda 19 --mutRate 0.6654
+    -> ✅ ÉXITO. Fitness devuelto: -43348
+[2026-06-15 23:50:42] 🚀 Probando Config: 52 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 10 --lambda 27 --mutRate 0.1704
+    -> ✅ ÉXITO. Fitness devuelto: -48498
+[2026-06-15 23:54:47] 🚀 Probando Config: 53 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 17 --mutRate 0.0467
+    -> ✅ ÉXITO. Fitness devuelto: -63873
+[2026-06-15 23:56:02] 🚀 Probando Config: 54 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 15 --lambda 25 --mutRate 0.5417
+    -> ✅ ÉXITO. Fitness devuelto: -67407
+[2026-06-15 23:56:05] 🚀 Probando Config: 55 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 12 --lambda 21 --mutRate 0.2942
+    -> ✅ ÉXITO. Fitness devuelto: -18147
+    -> ✅ ÉXITO. Fitness devuelto: -9974
+    -> ✅ ÉXITO. Fitness devuelto: -4140
+    -> ✅ ÉXITO. Fitness devuelto: -8626
+    -> ✅ ÉXITO. Fitness devuelto: -6342
+    -> ✅ ÉXITO. Fitness devuelto: -77173
+    -> ✅ ÉXITO. Fitness devuelto: -11549
+    -> ✅ ÉXITO. Fitness devuelto: -54516
+[2026-06-16 00:17:01] 🚀 Probando Config: 2 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 4 --lambda 17 --mutRate 0.5881
+[2026-06-16 00:17:01] 🚀 Probando Config: 3 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 15 --lambda 21 --mutRate 0.8356
+[2026-06-16 00:17:01] 🚀 Probando Config: 5 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 10 --lambda 15 --mutRate 0.4643
+[2026-06-16 00:17:01] 🚀 Probando Config: 4 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 8 --lambda 29 --mutRate 0.3406
+[2026-06-16 00:17:01] 🚀 Probando Config: 1 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 11 --lambda 25 --mutRate 0.0931
+[2026-06-16 00:17:01] 🚀 Probando Config: 6 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 3 --lambda 23 --mutRate 0.9593
+[2026-06-16 00:17:01] 🚀 Probando Config: 7 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 13 --lambda 27 --mutRate 0.7118
+[2026-06-16 00:17:01] 🚀 Probando Config: 8 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 6 --lambda 19 --mutRate 0.2168
+    -> ✅ ÉXITO. Fitness devuelto: -1632
+[2026-06-16 00:24:35] 🚀 Probando Config: 9 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 3 --lambda 28 --mutRate 0.0312
+    -> ✅ ÉXITO. Fitness devuelto: -263
+[2026-06-16 00:26:57] 🚀 Probando Config: 10 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 10 --lambda 20 --mutRate 0.5262
+    -> ✅ ÉXITO. Fitness devuelto: -1504
+[2026-06-16 00:32:56] 🚀 Probando Config: 11 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 14 --lambda 24 --mutRate 0.2787
+    -> ✅ ÉXITO. Fitness devuelto: -466
+[2026-06-16 00:33:44] 🚀 Probando Config: 12 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 7 --lambda 16 --mutRate 0.7737
+    -> ✅ ÉXITO. Fitness devuelto: -1648
+[2026-06-16 00:33:59] 🚀 Probando Config: 13 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 2 --lambda 22 --mutRate 0.4025
+    -> ✅ ÉXITO. Fitness devuelto: -1648
+[2026-06-16 00:34:04] 🚀 Probando Config: 14 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 9 --lambda 30 --mutRate 0.8975
+    -> ✅ ÉXITO. Fitness devuelto: -1458
+[2026-06-16 00:34:06] 🚀 Probando Config: 15 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 12 --lambda 18 --mutRate 0.155
+    -> ✅ ÉXITO. Fitness devuelto: -1656
+[2026-06-16 00:34:07] 🚀 Probando Config: 16 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 5 --lambda 26 --mutRate 0.65
+    -> ✅ ÉXITO. Fitness devuelto: -1648
+[2026-06-16 00:34:07] 🚀 Probando Config: 17 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 6 --lambda 27 --mutRate 0.8665
+    -> ✅ ÉXITO. Fitness devuelto: -1485
+[2026-06-16 00:43:36] 🚀 Probando Config: 18 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 13 --lambda 19 --mutRate 0.3715
+    -> ✅ ÉXITO. Fitness devuelto: -804
+[2026-06-16 00:43:38] 🚀 Probando Config: 19 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 3 --lambda 15 --mutRate 0.124
+    -> ✅ ÉXITO. Fitness devuelto: -501
+[2026-06-16 00:46:18] 🚀 Probando Config: 20 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 10 --lambda 23 --mutRate 0.619
+    -> ✅ ÉXITO. Fitness devuelto: -1580
+[2026-06-16 00:47:01] 🚀 Probando Config: 21 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 5 --lambda 25 --mutRate 0.4953
+    -> ✅ ÉXITO. Fitness devuelto: -711
+[2026-06-16 00:50:03] 🚀 Probando Config: 22 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 12 --lambda 17 --mutRate 0.9903
+    -> ✅ ÉXITO. Fitness devuelto: -1444
+[2026-06-16 00:50:28] 🚀 Probando Config: 23 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 15 --lambda 29 --mutRate 0.2478
+    -> ✅ ÉXITO. Fitness devuelto: -860
+[2026-06-16 00:50:54] 🚀 Probando Config: 24 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 8 --lambda 21 --mutRate 0.7428
+    -> ✅ ÉXITO. Fitness devuelto: -1413
+[2026-06-16 00:51:04] 🚀 Probando Config: 25 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 9 --lambda 22 --mutRate 0.0622
+    -> ✅ ÉXITO. Fitness devuelto: -1314
+[2026-06-16 00:51:09] 🚀 Probando Config: 26 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 2 --lambda 30 --mutRate 0.5572
+    -> ✅ ÉXITO. Fitness devuelto: -1466
+[2026-06-16 00:53:19] 🚀 Probando Config: 27 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 13 --lambda 26 --mutRate 0.8047
+    -> ✅ ÉXITO. Fitness devuelto: -1436
+[2026-06-16 00:57:17] 🚀 Probando Config: 28 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 6 --lambda 18 --mutRate 0.3097
+    -> ✅ ÉXITO. Fitness devuelto: -1609
+[2026-06-16 01:03:22] 🚀 Probando Config: 29 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 14 --lambda 16 --mutRate 0.6809
+    -> ✅ ÉXITO. Fitness devuelto: -1402
+[2026-06-16 01:03:55] 🚀 Probando Config: 30 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 7 --lambda 24 --mutRate 0.1859
+    -> ✅ ÉXITO. Fitness devuelto: -1515
+[2026-06-16 01:06:57] 🚀 Probando Config: 31 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 4 --lambda 20 --mutRate 0.9284
+    -> ✅ ÉXITO. Fitness devuelto: -1656
+[2026-06-16 01:07:41] 🚀 Probando Config: 32 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 11 --lambda 28 --mutRate 0.4334
+    -> ✅ ÉXITO. Fitness devuelto: -1525
+[2026-06-16 01:07:52] 🚀 Probando Config: 33 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 2 --lambda 18 --mutRate 0.8201
+    -> ✅ ÉXITO. Fitness devuelto: -1532
+[2026-06-16 01:08:09] 🚀 Probando Config: 34 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 9 --lambda 26 --mutRate 0.3251
+    -> ✅ ÉXITO. Fitness devuelto: -1480
+[2026-06-16 01:10:21] 🚀 Probando Config: 35 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 6 --lambda 30 --mutRate 0.0776
+    -> ✅ ÉXITO. Fitness devuelto: -1535
+[2026-06-16 01:11:14] 🚀 Probando Config: 36 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 13 --lambda 22 --mutRate 0.5726
+    -> ✅ ÉXITO. Fitness devuelto: -1546
+[2026-06-16 01:13:10] 🚀 Probando Config: 37 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 15 --lambda 28 --mutRate 0.9439
+    -> ✅ ÉXITO. Fitness devuelto: -1482
+[2026-06-16 01:20:20] 🚀 Probando Config: 38 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 8 --lambda 20 --mutRate 0.4489
+    -> ✅ ÉXITO. Fitness devuelto: -1526
+[2026-06-16 01:20:30] 🚀 Probando Config: 39 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 4 --lambda 24 --mutRate 0.6964
+    -> ✅ ÉXITO. Fitness devuelto: -1494
+[2026-06-16 01:23:56] 🚀 Probando Config: 40 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 11 --lambda 16 --mutRate 0.2014
+    -> ✅ ÉXITO. Fitness devuelto: -1140
+[2026-06-16 01:24:41] 🚀 Probando Config: 41 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 14 --lambda 23 --mutRate 0.0158
+    -> ✅ ÉXITO. Fitness devuelto: -1183
+[2026-06-16 01:24:46] 🚀 Probando Config: 42 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 7 --lambda 15 --mutRate 0.5108
+    -> ✅ ÉXITO. Fitness devuelto: -1504
+[2026-06-16 01:24:58] 🚀 Probando Config: 43 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 10 --lambda 19 --mutRate 0.7583
+    -> ✅ ÉXITO. Fitness devuelto: -1513
+[2026-06-16 01:26:34] 🚀 Probando Config: 44 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 3 --lambda 27 --mutRate 0.2633
+    -> ✅ ÉXITO. Fitness devuelto: -1639
+[2026-06-16 01:28:35] 🚀 Probando Config: 45 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 12 --lambda 29 --mutRate 0.6345
+    -> ✅ ÉXITO. Fitness devuelto: -1646
+[2026-06-16 01:30:07] 🚀 Probando Config: 46 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 5 --lambda 21 --mutRate 0.1395
+    -> ✅ ÉXITO. Fitness devuelto: -1421
+[2026-06-16 01:34:14] 🚀 Probando Config: 47 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 8 --lambda 25 --mutRate 0.882
+    -> ✅ ÉXITO. Fitness devuelto: -903
+[2026-06-16 01:36:57] 🚀 Probando Config: 48 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 15 --lambda 17 --mutRate 0.387
+    -> ✅ ÉXITO. Fitness devuelto: -904
+[2026-06-16 01:37:12] 🚀 Probando Config: 49 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 13 --lambda 15 --mutRate 0.9129
+    -> ✅ ÉXITO. Fitness devuelto: -1438
+[2026-06-16 01:39:38] 🚀 Probando Config: 50 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 6 --lambda 23 --mutRate 0.4179
+    -> ✅ ÉXITO. Fitness devuelto: -477
+[2026-06-16 01:41:32] 🚀 Probando Config: 51 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 3 --lambda 19 --mutRate 0.6654
+    -> ✅ ÉXITO. Fitness devuelto: -892
+[2026-06-16 01:41:35] 🚀 Probando Config: 52 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 10 --lambda 27 --mutRate 0.1704
+    -> ✅ ÉXITO. Fitness devuelto: -1504
+[2026-06-16 01:41:55] 🚀 Probando Config: 53 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 8 --lambda 17 --mutRate 0.0467
+    -> ✅ ÉXITO. Fitness devuelto: -960
+[2026-06-16 01:43:30] 🚀 Probando Config: 54 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 15 --lambda 25 --mutRate 0.5417
+    -> ✅ ÉXITO. Fitness devuelto: -1645
+[2026-06-16 01:45:45] 🚀 Probando Config: 55 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 12 --lambda 21 --mutRate 0.2942
+    -> ✅ ÉXITO. Fitness devuelto: -1336
+    -> ✅ ÉXITO. Fitness devuelto: -1520
+    -> ✅ ÉXITO. Fitness devuelto: -1504
+    -> ✅ ÉXITO. Fitness devuelto: -1656
+    -> ✅ ÉXITO. Fitness devuelto: -1254
+    -> ✅ ÉXITO. Fitness devuelto: -742
+    -> ✅ ÉXITO. Fitness devuelto: -1738
+    -> ✅ ÉXITO. Fitness devuelto: -1421
+[2026-06-16 01:59:51] 🚀 Probando Config: 1 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 11 --lambda 25 --mutRate 0.0931
+[2026-06-16 01:59:51] 🚀 Probando Config: 2 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 4 --lambda 17 --mutRate 0.5881
+[2026-06-16 01:59:51] 🚀 Probando Config: 3 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 15 --lambda 21 --mutRate 0.8356
+[2026-06-16 01:59:51] 🚀 Probando Config: 4 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 8 --lambda 29 --mutRate 0.3406
+[2026-06-16 01:59:51] 🚀 Probando Config: 5 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 10 --lambda 15 --mutRate 0.4643
+[2026-06-16 01:59:51] 🚀 Probando Config: 6 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 3 --lambda 23 --mutRate 0.9593
+[2026-06-16 01:59:51] 🚀 Probando Config: 7 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 13 --lambda 27 --mutRate 0.7118
+[2026-06-16 01:59:51] 🚀 Probando Config: 8 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 6 --lambda 19 --mutRate 0.2168
+    -> ✅ ÉXITO. Fitness devuelto: -919
+[2026-06-16 02:07:53] 🚀 Probando Config: 9 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 3 --lambda 28 --mutRate 0.0312
+    -> ✅ ÉXITO. Fitness devuelto: -136
+[2026-06-16 02:09:23] 🚀 Probando Config: 10 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 10 --lambda 20 --mutRate 0.5262
+    -> ✅ ÉXITO. Fitness devuelto: -639
+[2026-06-16 02:12:46] 🚀 Probando Config: 11 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 14 --lambda 24 --mutRate 0.2787
+    -> ✅ ÉXITO. Fitness devuelto: -974
+[2026-06-16 02:16:26] 🚀 Probando Config: 12 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 7 --lambda 16 --mutRate 0.7737
+    -> ✅ ÉXITO. Fitness devuelto: -747
+[2026-06-16 02:16:35] 🚀 Probando Config: 13 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 2 --lambda 22 --mutRate 0.4025
+    -> ✅ ÉXITO. Fitness devuelto: -1030
+[2026-06-16 02:16:37] 🚀 Probando Config: 14 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 9 --lambda 30 --mutRate 0.8975
+    -> ✅ ÉXITO. Fitness devuelto: -1223
+[2026-06-16 02:16:45] 🚀 Probando Config: 15 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 12 --lambda 18 --mutRate 0.155
+    -> ✅ ÉXITO. Fitness devuelto: -791
+[2026-06-16 02:16:51] 🚀 Probando Config: 16 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 5 --lambda 26 --mutRate 0.65
+    -> ✅ ÉXITO. Fitness devuelto: -1223
+[2026-06-16 02:16:58] 🚀 Probando Config: 17 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 6 --lambda 27 --mutRate 0.8665
+    -> ✅ ÉXITO. Fitness devuelto: -721
+[2026-06-16 02:25:19] 🚀 Probando Config: 18 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 13 --lambda 19 --mutRate 0.3715
+    -> ✅ ÉXITO. Fitness devuelto: -705
+[2026-06-16 02:26:13] 🚀 Probando Config: 19 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 3 --lambda 15 --mutRate 0.124
+    -> ✅ ÉXITO. Fitness devuelto: -384
+[2026-06-16 02:29:51] 🚀 Probando Config: 20 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 10 --lambda 23 --mutRate 0.619
+    -> ✅ ÉXITO. Fitness devuelto: -645
+[2026-06-16 02:31:04] 🚀 Probando Config: 21 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 5 --lambda 25 --mutRate 0.4953
+    -> ✅ ÉXITO. Fitness devuelto: -981
+[2026-06-16 02:33:06] 🚀 Probando Config: 22 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 12 --lambda 17 --mutRate 0.9903
+    -> ✅ ÉXITO. Fitness devuelto: -974
+[2026-06-16 02:33:29] 🚀 Probando Config: 23 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 15 --lambda 29 --mutRate 0.2478
+    -> ✅ ÉXITO. Fitness devuelto: -155
+[2026-06-16 02:33:42] 🚀 Probando Config: 24 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 8 --lambda 21 --mutRate 0.7428
+    -> ✅ ÉXITO. Fitness devuelto: -974
+[2026-06-16 02:33:54] 🚀 Probando Config: 25 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 9 --lambda 22 --mutRate 0.0622
+    -> ✅ ÉXITO. Fitness devuelto: -189
+[2026-06-16 02:34:18] 🚀 Probando Config: 26 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 2 --lambda 30 --mutRate 0.5572
+    -> ✅ ÉXITO. Fitness devuelto: -334
+[2026-06-16 02:41:59] 🚀 Probando Config: 27 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 13 --lambda 26 --mutRate 0.8047
+    -> ✅ ÉXITO. Fitness devuelto: -612
+[2026-06-16 02:42:22] 🚀 Probando Config: 28 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 6 --lambda 18 --mutRate 0.3097
+    -> ✅ ÉXITO. Fitness devuelto: -730
+[2026-06-16 02:46:49] 🚀 Probando Config: 29 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 14 --lambda 16 --mutRate 0.6809
+    -> ✅ ÉXITO. Fitness devuelto: -519
+[2026-06-16 02:47:48] 🚀 Probando Config: 30 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 7 --lambda 24 --mutRate 0.1859
+    -> ✅ ÉXITO. Fitness devuelto: -974
+[2026-06-16 02:49:58] 🚀 Probando Config: 31 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 4 --lambda 20 --mutRate 0.9284
+    -> ✅ ÉXITO. Fitness devuelto: -866
+[2026-06-16 02:50:26] 🚀 Probando Config: 32 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 11 --lambda 28 --mutRate 0.4334
+    -> ✅ ÉXITO. Fitness devuelto: -974
+[2026-06-16 02:50:37] 🚀 Probando Config: 33 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 2 --lambda 18 --mutRate 0.8201
+    -> ✅ ÉXITO. Fitness devuelto: -411
+[2026-06-16 02:50:53] 🚀 Probando Config: 34 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 9 --lambda 26 --mutRate 0.3251
+    -> ✅ ÉXITO. Fitness devuelto: -224
+[2026-06-16 02:51:30] 🚀 Probando Config: 35 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 6 --lambda 30 --mutRate 0.0776
+    -> ✅ ÉXITO. Fitness devuelto: -612
+[2026-06-16 02:55:25] 🚀 Probando Config: 36 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 13 --lambda 22 --mutRate 0.5726
+    -> ✅ ÉXITO. Fitness devuelto: -579
+[2026-06-16 02:58:24] 🚀 Probando Config: 37 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 15 --lambda 28 --mutRate 0.9439
+    -> ✅ ÉXITO. Fitness devuelto: -578
+[2026-06-16 02:58:50] 🚀 Probando Config: 38 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 8 --lambda 20 --mutRate 0.4489
+    -> ✅ ÉXITO. Fitness devuelto: -1158
+[2026-06-16 03:03:51] 🚀 Probando Config: 39 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 4 --lambda 24 --mutRate 0.6964
+    -> ✅ ÉXITO. Fitness devuelto: -730
+[2026-06-16 03:06:39] 🚀 Probando Config: 40 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 11 --lambda 16 --mutRate 0.2014
+    -> ✅ ÉXITO. Fitness devuelto: -390
+[2026-06-16 03:07:14] 🚀 Probando Config: 41 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 14 --lambda 23 --mutRate 0.0158
+    -> ✅ ÉXITO. Fitness devuelto: -974
+[2026-06-16 03:07:20] 🚀 Probando Config: 42 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 7 --lambda 15 --mutRate 0.5108
+    -> ✅ ÉXITO. Fitness devuelto: -545
+[2026-06-16 03:07:23] 🚀 Probando Config: 43 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 10 --lambda 19 --mutRate 0.7583
+    -> ✅ ÉXITO. Fitness devuelto: -104
+[2026-06-16 03:08:03] 🚀 Probando Config: 44 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 3 --lambda 27 --mutRate 0.2633
+    -> ✅ ÉXITO. Fitness devuelto: -974
+[2026-06-16 03:12:33] 🚀 Probando Config: 45 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 12 --lambda 29 --mutRate 0.6345
+    -> ✅ ÉXITO. Fitness devuelto: -623
+[2026-06-16 03:12:34] 🚀 Probando Config: 46 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 5 --lambda 21 --mutRate 0.1395
+    -> ✅ ÉXITO. Fitness devuelto: -579
+[2026-06-16 03:15:08] 🚀 Probando Config: 47 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 8 --lambda 25 --mutRate 0.882
+    -> ✅ ÉXITO. Fitness devuelto: -1223
+[2026-06-16 03:15:12] 🚀 Probando Config: 48 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 15 --lambda 17 --mutRate 0.387
+    -> ✅ ÉXITO. Fitness devuelto: -282
+[2026-06-16 03:18:45] 🚀 Probando Config: 49 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 13 --lambda 15 --mutRate 0.9129
+    -> ✅ ÉXITO. Fitness devuelto: -599
+[2026-06-16 03:19:04] 🚀 Probando Config: 50 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 6 --lambda 23 --mutRate 0.4179
+    -> ✅ ÉXITO. Fitness devuelto: -639
+[2026-06-16 03:20:40] 🚀 Probando Config: 51 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 3 --lambda 19 --mutRate 0.6654
+    -> ✅ ÉXITO. Fitness devuelto: -763
+[2026-06-16 03:21:48] 🚀 Probando Config: 52 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 10 --lambda 27 --mutRate 0.1704
+    -> ✅ ÉXITO. Fitness devuelto: -643
+[2026-06-16 03:24:14] 🚀 Probando Config: 53 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 8 --lambda 17 --mutRate 0.0467
+    -> ✅ ÉXITO. Fitness devuelto: -692
+[2026-06-16 03:26:04] 🚀 Probando Config: 54 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 15 --lambda 25 --mutRate 0.5417
+    -> ✅ ÉXITO. Fitness devuelto: -396
+[2026-06-16 03:26:47] 🚀 Probando Config: 55 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 12 --lambda 21 --mutRate 0.2942
+    -> ✅ ÉXITO. Fitness devuelto: -382
+    -> ✅ ÉXITO. Fitness devuelto: -1223
+    -> ✅ ÉXITO. Fitness devuelto: -724
+    -> ✅ ÉXITO. Fitness devuelto: -1223
+    -> ✅ ÉXITO. Fitness devuelto: -582
+    -> ✅ ÉXITO. Fitness devuelto: -1170
+    -> ✅ ÉXITO. Fitness devuelto: -274
+    -> ✅ ÉXITO. Fitness devuelto: -623
+[2026-06-16 03:40:45] 🚀 Probando Config: 1 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 11 --lambda 25 --mutRate 0.0931
+[2026-06-16 03:40:45] 🚀 Probando Config: 4 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 8 --lambda 29 --mutRate 0.3406
+[2026-06-16 03:40:45] 🚀 Probando Config: 5 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 10 --lambda 15 --mutRate 0.4643
+[2026-06-16 03:40:45] 🚀 Probando Config: 3 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 15 --lambda 21 --mutRate 0.8356
+[2026-06-16 03:40:45] 🚀 Probando Config: 2 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 4 --lambda 17 --mutRate 0.5881
+[2026-06-16 03:40:45] 🚀 Probando Config: 6 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 3 --lambda 23 --mutRate 0.9593
+[2026-06-16 03:40:45] 🚀 Probando Config: 7 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 13 --lambda 27 --mutRate 0.7118
+[2026-06-16 03:40:45] 🚀 Probando Config: 8 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 6 --lambda 19 --mutRate 0.2168
+    -> ✅ ÉXITO. Fitness devuelto: -368
+[2026-06-16 03:47:57] 🚀 Probando Config: 9 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 3 --lambda 28 --mutRate 0.0312
+    -> ✅ ÉXITO. Fitness devuelto: -289
+[2026-06-16 03:49:54] 🚀 Probando Config: 10 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 10 --lambda 20 --mutRate 0.5262
+    -> ✅ ÉXITO. Fitness devuelto: -257
+[2026-06-16 03:55:35] 🚀 Probando Config: 11 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 14 --lambda 24 --mutRate 0.2787
+    -> ✅ ÉXITO. Fitness devuelto: -802
+[2026-06-16 03:57:20] 🚀 Probando Config: 12 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 7 --lambda 16 --mutRate 0.7737
+    -> ✅ ÉXITO. Fitness devuelto: -423
+[2026-06-16 03:57:29] 🚀 Probando Config: 13 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 2 --lambda 22 --mutRate 0.4025
+    -> ✅ ÉXITO. Fitness devuelto: -984
+[2026-06-16 03:57:41] 🚀 Probando Config: 14 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 9 --lambda 30 --mutRate 0.8975
+    -> ✅ ÉXITO. Fitness devuelto: -561
+[2026-06-16 03:57:45] 🚀 Probando Config: 15 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 12 --lambda 18 --mutRate 0.155
+    -> ✅ ÉXITO. Fitness devuelto: -973
+[2026-06-16 03:57:46] 🚀 Probando Config: 16 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 5 --lambda 26 --mutRate 0.65
+    -> ✅ ÉXITO. Fitness devuelto: -423
+[2026-06-16 03:57:50] 🚀 Probando Config: 17 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 6 --lambda 27 --mutRate 0.8665
+    -> ✅ ÉXITO. Fitness devuelto: -462
+[2026-06-16 04:06:41] 🚀 Probando Config: 18 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 13 --lambda 19 --mutRate 0.3715
+    -> ✅ ÉXITO. Fitness devuelto: -507
+[2026-06-16 04:12:27] 🚀 Probando Config: 19 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 3 --lambda 15 --mutRate 0.124
+    -> ✅ ÉXITO. Fitness devuelto: -819
+[2026-06-16 04:13:07] 🚀 Probando Config: 20 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 10 --lambda 23 --mutRate 0.619
+    -> ✅ ÉXITO. Fitness devuelto: -984
+[2026-06-16 04:14:15] 🚀 Probando Config: 21 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 5 --lambda 25 --mutRate 0.4953
+    -> ✅ ÉXITO. Fitness devuelto: -540
+[2026-06-16 04:14:15] 🚀 Probando Config: 22 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 12 --lambda 17 --mutRate 0.9903
+    -> ✅ ÉXITO. Fitness devuelto: -867
+[2026-06-16 04:14:38] 🚀 Probando Config: 23 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 15 --lambda 29 --mutRate 0.2478
+    -> ✅ ÉXITO. Fitness devuelto: -841
+[2026-06-16 04:14:40] 🚀 Probando Config: 24 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 8 --lambda 21 --mutRate 0.7428
+    -> ✅ ÉXITO. Fitness devuelto: -458
+[2026-06-16 04:14:46] 🚀 Probando Config: 25 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 9 --lambda 22 --mutRate 0.0622
+    -> ✅ ÉXITO. Fitness devuelto: -377
+[2026-06-16 04:19:10] 🚀 Probando Config: 26 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 2 --lambda 30 --mutRate 0.5572
+    -> ✅ ÉXITO. Fitness devuelto: -684
+[2026-06-16 04:23:31] 🚀 Probando Config: 27 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 13 --lambda 26 --mutRate 0.8047
+    -> ✅ ÉXITO. Fitness devuelto: -812
+[2026-06-16 04:23:44] 🚀 Probando Config: 28 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 6 --lambda 18 --mutRate 0.3097
+    -> ✅ ÉXITO. Fitness devuelto: -439
+[2026-06-16 04:30:09] 🚀 Probando Config: 29 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 14 --lambda 16 --mutRate 0.6809
+    -> ✅ ÉXITO. Fitness devuelto: -423
+[2026-06-16 04:31:01] 🚀 Probando Config: 30 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 7 --lambda 24 --mutRate 0.1859
+    -> ✅ ÉXITO. Fitness devuelto: -403
+[2026-06-16 04:31:18] 🚀 Probando Config: 31 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 4 --lambda 20 --mutRate 0.9284
+    -> ✅ ÉXITO. Fitness devuelto: -947
+[2026-06-16 04:31:35] 🚀 Probando Config: 32 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 11 --lambda 28 --mutRate 0.4334
+    -> ✅ ÉXITO. Fitness devuelto: -391
+[2026-06-16 04:31:41] 🚀 Probando Config: 33 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 2 --lambda 18 --mutRate 0.8201
+    -> ✅ ÉXITO. Fitness devuelto: -396
+[2026-06-16 04:34:43] 🚀 Probando Config: 34 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 9 --lambda 26 --mutRate 0.3251
+    -> ✅ ÉXITO. Fitness devuelto: -822
+[2026-06-16 04:36:04] 🚀 Probando Config: 35 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 6 --lambda 30 --mutRate 0.0776
+    -> ✅ ÉXITO. Fitness devuelto: -1064
+[2026-06-16 04:40:18] 🚀 Probando Config: 36 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 13 --lambda 22 --mutRate 0.5726
+    -> ✅ ÉXITO. Fitness devuelto: -413
+[2026-06-16 04:40:24] 🚀 Probando Config: 37 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 15 --lambda 28 --mutRate 0.9439
+    -> ✅ ÉXITO. Fitness devuelto: -1064
+[2026-06-16 04:40:51] 🚀 Probando Config: 38 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 8 --lambda 20 --mutRate 0.4489
+    -> ✅ ÉXITO. Fitness devuelto: -423
+[2026-06-16 04:47:13] 🚀 Probando Config: 39 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 4 --lambda 24 --mutRate 0.6964
+    -> ✅ ÉXITO. Fitness devuelto: -540
+[2026-06-16 04:48:10] 🚀 Probando Config: 40 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 11 --lambda 16 --mutRate 0.2014
+    -> ✅ ÉXITO. Fitness devuelto: -382
+[2026-06-16 04:48:28] 🚀 Probando Config: 41 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 14 --lambda 23 --mutRate 0.0158
+    -> ✅ ÉXITO. Fitness devuelto: -968
+[2026-06-16 04:48:38] 🚀 Probando Config: 42 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 7 --lambda 15 --mutRate 0.5108
+    -> ✅ ÉXITO. Fitness devuelto: -195
+[2026-06-16 04:50:34] 🚀 Probando Config: 43 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 10 --lambda 19 --mutRate 0.7583
+    -> ✅ ÉXITO. Fitness devuelto: -984
+[2026-06-16 04:51:43] 🚀 Probando Config: 44 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 3 --lambda 27 --mutRate 0.2633
+    -> ✅ ÉXITO. Fitness devuelto: -955
+[2026-06-16 04:56:24] 🚀 Probando Config: 45 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 12 --lambda 29 --mutRate 0.6345
+    -> ✅ ÉXITO. Fitness devuelto: -843
+[2026-06-16 04:57:15] 🚀 Probando Config: 46 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 5 --lambda 21 --mutRate 0.1395
+    -> ✅ ÉXITO. Fitness devuelto: -474
+[2026-06-16 04:57:21] 🚀 Probando Config: 47 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 8 --lambda 25 --mutRate 0.882
+    -> ✅ ÉXITO. Fitness devuelto: -439
+[2026-06-16 04:58:55] 🚀 Probando Config: 48 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 15 --lambda 17 --mutRate 0.387
+    -> ✅ ÉXITO. Fitness devuelto: -402
+[2026-06-16 05:03:08] 🚀 Probando Config: 49 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 13 --lambda 15 --mutRate 0.9129
+    -> ✅ ÉXITO. Fitness devuelto: -423
+[2026-06-16 05:04:09] 🚀 Probando Config: 50 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 6 --lambda 23 --mutRate 0.4179
+    -> ✅ ÉXITO. Fitness devuelto: -1064
+[2026-06-16 05:05:34] 🚀 Probando Config: 51 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 3 --lambda 19 --mutRate 0.6654
+    -> ✅ ÉXITO. Fitness devuelto: -412
+[2026-06-16 05:07:35] 🚀 Probando Config: 52 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 10 --lambda 27 --mutRate 0.1704
+    -> ✅ ÉXITO. Fitness devuelto: -355
+[2026-06-16 05:08:23] 🚀 Probando Config: 53 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 8 --lambda 17 --mutRate 0.0467
+    -> ✅ ÉXITO. Fitness devuelto: -157
+[2026-06-16 05:10:53] 🚀 Probando Config: 54 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 15 --lambda 25 --mutRate 0.5417
+    -> ✅ ÉXITO. Fitness devuelto: -460
+[2026-06-16 05:13:12] 🚀 Probando Config: 55 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_145.txt | Parámetros: --mu 12 --lambda 21 --mutRate 0.2942
+    -> ✅ ÉXITO. Fitness devuelto: -973
+    -> ✅ ÉXITO. Fitness devuelto: -776
+    -> ✅ ÉXITO. Fitness devuelto: -445
+    -> ✅ ÉXITO. Fitness devuelto: -408
+    -> ✅ ÉXITO. Fitness devuelto: -812
+    -> ✅ ÉXITO. Fitness devuelto: -446
+    -> ✅ ÉXITO. Fitness devuelto: -422
+    -> ✅ ÉXITO. Fitness devuelto: -984
+[2026-06-16 05:26:24] 🚀 Probando Config: 1 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 11 --lambda 25 --mutRate 0.0931
+[2026-06-16 05:26:24] 🚀 Probando Config: 2 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 4 --lambda 17 --mutRate 0.5881
+[2026-06-16 05:26:24] 🚀 Probando Config: 3 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 15 --lambda 21 --mutRate 0.8356
+[2026-06-16 05:26:24] 🚀 Probando Config: 4 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 8 --lambda 29 --mutRate 0.3406
+[2026-06-16 05:26:24] 🚀 Probando Config: 5 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 10 --lambda 15 --mutRate 0.4643
+[2026-06-16 05:26:24] 🚀 Probando Config: 6 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 3 --lambda 23 --mutRate 0.9593
+[2026-06-16 05:26:24] 🚀 Probando Config: 7 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 13 --lambda 27 --mutRate 0.7118
+[2026-06-16 05:26:24] 🚀 Probando Config: 8 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 6 --lambda 19 --mutRate 0.2168
+    -> ✅ ÉXITO. Fitness devuelto: -30
+[2026-06-16 05:31:15] 🚀 Probando Config: 9 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 3 --lambda 28 --mutRate 0.0312
+    -> ✅ ÉXITO. Fitness devuelto: -60
+[2026-06-16 05:33:47] 🚀 Probando Config: 10 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 10 --lambda 20 --mutRate 0.5262
+    -> ✅ ÉXITO. Fitness devuelto: -67
+[2026-06-16 05:34:04] 🚀 Probando Config: 11 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 14 --lambda 24 --mutRate 0.2787
+    -> ✅ ÉXITO. Fitness devuelto: -109
+[2026-06-16 05:37:20] 🚀 Probando Config: 12 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 7 --lambda 16 --mutRate 0.7737
+    -> ✅ ÉXITO. Fitness devuelto: -123
+[2026-06-16 05:42:00] 🚀 Probando Config: 13 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 2 --lambda 22 --mutRate 0.4025
+    -> ✅ ÉXITO. Fitness devuelto: -113
+[2026-06-16 05:43:13] 🚀 Probando Config: 14 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 9 --lambda 30 --mutRate 0.8975
+    -> ✅ ÉXITO. Fitness devuelto: -109
+[2026-06-16 05:43:22] 🚀 Probando Config: 15 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 12 --lambda 18 --mutRate 0.155
+    -> ✅ ÉXITO. Fitness devuelto: -105
+[2026-06-16 05:43:30] 🚀 Probando Config: 16 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 5 --lambda 26 --mutRate 0.65
+    -> ✅ ÉXITO. Fitness devuelto: -113
+[2026-06-16 05:43:31] 🚀 Probando Config: 17 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 6 --lambda 27 --mutRate 0.8665
+    -> ✅ ÉXITO. Fitness devuelto: -75
+[2026-06-16 05:48:33] 🚀 Probando Config: 18 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 13 --lambda 19 --mutRate 0.3715
+    -> ✅ ÉXITO. Fitness devuelto: -113
+[2026-06-16 05:49:09] 🚀 Probando Config: 19 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 3 --lambda 15 --mutRate 0.124
+    -> ✅ ÉXITO. Fitness devuelto: -109
+[2026-06-16 05:50:38] 🚀 Probando Config: 20 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 10 --lambda 23 --mutRate 0.619
+    -> ✅ ÉXITO. Fitness devuelto: -36
+[2026-06-16 05:51:34] 🚀 Probando Config: 21 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 5 --lambda 25 --mutRate 0.4953
+    -> ✅ ÉXITO. Fitness devuelto: -95
+[2026-06-16 05:54:23] 🚀 Probando Config: 22 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 12 --lambda 17 --mutRate 0.9903
+    -> ✅ ÉXITO. Fitness devuelto: -109
+[2026-06-16 05:58:40] 🚀 Probando Config: 23 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 15 --lambda 29 --mutRate 0.2478
+    -> ✅ ÉXITO. Fitness devuelto: -113
+[2026-06-16 06:00:03] 🚀 Probando Config: 24 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 8 --lambda 21 --mutRate 0.7428
+    -> ✅ ÉXITO. Fitness devuelto: -105
+[2026-06-16 06:00:14] 🚀 Probando Config: 25 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 9 --lambda 22 --mutRate 0.0622
+    -> ✅ ÉXITO. Fitness devuelto: -109
+[2026-06-16 06:00:33] 🚀 Probando Config: 26 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 2 --lambda 30 --mutRate 0.5572
+    -> ✅ ÉXITO. Fitness devuelto: -113
+[2026-06-16 06:02:00] 🚀 Probando Config: 27 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 13 --lambda 26 --mutRate 0.8047
+    -> ✅ ÉXITO. Fitness devuelto: -94
+[2026-06-16 06:03:19] 🚀 Probando Config: 28 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 6 --lambda 18 --mutRate 0.3097
+    -> ✅ ÉXITO. Fitness devuelto: -105
+[2026-06-16 06:07:47] 🚀 Probando Config: 29 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 14 --lambda 16 --mutRate 0.6809
+    -> ✅ ÉXITO. Fitness devuelto: -113
+[2026-06-16 06:08:18] 🚀 Probando Config: 30 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 7 --lambda 24 --mutRate 0.1859
+    -> ✅ ÉXITO. Fitness devuelto: -109
+[2026-06-16 06:11:04] 🚀 Probando Config: 31 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 4 --lambda 20 --mutRate 0.9284
+    -> ✅ ÉXITO. Fitness devuelto: -123
+[2026-06-16 06:11:19] 🚀 Probando Config: 32 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 11 --lambda 28 --mutRate 0.4334
+    -> ✅ ÉXITO. Fitness devuelto: -105
+[2026-06-16 06:14:30] 🚀 Probando Config: 33 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 2 --lambda 18 --mutRate 0.8201
+    -> ✅ ÉXITO. Fitness devuelto: -105
+[2026-06-16 06:16:33] 🚀 Probando Config: 34 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 9 --lambda 26 --mutRate 0.3251
+    -> ✅ ÉXITO. Fitness devuelto: -69
+[2026-06-16 06:16:53] 🚀 Probando Config: 35 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 6 --lambda 30 --mutRate 0.0776
+    -> ✅ ÉXITO. Fitness devuelto: -113
+[2026-06-16 06:17:30] 🚀 Probando Config: 36 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 13 --lambda 22 --mutRate 0.5726
+    -> ✅ ÉXITO. Fitness devuelto: -109
+[2026-06-16 06:18:59] 🚀 Probando Config: 37 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 15 --lambda 28 --mutRate 0.9439
+    -> ✅ ÉXITO. Fitness devuelto: -13
+[2026-06-16 06:21:11] 🚀 Probando Config: 38 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 8 --lambda 20 --mutRate 0.4489
+    -> ✅ ÉXITO. Fitness devuelto: -93
+[2026-06-16 06:25:00] 🚀 Probando Config: 39 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 4 --lambda 24 --mutRate 0.6964
+    -> ✅ ÉXITO. Fitness devuelto: -123
+[2026-06-16 06:27:43] 🚀 Probando Config: 40 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 11 --lambda 16 --mutRate 0.2014
+    -> ✅ ÉXITO. Fitness devuelto: -40
+[2026-06-16 06:28:18] 🚀 Probando Config: 41 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 14 --lambda 23 --mutRate 0.0158
+    -> ✅ ÉXITO. Fitness devuelto: -19
+[2026-06-16 06:29:20] 🚀 Probando Config: 42 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 7 --lambda 15 --mutRate 0.5108
+    -> ✅ ÉXITO. Fitness devuelto: -105
+[2026-06-16 06:31:15] 🚀 Probando Config: 43 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 10 --lambda 19 --mutRate 0.7583
+    -> ✅ ÉXITO. Fitness devuelto: -109
+[2026-06-16 06:33:22] 🚀 Probando Config: 44 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 3 --lambda 27 --mutRate 0.2633
+    -> ✅ ÉXITO. Fitness devuelto: -105
+[2026-06-16 06:34:28] 🚀 Probando Config: 45 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 12 --lambda 29 --mutRate 0.6345
+    -> ✅ ÉXITO. Fitness devuelto: -86
+[2026-06-16 06:34:33] 🚀 Probando Config: 46 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 5 --lambda 21 --mutRate 0.1395
+    -> ✅ ÉXITO. Fitness devuelto: -105
+[2026-06-16 06:35:33] 🚀 Probando Config: 47 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 8 --lambda 25 --mutRate 0.882
+    -> ✅ ÉXITO. Fitness devuelto: -109
+[2026-06-16 06:36:07] 🚀 Probando Config: 48 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 15 --lambda 17 --mutRate 0.387
+    -> ✅ ÉXITO. Fitness devuelto: -109
+[2026-06-16 06:40:27] 🚀 Probando Config: 49 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 13 --lambda 15 --mutRate 0.9129
+    -> ✅ ÉXITO. Fitness devuelto: -109
+[2026-06-16 06:41:08] 🚀 Probando Config: 50 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 6 --lambda 23 --mutRate 0.4179
+    -> ✅ ÉXITO. Fitness devuelto: -109
+[2026-06-16 06:41:50] 🚀 Probando Config: 51 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 3 --lambda 19 --mutRate 0.6654
+    -> ✅ ÉXITO. Fitness devuelto: -95
+[2026-06-16 06:46:42] 🚀 Probando Config: 52 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 10 --lambda 27 --mutRate 0.1704
+    -> ✅ ÉXITO. Fitness devuelto: -123
+[2026-06-16 06:48:05] 🚀 Probando Config: 53 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 8 --lambda 17 --mutRate 0.0467
+    -> ✅ ÉXITO. Fitness devuelto: -113
+[2026-06-16 06:50:08] 🚀 Probando Config: 54 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 15 --lambda 25 --mutRate 0.5417
+    -> ✅ ÉXITO. Fitness devuelto: -93
+[2026-06-16 06:50:29] 🚀 Probando Config: 55 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_245.txt | Parámetros: --mu 12 --lambda 21 --mutRate 0.2942
+    -> ✅ ÉXITO. Fitness devuelto: -123
+    -> ✅ ÉXITO. Fitness devuelto: -123
+    -> ✅ ÉXITO. Fitness devuelto: -93
+    -> ✅ ÉXITO. Fitness devuelto: -109
+    -> ✅ ÉXITO. Fitness devuelto: -109
+    -> ✅ ÉXITO. Fitness devuelto: -109
+    -> ✅ ÉXITO. Fitness devuelto: -69
+    -> ✅ ÉXITO. Fitness devuelto: -113
+[2026-06-16 07:03:21] 🚀 Probando Config: 2 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 4 --lambda 17 --mutRate 0.5881
+[2026-06-16 07:03:21] 🚀 Probando Config: 4 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 8 --lambda 29 --mutRate 0.3406
+[2026-06-16 07:03:21] 🚀 Probando Config: 7 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 13 --lambda 27 --mutRate 0.7118
+[2026-06-16 07:03:21] 🚀 Probando Config: 11 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 14 --lambda 24 --mutRate 0.2787
+[2026-06-16 07:03:21] 🚀 Probando Config: 12 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 7 --lambda 16 --mutRate 0.7737
+[2026-06-16 07:03:21] 🚀 Probando Config: 14 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 9 --lambda 30 --mutRate 0.8975
+[2026-06-16 07:03:21] 🚀 Probando Config: 20 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 10 --lambda 23 --mutRate 0.619
+[2026-06-16 07:03:21] 🚀 Probando Config: 22 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 12 --lambda 17 --mutRate 0.9903
+    -> ✅ ÉXITO. Fitness devuelto: -244
+[2026-06-16 07:13:31] 🚀 Probando Config: 23 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 15 --lambda 29 --mutRate 0.2478
+    -> ✅ ÉXITO. Fitness devuelto: -587
+[2026-06-16 07:20:05] 🚀 Probando Config: 26 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 2 --lambda 30 --mutRate 0.5572
+    -> ✅ ÉXITO. Fitness devuelto: -402
+[2026-06-16 07:20:06] 🚀 Probando Config: 29 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 14 --lambda 16 --mutRate 0.6809
+    -> ✅ ÉXITO. Fitness devuelto: -730
+[2026-06-16 07:20:10] 🚀 Probando Config: 30 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 7 --lambda 24 --mutRate 0.1859
+    -> ✅ ÉXITO. Fitness devuelto: -1223
+[2026-06-16 07:20:12] 🚀 Probando Config: 31 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 4 --lambda 20 --mutRate 0.9284
+    -> ✅ ÉXITO. Fitness devuelto: -1223
+[2026-06-16 07:20:12] 🚀 Probando Config: 34 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 9 --lambda 26 --mutRate 0.3251
+    -> ✅ ÉXITO. Fitness devuelto: -763
+[2026-06-16 07:20:13] 🚀 Probando Config: 36 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 13 --lambda 22 --mutRate 0.5726
+    -> ✅ ÉXITO. Fitness devuelto: -673
+[2026-06-16 07:20:16] 🚀 Probando Config: 37 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 15 --lambda 28 --mutRate 0.9439
+    -> ✅ ÉXITO. Fitness devuelto: -721
+[2026-06-16 07:30:28] 🚀 Probando Config: 43 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 10 --lambda 19 --mutRate 0.7583
+    -> ✅ ÉXITO. Fitness devuelto: -541
+[2026-06-16 07:36:45] 🚀 Probando Config: 45 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 12 --lambda 29 --mutRate 0.6345
+    -> ✅ ÉXITO. Fitness devuelto: -1111
+[2026-06-16 07:36:45] 🚀 Probando Config: 47 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 8 --lambda 25 --mutRate 0.882
+    -> ✅ ÉXITO. Fitness devuelto: -1223
+[2026-06-16 07:37:02] 🚀 Probando Config: 48 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 15 --lambda 17 --mutRate 0.387
+    -> ✅ ÉXITO. Fitness devuelto: -974
+[2026-06-16 07:37:10] 🚀 Probando Config: 49 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 13 --lambda 15 --mutRate 0.9129
+    -> ✅ ÉXITO. Fitness devuelto: -365
+    -> ✅ ÉXITO. Fitness devuelto: -468
+    -> ✅ ÉXITO. Fitness devuelto: -791
+    -> ✅ ÉXITO. Fitness devuelto: -867
+    -> ✅ ÉXITO. Fitness devuelto: -866
+    -> ✅ ÉXITO. Fitness devuelto: -1230
+    -> ✅ ÉXITO. Fitness devuelto: -1201
+    -> ✅ ÉXITO. Fitness devuelto: -454
+[2026-06-16 07:50:27] 🚀 Probando Config: 2 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 4 --lambda 17 --mutRate 0.5881
+[2026-06-16 07:50:27] 🚀 Probando Config: 4 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 8 --lambda 29 --mutRate 0.3406
+[2026-06-16 07:50:27] 🚀 Probando Config: 7 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 13 --lambda 27 --mutRate 0.7118
+[2026-06-16 07:50:27] 🚀 Probando Config: 11 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 14 --lambda 24 --mutRate 0.2787
+[2026-06-16 07:50:27] 🚀 Probando Config: 12 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 7 --lambda 16 --mutRate 0.7737
+[2026-06-16 07:50:27] 🚀 Probando Config: 14 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 9 --lambda 30 --mutRate 0.8975
+[2026-06-16 07:50:27] 🚀 Probando Config: 20 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 10 --lambda 23 --mutRate 0.619
+[2026-06-16 07:50:27] 🚀 Probando Config: 22 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 12 --lambda 17 --mutRate 0.9903
+    -> ✅ ÉXITO. Fitness devuelto: -1526
+[2026-06-16 08:05:20] 🚀 Probando Config: 23 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 15 --lambda 29 --mutRate 0.2478
+    -> ✅ ÉXITO. Fitness devuelto: -803
+[2026-06-16 08:07:09] 🚀 Probando Config: 26 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 2 --lambda 30 --mutRate 0.5572
+    -> ✅ ÉXITO. Fitness devuelto: -1550
+[2026-06-16 08:07:21] 🚀 Probando Config: 29 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 14 --lambda 16 --mutRate 0.6809
+    -> ✅ ÉXITO. Fitness devuelto: -841
+[2026-06-16 08:07:21] 🚀 Probando Config: 30 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 7 --lambda 24 --mutRate 0.1859
+    -> ✅ ÉXITO. Fitness devuelto: -1642
+[2026-06-16 08:07:26] 🚀 Probando Config: 31 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 4 --lambda 20 --mutRate 0.9284
+    -> ✅ ÉXITO. Fitness devuelto: -1578
+[2026-06-16 08:07:27] 🚀 Probando Config: 34 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 9 --lambda 26 --mutRate 0.3251
+    -> ✅ ÉXITO. Fitness devuelto: -1520
+[2026-06-16 08:07:31] 🚀 Probando Config: 36 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 13 --lambda 22 --mutRate 0.5726
+    -> ✅ ÉXITO. Fitness devuelto: -1526
+[2026-06-16 08:07:34] 🚀 Probando Config: 37 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 15 --lambda 28 --mutRate 0.9439
+    -> ✅ ÉXITO. Fitness devuelto: -1061
+[2026-06-16 08:19:23] 🚀 Probando Config: 43 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 10 --lambda 19 --mutRate 0.7583
+    -> ✅ ÉXITO. Fitness devuelto: -1146
+[2026-06-16 08:20:39] 🚀 Probando Config: 45 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 12 --lambda 29 --mutRate 0.6345
+    -> ✅ ÉXITO. Fitness devuelto: -1577
+[2026-06-16 08:22:12] 🚀 Probando Config: 47 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 8 --lambda 25 --mutRate 0.882
+    -> ✅ ÉXITO. Fitness devuelto: -1545
+[2026-06-16 08:24:07] 🚀 Probando Config: 48 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 15 --lambda 17 --mutRate 0.387
+    -> ✅ ÉXITO. Fitness devuelto: -1534
+[2026-06-16 08:24:15] 🚀 Probando Config: 49 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 13 --lambda 15 --mutRate 0.9129
+    -> ✅ ÉXITO. Fitness devuelto: -1520
+    -> ✅ ÉXITO. Fitness devuelto: -1708
+    -> ✅ ÉXITO. Fitness devuelto: -1525
+    -> ✅ ÉXITO. Fitness devuelto: -1172
+    -> ✅ ÉXITO. Fitness devuelto: -1619
+    -> ✅ ÉXITO. Fitness devuelto: -1523
+    -> ✅ ÉXITO. Fitness devuelto: -1656
+    -> ✅ ÉXITO. Fitness devuelto: -1504
+[2026-06-16 08:37:44] 🚀 Probando Config: 47 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 25 --mutRate 0.882
+[2026-06-16 08:37:44] 🚀 Probando Config: 2 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 4 --lambda 17 --mutRate 0.5881
+[2026-06-16 08:37:44] 🚀 Probando Config: 45 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 12 --lambda 29 --mutRate 0.6345
+[2026-06-16 08:37:44] 🚀 Probando Config: 56 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 12 --lambda 26 --mutRate 0.6417
+[2026-06-16 08:37:45] 🚀 Probando Config: 57 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 9 --lambda 25 --mutRate 0.6867
+[2026-06-16 08:37:45] 🚀 Probando Config: 58 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 6 --lambda 27 --mutRate 0.6175
+[2026-06-16 08:37:45] 🚀 Probando Config: 59 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 13 --lambda 29 --mutRate 0.6347
+[2026-06-16 08:37:45] 🚀 Probando Config: 60 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 9 --lambda 29 --mutRate 0.6193
+    -> ✅ ÉXITO. Fitness devuelto: -6178
+[2026-06-16 08:55:49] 🚀 Probando Config: 61 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 3 --lambda 20 --mutRate 0.4901
+    -> ✅ ÉXITO. Fitness devuelto: -17742
+[2026-06-16 08:58:10] 🚀 Probando Config: 62 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 9 --lambda 26 --mutRate 0.7918
+    -> ✅ ÉXITO. Fitness devuelto: -14998
+[2026-06-16 08:58:40] 🚀 Probando Config: 63 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 11 --lambda 29 --mutRate 0.8127
+    -> ✅ ÉXITO. Fitness devuelto: -52144
+[2026-06-16 09:00:04] 🚀 Probando Config: 64 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 3 --lambda 20 --mutRate 0.589
+    -> ✅ ÉXITO. Fitness devuelto: -41916
+[2026-06-16 09:01:06] 🚀 Probando Config: 65 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 6 --lambda 19 --mutRate 0.6091
+    -> ✅ ÉXITO. Fitness devuelto: -21745
+[2026-06-16 09:01:51] 🚀 Probando Config: 66 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 3 --lambda 18 --mutRate 0.6944
+    -> ✅ ÉXITO. Fitness devuelto: -58754
+[2026-06-16 09:06:09] 🚀 Probando Config: 67 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 24 --mutRate 0.6523
+    -> ✅ ÉXITO. Fitness devuelto: -4023
+[2026-06-16 09:12:18] 🚀 Probando Config: 68 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 4 --lambda 17 --mutRate 0.3886
+    -> ✅ ÉXITO. Fitness devuelto: -59169
+[2026-06-16 09:12:32] 🚀 Probando Config: 69 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 11 --lambda 24 --mutRate 0.9918
+    -> ✅ ÉXITO. Fitness devuelto: -20789
+[2026-06-16 09:21:57] 🚀 Probando Config: 70 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 3 --lambda 19 --mutRate 0.545
+    -> ✅ ÉXITO. Fitness devuelto: -32056
+[2026-06-16 09:23:28] 🚀 Probando Config: 71 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 6 --lambda 28 --mutRate 0.8288
+    -> ✅ ÉXITO. Fitness devuelto: -48689
+[2026-06-16 09:24:53] 🚀 Probando Config: 72 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 12 --lambda 30 --mutRate 0.4647
+    -> ✅ ÉXITO. Fitness devuelto: -52250
+[2026-06-16 09:28:16] 🚀 Probando Config: 73 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 10 --lambda 28 --mutRate 0.8233
+    -> ✅ ÉXITO. Fitness devuelto: -46939
+[2026-06-16 09:28:24] 🚀 Probando Config: 74 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 7 --lambda 24 --mutRate 0.8523
+    -> ✅ ÉXITO. Fitness devuelto: -19430
+[2026-06-16 09:33:10] 🚀 Probando Config: 75 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 13 --lambda 30 --mutRate 0.7983
+    -> ✅ ÉXITO. Fitness devuelto: -46245
+[2026-06-16 09:37:07] 🚀 Probando Config: 76 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 26 --mutRate 0.8389
+    -> ✅ ÉXITO. Fitness devuelto: -61153
+[2026-06-16 09:38:02] 🚀 Probando Config: 77 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 2 --lambda 16 --mutRate 0.7057
+    -> ✅ ÉXITO. Fitness devuelto: -48346
+[2026-06-16 09:45:02] 🚀 Probando Config: 78 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 2 --lambda 18 --mutRate 0.6535
+    -> ✅ ÉXITO. Fitness devuelto: -13088
+[2026-06-16 09:47:31] 🚀 Probando Config: 79 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 10 --lambda 26 --mutRate 0.8351
+    -> ✅ ÉXITO. Fitness devuelto: -44162
+[2026-06-16 09:48:55] 🚀 Probando Config: 80 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 2 --lambda 16 --mutRate 0.7584
+    -> ✅ ÉXITO. Fitness devuelto: -15162
+[2026-06-16 09:49:35] 🚀 Probando Config: 81 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 13 --lambda 30 --mutRate 0.5477
+    -> ✅ ÉXITO. Fitness devuelto: -46823
+[2026-06-16 09:51:36] 🚀 Probando Config: 82 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 10 --lambda 26 --mutRate 0.9257
+    -> ✅ ÉXITO. Fitness devuelto: -33212
+[2026-06-16 09:54:02] 🚀 Probando Config: 83 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 18 --mutRate 0.7399
+    -> ✅ ÉXITO. Fitness devuelto: -28890
+[2026-06-16 09:57:30] 🚀 Probando Config: 84 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 4 --lambda 17 --mutRate 0.6138
+    -> ✅ ÉXITO. Fitness devuelto: -53438
+[2026-06-16 10:05:49] 🚀 Probando Config: 85 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 9 --lambda 24 --mutRate 0.6392
+    -> ✅ ÉXITO. Fitness devuelto: -3804
+[2026-06-16 10:06:47] 🚀 Probando Config: 86 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 2 --lambda 15 --mutRate 0.4755
+    -> ✅ ÉXITO. Fitness devuelto: -16387
+[2026-06-16 10:08:18] 🚀 Probando Config: 87 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 17 --mutRate 0.424
+    -> ✅ ÉXITO. Fitness devuelto: -9390
+[2026-06-16 10:09:56] 🚀 Probando Config: 88 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 13 --lambda 29 --mutRate 0.8226
+    -> ✅ ÉXITO. Fitness devuelto: -55637
+[2026-06-16 10:14:06] 🚀 Probando Config: 89 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 10 --lambda 29 --mutRate 0.3833
+    -> ✅ ÉXITO. Fitness devuelto: -17187
+[2026-06-16 10:21:18] 🚀 Probando Config: 90 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 5 --lambda 17 --mutRate 0.2319
+    -> ✅ ÉXITO. Fitness devuelto: -50586
+[2026-06-16 10:22:17] 🚀 Probando Config: 91 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 21 --mutRate 0.8175
+    -> ✅ ÉXITO. Fitness devuelto: -68065
+[2026-06-16 10:29:14] 🚀 Probando Config: 92 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 7 --lambda 26 --mutRate 0.8188
+    -> ✅ ÉXITO. Fitness devuelto: -6753
+[2026-06-16 10:29:25] 🚀 Probando Config: 93 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 4 --lambda 20 --mutRate 0.5092
+    -> ✅ ÉXITO. Fitness devuelto: -11610
+[2026-06-16 10:30:06] 🚀 Probando Config: 94 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 5 --lambda 19 --mutRate 0.5387
+    -> ✅ ÉXITO. Fitness devuelto: -34017
+[2026-06-16 10:32:31] 🚀 Probando Config: 95 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 9 --lambda 24 --mutRate 0.8869
+    -> ✅ ÉXITO. Fitness devuelto: -54148
+[2026-06-16 10:33:06] 🚀 Probando Config: 96 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 15 --lambda 26 --mutRate 0.5726
+    -> ✅ ÉXITO. Fitness devuelto: -19925
+[2026-06-16 10:39:14] 🚀 Probando Config: 97 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 23 --mutRate 0.9949
+    -> ✅ ÉXITO. Fitness devuelto: -30305
+    -> ✅ ÉXITO. Fitness devuelto: -17431
+    -> ✅ ÉXITO. Fitness devuelto: -5994
+    -> ✅ ÉXITO. Fitness devuelto: -15981
+    -> ✅ ÉXITO. Fitness devuelto: -11838
+    -> ✅ ÉXITO. Fitness devuelto: -17490
+    -> ✅ ÉXITO. Fitness devuelto: -30795
+    -> ✅ ÉXITO. Fitness devuelto: -61821
+[2026-06-16 10:59:15] 🚀 Probando Config: 56 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 12 --lambda 26 --mutRate 0.6417
+[2026-06-16 10:59:15] 🚀 Probando Config: 57 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 9 --lambda 25 --mutRate 0.6867
+[2026-06-16 10:59:15] 🚀 Probando Config: 58 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 6 --lambda 27 --mutRate 0.6175
+[2026-06-16 10:59:15] 🚀 Probando Config: 59 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 13 --lambda 29 --mutRate 0.6347
+[2026-06-16 10:59:15] 🚀 Probando Config: 60 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 9 --lambda 29 --mutRate 0.6193
+[2026-06-16 10:59:15] 🚀 Probando Config: 61 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 3 --lambda 20 --mutRate 0.4901
+[2026-06-16 10:59:15] 🚀 Probando Config: 62 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 9 --lambda 26 --mutRate 0.7918
+[2026-06-16 10:59:15] 🚀 Probando Config: 63 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 11 --lambda 29 --mutRate 0.8127
+    -> ✅ ÉXITO. Fitness devuelto: -443
+[2026-06-16 11:15:55] 🚀 Probando Config: 64 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 3 --lambda 20 --mutRate 0.589
+    -> ✅ ÉXITO. Fitness devuelto: -1223
+[2026-06-16 11:16:06] 🚀 Probando Config: 65 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 6 --lambda 19 --mutRate 0.6091
+    -> ✅ ÉXITO. Fitness devuelto: -286
+[2026-06-16 11:16:10] 🚀 Probando Config: 66 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 3 --lambda 18 --mutRate 0.6944
+    -> ✅ ÉXITO. Fitness devuelto: -1255
+[2026-06-16 11:16:13] 🚀 Probando Config: 67 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 8 --lambda 24 --mutRate 0.6523
+    -> ✅ ÉXITO. Fitness devuelto: -217
+[2026-06-16 11:16:16] 🚀 Probando Config: 68 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 4 --lambda 17 --mutRate 0.3886
+    -> ✅ ÉXITO. Fitness devuelto: -1223
+[2026-06-16 11:16:16] 🚀 Probando Config: 69 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 11 --lambda 24 --mutRate 0.9918
+    -> ✅ ÉXITO. Fitness devuelto: -832
+[2026-06-16 11:16:21] 🚀 Probando Config: 70 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 3 --lambda 19 --mutRate 0.545
+    -> ✅ ÉXITO. Fitness devuelto: -763
+[2026-06-16 11:16:24] 🚀 Probando Config: 71 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 6 --lambda 28 --mutRate 0.8288
+    -> ✅ ÉXITO. Fitness devuelto: -1223
+[2026-06-16 11:32:43] 🚀 Probando Config: 72 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 12 --lambda 30 --mutRate 0.4647
+    -> ✅ ÉXITO. Fitness devuelto: -389
+[2026-06-16 11:32:58] 🚀 Probando Config: 73 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 10 --lambda 28 --mutRate 0.8233
+    -> ✅ ÉXITO. Fitness devuelto: -763
+[2026-06-16 11:33:03] 🚀 Probando Config: 74 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 7 --lambda 24 --mutRate 0.8523
+    -> ✅ ÉXITO. Fitness devuelto: -716
+[2026-06-16 11:33:08] 🚀 Probando Config: 75 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 13 --lambda 30 --mutRate 0.7983
+    -> ✅ ÉXITO. Fitness devuelto: -344
+[2026-06-16 11:33:10] 🚀 Probando Config: 76 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 8 --lambda 26 --mutRate 0.8389
+    -> ✅ ÉXITO. Fitness devuelto: -1158
+[2026-06-16 11:33:13] 🚀 Probando Config: 77 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 2 --lambda 16 --mutRate 0.7057
+    -> ✅ ÉXITO. Fitness devuelto: -763
+[2026-06-16 11:33:22] 🚀 Probando Config: 78 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 2 --lambda 18 --mutRate 0.6535
+    -> ✅ ÉXITO. Fitness devuelto: -519
+[2026-06-16 11:33:22] 🚀 Probando Config: 79 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 10 --lambda 26 --mutRate 0.8351
+    -> ✅ ÉXITO. Fitness devuelto: -674
+[2026-06-16 11:49:42] 🚀 Probando Config: 80 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 2 --lambda 16 --mutRate 0.7584
+    -> ✅ ÉXITO. Fitness devuelto: -590
+[2026-06-16 11:49:53] 🚀 Probando Config: 81 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 13 --lambda 30 --mutRate 0.5477
+    -> ✅ ÉXITO. Fitness devuelto: -1223
+[2026-06-16 11:50:00] 🚀 Probando Config: 82 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 10 --lambda 26 --mutRate 0.9257
+    -> ✅ ÉXITO. Fitness devuelto: -472
+[2026-06-16 11:50:07] 🚀 Probando Config: 83 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 8 --lambda 18 --mutRate 0.7399
+    -> ✅ ÉXITO. Fitness devuelto: -705
+[2026-06-16 11:50:08] 🚀 Probando Config: 84 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 4 --lambda 17 --mutRate 0.6138
+    -> ✅ ÉXITO. Fitness devuelto: -700
+[2026-06-16 11:50:09] 🚀 Probando Config: 85 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 9 --lambda 24 --mutRate 0.6392
+    -> ✅ ÉXITO. Fitness devuelto: -639
+[2026-06-16 11:50:10] 🚀 Probando Config: 86 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 2 --lambda 15 --mutRate 0.4755
+    -> ✅ ÉXITO. Fitness devuelto: -288
+[2026-06-16 11:50:23] 🚀 Probando Config: 87 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 8 --lambda 17 --mutRate 0.424
+    -> ✅ ÉXITO. Fitness devuelto: -585
+[2026-06-16 12:04:26] 🚀 Probando Config: 88 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 13 --lambda 29 --mutRate 0.8226
+    -> ✅ ÉXITO. Fitness devuelto: -981
+[2026-06-16 12:04:26] 🚀 Probando Config: 89 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 10 --lambda 29 --mutRate 0.3833
+    -> ✅ ÉXITO. Fitness devuelto: -1201
+[2026-06-16 12:06:30] 🚀 Probando Config: 90 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 5 --lambda 17 --mutRate 0.2319
+    -> ✅ ÉXITO. Fitness devuelto: -705
+[2026-06-16 12:06:49] 🚀 Probando Config: 91 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 8 --lambda 21 --mutRate 0.8175
+    -> ✅ ÉXITO. Fitness devuelto: -472
+[2026-06-16 12:06:53] 🚀 Probando Config: 92 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 7 --lambda 26 --mutRate 0.8188
+    -> ✅ ÉXITO. Fitness devuelto: -266
+[2026-06-16 12:07:03] 🚀 Probando Config: 93 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 4 --lambda 20 --mutRate 0.5092
+    -> ✅ ÉXITO. Fitness devuelto: -1230
+[2026-06-16 12:07:08] 🚀 Probando Config: 94 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 5 --lambda 19 --mutRate 0.5387
+    -> ✅ ÉXITO. Fitness devuelto: -1223
+[2026-06-16 12:07:22] 🚀 Probando Config: 95 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 9 --lambda 24 --mutRate 0.8869
+    -> ✅ ÉXITO. Fitness devuelto: -1230
+[2026-06-16 12:12:23] 🚀 Probando Config: 96 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 15 --lambda 26 --mutRate 0.5726
+    -> ✅ ÉXITO. Fitness devuelto: -391
+[2026-06-16 12:21:27] 🚀 Probando Config: 97 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_743.txt | Parámetros: --mu 8 --lambda 23 --mutRate 0.9949
+    -> ✅ ÉXITO. Fitness devuelto: -405
+    -> ✅ ÉXITO. Fitness devuelto: -730
+    -> ✅ ÉXITO. Fitness devuelto: -1223
+    -> ✅ ÉXITO. Fitness devuelto: -1223
+    -> ✅ ÉXITO. Fitness devuelto: -730
+    -> ✅ ÉXITO. Fitness devuelto: -1230
+    -> ✅ ÉXITO. Fitness devuelto: -540
+    -> ✅ ÉXITO. Fitness devuelto: -233
+[2026-06-16 12:33:21] 🚀 Probando Config: 56 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 12 --lambda 26 --mutRate 0.6417
+[2026-06-16 12:33:21] 🚀 Probando Config: 57 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 9 --lambda 25 --mutRate 0.6867
+[2026-06-16 12:33:21] 🚀 Probando Config: 58 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 6 --lambda 27 --mutRate 0.6175
+[2026-06-16 12:33:21] 🚀 Probando Config: 59 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 13 --lambda 29 --mutRate 0.6347
+[2026-06-16 12:33:21] 🚀 Probando Config: 60 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 9 --lambda 29 --mutRate 0.6193
+[2026-06-16 12:33:21] 🚀 Probando Config: 61 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 3 --lambda 20 --mutRate 0.4901
+[2026-06-16 12:33:21] 🚀 Probando Config: 62 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 9 --lambda 26 --mutRate 0.7918
+[2026-06-16 12:33:21] 🚀 Probando Config: 63 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 11 --lambda 29 --mutRate 0.8127
+    -> ✅ ÉXITO. Fitness devuelto: -373
+[2026-06-16 12:48:26] 🚀 Probando Config: 64 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 3 --lambda 20 --mutRate 0.589
+    -> ✅ ÉXITO. Fitness devuelto: -1306
+[2026-06-16 12:50:06] 🚀 Probando Config: 65 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 6 --lambda 19 --mutRate 0.6091
+    -> ✅ ÉXITO. Fitness devuelto: -1449
+[2026-06-16 12:50:09] 🚀 Probando Config: 66 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 3 --lambda 18 --mutRate 0.6944
+    -> ✅ ÉXITO. Fitness devuelto: -961
+[2026-06-16 12:50:10] 🚀 Probando Config: 67 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 8 --lambda 24 --mutRate 0.6523
+    -> ✅ ÉXITO. Fitness devuelto: -1708
+[2026-06-16 12:50:16] 🚀 Probando Config: 68 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 4 --lambda 17 --mutRate 0.3886
+    -> ✅ ÉXITO. Fitness devuelto: -1619
+[2026-06-16 12:50:18] 🚀 Probando Config: 69 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 11 --lambda 24 --mutRate 0.9918
+    -> ✅ ÉXITO. Fitness devuelto: -1463
+[2026-06-16 12:50:18] 🚀 Probando Config: 70 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 3 --lambda 19 --mutRate 0.545
+    -> ✅ ÉXITO. Fitness devuelto: -1254
+[2026-06-16 12:50:27] 🚀 Probando Config: 71 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 6 --lambda 28 --mutRate 0.8288
+    -> ✅ ÉXITO. Fitness devuelto: -1517
+[2026-06-16 13:05:26] 🚀 Probando Config: 72 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 12 --lambda 30 --mutRate 0.4647
+    -> ✅ ÉXITO. Fitness devuelto: -554
+[2026-06-16 13:06:54] 🚀 Probando Config: 73 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 10 --lambda 28 --mutRate 0.8233
+    -> ✅ ÉXITO. Fitness devuelto: -1356
+[2026-06-16 13:06:55] 🚀 Probando Config: 74 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 7 --lambda 24 --mutRate 0.8523
+    -> ✅ ÉXITO. Fitness devuelto: -1415
+[2026-06-16 13:07:09] 🚀 Probando Config: 75 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 13 --lambda 30 --mutRate 0.7983
+    -> ✅ ÉXITO. Fitness devuelto: -1158
+[2026-06-16 13:07:11] 🚀 Probando Config: 76 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 8 --lambda 26 --mutRate 0.8389
+    -> ✅ ÉXITO. Fitness devuelto: -1045
+[2026-06-16 13:07:12] 🚀 Probando Config: 77 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 2 --lambda 16 --mutRate 0.7057
+    -> ✅ ÉXITO. Fitness devuelto: -1266
+[2026-06-16 13:07:16] 🚀 Probando Config: 78 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 2 --lambda 18 --mutRate 0.6535
+    -> ✅ ÉXITO. Fitness devuelto: -1505
+[2026-06-16 13:07:25] 🚀 Probando Config: 79 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 10 --lambda 26 --mutRate 0.8351
+    -> ✅ ÉXITO. Fitness devuelto: -1248
+[2026-06-16 13:22:34] 🚀 Probando Config: 80 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 2 --lambda 16 --mutRate 0.7584
+    -> ✅ ÉXITO. Fitness devuelto: -1656
+[2026-06-16 13:23:48] 🚀 Probando Config: 81 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 13 --lambda 30 --mutRate 0.5477
+    -> ✅ ÉXITO. Fitness devuelto: -1487
+[2026-06-16 13:24:02] 🚀 Probando Config: 82 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 10 --lambda 26 --mutRate 0.9257
+    -> ✅ ÉXITO. Fitness devuelto: -1302
+[2026-06-16 13:24:02] 🚀 Probando Config: 83 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 8 --lambda 18 --mutRate 0.7399
+    -> ✅ ÉXITO. Fitness devuelto: -1449
+[2026-06-16 13:24:08] 🚀 Probando Config: 84 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 4 --lambda 17 --mutRate 0.6138
+    -> ✅ ÉXITO. Fitness devuelto: -660
+[2026-06-16 13:24:08] 🚀 Probando Config: 85 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 9 --lambda 24 --mutRate 0.6392
+    -> ✅ ÉXITO. Fitness devuelto: -1656
+[2026-06-16 13:24:16] 🚀 Probando Config: 86 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 2 --lambda 15 --mutRate 0.4755
+    -> ✅ ÉXITO. Fitness devuelto: -1551
+[2026-06-16 13:24:19] 🚀 Probando Config: 87 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 8 --lambda 17 --mutRate 0.424
+    -> ✅ ÉXITO. Fitness devuelto: -234
+[2026-06-16 13:34:32] 🚀 Probando Config: 88 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 13 --lambda 29 --mutRate 0.8226
+    -> ✅ ÉXITO. Fitness devuelto: -1520
+[2026-06-16 13:39:34] 🚀 Probando Config: 89 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 10 --lambda 29 --mutRate 0.3833
+    -> ✅ ÉXITO. Fitness devuelto: -1515
+[2026-06-16 13:40:59] 🚀 Probando Config: 90 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 5 --lambda 17 --mutRate 0.2319
+    -> ✅ ÉXITO. Fitness devuelto: -563
+[2026-06-16 13:41:06] 🚀 Probando Config: 91 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 8 --lambda 21 --mutRate 0.8175
+    -> ✅ ÉXITO. Fitness devuelto: -714
+[2026-06-16 13:41:06] 🚀 Probando Config: 92 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 7 --lambda 26 --mutRate 0.8188
+    -> ✅ ÉXITO. Fitness devuelto: -1582
+[2026-06-16 13:41:14] 🚀 Probando Config: 93 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 4 --lambda 20 --mutRate 0.5092
+    -> ✅ ÉXITO. Fitness devuelto: -1513
+    -> ✅ ÉXITO. Fitness devuelto: -1656
+[2026-06-16 13:41:17] 🚀 Probando Config: 94 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 5 --lambda 19 --mutRate 0.5387
+[2026-06-16 13:41:17] 🚀 Probando Config: 95 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 9 --lambda 24 --mutRate 0.8869
+    -> ✅ ÉXITO. Fitness devuelto: -1461
+[2026-06-16 13:51:20] 🚀 Probando Config: 96 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 15 --lambda 26 --mutRate 0.5726
+    -> ✅ ÉXITO. Fitness devuelto: -1515
+[2026-06-16 13:53:29] 🚀 Probando Config: 97 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_15.txt | Parámetros: --mu 8 --lambda 23 --mutRate 0.9949
+    -> ✅ ÉXITO. Fitness devuelto: -1513
+    -> ✅ ÉXITO. Fitness devuelto: -982
+    -> ✅ ÉXITO. Fitness devuelto: -1648
+    -> ✅ ÉXITO. Fitness devuelto: -1518
+    -> ✅ ÉXITO. Fitness devuelto: -496
+    -> ✅ ÉXITO. Fitness devuelto: -1650
+    -> ✅ ÉXITO. Fitness devuelto: -1568
+    -> ✅ ÉXITO. Fitness devuelto: -1367
+[2026-06-16 14:06:28] 🚀 Probando Config: 57 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 9 --lambda 25 --mutRate 0.6867
+[2026-06-16 14:06:28] 🚀 Probando Config: 59 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 13 --lambda 29 --mutRate 0.6347
+[2026-06-16 14:06:28] 🚀 Probando Config: 56 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 12 --lambda 26 --mutRate 0.6417
+[2026-06-16 14:06:28] 🚀 Probando Config: 60 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 9 --lambda 29 --mutRate 0.6193
+[2026-06-16 14:06:28] 🚀 Probando Config: 58 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 6 --lambda 27 --mutRate 0.6175
+[2026-06-16 14:06:28] 🚀 Probando Config: 61 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 3 --lambda 20 --mutRate 0.4901
+[2026-06-16 14:06:28] 🚀 Probando Config: 62 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 9 --lambda 26 --mutRate 0.7918
+[2026-06-16 14:06:28] 🚀 Probando Config: 63 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 11 --lambda 29 --mutRate 0.8127
+    -> ✅ ÉXITO. Fitness devuelto: -13288
+[2026-06-16 14:25:50] 🚀 Probando Config: 64 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 3 --lambda 20 --mutRate 0.589
+    -> ✅ ÉXITO. Fitness devuelto: -18382
+[2026-06-16 14:27:10] 🚀 Probando Config: 65 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 6 --lambda 19 --mutRate 0.6091
+    -> ✅ ÉXITO. Fitness devuelto: -4795
+[2026-06-16 14:27:21] 🚀 Probando Config: 66 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 3 --lambda 18 --mutRate 0.6944
+    -> ✅ ÉXITO. Fitness devuelto: -15192
+[2026-06-16 14:28:18] 🚀 Probando Config: 67 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 24 --mutRate 0.6523
+    -> ✅ ÉXITO. Fitness devuelto: -17406
+[2026-06-16 14:28:52] 🚀 Probando Config: 68 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 4 --lambda 17 --mutRate 0.3886
+    -> ✅ ÉXITO. Fitness devuelto: -21275
+[2026-06-16 14:31:01] 🚀 Probando Config: 69 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 11 --lambda 24 --mutRate 0.9918
+    -> ✅ ÉXITO. Fitness devuelto: -45569
+[2026-06-16 14:35:06] 🚀 Probando Config: 70 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 3 --lambda 19 --mutRate 0.545
+    -> ✅ ÉXITO. Fitness devuelto: -6809
+[2026-06-16 14:45:31] 🚀 Probando Config: 71 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 6 --lambda 28 --mutRate 0.8288
+    -> ✅ ÉXITO. Fitness devuelto: -66439
+[2026-06-16 14:47:17] 🚀 Probando Config: 72 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 12 --lambda 30 --mutRate 0.4647
+    -> ✅ ÉXITO. Fitness devuelto: -10808
+[2026-06-16 14:47:26] 🚀 Probando Config: 73 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 10 --lambda 28 --mutRate 0.8233
+    -> ✅ ÉXITO. Fitness devuelto: -55806
+[2026-06-16 14:51:43] 🚀 Probando Config: 74 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 7 --lambda 24 --mutRate 0.8523
+    -> ✅ ÉXITO. Fitness devuelto: -22081
+[2026-06-16 14:54:07] 🚀 Probando Config: 75 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 13 --lambda 30 --mutRate 0.7983
+    -> ✅ ÉXITO. Fitness devuelto: -53464
+[2026-06-16 14:56:52] 🚀 Probando Config: 76 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 26 --mutRate 0.8389
+    -> ✅ ÉXITO. Fitness devuelto: -52185
+[2026-06-16 14:58:52] 🚀 Probando Config: 77 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 2 --lambda 16 --mutRate 0.7057
+    -> ✅ ÉXITO. Fitness devuelto: -66824
+[2026-06-16 15:02:31] 🚀 Probando Config: 78 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 2 --lambda 18 --mutRate 0.6535
+    -> ✅ ÉXITO. Fitness devuelto: -11686
+[2026-06-16 15:06:17] 🚀 Probando Config: 79 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 10 --lambda 26 --mutRate 0.8351
+    -> ✅ ÉXITO. Fitness devuelto: -9627
+[2026-06-16 15:06:19] 🚀 Probando Config: 80 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 2 --lambda 16 --mutRate 0.7584
+    -> ✅ ÉXITO. Fitness devuelto: -22560
+[2026-06-16 15:10:56] 🚀 Probando Config: 81 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 13 --lambda 30 --mutRate 0.5477
+    -> ✅ ÉXITO. Fitness devuelto: -4390
+[2026-06-16 15:11:08] 🚀 Probando Config: 82 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 10 --lambda 26 --mutRate 0.9257
+    -> ✅ ÉXITO. Fitness devuelto: -7543
+[2026-06-16 15:17:02] 🚀 Probando Config: 83 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 18 --mutRate 0.7399
+    -> ✅ ÉXITO. Fitness devuelto: -38851
+[2026-06-16 15:19:09] 🚀 Probando Config: 84 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 4 --lambda 17 --mutRate 0.6138
+    -> ✅ ÉXITO. Fitness devuelto: -4915
+[2026-06-16 15:21:57] 🚀 Probando Config: 85 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 9 --lambda 24 --mutRate 0.6392
+    -> ✅ ÉXITO. Fitness devuelto: -30428
+[2026-06-16 15:23:01] 🚀 Probando Config: 86 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 2 --lambda 15 --mutRate 0.4755
+    -> ✅ ÉXITO. Fitness devuelto: -15815
+[2026-06-16 15:27:08] 🚀 Probando Config: 87 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 17 --mutRate 0.424
+    -> ✅ ÉXITO. Fitness devuelto: -24716
+[2026-06-16 15:35:27] 🚀 Probando Config: 88 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 13 --lambda 29 --mutRate 0.8226
+    -> 🚨 COLAPSO/ERROR. Código de salida: 137
+    -> Mensaje: 
+[2026-06-16 15:42:23] 🚀 Probando Config: 89 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 10 --lambda 29 --mutRate 0.3833
+    -> ✅ ÉXITO. Fitness devuelto: -45976
+[2026-06-16 15:43:20] 🚀 Probando Config: 90 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 5 --lambda 17 --mutRate 0.2319
+    -> ✅ ÉXITO. Fitness devuelto: -21248
+[2026-06-16 15:44:32] 🚀 Probando Config: 91 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 21 --mutRate 0.8175
+    -> ✅ ÉXITO. Fitness devuelto: -39585
+[2026-06-16 15:44:47] 🚀 Probando Config: 92 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 7 --lambda 26 --mutRate 0.8188
+    -> ✅ ÉXITO. Fitness devuelto: -49153
+[2026-06-16 15:48:57] 🚀 Probando Config: 93 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 4 --lambda 20 --mutRate 0.5092
+    -> ✅ ÉXITO. Fitness devuelto: -63893
+[2026-06-16 15:49:41] 🚀 Probando Config: 94 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 5 --lambda 19 --mutRate 0.5387
+    -> ✅ ÉXITO. Fitness devuelto: -57697
+[2026-06-16 15:57:11] 🚀 Probando Config: 95 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 9 --lambda 24 --mutRate 0.8869
+    -> ✅ ÉXITO. Fitness devuelto: -20985
+[2026-06-16 15:58:02] 🚀 Probando Config: 96 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 15 --lambda 26 --mutRate 0.5726
+    -> ✅ ÉXITO. Fitness devuelto: -10129
+[2026-06-16 16:04:14] 🚀 Probando Config: 97 | Instancia: /home/bored/proyectos/Sokoban_Native/tuning/Instances/shell_577.txt | Parámetros: --mu 8 --lambda 23 --mutRate 0.9949
+    -> ✅ ÉXITO. Fitness devuelto: -33984
+    -> ✅ ÉXITO. Fitness devuelto: -14613
+    -> ✅ ÉXITO. Fitness devuelto: -51981
+    -> ✅ ÉXITO. Fitness devuelto: -9798
+    -> ✅ ÉXITO. Fitness devuelto: -57619
+    -> ✅ ÉXITO. Fitness devuelto: -15502
+    -> ✅ ÉXITO. Fitness devuelto: -58436
+    -> ✅ ÉXITO. Fitness devuelto: -72490
