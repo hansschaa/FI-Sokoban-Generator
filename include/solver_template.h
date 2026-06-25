@@ -34,7 +34,7 @@ public:
     std::function<bool(const Node*, const Node*)> is_equal,
     std::function<int(const Node*, const Node*)> heuristic = nullptr,
     double max_seconds = 120.0,
-    size_t max_nodes = 500000
+    size_t max_nodes = 300000
     ) {
         if (is_equal(start, goal)) {
             if constexpr (std::is_same_v<Result, bool>) {

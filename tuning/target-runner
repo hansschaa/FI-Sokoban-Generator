@@ -7,7 +7,7 @@ INSTANCE=$4
 shift 4
 
 EXE="../build/irace_generator"
-ALGO="ES"
+ALGO="GA"
 FO="FO4"
 
 # --- SISTEMA DE RASTREO EN TIEMPO REAL ---
