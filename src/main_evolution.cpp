@@ -75,11 +75,16 @@ int main(int argc, char** argv)
         fitnessType = FitnessType::FO4_DEADLOCKS;
         std::cout << "Fitness: FO4 (Deadlocks)\n";
     }
+    else if (fitness_arg == "FO5" || fitness_arg == "repeated_nodes")
+    {
+        fitnessType = FitnessType::FO5_REPEATED_NODES;
+        std::cout << "Fitness: FO5 (Repeated Nodes)\n";
+    }
     else
     {
         std::cerr
             << "Unknown fitness: \"" << fitness_arg << "\"\n"
-            << "Valid options: FO1 | FO2 | FO3 | FO4\n";
+            << "Valid options: FO1 | FO2 | FO3 | FO4 | FO5\n";
         return 1;
     }
 

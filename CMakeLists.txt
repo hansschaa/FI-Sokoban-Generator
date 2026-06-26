@@ -74,6 +74,7 @@ list(REMOVE_ITEM MY_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_test_solver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_irace.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_batch.cpp     # <- MODIFICADO: Evita conflicto en los demas binarios
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_experiment1.cpp
 )
 
 #

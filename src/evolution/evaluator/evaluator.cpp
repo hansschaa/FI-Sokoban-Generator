@@ -70,6 +70,10 @@ double Evaluator::evaluate(Individual& individual)
         case FitnessType::FO4_DEADLOCKS:
             individual.fitness = stats.deadlocks;
             break;
+
+        case FitnessType::FO5_REPEATED_NODES:
+            individual.fitness = stats.repeated_nodes;
+            break;
     }
 
     return individual.fitness;
