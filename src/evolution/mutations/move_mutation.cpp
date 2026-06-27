@@ -119,14 +119,23 @@ bool MoveMutation::moveCharacter(
 
     //
     // CLEAR SOURCE CELL
+    // Handle composite states correctly depending on what is moving
     //
 
     if (src == '+')
-        board[selected.i][selected.j] = '.';   // player was on goal → restore goal
+    {
+        if (target == '.') board[selected.i][selected.j] = '@'; // moving goal, player remains
+        else               board[selected.i][selected.j] = '.'; // moving player, goal remains
+    }
     else if (src == '*')
-        board[selected.i][selected.j] = '.';   // box was on goal → restore goal
+    {
+        if (target == '.') board[selected.i][selected.j] = '$'; // moving goal, box remains
+        else               board[selected.i][selected.j] = '.'; // moving box, goal remains
+    }
     else
+    {
         board[selected.i][selected.j] = ' ';
+    }
 
     //
     // PLACE ENTITY AT DESTINATION

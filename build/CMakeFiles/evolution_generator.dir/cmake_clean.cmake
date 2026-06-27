@@ -38,6 +38,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/evolution_generator.dir/src/point.cpp.o.d"
   "CMakeFiles/evolution_generator.dir/src/repeat.cpp.o"
   "CMakeFiles/evolution_generator.dir/src/repeat.cpp.o.d"
+  "CMakeFiles/evolution_generator.dir/src/shell_generator/shell_generator.cpp.o"
+  "CMakeFiles/evolution_generator.dir/src/shell_generator/shell_generator.cpp.o.d"
   "evolution_generator"
   "evolution_generator.pdb"
 )

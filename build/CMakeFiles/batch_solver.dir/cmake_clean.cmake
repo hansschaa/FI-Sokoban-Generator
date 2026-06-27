@@ -38,6 +38,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/batch_solver.dir/src/point.cpp.o.d"
   "CMakeFiles/batch_solver.dir/src/repeat.cpp.o"
   "CMakeFiles/batch_solver.dir/src/repeat.cpp.o.d"
+  "CMakeFiles/batch_solver.dir/src/shell_generator/shell_generator.cpp.o"
+  "CMakeFiles/batch_solver.dir/src/shell_generator/shell_generator.cpp.o.d"
   "batch_solver"
   "batch_solver.pdb"
 )

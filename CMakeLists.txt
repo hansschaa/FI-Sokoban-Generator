@@ -75,6 +75,7 @@ list(REMOVE_ITEM MY_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_irace.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_batch.cpp     # <- MODIFICADO: Evita conflicto en los demas binarios
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_experiment1.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_shell.cpp     # Nuevo main para pruebas
 )
 
 #
@@ -138,6 +139,16 @@ add_executable(
 )
 
 #
+# Shell test executable
+#
+
+add_executable(
+    test_shell
+    src/main_shell.cpp
+    ${MY_SRC}
+)
+
+#
 # Common compiler flags
 #
 
@@ -148,6 +159,7 @@ foreach(target
     test_solver
     irace_generator
     batch_solver                                        # <- MODIFICADO: Añadido al bucle de optimizacion
+    test_shell
 )
     target_compile_options(
         ${target}

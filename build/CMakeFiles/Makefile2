@@ -69,6 +69,7 @@ all: CMakeFiles/evolution_generator.dir/all
 all: CMakeFiles/test_solver.dir/all
 all: CMakeFiles/irace_generator.dir/all
 all: CMakeFiles/batch_solver.dir/all
+all: CMakeFiles/test_shell.dir/all
 .PHONY : all
 
 # The main recursive "codegen" target.
@@ -78,6 +79,7 @@ codegen: CMakeFiles/evolution_generator.dir/codegen
 codegen: CMakeFiles/test_solver.dir/codegen
 codegen: CMakeFiles/irace_generator.dir/codegen
 codegen: CMakeFiles/batch_solver.dir/codegen
+codegen: CMakeFiles/test_shell.dir/codegen
 .PHONY : codegen
 
 # The main recursive "preinstall" target.
@@ -91,6 +93,7 @@ clean: CMakeFiles/evolution_generator.dir/clean
 clean: CMakeFiles/test_solver.dir/clean
 clean: CMakeFiles/irace_generator.dir/clean
 clean: CMakeFiles/batch_solver.dir/clean
+clean: CMakeFiles/test_shell.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -100,12 +103,12 @@ clean: CMakeFiles/batch_solver.dir/clean
 CMakeFiles/sokoban_solver.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66 "Built target sokoban_solver"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=43,44,45,46,47,48,49,50,51,52,53,54,55,56,57 "Built target sokoban_solver"
 .PHONY : CMakeFiles/sokoban_solver.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/sokoban_solver.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 16
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 15
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/sokoban_solver.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 0
 .PHONY : CMakeFiles/sokoban_solver.dir/rule
@@ -117,7 +120,7 @@ sokoban_solver: CMakeFiles/sokoban_solver.dir/rule
 # codegen rule for target.
 CMakeFiles/sokoban_solver.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66 "Finished codegen for target sokoban_solver"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=43,44,45,46,47,48,49,50,51,52,53,54,55,56,57 "Finished codegen for target sokoban_solver"
 .PHONY : CMakeFiles/sokoban_solver.dir/codegen
 
 # clean rule for target.
@@ -132,12 +135,12 @@ CMakeFiles/sokoban_solver.dir/clean:
 CMakeFiles/solver_benchmark.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83 "Built target solver_benchmark"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=58,59,60,61,62,63,64,65,66,67,68,69,70,71 "Built target solver_benchmark"
 .PHONY : CMakeFiles/solver_benchmark.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/solver_benchmark.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 17
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 14
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/solver_benchmark.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 0
 .PHONY : CMakeFiles/solver_benchmark.dir/rule
@@ -149,7 +152,7 @@ solver_benchmark: CMakeFiles/solver_benchmark.dir/rule
 # codegen rule for target.
 CMakeFiles/solver_benchmark.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83 "Finished codegen for target solver_benchmark"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=58,59,60,61,62,63,64,65,66,67,68,69,70,71 "Finished codegen for target solver_benchmark"
 .PHONY : CMakeFiles/solver_benchmark.dir/codegen
 
 # clean rule for target.
@@ -164,12 +167,12 @@ CMakeFiles/solver_benchmark.dir/clean:
 CMakeFiles/evolution_generator.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33 "Built target evolution_generator"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=15,16,17,18,19,20,21,22,23,24,25,26,27,28 "Built target evolution_generator"
 .PHONY : CMakeFiles/evolution_generator.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/evolution_generator.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 17
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 14
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/evolution_generator.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 0
 .PHONY : CMakeFiles/evolution_generator.dir/rule
@@ -181,7 +184,7 @@ evolution_generator: CMakeFiles/evolution_generator.dir/rule
 # codegen rule for target.
 CMakeFiles/evolution_generator.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33 "Finished codegen for target evolution_generator"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=15,16,17,18,19,20,21,22,23,24,25,26,27,28 "Finished codegen for target evolution_generator"
 .PHONY : CMakeFiles/evolution_generator.dir/codegen
 
 # clean rule for target.
@@ -196,12 +199,12 @@ CMakeFiles/evolution_generator.dir/clean:
 CMakeFiles/test_solver.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100 "Built target test_solver"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=86,87,88,89,90,91,92,93,94,95,96,97,98,99,100 "Built target test_solver"
 .PHONY : CMakeFiles/test_solver.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/test_solver.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 17
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 15
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/test_solver.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 0
 .PHONY : CMakeFiles/test_solver.dir/rule
@@ -213,7 +216,7 @@ test_solver: CMakeFiles/test_solver.dir/rule
 # codegen rule for target.
 CMakeFiles/test_solver.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100 "Finished codegen for target test_solver"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=86,87,88,89,90,91,92,93,94,95,96,97,98,99,100 "Finished codegen for target test_solver"
 .PHONY : CMakeFiles/test_solver.dir/codegen
 
 # clean rule for target.
@@ -228,12 +231,12 @@ CMakeFiles/test_solver.dir/clean:
 CMakeFiles/irace_generator.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/irace_generator.dir/build.make CMakeFiles/irace_generator.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/irace_generator.dir/build.make CMakeFiles/irace_generator.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50 "Built target irace_generator"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=29,30,31,32,33,34,35,36,37,38,39,40,41,42 "Built target irace_generator"
 .PHONY : CMakeFiles/irace_generator.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/irace_generator.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 17
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 14
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/irace_generator.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 0
 .PHONY : CMakeFiles/irace_generator.dir/rule
@@ -245,7 +248,7 @@ irace_generator: CMakeFiles/irace_generator.dir/rule
 # codegen rule for target.
 CMakeFiles/irace_generator.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/irace_generator.dir/build.make CMakeFiles/irace_generator.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50 "Finished codegen for target irace_generator"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=29,30,31,32,33,34,35,36,37,38,39,40,41,42 "Finished codegen for target irace_generator"
 .PHONY : CMakeFiles/irace_generator.dir/codegen
 
 # clean rule for target.
@@ -260,12 +263,12 @@ CMakeFiles/irace_generator.dir/clean:
 CMakeFiles/batch_solver.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 "Built target batch_solver"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14 "Built target batch_solver"
 .PHONY : CMakeFiles/batch_solver.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/batch_solver.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 16
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 14
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/batch_solver.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 0
 .PHONY : CMakeFiles/batch_solver.dir/rule
@@ -277,13 +280,45 @@ batch_solver: CMakeFiles/batch_solver.dir/rule
 # codegen rule for target.
 CMakeFiles/batch_solver.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 "Finished codegen for target batch_solver"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14 "Finished codegen for target batch_solver"
 .PHONY : CMakeFiles/batch_solver.dir/codegen
 
 # clean rule for target.
 CMakeFiles/batch_solver.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/clean
 .PHONY : CMakeFiles/batch_solver.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/test_shell.dir
+
+# All Build rule for target.
+CMakeFiles/test_shell.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=72,73,74,75,76,77,78,79,80,81,82,83,84,85 "Built target test_shell"
+.PHONY : CMakeFiles/test_shell.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/test_shell.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 14
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/test_shell.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hanss/FI-sokoban-generator/build/CMakeFiles 0
+.PHONY : CMakeFiles/test_shell.dir/rule
+
+# Convenience name for target.
+test_shell: CMakeFiles/test_shell.dir/rule
+.PHONY : test_shell
+
+# codegen rule for target.
+CMakeFiles/test_shell.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=72,73,74,75,76,77,78,79,80,81,82,83,84,85 "Finished codegen for target test_shell"
+.PHONY : CMakeFiles/test_shell.dir/codegen
+
+# clean rule for target.
+CMakeFiles/test_shell.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/clean
+.PHONY : CMakeFiles/test_shell.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

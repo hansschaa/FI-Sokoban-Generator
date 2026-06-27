@@ -38,6 +38,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/sokoban_solver.dir/src/point.cpp.o.d"
   "CMakeFiles/sokoban_solver.dir/src/repeat.cpp.o"
   "CMakeFiles/sokoban_solver.dir/src/repeat.cpp.o.d"
+  "CMakeFiles/sokoban_solver.dir/src/shell_generator/shell_generator.cpp.o"
+  "CMakeFiles/sokoban_solver.dir/src/shell_generator/shell_generator.cpp.o.d"
   "sokoban_solver"
   "sokoban_solver.pdb"
 )

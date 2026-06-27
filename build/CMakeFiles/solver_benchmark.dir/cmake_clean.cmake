@@ -38,6 +38,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/solver_benchmark.dir/src/point.cpp.o.d"
   "CMakeFiles/solver_benchmark.dir/src/repeat.cpp.o"
   "CMakeFiles/solver_benchmark.dir/src/repeat.cpp.o.d"
+  "CMakeFiles/solver_benchmark.dir/src/shell_generator/shell_generator.cpp.o"
+  "CMakeFiles/solver_benchmark.dir/src/shell_generator/shell_generator.cpp.o.d"
   "solver_benchmark"
   "solver_benchmark.pdb"
 )

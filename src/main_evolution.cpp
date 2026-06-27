@@ -10,6 +10,7 @@
 
 #include "../include/evolution/algorithms/evolution_strategy.h"
 #include "../include/evolution/algorithms/genetic_algorithm.h"
+#include "shell_generator/shell_generator.h"
 
 #include "../include/evolution/individual.h"
 #include "../include/evolution/utils/board_utils.h"
@@ -34,13 +35,13 @@ int main(int argc, char** argv)
     //
     // ./evolution_generator ES pushes 5
 
-    if (argc < 3)
+    if (argc < 4)
     {
         std::cout
             << "Usage:\n"
-            << "./evolution_generator ES  <fitness> [runs] [--show-stats] [--no-parallel]\n"
-            << "./evolution_generator GA  <fitness> [runs] [--show-stats] [--no-parallel]\n"
-            << "./evolution_generator SA  <fitness> [runs] [--show-stats] [--no-parallel]\n"
+            << "./evolution_generator ES  <fitness> [runs] [factorX] [factorY] [--show-stats] [--no-parallel]\n"
+            << "./evolution_generator GA  <fitness> [runs] [factorX] [factorY] [--show-stats] [--no-parallel]\n"
+            << "./evolution_generator SA  <fitness> [runs] [factorX] [factorY] [--show-stats] [--no-parallel]\n"
             << "\n"
             << "fitness options:\n"
             << "  pushes           number of box pushes in solution\n"
@@ -50,27 +51,35 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    std::string algorithm  = argv[1];
+    std::string fitness_arg = argv[2];
+    int num_runs = std::stoi(argv[3]);
+
+    int factorX = 2;
+    int factorY = 2;
+    int current_arg = 4;
+
+    if (argc > current_arg && argv[current_arg][0] != '-')
+    {
+        factorX = std::stoi(argv[current_arg++]);
+    }
+    if (argc > current_arg && argv[current_arg][0] != '-')
+    {
+        factorY = std::stoi(argv[current_arg++]);
+    }
+
     bool show_stats = false;
     bool no_parallel = false;
-    int num_runs = 1;
     
     // Parse optional arguments
-    for (int i = 3; i < argc; i++) {
+    for (int i = current_arg; i < argc; i++) {
         std::string arg = argv[i];
         if (arg == "--show-stats") {
             show_stats = true;
         } else if (arg == "--no-parallel") {
             no_parallel = true;
-        } else {
-            // If it's a number, it's the runs argument
-            try {
-                num_runs = std::stoi(arg);
-            } catch (...) {}
         }
     }
-
-    std::string algorithm  = argv[1];
-    std::string fitness_arg = argv[2];
 
     //
     // PARSE FITNESS TYPE
@@ -117,18 +126,12 @@ int main(int argc, char** argv)
     std::cout << "START\n";
 
     //
-    // BOARD SHELL
-    // ONLY WALLS + EMPTY SPACES
+    // GENERATE SHELL
     //
-
-    std::vector<std::vector<char>> shell =
-    {
-        {'#','#','#','#','#','#','#'},
-        {'#',' ',' ',' ',' ',' ','#'},
-        {'#',' ',' ',' ',' ',' ','#'},
-        {'#',' ',' ',' ',' ',' ','#'},
-        {'#','#','#','#','#','#','#'}
-    };
+    SokobanGenerator generator(factorX, factorY);
+    std::cout << "Generando cascaron de topologia " << factorX << "x" << factorY << "...\n";
+    generator.generate();
+    std::vector<std::vector<char>> shell = generator.getBoard();
 
     //
     // max_boxes: upper bound available to mutation operators that add boxes.
@@ -301,10 +304,11 @@ int main(int argc, char** argv)
         EvolutionStrategy es;
         es.use_parallel    = !no_parallel;
         es.setDeadlockMask(deadlock_mask);
-        es.mu              = 10;
+        es.mu              = 15;
         es.lambda          = 20;  // igualado a GA para comparación justa
+        es.mutationRate    = 1.0;
         es.maxEvaluations  = 20000;
-        es.stagnationLimit = 100;
+        es.stagnationLimit = 1000;
 
         std::cout << "RUNNING MU + LAMBDA ES\n";
         best = es.run(population);
@@ -315,6 +319,9 @@ int main(int argc, char** argv)
         ga.use_parallel    = !no_parallel;
         ga.setDeadlockMask(deadlock_mask);
         ga.offspringSize   = 10;
+        ga.mutationRate    = 1.0;
+        ga.crossoverRate   = 1.0;
+        ga.maxFailedAttempts = 10;
         ga.maxEvaluations  = 2000;
         ga.stagnationLimit = 30;
 
@@ -330,9 +337,6 @@ int main(int argc, char** argv)
         sa.maxEvaluations     = 500;
         sa.stagnationLimit    = 15;
 
-        //
-        // START FROM BEST INDIVIDUAL
-        // Avoids dependency on random ordering of the initial population.
         //
         // START FROM BEST INDIVIDUAL
         // Avoids dependency on random ordering of the initial population.
