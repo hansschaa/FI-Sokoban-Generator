@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/hanss/FI-sokoban-generator/include
 
-CXX_FLAGS = -O3 -march=native -flto -DNDEBUG -std=gnu++17 -Wall -Wextra -pedantic -O3 -march=native -flto -DNDEBUG
+CXX_FLAGS = -O3 -march=native -flto -DNDEBUG -std=gnu++17 -Wall -Wextra -pedantic -O3 -march=native -flto -DNDEBUG -pthread
 

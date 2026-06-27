@@ -3,6 +3,9 @@
 #include <ctime>
 #include <string>
 #include <algorithm>
+#include <future>
+#include <mutex>
+#include <chrono>
 
 #include "../include/evolution/algorithms/evolution_strategy.h"
 #include "../include/evolution/algorithms/genetic_algorithm.h"
@@ -34,9 +37,9 @@ int main(int argc, char** argv)
     {
         std::cout
             << "Usage:\n"
-            << "./evolution_generator ES  <fitness> [runs] [--show-stats]\n"
-            << "./evolution_generator GA  <fitness> [runs] [--show-stats]\n"
-            << "./evolution_generator SA  <fitness> [runs] [--show-stats]\n"
+            << "./evolution_generator ES  <fitness> [runs] [--show-stats] [--no-parallel]\n"
+            << "./evolution_generator GA  <fitness> [runs] [--show-stats] [--no-parallel]\n"
+            << "./evolution_generator SA  <fitness> [runs] [--show-stats] [--no-parallel]\n"
             << "\n"
             << "fitness options:\n"
             << "  pushes           number of box pushes in solution\n"
@@ -47,6 +50,7 @@ int main(int argc, char** argv)
     }
 
     bool show_stats = false;
+    bool no_parallel = false;
     int num_runs = 1;
     
     // Parse optional arguments
@@ -54,6 +58,8 @@ int main(int argc, char** argv)
         std::string arg = argv[i];
         if (arg == "--show-stats") {
             show_stats = true;
+        } else if (arg == "--no-parallel") {
+            no_parallel = true;
         } else {
             // If it's a number, it's the runs argument
             try {
@@ -166,64 +172,82 @@ int main(int argc, char** argv)
         // GENERATE VALID INDIVIDUALS
         //
 
-        for (int i = 0; i < POP_SIZE; i++)
-    {
-        bool valid    = false;
-        int attempts  = 0;
+        std::mutex pop_mutex;
+        
+        auto start_time = std::chrono::high_resolution_clock::now();
 
-        while (!valid && attempts < 10000)
-        {
-            auto board = shell;
+        auto generate_individual = [&](int i) {
+            bool valid = false;
+            int attempts = 0;
 
-            //
-            // All initial individuals start with 1 box.
-            // Complexity grows through evolution, not initialization.
-            //
-
-            int numBoxes = 1;
-
-            placeRandom(board, '@', deadlock_mask);
-
-            for (int k = 0; k < numBoxes; k++)
+            while (!valid && attempts < 10000)
             {
-                placeRandom(board, '$', deadlock_mask);
-                placeRandom(board, '.', deadlock_mask);
+                auto board = shell;
+                int numBoxes = 1;
+
+                // Bloqueamos rand() y la generacion por seguridad de hilos
+                {
+                    std::lock_guard<std::mutex> lock(pop_mutex);
+                    placeRandom(board, '@', deadlock_mask);
+                    for (int k = 0; k < numBoxes; k++)
+                    {
+                        placeRandom(board, '$', deadlock_mask);
+                        placeRandom(board, '.', deadlock_mask);
+                    }
+                }
+
+                std::string  level = board_to_string(board);
+                unsigned int rows  = board.size();
+                unsigned int cols  = board[0].size();
+
+                game_solver solver(level, rows, cols, 512);
+                std::vector<game_node> solution;
+
+                auto stats = solver.test_template(Method::a_star, solution);
+
+                if (stats.status == SolveStatus::SOLVED)
+                {
+                    Individual ind;
+                    ind.board   = board;
+                    
+                    std::lock_guard<std::mutex> lock(pop_mutex);
+                    ind.fitness = evaluator.evaluate(ind);
+
+                    population.push_back(ind);
+                    valid = true;
+
+                    std::cout
+                        << "VALID INDIVIDUAL " << i
+                        << "  |  boxes=" << numBoxes
+                        << "  |  fitness=" << ind.fitness << "\n";
+                }
+
+                attempts++;
             }
 
-            std::string  level = board_to_string(board);
-            unsigned int rows  = board.size();
-            unsigned int cols  = board[0].size();
-
-            game_solver solver(level, rows, cols, 512);
-
-            std::vector<game_node> solution;
-
-            auto stats = solver.test_template(Method::a_star, solution);
-
-            if (stats.status == SolveStatus::SOLVED)
+            if (!valid)
             {
-                Individual ind;
-                ind.board   = board;
-                ind.fitness = evaluator.evaluate(ind);
-
-                population.push_back(ind);
-                valid = true;
-
-                std::cout
-                    << "VALID INDIVIDUAL " << i
-                    << "  |  boxes=" << numBoxes
-                    << "  |  fitness=" << ind.fitness << "\n"
-                    << board_to_pretty_string(board) << "\n";
+                std::lock_guard<std::mutex> lock(pop_mutex);
+                std::cerr << "Could not generate valid individual " << i << "\n";
             }
+        };
 
-            attempts++;
+        if (no_parallel) {
+            for (int i = 0; i < POP_SIZE; i++) {
+                generate_individual(i);
+            }
+        } else {
+            std::vector<std::future<void>> futures;
+            for (int i = 0; i < POP_SIZE; i++) {
+                futures.push_back(std::async(std::launch::async, generate_individual, i));
+            }
+            for (auto& f : futures) {
+                f.get();
+            }
         }
 
-        if (!valid)
-        {
-            std::cerr << "Could not generate valid individual " << i << "\n";
-        }
-    }
+        auto end_time = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
 
     //
     // POPULATION SAFETY CHECK
@@ -235,7 +259,8 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    std::cout << "POPULATION READY: " << population.size() << " individuals\n\n";
+    std::cout << "POPULATION READY: " << population.size() << " individuals\n";
+    std::cout << "Generation Time: " << duration.count() << " ms\n\n";
 
     //
     // FINAL BEST

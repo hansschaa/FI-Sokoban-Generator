@@ -159,11 +159,13 @@ foreach(target
         -march=native
         -flto
         -DNDEBUG
+        -pthread
     )
 
     target_link_options(
         ${target}
         PRIVATE
         -flto
+        -pthread
     )
 endforeach()
