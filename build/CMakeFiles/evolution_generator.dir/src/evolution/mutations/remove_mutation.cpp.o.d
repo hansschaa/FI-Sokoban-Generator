@@ -1,9 +1,9 @@
 CMakeFiles/evolution_generator.dir/src/evolution/mutations/remove_mutation.cpp.o: \
- /home/hanss/automatic-sokoban-solver/src/evolution/mutations/remove_mutation.cpp \
+ /home/hanss/FI-sokoban-generator/src/evolution/mutations/remove_mutation.cpp \
  /usr/include/stdc-predef.h \
- /home/hanss/automatic-sokoban-solver/src/evolution/mutations/../../../include/evolution/mutations/remove_mutation.h \
- /home/hanss/automatic-sokoban-solver/src/evolution/mutations/../../../include/evolution/mutations/mutation.h \
- /home/hanss/automatic-sokoban-solver/src/evolution/mutations/../../../include/evolution/mutations/../individual.h \
+ /home/hanss/FI-sokoban-generator/src/evolution/mutations/../../../include/evolution/mutations/remove_mutation.h \
+ /home/hanss/FI-sokoban-generator/src/evolution/mutations/../../../include/evolution/mutations/mutation.h \
+ /home/hanss/FI-sokoban-generator/src/evolution/mutations/../../../include/evolution/mutations/../individual.h \
  /usr/include/c++/15/vector /usr/include/c++/15/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
@@ -55,8 +55,8 @@ CMakeFiles/evolution_generator.dir/src/evolution/mutations/remove_mutation.cpp.o
  /usr/lib/gcc/x86_64-linux-gnu/15/include/stddef.h \
  /usr/include/c++/15/bits/uses_allocator.h \
  /usr/include/c++/15/bits/uses_allocator_args.h /usr/include/c++/15/tuple \
- /home/hanss/automatic-sokoban-solver/src/evolution/mutations/../../../include/evolution/utils/pair.h \
- /home/hanss/automatic-sokoban-solver/src/evolution/mutations/../../../include/evolution/utils/board_utils.h \
+ /home/hanss/FI-sokoban-generator/src/evolution/mutations/../../../include/evolution/utils/pair.h \
+ /home/hanss/FI-sokoban-generator/src/evolution/mutations/../../../include/evolution/utils/board_utils.h \
  /usr/include/c++/15/string /usr/include/c++/15/bits/stringfwd.h \
  /usr/include/c++/15/bits/char_traits.h \
  /usr/include/c++/15/bits/postypes.h /usr/include/c++/15/cwchar \

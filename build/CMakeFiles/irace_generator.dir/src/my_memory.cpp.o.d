@@ -1,5 +1,5 @@
 CMakeFiles/irace_generator.dir/src/my_memory.cpp.o: \
- /home/hanss/automatic-sokoban-solver/src/my_memory.cpp \
+ /home/hanss/FI-sokoban-generator/src/my_memory.cpp \
  /usr/include/stdc-predef.h /usr/include/c++/15/cstdlib \
  /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
@@ -68,7 +68,7 @@ CMakeFiles/irace_generator.dir/src/my_memory.cpp.o: \
  /usr/include/strings.h \
  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
- /home/hanss/automatic-sokoban-solver/include/my_memory.h \
+ /home/hanss/FI-sokoban-generator/include/my_memory.h \
  /usr/include/c++/15/vector /usr/include/c++/15/bits/requires_hosted.h \
  /usr/include/c++/15/bits/stl_algobase.h \
  /usr/include/c++/15/bits/functexcept.h \

@@ -1,5 +1,5 @@
 CMakeFiles/test_solver.dir/src/main_test_solver.cpp.o: \
- /home/hanss/automatic-sokoban-solver/src/main_test_solver.cpp \
+ /home/hanss/FI-sokoban-generator/src/main_test_solver.cpp \
  /usr/include/stdc-predef.h /usr/include/c++/15/iostream \
  /usr/include/c++/15/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \
@@ -177,9 +177,9 @@ CMakeFiles/test_solver.dir/src/main_test_solver.cpp.o: \
  /usr/include/x86_64-linux-gnu/c++/15/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/c++io.h \
  /usr/include/c++/15/bits/fstream.tcc \
- /home/hanss/automatic-sokoban-solver/src/../include/game_solver.h \
- /home/hanss/automatic-sokoban-solver/src/../include/game_node.h \
- /home/hanss/automatic-sokoban-solver/src/../include/point.h \
+ /home/hanss/FI-sokoban-generator/src/../include/game_solver.h \
+ /home/hanss/FI-sokoban-generator/src/../include/game_node.h \
+ /home/hanss/FI-sokoban-generator/src/../include/point.h \
  /usr/include/c++/15/cstdint \
  /usr/lib/gcc/x86_64-linux-gnu/15/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
@@ -190,16 +190,16 @@ CMakeFiles/test_solver.dir/src/main_test_solver.cpp.o: \
  /usr/include/c++/15/bits/stl_set.h \
  /usr/include/c++/15/bits/stl_multiset.h \
  /usr/include/c++/15/bits/erase_if.h \
- /home/hanss/automatic-sokoban-solver/src/../include/repeat.h \
+ /home/hanss/FI-sokoban-generator/src/../include/repeat.h \
  /usr/include/c++/15/unordered_set \
  /usr/include/c++/15/bits/unordered_set.h \
  /usr/include/c++/15/bits/hashtable.h \
  /usr/include/c++/15/bits/hashtable_policy.h \
  /usr/include/c++/15/bits/enable_special_members.h \
- /home/hanss/automatic-sokoban-solver/src/../include/locked.h \
- /home/hanss/automatic-sokoban-solver/src/../include/my_memory.h \
- /home/hanss/automatic-sokoban-solver/src/../include/method.h \
- /home/hanss/automatic-sokoban-solver/src/../include/path_simulator.h \
+ /home/hanss/FI-sokoban-generator/src/../include/locked.h \
+ /home/hanss/FI-sokoban-generator/src/../include/my_memory.h \
+ /home/hanss/FI-sokoban-generator/src/../include/method.h \
+ /home/hanss/FI-sokoban-generator/src/../include/path_simulator.h \
  /usr/include/c++/15/memory /usr/include/c++/15/bits/stl_tempbuf.h \
  /usr/include/c++/15/bits/stl_raw_storage_iter.h \
  /usr/include/c++/15/bits/align.h /usr/include/c++/15/bits/unique_ptr.h \
@@ -218,10 +218,10 @@ CMakeFiles/test_solver.dir/src/main_test_solver.cpp.o: \
  /usr/include/c++/15/bits/stl_heap.h \
  /usr/include/c++/15/bits/uniform_int_dist.h \
  /usr/include/c++/15/pstl/glue_algorithm_defs.h \
- /home/hanss/automatic-sokoban-solver/src/../include/penalty.h \
+ /home/hanss/FI-sokoban-generator/src/../include/penalty.h \
  /usr/include/c++/15/functional /usr/include/c++/15/bits/std_function.h \
  /usr/include/c++/15/unordered_map \
  /usr/include/c++/15/bits/unordered_map.h /usr/include/c++/15/array \
  /usr/include/c++/15/compare \
- /home/hanss/automatic-sokoban-solver/src/../include/evolution/utils/board_utils.h \
- /home/hanss/automatic-sokoban-solver/src/../include/evolution/utils/pair.h
+ /home/hanss/FI-sokoban-generator/src/../include/evolution/utils/board_utils.h \
+ /home/hanss/FI-sokoban-generator/src/../include/evolution/utils/pair.h

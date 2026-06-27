@@ -1,8 +1,8 @@
 CMakeFiles/solver_benchmark.dir/src/penalty.cpp.o: \
- /home/hanss/automatic-sokoban-solver/src/penalty.cpp \
+ /home/hanss/FI-sokoban-generator/src/penalty.cpp \
  /usr/include/stdc-predef.h \
- /home/hanss/automatic-sokoban-solver/src/../include/penalty.h \
- /home/hanss/automatic-sokoban-solver/src/../include/point.h \
+ /home/hanss/FI-sokoban-generator/src/../include/penalty.h \
+ /home/hanss/FI-sokoban-generator/src/../include/point.h \
  /usr/include/c++/15/cstdint \
  /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
@@ -70,9 +70,9 @@ CMakeFiles/solver_benchmark.dir/src/penalty.cpp.o: \
  /usr/include/c++/15/bits/stl_set.h \
  /usr/include/c++/15/bits/stl_multiset.h \
  /usr/include/c++/15/bits/erase_if.h \
- /home/hanss/automatic-sokoban-solver/src/../include/constant.h \
- /home/hanss/automatic-sokoban-solver/src/../include/method.h \
- /home/hanss/automatic-sokoban-solver/src/../include/my_memory.h \
+ /home/hanss/FI-sokoban-generator/src/../include/constant.h \
+ /home/hanss/FI-sokoban-generator/src/../include/method.h \
+ /home/hanss/FI-sokoban-generator/src/../include/my_memory.h \
  /usr/include/c++/15/algorithm /usr/include/c++/15/bits/stl_algo.h \
  /usr/include/c++/15/bits/algorithmfwd.h \
  /usr/include/c++/15/bits/stl_heap.h \

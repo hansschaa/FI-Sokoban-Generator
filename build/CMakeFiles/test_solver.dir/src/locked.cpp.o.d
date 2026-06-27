@@ -1,5 +1,5 @@
 CMakeFiles/test_solver.dir/src/locked.cpp.o: \
- /home/hanss/automatic-sokoban-solver/src/locked.cpp \
+ /home/hanss/FI-sokoban-generator/src/locked.cpp \
  /usr/include/stdc-predef.h /usr/include/c++/15/cmath \
  /usr/include/c++/15/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \
@@ -92,8 +92,8 @@ CMakeFiles/test_solver.dir/src/locked.cpp.o: \
  /usr/include/c++/15/tr1/poly_hermite.tcc \
  /usr/include/c++/15/tr1/poly_laguerre.tcc \
  /usr/include/c++/15/tr1/riemann_zeta.tcc \
- /home/hanss/automatic-sokoban-solver/include/locked.h \
- /home/hanss/automatic-sokoban-solver/include/point.h \
+ /home/hanss/FI-sokoban-generator/include/locked.h \
+ /home/hanss/FI-sokoban-generator/include/point.h \
  /usr/include/c++/15/cstdint \
  /usr/lib/gcc/x86_64-linux-gnu/15/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
@@ -121,6 +121,6 @@ CMakeFiles/test_solver.dir/src/locked.cpp.o: \
  /usr/include/c++/15/bits/memory_resource.h /usr/include/c++/15/cstddef \
  /usr/include/c++/15/bits/uses_allocator.h \
  /usr/include/c++/15/bits/uses_allocator_args.h /usr/include/c++/15/tuple \
- /home/hanss/automatic-sokoban-solver/include/constant.h \
- /home/hanss/automatic-sokoban-solver/include/method.h \
- /home/hanss/automatic-sokoban-solver/include/my_memory.h
+ /home/hanss/FI-sokoban-generator/include/constant.h \
+ /home/hanss/FI-sokoban-generator/include/method.h \
+ /home/hanss/FI-sokoban-generator/include/my_memory.h

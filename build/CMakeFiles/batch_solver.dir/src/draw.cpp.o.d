@@ -1,6 +1,6 @@
 CMakeFiles/batch_solver.dir/src/draw.cpp.o: \
- /home/hanss/automatic-sokoban-solver/src/draw.cpp \
- /usr/include/stdc-predef.h /usr/include/c++/15/cstdio \
+ /home/hanss/FI-sokoban-generator/src/draw.cpp /usr/include/stdc-predef.h \
+ /usr/include/c++/15/cstdio \
  /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -136,9 +136,9 @@ CMakeFiles/batch_solver.dir/src/draw.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/termios-misc.h \
  /usr/include/x86_64-linux-gnu/bits/termios-baud.h \
  /usr/include/x86_64-linux-gnu/sys/ttydefaults.h \
- /home/hanss/automatic-sokoban-solver/include/draw.h \
- /home/hanss/automatic-sokoban-solver/include/game_node.h \
- /home/hanss/automatic-sokoban-solver/include/point.h \
+ /home/hanss/FI-sokoban-generator/include/draw.h \
+ /home/hanss/FI-sokoban-generator/include/game_node.h \
+ /home/hanss/FI-sokoban-generator/include/point.h \
  /usr/include/c++/15/cstdint \
  /usr/lib/gcc/x86_64-linux-gnu/15/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
@@ -153,11 +153,11 @@ CMakeFiles/batch_solver.dir/src/draw.cpp.o: \
  /usr/include/c++/15/bits/stl_set.h \
  /usr/include/c++/15/bits/stl_multiset.h \
  /usr/include/c++/15/bits/erase_if.h \
- /home/hanss/automatic-sokoban-solver/include/constant.h \
- /home/hanss/automatic-sokoban-solver/include/method.h \
- /home/hanss/automatic-sokoban-solver/include/my_memory.h \
- /home/hanss/automatic-sokoban-solver/include/mazesolver.h \
- /home/hanss/automatic-sokoban-solver/include/solver_template.h \
+ /home/hanss/FI-sokoban-generator/include/constant.h \
+ /home/hanss/FI-sokoban-generator/include/method.h \
+ /home/hanss/FI-sokoban-generator/include/my_memory.h \
+ /home/hanss/FI-sokoban-generator/include/mazesolver.h \
+ /home/hanss/FI-sokoban-generator/include/solver_template.h \
  /usr/include/c++/15/queue /usr/include/c++/15/deque \
  /usr/include/c++/15/bits/stl_deque.h /usr/include/c++/15/bits/deque.tcc \
  /usr/include/c++/15/bits/stl_heap.h /usr/include/c++/15/bits/stl_queue.h \

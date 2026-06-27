@@ -1,5 +1,5 @@
 CMakeFiles/irace_generator.dir/src/point.cpp.o: \
- /home/hanss/automatic-sokoban-solver/src/point.cpp \
+ /home/hanss/FI-sokoban-generator/src/point.cpp \
  /usr/include/stdc-predef.h /usr/include/c++/15/cstdio \
  /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
@@ -31,7 +31,7 @@ CMakeFiles/irace_generator.dir/src/point.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
- /home/hanss/automatic-sokoban-solver/include/point.h \
+ /home/hanss/FI-sokoban-generator/include/point.h \
  /usr/include/c++/15/cstdint \
  /usr/lib/gcc/x86_64-linux-gnu/15/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \

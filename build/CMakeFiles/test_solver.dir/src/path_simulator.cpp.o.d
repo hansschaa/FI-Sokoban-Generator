@@ -1,7 +1,7 @@
 CMakeFiles/test_solver.dir/src/path_simulator.cpp.o: \
- /home/hanss/automatic-sokoban-solver/src/path_simulator.cpp \
+ /home/hanss/FI-sokoban-generator/src/path_simulator.cpp \
  /usr/include/stdc-predef.h \
- /home/hanss/automatic-sokoban-solver/include/path_simulator.h \
+ /home/hanss/FI-sokoban-generator/include/path_simulator.h \
  /usr/include/c++/15/string /usr/include/c++/15/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \

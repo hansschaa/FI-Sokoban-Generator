@@ -22,21 +22,21 @@ int main(int argc, char** argv)
     // ARGUMENT CHECK
     //
     // Usage:
-    // ./evolution_generator ES   <fitness>
-    // ./evolution_generator GA   <fitness>
-    // ./evolution_generator SA   <fitness>
+    // ./evolution_generator ES   <fitness> [runs]
+    // ./evolution_generator GA   <fitness> [runs]
+    // ./evolution_generator SA   <fitness> [runs]
     //
     // fitness: pushes | expanded | solution_length | branching
     //
-    // ./evolution_generator ES pushes
+    // ./evolution_generator ES pushes 5
 
     if (argc < 3)
     {
         std::cout
             << "Usage:\n"
-            << "./evolution_generator ES  <fitness>\n"
-            << "./evolution_generator GA  <fitness>\n"
-            << "./evolution_generator SA  <fitness>\n"
+            << "./evolution_generator ES  <fitness> [runs] [--show-stats]\n"
+            << "./evolution_generator GA  <fitness> [runs] [--show-stats]\n"
+            << "./evolution_generator SA  <fitness> [runs] [--show-stats]\n"
             << "\n"
             << "fitness options:\n"
             << "  pushes           number of box pushes in solution\n"
@@ -44,6 +44,22 @@ int main(int argc, char** argv)
             << "  solution_length  number of nodes in solution path\n"
             << "  branching        effective branching factor\n";
         return 1;
+    }
+
+    bool show_stats = false;
+    int num_runs = 1;
+    
+    // Parse optional arguments
+    for (int i = 3; i < argc; i++) {
+        std::string arg = argv[i];
+        if (arg == "--show-stats") {
+            show_stats = true;
+        } else {
+            // If it's a number, it's the runs argument
+            try {
+                num_runs = std::stoi(arg);
+            } catch (...) {}
+        }
     }
 
     std::string algorithm  = argv[1];
@@ -120,21 +136,37 @@ int main(int argc, char** argv)
         << "  |  Max boxes for mutation: " << max_boxes << "\n\n";
 
     //
-    // INITIAL POPULATION
+    // COMPUTE DEADLOCK MASK
     //
-
-    std::vector<Individual> population;
+    auto deadlock_mask = compute_deadlock_mask(shell);
+    int deadlocks_count = 0;
+    for (const auto& row : deadlock_mask) {
+        for (bool b : row) if (b) deadlocks_count++;
+    }
+    std::cout << "Computed deadlock mask. Deadlock cells found: " << deadlocks_count << "\n\n";
 
     Evaluator evaluator;
     evaluator.fitnessType = fitnessType;
 
     const int POP_SIZE = 10;
 
-    //
-    // GENERATE VALID INDIVIDUALS
-    //
+    for (int run = 0; run < num_runs; run++)
+    {
+        std::cout << "\n=========================================\n";
+        std::cout << "  RUN " << (run + 1) << " / " << num_runs << "\n";
+        std::cout << "=========================================\n\n";
 
-    for (int i = 0; i < POP_SIZE; i++)
+        //
+        // INITIAL POPULATION
+        //
+
+        std::vector<Individual> population;
+
+        //
+        // GENERATE VALID INDIVIDUALS
+        //
+
+        for (int i = 0; i < POP_SIZE; i++)
     {
         bool valid    = false;
         int attempts  = 0;
@@ -150,12 +182,12 @@ int main(int argc, char** argv)
 
             int numBoxes = 1;
 
-            placeRandom(board, '@');
+            placeRandom(board, '@', deadlock_mask);
 
             for (int k = 0; k < numBoxes; k++)
             {
-                placeRandom(board, '$');
-                placeRandom(board, '.');
+                placeRandom(board, '$', deadlock_mask);
+                placeRandom(board, '.', deadlock_mask);
             }
 
             std::string  level = board_to_string(board);
@@ -218,6 +250,7 @@ int main(int argc, char** argv)
     if (algorithm == "ES")
     {
         EvolutionStrategy es;
+        es.setDeadlockMask(deadlock_mask);
         es.mu              = 5;
         es.lambda          = 10;  // igualado a GA para comparación justa
         es.maxEvaluations  = 500;
@@ -229,6 +262,7 @@ int main(int argc, char** argv)
     else if (algorithm == "GA")
     {
         GeneticAlgorithm ga;
+        ga.setDeadlockMask(deadlock_mask);
         ga.offspringSize   = 10;
         ga.maxEvaluations  = 500;
         ga.stagnationLimit = 15;
@@ -239,6 +273,7 @@ int main(int argc, char** argv)
     else if (algorithm == "SA")
     {
         SimulatedAnnealing sa;
+        sa.setDeadlockMask(deadlock_mask);
         sa.initialTemperature = 100.0;
         sa.coolingRate        = 0.01;
         sa.maxEvaluations     = 500;
@@ -264,12 +299,12 @@ int main(int argc, char** argv)
     }
 
     //
-    // FINAL RESULT
+    // FINAL RESULT OF THIS RUN
     //
 
     std::cout
         << "\n========================\n"
-        << "FINAL BEST FITNESS = " << best.fitness << "\n"
+        << "BEST FITNESS FOR RUN " << (run + 1) << " = " << best.fitness << "\n"
         << "\nBEST BOARD:\n"
         << board_to_pretty_string(best.board) << "\n";
 
@@ -280,7 +315,7 @@ int main(int argc, char** argv)
     // ========================================================
     //
 
-    std::cout << "\nIniciando analisis profundo del campeon...\n";
+    std::cout << "\nIniciando analisis profundo del campeon de la corrida " << (run + 1) << "...\n";
 
     std::string champion_level = board_to_string(best.board);
     unsigned int champ_rows = best.board.size();
@@ -301,7 +336,11 @@ int main(int argc, char** argv)
     std::cout << "[TABLERO GENERADO]\n";
     std::cout << board_to_pretty_string(best.board) << "\n";
 
-    print_solver_stats(champ_stats);
+    if (show_stats) {
+        print_solver_stats(champ_stats);
+    }
+
+    } // END OF RUN LOOP
 
     return 0;
 }

@@ -1,5 +1,5 @@
 CMakeFiles/irace_generator.dir/src/game_solver.cpp.o: \
- /home/hanss/automatic-sokoban-solver/src/game_solver.cpp \
+ /home/hanss/FI-sokoban-generator/src/game_solver.cpp \
  /usr/include/stdc-predef.h /usr/include/c++/15/deque \
  /usr/include/c++/15/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \
@@ -207,25 +207,25 @@ CMakeFiles/irace_generator.dir/src/game_solver.cpp.o: \
  /usr/include/c++/15/bits/basic_ios.tcc \
  /usr/include/c++/15/bits/ostream.tcc /usr/include/c++/15/istream \
  /usr/include/c++/15/bits/istream.tcc \
- /home/hanss/automatic-sokoban-solver/include/game_solver.h \
- /home/hanss/automatic-sokoban-solver/include/game_node.h \
- /home/hanss/automatic-sokoban-solver/include/point.h \
- /usr/include/c++/15/set /usr/include/c++/15/bits/stl_tree.h \
+ /home/hanss/FI-sokoban-generator/include/game_solver.h \
+ /home/hanss/FI-sokoban-generator/include/game_node.h \
+ /home/hanss/FI-sokoban-generator/include/point.h /usr/include/c++/15/set \
+ /usr/include/c++/15/bits/stl_tree.h \
  /usr/include/c++/15/ext/aligned_buffer.h \
  /usr/include/c++/15/bits/node_handle.h \
  /usr/include/c++/15/bits/stl_set.h \
  /usr/include/c++/15/bits/stl_multiset.h \
  /usr/include/c++/15/bits/erase_if.h \
- /home/hanss/automatic-sokoban-solver/include/repeat.h \
+ /home/hanss/FI-sokoban-generator/include/repeat.h \
  /usr/include/c++/15/unordered_set \
  /usr/include/c++/15/bits/unordered_set.h \
  /usr/include/c++/15/bits/hashtable.h \
  /usr/include/c++/15/bits/hashtable_policy.h \
  /usr/include/c++/15/bits/enable_special_members.h \
- /home/hanss/automatic-sokoban-solver/include/locked.h \
- /home/hanss/automatic-sokoban-solver/include/my_memory.h \
- /home/hanss/automatic-sokoban-solver/include/method.h \
- /home/hanss/automatic-sokoban-solver/include/path_simulator.h \
+ /home/hanss/FI-sokoban-generator/include/locked.h \
+ /home/hanss/FI-sokoban-generator/include/my_memory.h \
+ /home/hanss/FI-sokoban-generator/include/method.h \
+ /home/hanss/FI-sokoban-generator/include/path_simulator.h \
  /usr/include/c++/15/memory /usr/include/c++/15/bits/stl_tempbuf.h \
  /usr/include/c++/15/bits/stl_raw_storage_iter.h \
  /usr/include/c++/15/bits/align.h /usr/include/c++/15/bits/unique_ptr.h \
@@ -243,13 +243,13 @@ CMakeFiles/irace_generator.dir/src/game_solver.cpp.o: \
  /usr/include/c++/15/bits/algorithmfwd.h \
  /usr/include/c++/15/bits/uniform_int_dist.h \
  /usr/include/c++/15/pstl/glue_algorithm_defs.h \
- /home/hanss/automatic-sokoban-solver/include/penalty.h \
+ /home/hanss/FI-sokoban-generator/include/penalty.h \
  /usr/include/c++/15/functional /usr/include/c++/15/bits/std_function.h \
  /usr/include/c++/15/unordered_map \
  /usr/include/c++/15/bits/unordered_map.h /usr/include/c++/15/array \
  /usr/include/c++/15/compare \
- /home/hanss/automatic-sokoban-solver/include/constant.h \
- /home/hanss/automatic-sokoban-solver/include/solver_template.h \
+ /home/hanss/FI-sokoban-generator/include/constant.h \
+ /home/hanss/FI-sokoban-generator/include/solver_template.h \
  /usr/include/c++/15/stack /usr/include/c++/15/bits/stl_stack.h \
- /home/hanss/automatic-sokoban-solver/include/mazesolver.h \
- /home/hanss/automatic-sokoban-solver/include/hungarian.h
+ /home/hanss/FI-sokoban-generator/include/mazesolver.h \
+ /home/hanss/FI-sokoban-generator/include/hungarian.h

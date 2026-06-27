@@ -34,8 +34,12 @@ bool AddMutation::apply(
 
     for (int i = 0; i < (int)b.size(); i++)
         for (int j = 0; j < (int)b[i].size(); j++)
-            if (b[i][j] == ' ')
+            if (b[i][j] == ' ') {
+                if (!deadlock_mask.empty() && i < deadlock_mask.size() && j < deadlock_mask[i].size() && deadlock_mask[i][j]) {
+                    continue; // Skip deadlock cell for box placement
+                }
                 emptyCells.push_back({i, j});
+            }
 
     //
     // NEED AT LEAST 2 EMPTY CELLS

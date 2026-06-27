@@ -62,9 +62,13 @@ Pair MoveMutation::getRandomDestination(
                 //
                 // CAN LAND ON EMPTY OR GOAL
                 //
-
-                if (c == ' ' || c == '.')
+                
+                if (c == ' ' || c == '.') {
+                    if (target == '$' && !deadlock_mask.empty() && i < deadlock_mask.size() && j < deadlock_mask[i].size() && deadlock_mask[i][j]) {
+                        continue; // Skip deadlock cells for boxes
+                    }
                     candidates.push_back({(int)i, (int)j});
+                }
             }
             else if (target == '.')
             {

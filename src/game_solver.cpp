@@ -673,7 +673,7 @@ SolverStats game_solver::test_template(
 }
 
 void print_solver_stats(const SolverStats& stats) {
-    /*std::cout << "\n=========================================\n";
+    std::cout << "\n=========================================\n";
     std::cout << "        DUMP COMPLETO DE STATS           \n";
     std::cout << "=========================================\n";
 
@@ -725,7 +725,7 @@ void print_solver_stats(const SolverStats& stats) {
         std::cout << "deadlocks:                       " << stats.path_stats.deadlocks << "\n";
         std::cout << "redundancy:                      " << stats.path_stats.get_redundancy() << "\n";
     }
-    std::cout << "=========================================\n";*/
+    std::cout << "=========================================\n";
 }
 
 // ==============================================================================

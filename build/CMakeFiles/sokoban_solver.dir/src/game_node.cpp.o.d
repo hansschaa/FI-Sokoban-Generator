@@ -1,8 +1,8 @@
 CMakeFiles/sokoban_solver.dir/src/game_node.cpp.o: \
- /home/hanss/automatic-sokoban-solver/src/game_node.cpp \
+ /home/hanss/FI-sokoban-generator/src/game_node.cpp \
  /usr/include/stdc-predef.h \
- /home/hanss/automatic-sokoban-solver/include/game_node.h \
- /home/hanss/automatic-sokoban-solver/include/point.h \
+ /home/hanss/FI-sokoban-generator/include/game_node.h \
+ /home/hanss/FI-sokoban-generator/include/point.h \
  /usr/include/c++/15/cstdint \
  /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
@@ -71,11 +71,11 @@ CMakeFiles/sokoban_solver.dir/src/game_node.cpp.o: \
  /usr/include/c++/15/bits/stl_set.h \
  /usr/include/c++/15/bits/stl_multiset.h \
  /usr/include/c++/15/bits/erase_if.h \
- /home/hanss/automatic-sokoban-solver/include/mazesolver.h \
- /home/hanss/automatic-sokoban-solver/include/method.h \
- /home/hanss/automatic-sokoban-solver/include/constant.h \
- /home/hanss/automatic-sokoban-solver/include/my_memory.h \
- /home/hanss/automatic-sokoban-solver/include/solver_template.h \
+ /home/hanss/FI-sokoban-generator/include/mazesolver.h \
+ /home/hanss/FI-sokoban-generator/include/method.h \
+ /home/hanss/FI-sokoban-generator/include/constant.h \
+ /home/hanss/FI-sokoban-generator/include/my_memory.h \
+ /home/hanss/FI-sokoban-generator/include/solver_template.h \
  /usr/include/c++/15/queue /usr/include/c++/15/deque \
  /usr/include/c++/15/bits/stl_deque.h /usr/include/c++/15/bits/deque.tcc \
  /usr/include/c++/15/bits/stl_heap.h /usr/include/c++/15/bits/stl_queue.h \
@@ -145,6 +145,6 @@ CMakeFiles/sokoban_solver.dir/src/game_node.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
- /home/hanss/automatic-sokoban-solver/include/repeat.h \
+ /home/hanss/FI-sokoban-generator/include/repeat.h \
  /usr/include/c++/15/unordered_set \
  /usr/include/c++/15/bits/unordered_set.h

@@ -1,5 +1,5 @@
 CMakeFiles/solver_benchmark.dir/src/repeat.cpp.o: \
- /home/hanss/automatic-sokoban-solver/src/repeat.cpp \
+ /home/hanss/FI-sokoban-generator/src/repeat.cpp \
  /usr/include/stdc-predef.h /usr/include/c++/15/cstdlib \
  /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
@@ -51,9 +51,9 @@ CMakeFiles/solver_benchmark.dir/src/repeat.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
  /usr/include/c++/15/bits/std_abs.h \
- /home/hanss/automatic-sokoban-solver/include/repeat.h \
- /home/hanss/automatic-sokoban-solver/include/game_node.h \
- /home/hanss/automatic-sokoban-solver/include/point.h \
+ /home/hanss/FI-sokoban-generator/include/repeat.h \
+ /home/hanss/FI-sokoban-generator/include/game_node.h \
+ /home/hanss/FI-sokoban-generator/include/point.h \
  /usr/include/c++/15/cstdint \
  /usr/lib/gcc/x86_64-linux-gnu/15/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
@@ -108,6 +108,6 @@ CMakeFiles/solver_benchmark.dir/src/repeat.cpp.o: \
  /usr/include/c++/15/bits/hashtable.h \
  /usr/include/c++/15/bits/hashtable_policy.h \
  /usr/include/c++/15/bits/enable_special_members.h \
- /home/hanss/automatic-sokoban-solver/include/constant.h \
- /home/hanss/automatic-sokoban-solver/include/method.h \
- /home/hanss/automatic-sokoban-solver/include/my_memory.h
+ /home/hanss/FI-sokoban-generator/include/constant.h \
+ /home/hanss/FI-sokoban-generator/include/method.h \
+ /home/hanss/FI-sokoban-generator/include/my_memory.h

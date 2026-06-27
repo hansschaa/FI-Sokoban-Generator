@@ -22,6 +22,11 @@ public:
 
     Evaluator evaluator;
 
+    void setDeadlockMask(const std::vector<std::vector<bool>>& mask) {
+        moveMutation.deadlock_mask = mask;
+        addMutation.deadlock_mask = mask;
+    }
+
     //
     // μ + λ PARAMETERS
     //

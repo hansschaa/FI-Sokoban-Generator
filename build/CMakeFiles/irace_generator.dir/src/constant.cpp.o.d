@@ -1,9 +1,9 @@
 CMakeFiles/irace_generator.dir/src/constant.cpp.o: \
- /home/hanss/automatic-sokoban-solver/src/constant.cpp \
+ /home/hanss/FI-sokoban-generator/src/constant.cpp \
  /usr/include/stdc-predef.h \
- /home/hanss/automatic-sokoban-solver/include/constant.h \
- /home/hanss/automatic-sokoban-solver/include/method.h \
- /home/hanss/automatic-sokoban-solver/include/point.h \
+ /home/hanss/FI-sokoban-generator/include/constant.h \
+ /home/hanss/FI-sokoban-generator/include/method.h \
+ /home/hanss/FI-sokoban-generator/include/point.h \
  /usr/include/c++/15/cstdint \
  /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
@@ -25,7 +25,7 @@ CMakeFiles/irace_generator.dir/src/constant.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
- /home/hanss/automatic-sokoban-solver/include/my_memory.h \
+ /home/hanss/FI-sokoban-generator/include/my_memory.h \
  /usr/include/c++/15/vector /usr/include/c++/15/bits/requires_hosted.h \
  /usr/include/c++/15/bits/stl_algobase.h \
  /usr/include/c++/15/bits/functexcept.h \

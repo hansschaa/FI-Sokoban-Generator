@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/hanss/automatic-sokoban-solver
+CMAKE_SOURCE_DIR = /home/hanss/FI-sokoban-generator
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/hanss/automatic-sokoban-solver/build
+CMAKE_BINARY_DIR = /home/hanss/FI-sokoban-generator/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/test_solver.dir/depend.make
@@ -73,270 +73,270 @@ CMakeFiles/test_solver.dir/codegen:
 .PHONY : CMakeFiles/test_solver.dir/codegen
 
 CMakeFiles/test_solver.dir/src/main_test_solver.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/main_test_solver.cpp.o: /home/hanss/automatic-sokoban-solver/src/main_test_solver.cpp
+CMakeFiles/test_solver.dir/src/main_test_solver.cpp.o: /home/hanss/FI-sokoban-generator/src/main_test_solver.cpp
 CMakeFiles/test_solver.dir/src/main_test_solver.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/test_solver.dir/src/main_test_solver.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/main_test_solver.cpp.o -MF CMakeFiles/test_solver.dir/src/main_test_solver.cpp.o.d -o CMakeFiles/test_solver.dir/src/main_test_solver.cpp.o -c /home/hanss/automatic-sokoban-solver/src/main_test_solver.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/test_solver.dir/src/main_test_solver.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/main_test_solver.cpp.o -MF CMakeFiles/test_solver.dir/src/main_test_solver.cpp.o.d -o CMakeFiles/test_solver.dir/src/main_test_solver.cpp.o -c /home/hanss/FI-sokoban-generator/src/main_test_solver.cpp
 
 CMakeFiles/test_solver.dir/src/main_test_solver.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/main_test_solver.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/main_test_solver.cpp > CMakeFiles/test_solver.dir/src/main_test_solver.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/main_test_solver.cpp > CMakeFiles/test_solver.dir/src/main_test_solver.cpp.i
 
 CMakeFiles/test_solver.dir/src/main_test_solver.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/main_test_solver.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/main_test_solver.cpp -o CMakeFiles/test_solver.dir/src/main_test_solver.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/main_test_solver.cpp -o CMakeFiles/test_solver.dir/src/main_test_solver.cpp.s
 
 CMakeFiles/test_solver.dir/src/constant.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/constant.cpp.o: /home/hanss/automatic-sokoban-solver/src/constant.cpp
+CMakeFiles/test_solver.dir/src/constant.cpp.o: /home/hanss/FI-sokoban-generator/src/constant.cpp
 CMakeFiles/test_solver.dir/src/constant.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/test_solver.dir/src/constant.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/constant.cpp.o -MF CMakeFiles/test_solver.dir/src/constant.cpp.o.d -o CMakeFiles/test_solver.dir/src/constant.cpp.o -c /home/hanss/automatic-sokoban-solver/src/constant.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/test_solver.dir/src/constant.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/constant.cpp.o -MF CMakeFiles/test_solver.dir/src/constant.cpp.o.d -o CMakeFiles/test_solver.dir/src/constant.cpp.o -c /home/hanss/FI-sokoban-generator/src/constant.cpp
 
 CMakeFiles/test_solver.dir/src/constant.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/constant.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/constant.cpp > CMakeFiles/test_solver.dir/src/constant.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/constant.cpp > CMakeFiles/test_solver.dir/src/constant.cpp.i
 
 CMakeFiles/test_solver.dir/src/constant.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/constant.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/constant.cpp -o CMakeFiles/test_solver.dir/src/constant.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/constant.cpp -o CMakeFiles/test_solver.dir/src/constant.cpp.s
 
 CMakeFiles/test_solver.dir/src/draw.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/draw.cpp.o: /home/hanss/automatic-sokoban-solver/src/draw.cpp
+CMakeFiles/test_solver.dir/src/draw.cpp.o: /home/hanss/FI-sokoban-generator/src/draw.cpp
 CMakeFiles/test_solver.dir/src/draw.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/test_solver.dir/src/draw.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/draw.cpp.o -MF CMakeFiles/test_solver.dir/src/draw.cpp.o.d -o CMakeFiles/test_solver.dir/src/draw.cpp.o -c /home/hanss/automatic-sokoban-solver/src/draw.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/test_solver.dir/src/draw.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/draw.cpp.o -MF CMakeFiles/test_solver.dir/src/draw.cpp.o.d -o CMakeFiles/test_solver.dir/src/draw.cpp.o -c /home/hanss/FI-sokoban-generator/src/draw.cpp
 
 CMakeFiles/test_solver.dir/src/draw.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/draw.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/draw.cpp > CMakeFiles/test_solver.dir/src/draw.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/draw.cpp > CMakeFiles/test_solver.dir/src/draw.cpp.i
 
 CMakeFiles/test_solver.dir/src/draw.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/draw.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/draw.cpp -o CMakeFiles/test_solver.dir/src/draw.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/draw.cpp -o CMakeFiles/test_solver.dir/src/draw.cpp.s
 
 CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.o: /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/evolution_strategy.cpp
+CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.o: /home/hanss/FI-sokoban-generator/src/evolution/algorithms/evolution_strategy.cpp
 CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.o -MF CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.o.d -o CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.o -c /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/evolution_strategy.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.o -MF CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.o.d -o CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.o -c /home/hanss/FI-sokoban-generator/src/evolution/algorithms/evolution_strategy.cpp
 
 CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/evolution_strategy.cpp > CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/evolution/algorithms/evolution_strategy.cpp > CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.i
 
 CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/evolution_strategy.cpp -o CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/evolution/algorithms/evolution_strategy.cpp -o CMakeFiles/test_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.s
 
 CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o: /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/genetic_algorithm.cpp
+CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o: /home/hanss/FI-sokoban-generator/src/evolution/algorithms/genetic_algorithm.cpp
 CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o -MF CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o.d -o CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o -c /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/genetic_algorithm.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o -MF CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o.d -o CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o -c /home/hanss/FI-sokoban-generator/src/evolution/algorithms/genetic_algorithm.cpp
 
 CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/genetic_algorithm.cpp > CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/evolution/algorithms/genetic_algorithm.cpp > CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.i
 
 CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/genetic_algorithm.cpp -o CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/evolution/algorithms/genetic_algorithm.cpp -o CMakeFiles/test_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.s
 
 CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.o: /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/simulated_annealing.cpp
+CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.o: /home/hanss/FI-sokoban-generator/src/evolution/algorithms/simulated_annealing.cpp
 CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.o -MF CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.o.d -o CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.o -c /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/simulated_annealing.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.o -MF CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.o.d -o CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.o -c /home/hanss/FI-sokoban-generator/src/evolution/algorithms/simulated_annealing.cpp
 
 CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/simulated_annealing.cpp > CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/evolution/algorithms/simulated_annealing.cpp > CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.i
 
 CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/evolution/algorithms/simulated_annealing.cpp -o CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/evolution/algorithms/simulated_annealing.cpp -o CMakeFiles/test_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.s
 
 CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.o: /home/hanss/automatic-sokoban-solver/src/evolution/crossover/board_crossover.cpp
+CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.o: /home/hanss/FI-sokoban-generator/src/evolution/crossover/board_crossover.cpp
 CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.o -MF CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.o.d -o CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.o -c /home/hanss/automatic-sokoban-solver/src/evolution/crossover/board_crossover.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.o -MF CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.o.d -o CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.o -c /home/hanss/FI-sokoban-generator/src/evolution/crossover/board_crossover.cpp
 
 CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/evolution/crossover/board_crossover.cpp > CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/evolution/crossover/board_crossover.cpp > CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.i
 
 CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/evolution/crossover/board_crossover.cpp -o CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/evolution/crossover/board_crossover.cpp -o CMakeFiles/test_solver.dir/src/evolution/crossover/board_crossover.cpp.s
 
 CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.o: /home/hanss/automatic-sokoban-solver/src/evolution/evaluator/evaluator.cpp
+CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.o: /home/hanss/FI-sokoban-generator/src/evolution/evaluator/evaluator.cpp
 CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.o -MF CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.o.d -o CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.o -c /home/hanss/automatic-sokoban-solver/src/evolution/evaluator/evaluator.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.o -MF CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.o.d -o CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.o -c /home/hanss/FI-sokoban-generator/src/evolution/evaluator/evaluator.cpp
 
 CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/evolution/evaluator/evaluator.cpp > CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/evolution/evaluator/evaluator.cpp > CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.i
 
 CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/evolution/evaluator/evaluator.cpp -o CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/evolution/evaluator/evaluator.cpp -o CMakeFiles/test_solver.dir/src/evolution/evaluator/evaluator.cpp.s
 
 CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.o: /home/hanss/automatic-sokoban-solver/src/evolution/mutations/add_mutation.cpp
+CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.o: /home/hanss/FI-sokoban-generator/src/evolution/mutations/add_mutation.cpp
 CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.o -MF CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.o.d -o CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.o -c /home/hanss/automatic-sokoban-solver/src/evolution/mutations/add_mutation.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.o -MF CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.o.d -o CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.o -c /home/hanss/FI-sokoban-generator/src/evolution/mutations/add_mutation.cpp
 
 CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/evolution/mutations/add_mutation.cpp > CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/evolution/mutations/add_mutation.cpp > CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.i
 
 CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/evolution/mutations/add_mutation.cpp -o CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/evolution/mutations/add_mutation.cpp -o CMakeFiles/test_solver.dir/src/evolution/mutations/add_mutation.cpp.s
 
 CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.o: /home/hanss/automatic-sokoban-solver/src/evolution/mutations/move_mutation.cpp
+CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.o: /home/hanss/FI-sokoban-generator/src/evolution/mutations/move_mutation.cpp
 CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.o -MF CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.o.d -o CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.o -c /home/hanss/automatic-sokoban-solver/src/evolution/mutations/move_mutation.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.o -MF CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.o.d -o CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.o -c /home/hanss/FI-sokoban-generator/src/evolution/mutations/move_mutation.cpp
 
 CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/evolution/mutations/move_mutation.cpp > CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/evolution/mutations/move_mutation.cpp > CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.i
 
 CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/evolution/mutations/move_mutation.cpp -o CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/evolution/mutations/move_mutation.cpp -o CMakeFiles/test_solver.dir/src/evolution/mutations/move_mutation.cpp.s
 
 CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.o: /home/hanss/automatic-sokoban-solver/src/evolution/mutations/remove_mutation.cpp
+CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.o: /home/hanss/FI-sokoban-generator/src/evolution/mutations/remove_mutation.cpp
 CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.o -MF CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.o.d -o CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.o -c /home/hanss/automatic-sokoban-solver/src/evolution/mutations/remove_mutation.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.o -MF CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.o.d -o CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.o -c /home/hanss/FI-sokoban-generator/src/evolution/mutations/remove_mutation.cpp
 
 CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/evolution/mutations/remove_mutation.cpp > CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/evolution/mutations/remove_mutation.cpp > CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.i
 
 CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/evolution/mutations/remove_mutation.cpp -o CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/evolution/mutations/remove_mutation.cpp -o CMakeFiles/test_solver.dir/src/evolution/mutations/remove_mutation.cpp.s
 
 CMakeFiles/test_solver.dir/src/game_node.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/game_node.cpp.o: /home/hanss/automatic-sokoban-solver/src/game_node.cpp
+CMakeFiles/test_solver.dir/src/game_node.cpp.o: /home/hanss/FI-sokoban-generator/src/game_node.cpp
 CMakeFiles/test_solver.dir/src/game_node.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/test_solver.dir/src/game_node.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/game_node.cpp.o -MF CMakeFiles/test_solver.dir/src/game_node.cpp.o.d -o CMakeFiles/test_solver.dir/src/game_node.cpp.o -c /home/hanss/automatic-sokoban-solver/src/game_node.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/test_solver.dir/src/game_node.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/game_node.cpp.o -MF CMakeFiles/test_solver.dir/src/game_node.cpp.o.d -o CMakeFiles/test_solver.dir/src/game_node.cpp.o -c /home/hanss/FI-sokoban-generator/src/game_node.cpp
 
 CMakeFiles/test_solver.dir/src/game_node.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/game_node.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/game_node.cpp > CMakeFiles/test_solver.dir/src/game_node.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/game_node.cpp > CMakeFiles/test_solver.dir/src/game_node.cpp.i
 
 CMakeFiles/test_solver.dir/src/game_node.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/game_node.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/game_node.cpp -o CMakeFiles/test_solver.dir/src/game_node.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/game_node.cpp -o CMakeFiles/test_solver.dir/src/game_node.cpp.s
 
 CMakeFiles/test_solver.dir/src/game_solver.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/game_solver.cpp.o: /home/hanss/automatic-sokoban-solver/src/game_solver.cpp
+CMakeFiles/test_solver.dir/src/game_solver.cpp.o: /home/hanss/FI-sokoban-generator/src/game_solver.cpp
 CMakeFiles/test_solver.dir/src/game_solver.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/test_solver.dir/src/game_solver.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/game_solver.cpp.o -MF CMakeFiles/test_solver.dir/src/game_solver.cpp.o.d -o CMakeFiles/test_solver.dir/src/game_solver.cpp.o -c /home/hanss/automatic-sokoban-solver/src/game_solver.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/test_solver.dir/src/game_solver.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/game_solver.cpp.o -MF CMakeFiles/test_solver.dir/src/game_solver.cpp.o.d -o CMakeFiles/test_solver.dir/src/game_solver.cpp.o -c /home/hanss/FI-sokoban-generator/src/game_solver.cpp
 
 CMakeFiles/test_solver.dir/src/game_solver.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/game_solver.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/game_solver.cpp > CMakeFiles/test_solver.dir/src/game_solver.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/game_solver.cpp > CMakeFiles/test_solver.dir/src/game_solver.cpp.i
 
 CMakeFiles/test_solver.dir/src/game_solver.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/game_solver.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/game_solver.cpp -o CMakeFiles/test_solver.dir/src/game_solver.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/game_solver.cpp -o CMakeFiles/test_solver.dir/src/game_solver.cpp.s
 
 CMakeFiles/test_solver.dir/src/locked.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/locked.cpp.o: /home/hanss/automatic-sokoban-solver/src/locked.cpp
+CMakeFiles/test_solver.dir/src/locked.cpp.o: /home/hanss/FI-sokoban-generator/src/locked.cpp
 CMakeFiles/test_solver.dir/src/locked.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/test_solver.dir/src/locked.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/locked.cpp.o -MF CMakeFiles/test_solver.dir/src/locked.cpp.o.d -o CMakeFiles/test_solver.dir/src/locked.cpp.o -c /home/hanss/automatic-sokoban-solver/src/locked.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/test_solver.dir/src/locked.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/locked.cpp.o -MF CMakeFiles/test_solver.dir/src/locked.cpp.o.d -o CMakeFiles/test_solver.dir/src/locked.cpp.o -c /home/hanss/FI-sokoban-generator/src/locked.cpp
 
 CMakeFiles/test_solver.dir/src/locked.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/locked.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/locked.cpp > CMakeFiles/test_solver.dir/src/locked.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/locked.cpp > CMakeFiles/test_solver.dir/src/locked.cpp.i
 
 CMakeFiles/test_solver.dir/src/locked.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/locked.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/locked.cpp -o CMakeFiles/test_solver.dir/src/locked.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/locked.cpp -o CMakeFiles/test_solver.dir/src/locked.cpp.s
 
 CMakeFiles/test_solver.dir/src/my_memory.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/my_memory.cpp.o: /home/hanss/automatic-sokoban-solver/src/my_memory.cpp
+CMakeFiles/test_solver.dir/src/my_memory.cpp.o: /home/hanss/FI-sokoban-generator/src/my_memory.cpp
 CMakeFiles/test_solver.dir/src/my_memory.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/test_solver.dir/src/my_memory.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/my_memory.cpp.o -MF CMakeFiles/test_solver.dir/src/my_memory.cpp.o.d -o CMakeFiles/test_solver.dir/src/my_memory.cpp.o -c /home/hanss/automatic-sokoban-solver/src/my_memory.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/test_solver.dir/src/my_memory.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/my_memory.cpp.o -MF CMakeFiles/test_solver.dir/src/my_memory.cpp.o.d -o CMakeFiles/test_solver.dir/src/my_memory.cpp.o -c /home/hanss/FI-sokoban-generator/src/my_memory.cpp
 
 CMakeFiles/test_solver.dir/src/my_memory.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/my_memory.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/my_memory.cpp > CMakeFiles/test_solver.dir/src/my_memory.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/my_memory.cpp > CMakeFiles/test_solver.dir/src/my_memory.cpp.i
 
 CMakeFiles/test_solver.dir/src/my_memory.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/my_memory.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/my_memory.cpp -o CMakeFiles/test_solver.dir/src/my_memory.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/my_memory.cpp -o CMakeFiles/test_solver.dir/src/my_memory.cpp.s
 
 CMakeFiles/test_solver.dir/src/path_simulator.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/path_simulator.cpp.o: /home/hanss/automatic-sokoban-solver/src/path_simulator.cpp
+CMakeFiles/test_solver.dir/src/path_simulator.cpp.o: /home/hanss/FI-sokoban-generator/src/path_simulator.cpp
 CMakeFiles/test_solver.dir/src/path_simulator.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/test_solver.dir/src/path_simulator.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/path_simulator.cpp.o -MF CMakeFiles/test_solver.dir/src/path_simulator.cpp.o.d -o CMakeFiles/test_solver.dir/src/path_simulator.cpp.o -c /home/hanss/automatic-sokoban-solver/src/path_simulator.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/test_solver.dir/src/path_simulator.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/path_simulator.cpp.o -MF CMakeFiles/test_solver.dir/src/path_simulator.cpp.o.d -o CMakeFiles/test_solver.dir/src/path_simulator.cpp.o -c /home/hanss/FI-sokoban-generator/src/path_simulator.cpp
 
 CMakeFiles/test_solver.dir/src/path_simulator.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/path_simulator.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/path_simulator.cpp > CMakeFiles/test_solver.dir/src/path_simulator.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/path_simulator.cpp > CMakeFiles/test_solver.dir/src/path_simulator.cpp.i
 
 CMakeFiles/test_solver.dir/src/path_simulator.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/path_simulator.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/path_simulator.cpp -o CMakeFiles/test_solver.dir/src/path_simulator.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/path_simulator.cpp -o CMakeFiles/test_solver.dir/src/path_simulator.cpp.s
 
 CMakeFiles/test_solver.dir/src/penalty.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/penalty.cpp.o: /home/hanss/automatic-sokoban-solver/src/penalty.cpp
+CMakeFiles/test_solver.dir/src/penalty.cpp.o: /home/hanss/FI-sokoban-generator/src/penalty.cpp
 CMakeFiles/test_solver.dir/src/penalty.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/test_solver.dir/src/penalty.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/penalty.cpp.o -MF CMakeFiles/test_solver.dir/src/penalty.cpp.o.d -o CMakeFiles/test_solver.dir/src/penalty.cpp.o -c /home/hanss/automatic-sokoban-solver/src/penalty.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/test_solver.dir/src/penalty.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/penalty.cpp.o -MF CMakeFiles/test_solver.dir/src/penalty.cpp.o.d -o CMakeFiles/test_solver.dir/src/penalty.cpp.o -c /home/hanss/FI-sokoban-generator/src/penalty.cpp
 
 CMakeFiles/test_solver.dir/src/penalty.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/penalty.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/penalty.cpp > CMakeFiles/test_solver.dir/src/penalty.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/penalty.cpp > CMakeFiles/test_solver.dir/src/penalty.cpp.i
 
 CMakeFiles/test_solver.dir/src/penalty.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/penalty.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/penalty.cpp -o CMakeFiles/test_solver.dir/src/penalty.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/penalty.cpp -o CMakeFiles/test_solver.dir/src/penalty.cpp.s
 
 CMakeFiles/test_solver.dir/src/point.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/point.cpp.o: /home/hanss/automatic-sokoban-solver/src/point.cpp
+CMakeFiles/test_solver.dir/src/point.cpp.o: /home/hanss/FI-sokoban-generator/src/point.cpp
 CMakeFiles/test_solver.dir/src/point.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/test_solver.dir/src/point.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/point.cpp.o -MF CMakeFiles/test_solver.dir/src/point.cpp.o.d -o CMakeFiles/test_solver.dir/src/point.cpp.o -c /home/hanss/automatic-sokoban-solver/src/point.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/test_solver.dir/src/point.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/point.cpp.o -MF CMakeFiles/test_solver.dir/src/point.cpp.o.d -o CMakeFiles/test_solver.dir/src/point.cpp.o -c /home/hanss/FI-sokoban-generator/src/point.cpp
 
 CMakeFiles/test_solver.dir/src/point.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/point.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/point.cpp > CMakeFiles/test_solver.dir/src/point.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/point.cpp > CMakeFiles/test_solver.dir/src/point.cpp.i
 
 CMakeFiles/test_solver.dir/src/point.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/point.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/point.cpp -o CMakeFiles/test_solver.dir/src/point.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/point.cpp -o CMakeFiles/test_solver.dir/src/point.cpp.s
 
 CMakeFiles/test_solver.dir/src/repeat.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/repeat.cpp.o: /home/hanss/automatic-sokoban-solver/src/repeat.cpp
+CMakeFiles/test_solver.dir/src/repeat.cpp.o: /home/hanss/FI-sokoban-generator/src/repeat.cpp
 CMakeFiles/test_solver.dir/src/repeat.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/test_solver.dir/src/repeat.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/repeat.cpp.o -MF CMakeFiles/test_solver.dir/src/repeat.cpp.o.d -o CMakeFiles/test_solver.dir/src/repeat.cpp.o -c /home/hanss/automatic-sokoban-solver/src/repeat.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/test_solver.dir/src/repeat.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/repeat.cpp.o -MF CMakeFiles/test_solver.dir/src/repeat.cpp.o.d -o CMakeFiles/test_solver.dir/src/repeat.cpp.o -c /home/hanss/FI-sokoban-generator/src/repeat.cpp
 
 CMakeFiles/test_solver.dir/src/repeat.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/repeat.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/automatic-sokoban-solver/src/repeat.cpp > CMakeFiles/test_solver.dir/src/repeat.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hanss/FI-sokoban-generator/src/repeat.cpp > CMakeFiles/test_solver.dir/src/repeat.cpp.i
 
 CMakeFiles/test_solver.dir/src/repeat.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/repeat.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/automatic-sokoban-solver/src/repeat.cpp -o CMakeFiles/test_solver.dir/src/repeat.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hanss/FI-sokoban-generator/src/repeat.cpp -o CMakeFiles/test_solver.dir/src/repeat.cpp.s
 
 # Object files for target test_solver
 test_solver_OBJECTS = \
@@ -385,7 +385,7 @@ test_solver: CMakeFiles/test_solver.dir/src/repeat.cpp.o
 test_solver: CMakeFiles/test_solver.dir/build.make
 test_solver: CMakeFiles/test_solver.dir/compiler_depend.ts
 test_solver: CMakeFiles/test_solver.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/hanss/automatic-sokoban-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Linking CXX executable test_solver"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/hanss/FI-sokoban-generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Linking CXX executable test_solver"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_solver.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -397,6 +397,6 @@ CMakeFiles/test_solver.dir/clean:
 .PHONY : CMakeFiles/test_solver.dir/clean
 
 CMakeFiles/test_solver.dir/depend:
-	cd /home/hanss/automatic-sokoban-solver/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/hanss/automatic-sokoban-solver /home/hanss/automatic-sokoban-solver /home/hanss/automatic-sokoban-solver/build /home/hanss/automatic-sokoban-solver/build /home/hanss/automatic-sokoban-solver/build/CMakeFiles/test_solver.dir/DependInfo.cmake "--color=$(COLOR)" test_solver
+	cd /home/hanss/FI-sokoban-generator/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/hanss/FI-sokoban-generator /home/hanss/FI-sokoban-generator /home/hanss/FI-sokoban-generator/build /home/hanss/FI-sokoban-generator/build /home/hanss/FI-sokoban-generator/build/CMakeFiles/test_solver.dir/DependInfo.cmake "--color=$(COLOR)" test_solver
 .PHONY : CMakeFiles/test_solver.dir/depend
 

@@ -6,6 +6,7 @@
 class MoveMutation : public Mutation
 {
 public:
+    std::vector<std::vector<bool>> deadlock_mask;
 
     bool apply(Individual& ind) override;
 
