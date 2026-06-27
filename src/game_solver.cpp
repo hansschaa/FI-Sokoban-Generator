@@ -443,7 +443,7 @@ void game_solver::set_lambda_function(){
 }
 
 // Función auxiliar para reconstruir LURD antes de test_template
-static std::string reconstruct_lurd(const std::vector<game_node>& solution) {
+static std::string reconstruct_lurd(const std::vector<game_node>& solution, point initial_player_pos) {
     if (solution.size() <= 1) return "";
 
     std::string full_path = "";
@@ -452,6 +452,8 @@ static std::string reconstruct_lurd(const std::vector<game_node>& solution) {
     point dirs[4] = {point(-1, 0), point(1, 0), point(0, -1), point(0, 1)};
     char move_chars[4] = {'u', 'd', 'l', 'r'};
     char push_chars[4] = {'U', 'D', 'L', 'R'};
+
+    point current_player_pos = initial_player_pos;
 
     // FIX: Iteramos en reversa porque el solver entrega la ruta [Meta ... Inicio]
     for (int i = (int)solution.size() - 1; i >= 1; i--) {
@@ -494,12 +496,12 @@ static std::string reconstruct_lurd(const std::vector<game_node>& solution) {
 
         // 4. BFS para calcular los movimientos del jugador hasta la posición de empuje
         std::string player_moves = "";
-        if (!(a.person_point == player_target)) {
+        if (!(current_player_pos == player_target)) {
             std::queue<std::pair<point, std::string>> q;
             std::vector<std::vector<bool>> visited(grid.size(), std::vector<bool>(grid[0].size(), false));
 
-            q.push({a.person_point, ""});
-            visited[a.person_point.x][a.person_point.y] = true;
+            q.push({current_player_pos, ""});
+            visited[current_player_pos.x][current_player_pos.y] = true;
 
             while (!q.empty()) {
                 auto curr = q.front().first;
@@ -528,6 +530,9 @@ static std::string reconstruct_lurd(const std::vector<game_node>& solution) {
 
         // 5. Concatenar camino del jugador + empuje de caja
         full_path += player_moves + push_char;
+        
+        // Después del empuje, el jugador avanza y ocupa el lugar original de la caja
+        current_player_pos = box_from;
     }
 
     return full_path;
@@ -656,14 +661,25 @@ SolverStats game_solver::test_template(
         stats.status = SolveStatus::UNSOLVABLE;
     } else {
         stats.status = SolveStatus::SOLVED;
-        stats.lurd_path = reconstruct_lurd(solution);
-        
-        // Contabilizar movimientos totales
-        stats.moves = stats.lurd_path.length(); 
-        
-        if (calc_path_branching && !stats.lurd_path.empty()) {
-            stats.path_stats = PathSimulator::compute_stats(original_map_1d, m, n, stats.lurd_path);
-            stats.path_stats_calculated = true;
+        stats.path_stats_calculated = false;
+
+        // Reconstruimos el string completo de pasos LURD si hay solución
+        if (solution.size() > 1) {
+            point initial_player(-1, -1);
+            for (int i = 0; i < (int)original_map_1d.length(); i++) {
+                if (original_map_1d[i] == '@' || original_map_1d[i] == '+') {
+                    initial_player = point(i / n, i % n);
+                    break;
+                }
+            }
+            stats.lurd_path = reconstruct_lurd(solution, initial_player);
+            stats.moves = stats.lurd_path.length();
+            
+            // SIMULATOR
+            if (calc_path_branching && !original_map_1d.empty()) {
+                stats.path_stats = PathSimulator::compute_stats(original_map_1d, m, n, stats.lurd_path);
+                stats.path_stats_calculated = true;
+            }
         }
     }
 

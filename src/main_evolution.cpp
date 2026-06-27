@@ -6,6 +6,7 @@
 #include <future>
 #include <mutex>
 #include <chrono>
+#include <atomic>
 
 #include "../include/evolution/algorithms/evolution_strategy.h"
 #include "../include/evolution/algorithms/genetic_algorithm.h"
@@ -110,6 +111,9 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    unsigned int hardware_threads = std::thread::hardware_concurrency();
+    if (hardware_threads == 0) hardware_threads = 4;
+    std::cout << "Available Hardware Threads: " << hardware_threads << "\n";
     std::cout << "START\n";
 
     //
@@ -237,10 +241,28 @@ int main(int argc, char** argv)
                 generate_individual(i);
             }
         } else {
+            unsigned int num_threads = std::thread::hardware_concurrency();
+            if (num_threads == 0) num_threads = 4; // Fallback
+            
+            unsigned int threads_to_launch = std::min((unsigned int)POP_SIZE, num_threads);
+
+            std::atomic<int> current_task{0};
             std::vector<std::future<void>> futures;
-            for (int i = 0; i < POP_SIZE; i++) {
-                futures.push_back(std::async(std::launch::async, generate_individual, i));
+
+            auto worker_task = [&]() {
+                while (true) {
+                    int i = current_task.fetch_add(1);
+                    if (i >= POP_SIZE) {
+                        break; // No more individuals to generate
+                    }
+                    generate_individual(i);
+                }
+            };
+
+            for (unsigned int t = 0; t < threads_to_launch; t++) {
+                futures.push_back(std::async(std::launch::async, worker_task));
             }
+            
             for (auto& f : futures) {
                 f.get();
             }
