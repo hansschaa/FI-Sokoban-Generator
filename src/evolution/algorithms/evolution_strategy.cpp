@@ -4,6 +4,9 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
+#include <future>
+#include <atomic>
+#include <thread>
 
 Individual EvolutionStrategy::run(
     std::vector<Individual>& population)
@@ -24,12 +27,31 @@ Individual EvolutionStrategy::run(
 
     //std::cout << "EVALUATING INITIAL POPULATION\n";
 
-    for (auto& ind : population)
-    {
-        evaluator.evaluate(ind);
+    unsigned int num_threads = use_parallel ? std::thread::hardware_concurrency() : 1;
+    if (num_threads == 0) num_threads = 4;
+    
+    std::atomic<int> current_task{0};
+    std::vector<std::future<void>> futures;
 
-        evaluations++;
+    auto eval_task = [&]() {
+        while (true) {
+            int i = current_task.fetch_add(1);
+            if (i >= (int)population.size()) break;
+            
+            Evaluator local_eval = evaluator;
+            local_eval.evaluate(population[i]);
+        }
+    };
+
+    unsigned int threads_to_launch = std::min((unsigned int)population.size(), num_threads);
+    for (unsigned int t = 0; t < threads_to_launch; t++) {
+        futures.push_back(std::async(std::launch::async, eval_task));
     }
+    for (auto& f : futures) {
+        f.get();
+    }
+
+    evaluations += population.size();
 
     //std::cout << "INITIAL POPULATION EVALUATED\n";
 
@@ -76,33 +98,22 @@ Individual EvolutionStrategy::run(
         int totalAttempts = 0;
         const int maxAttempts = lambda * 10;
 
+        std::vector<Individual> batch_to_evaluate;
+        std::vector<Individual> batch_no_evaluation;
+
         while (
             generated < lambda &&
-            evaluations < maxEvaluations &&
+            (evaluations + batch_to_evaluate.size()) < (size_t)maxEvaluations &&
             totalAttempts < maxAttempts)
         {
             totalAttempts++;
 
-            //
             // RANDOM PARENT SELECTION
-            //
-
-            int parentIndex =
-                rand() % population.size();
-
-            // Aquí el hijo hereda el genotipo Y el fitness ya calculado del padre
-            Individual child =
-                population[parentIndex];
-
-            // BANDERA DE CONTROL: Asumimos que no necesita evaluación
+            int parentIndex = rand() % population.size();
+            Individual child = population[parentIndex];
             bool needsEvaluation = false;
 
-            //
-            // RANDOM MUTATION
-            //
-
             double r_mut = (double)rand() / RAND_MAX;
-            
             if (r_mut <= mutationRate) 
             {
                 int mutationType = rand() % 3;
@@ -116,57 +127,59 @@ Individual EvolutionStrategy::run(
                     success = removeMutation.apply(child);
                 }
 
-                if (!success) {
-                    // Si la mutación falló, descartamos este intento
-                    continue;
-                } else {
-                    // La topología del nivel cambió. AHORA SÍ debemos evaluarlo.
-                    needsEvaluation = true;
+                if (!success) continue;
+                needsEvaluation = true;
+            }
+
+            if (needsEvaluation) {
+                batch_to_evaluate.push_back(child);
+            } else {
+                batch_no_evaluation.push_back(child);
+            }
+            generated++;
+        }
+
+        // PARALLEL EVALUATION OF BATCH
+        if (!batch_to_evaluate.empty()) {
+            std::atomic<int> current_child{0};
+            std::vector<std::future<void>> child_futures;
+            
+            auto child_eval_task = [&]() {
+                while(true) {
+                    int i = current_child.fetch_add(1);
+                    if (i >= (int)batch_to_evaluate.size()) break;
+                    
+                    Evaluator local_eval = evaluator;
+                    local_eval.evaluate(batch_to_evaluate[i]);
+                }
+            };
+            
+            unsigned int c_threads = std::min((unsigned int)batch_to_evaluate.size(), num_threads);
+            for (unsigned int t = 0; t < c_threads; t++) {
+                child_futures.push_back(std::async(std::launch::async, child_eval_task));
+            }
+            for(auto& f : child_futures) f.get();
+            
+            evaluations += batch_to_evaluate.size();
+        }
+
+        // PROCESS RESULTS
+        for (auto& child : batch_to_evaluate) {
+            if (!std::isnan(child.fitness)) {
+                offspring.push_back(child);
+                if (child.fitness > best.fitness) {
+                    best = child;
+                    improved = true;
                 }
             }
-            // Si r_mut > mutationRate, needsEvaluation sigue siendo false.
-
-            //
-            // EVALUATION (El filtro anti-trampa)
-            //
-
-            if (needsEvaluation)
-            {
-                evaluator.evaluate(child);
-                evaluations++;
-            }
-
-            //
-            // INVALID FITNESS
-            //
-
-            if (std::isnan(child.fitness))
-            {
-                /*std::cout
-                    << "INVALID FITNESS\n";*/
-                continue;
-            }
-
-            //
-            // SAVE CHILD
-            //
-
-            offspring.push_back(child);
-            generated++;
-
-            //
-            // GLOBAL BEST UPDATE
-            //
-
-            if (child.fitness > best.fitness)
-            {
-                best = child;
-                improved = true;
-
-                /*std::cout
-                    << "NEW BEST = "
-                    << best.fitness
-                    << std::endl;*/
+        }
+        for (auto& child : batch_no_evaluation) {
+            if (!std::isnan(child.fitness)) {
+                offspring.push_back(child);
+                if (child.fitness > best.fitness) {
+                    best = child;
+                    improved = true;
+                }
             }
         }
 
@@ -243,10 +256,8 @@ Individual EvolutionStrategy::run(
 
         if (evaluations >= maxEvaluations)
         {
-            /*std::cout
-                << "\nTermination: MAX_EVALUATIONS"
-                << std::endl;*/
-
+            std::cout
+                << "\n[ES] Criterio de Parada Alcanzado: MAX_EVALUATIONS (" << maxEvaluations << " evaluaciones)\n";
             break;
         }
 
@@ -257,10 +268,8 @@ Individual EvolutionStrategy::run(
 
         if (stagnationCount >= stagnationLimit)
         {
-            /*std::cout
-                << "\nTermination: STAGNATION"
-                << std::endl;*/
-
+            std::cout
+                << "\n[ES] Criterio de Parada Alcanzado: STAGNATION (Sin mejoras por " << stagnationLimit << " generaciones)\n";
             break;
         }
 

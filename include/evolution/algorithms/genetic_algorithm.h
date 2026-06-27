@@ -48,6 +48,8 @@ public:
 
     RemoveMutation removeMutation;
 
+    bool use_parallel = true;
+
     BoardCrossover crossover;
 
     void setDeadlockMask(const std::vector<std::vector<bool>>& mask) {

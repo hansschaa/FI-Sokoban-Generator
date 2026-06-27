@@ -7,6 +7,8 @@
 
 
 void Evaluator::registrar_tablero_critico(const std::vector<std::vector<char>>& board) {
+    // Disabled to avoid race conditions during multithreaded evaluation.
+    /*
     std::ofstream out("tablero_actual.txt");
     if (out.is_open()) {
         for (const auto& row : board) {
@@ -17,6 +19,7 @@ void Evaluator::registrar_tablero_critico(const std::vector<std::vector<char>>& 
         }
         out.close();
     }
+    */
 }
 
 double Evaluator::evaluate(Individual& individual)
@@ -25,7 +28,8 @@ double Evaluator::evaluate(Individual& individual)
     unsigned int rows = individual.board.size();
     unsigned int cols = individual.board[0].size();
 
-    game_solver solver(level, rows, cols, 512);
+    // Reducido a 32MB por hilo (antes 512MB) para prevenir Out Of Memory (OOM) en ejecución multihilo masiva.
+    game_solver solver(level, rows, cols, 32);
     std::vector<game_node> solution;
 
     // MAGIA AQUI: Solo activamos el simulador de path si el fitness es FO3

@@ -213,5 +213,18 @@ Individual SimulatedAnnealing::run(
             (1.0 - coolingRate);
     }
 
+    if (evaluations >= maxEvaluations)
+    {
+        std::cout << "\n[SA] Criterio de Parada Alcanzado: MAX_EVALUATIONS (" << maxEvaluations << " evaluaciones)\n";
+    }
+    else if (stagnation >= stagnationLimit)
+    {
+        std::cout << "\n[SA] Criterio de Parada Alcanzado: STAGNATION (Sin mejoras por " << stagnationLimit << " generaciones)\n";
+    }
+    else if (temperature <= 0.001)
+    {
+        std::cout << "\n[SA] Criterio de Parada Alcanzado: MIN_TEMPERATURE (Temperatura llego a " << temperature << ")\n";
+    }
+
     return best;
 }

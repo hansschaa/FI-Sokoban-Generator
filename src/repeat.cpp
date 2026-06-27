@@ -34,4 +34,4 @@ void repeat::insert(const game_node* temp_box2) {
     zobrist_hash.insert(temp_box2);
 }
 
-vector<vector<size_t>> repeat::zobrist;
+thread_local vector<vector<size_t>> repeat::zobrist;

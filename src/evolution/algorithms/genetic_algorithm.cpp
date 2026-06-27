@@ -4,6 +4,9 @@
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
+#include <future>
+#include <atomic>
+#include <thread>
 
 //
 // TOURNAMENT SELECTION
@@ -70,11 +73,31 @@ Individual GeneticAlgorithm::run(
     // INITIAL EVALUATION
     //
 
-    for (auto& ind : population)
-    {
-        evaluator.evaluate(ind);
-        evaluations++;
+    unsigned int num_threads = use_parallel ? std::thread::hardware_concurrency() : 1;
+    if (num_threads == 0) num_threads = 4;
+    
+    std::atomic<int> current_task{0};
+    std::vector<std::future<void>> futures;
+
+    auto eval_task = [&]() {
+        while (true) {
+            int i = current_task.fetch_add(1);
+            if (i >= (int)population.size()) break;
+            
+            Evaluator local_eval = evaluator;
+            local_eval.evaluate(population[i]);
+        }
+    };
+
+    unsigned int threads_to_launch = std::min((unsigned int)population.size(), num_threads);
+    for (unsigned int t = 0; t < threads_to_launch; t++) {
+        futures.push_back(std::async(std::launch::async, eval_task));
     }
+    for (auto& f : futures) {
+        f.get();
+    }
+
+    evaluations += population.size();
 
     //
     // INITIAL BEST
@@ -126,94 +149,78 @@ Individual GeneticAlgorithm::run(
         int totalAttempts = 0;
         const int maxAttempts = offspringSize * 10;
 
+        std::vector<Individual> batch_to_evaluate;
+
         while (
             generated < offspringSize &&
-            evaluations < maxEvaluations &&
+            (evaluations + batch_to_evaluate.size()) < (size_t)maxEvaluations &&
             totalAttempts < maxAttempts)
         {
             totalAttempts++;
 
-            //
             // SELECTION
-            //
+            Individual p1 = tournamentSelection(population);
+            Individual p2 = tournamentSelection(population);
 
-            Individual p1 =
-                tournamentSelection(population);
-
-            Individual p2 =
-                tournamentSelection(population);
-
-            //
             // CROSSOVER
-            //
-
             Individual child;
             bool valid = false;
 
-            // Tirar los dados para el cruce
             double r_cross = (double)rand() / RAND_MAX;
-
             if (r_cross <= crossoverRate)
             {
-                // Ocurre el cruce
                 valid = crossover.apply(p1, p2, child);
-                
-                if (!valid)
-                {
-                    continue; // Si falla el cruce, descartamos el intento
-                }
+                if (!valid) continue;
             }
             else
             {
-                // No hay cruce: el hijo hereda directamente del padre 1
                 child = p1;
                 valid = true;
             }
 
-            //
             // MUTATION
-            //
-
-            // AÑADIDO: Chequeo de probabilidad de mutación
             double r_mut = (double)rand() / RAND_MAX;
-            
             if (r_mut <= mutationRate) 
             {
                 bool success = applyRandomMutation(child);
-
-                if (!success)
-                {
-                    continue; // Si decide mutar y falla, descartamos el intento
-                }
+                if (!success) continue;
             }
-            // Si r_mut > mutationRate, el child simplemente no muta y pasa tal cual (producto del crossover)
 
-            //
-            // EVALUATION
-            //
-
-            evaluator.evaluate(child);
-
-            evaluations++;
-
+            batch_to_evaluate.push_back(child);
             generated++;
+        }
 
-            //
-            // UPDATE BEST
-            //
+        // PARALLEL EVALUATION OF BATCH
+        if (!batch_to_evaluate.empty()) {
+            std::atomic<int> current_child{0};
+            std::vector<std::future<void>> child_futures;
+            
+            auto child_eval_task = [&]() {
+                while(true) {
+                    int i = current_child.fetch_add(1);
+                    if (i >= (int)batch_to_evaluate.size()) break;
+                    
+                    Evaluator local_eval = evaluator;
+                    local_eval.evaluate(batch_to_evaluate[i]);
+                }
+            };
+            
+            unsigned int c_threads = std::min((unsigned int)batch_to_evaluate.size(), num_threads);
+            for (unsigned int t = 0; t < c_threads; t++) {
+                child_futures.push_back(std::async(std::launch::async, child_eval_task));
+            }
+            for(auto& f : child_futures) f.get();
+            
+            evaluations += batch_to_evaluate.size();
+        }
 
+        // PROCESS RESULTS
+        for (auto& child : batch_to_evaluate) {
             if (child.fitness > best.fitness)
             {
                 best = child;
-
                 improved = true;
-
-                /*std::cout
-                    << "NEW BEST "
-                    << best.fitness
-                    << std::endl;*/
             }
-
             offspring.push_back(child);
         }
 
@@ -358,19 +365,17 @@ Individual GeneticAlgorithm::run(
     // TERMINATION REPORT
     //
 
-    /*if (evaluations >= maxEvaluations)
+    if (evaluations >= maxEvaluations)
     {
         std::cout
-            << "TERMINATION: MAX EVALUATIONS"
-            << std::endl;
+            << "\n[GA] Criterio de Parada Alcanzado: MAX_EVALUATIONS (" << maxEvaluations << " evaluaciones)\n";
     }
 
     if (stagnation >= stagnationLimit)
     {
         std::cout
-            << "TERMINATION: STAGNATION"
-            << std::endl;
-    }*/
+            << "\n[GA] Criterio de Parada Alcanzado: STAGNATION (Sin mejoras por " << stagnationLimit << " generaciones)\n";
+    }
 
     return best;
 }

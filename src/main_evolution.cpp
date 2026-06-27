@@ -293,15 +293,18 @@ int main(int argc, char** argv)
     //
     // RUN ALGORITHM
     //
+    
+    auto t_start_run = std::chrono::high_resolution_clock::now();
 
     if (algorithm == "ES")
     {
         EvolutionStrategy es;
+        es.use_parallel    = !no_parallel;
         es.setDeadlockMask(deadlock_mask);
-        es.mu              = 5;
-        es.lambda          = 10;  // igualado a GA para comparación justa
-        es.maxEvaluations  = 500;
-        es.stagnationLimit = 5;
+        es.mu              = 10;
+        es.lambda          = 20;  // igualado a GA para comparación justa
+        es.maxEvaluations  = 20000;
+        es.stagnationLimit = 100;
 
         std::cout << "RUNNING MU + LAMBDA ES\n";
         best = es.run(population);
@@ -309,10 +312,11 @@ int main(int argc, char** argv)
     else if (algorithm == "GA")
     {
         GeneticAlgorithm ga;
+        ga.use_parallel    = !no_parallel;
         ga.setDeadlockMask(deadlock_mask);
         ga.offspringSize   = 10;
-        ga.maxEvaluations  = 500;
-        ga.stagnationLimit = 15;
+        ga.maxEvaluations  = 2000;
+        ga.stagnationLimit = 30;
 
         std::cout << "RUNNING GENETIC ALGORITHM\n";
         best = ga.run(population);
@@ -326,6 +330,9 @@ int main(int argc, char** argv)
         sa.maxEvaluations     = 500;
         sa.stagnationLimit    = 15;
 
+        //
+        // START FROM BEST INDIVIDUAL
+        // Avoids dependency on random ordering of the initial population.
         //
         // START FROM BEST INDIVIDUAL
         // Avoids dependency on random ordering of the initial population.
@@ -344,6 +351,10 @@ int main(int argc, char** argv)
         std::cerr << "Unknown algorithm: " << algorithm << "\nUse ES, GA or SA\n";
         return 1;
     }
+
+    auto t_end_run = std::chrono::high_resolution_clock::now();
+    long long run_time = std::chrono::duration_cast<std::chrono::milliseconds>(t_end_run - t_start_run).count();
+    std::cout << "Total Evolution Time: " << run_time << " ms\n";
 
     //
     // FINAL RESULT OF THIS RUN

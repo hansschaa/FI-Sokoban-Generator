@@ -16,8 +16,7 @@ public:
         bool operator()(const game_node* mmm,
                         const game_node* nnn) const;
     };
-
-    static std::vector<std::vector<size_t>> zobrist;
+    static thread_local std::vector<std::vector<size_t>> zobrist;
     std::unordered_set<const game_node*, get_num, cmp> zobrist_hash;
 
     repeat();
