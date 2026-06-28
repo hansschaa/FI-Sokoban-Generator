@@ -21,6 +21,7 @@ public:
     // Nodos que quedaron en la open list sin expandir al momento de terminar.
     // El caller debe destruirlos y desalocarlos antes del siguiente run.
     std::vector<const Node*> orphan_nodes;
+    std::vector<const Node*> discarded_nodes;
 
     bool did_timeout() const {
         return timeout_reached;
@@ -119,8 +120,9 @@ public:
                     // --- EL PARCHE DEFINITIVO ---
                     // Este nodo es un duplicado ya visitado. Al descartarlo con 'continue',
                     // sale de la Open List pero no entra a la Closed List. 
-                    // DEBEMOS llamar a su destructor explícitamente para liberar el heap de su std::set.
-                    const_cast<Node*>(current)->~Node();
+                    // Lo guardamos en discarded_nodes para que el caller pueda
+                    // hacer deallocate() en su memory pool.
+                    discarded_nodes.push_back(current);
                     continue;
                 }
                 mark_visited(current);

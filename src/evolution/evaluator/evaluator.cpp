@@ -28,8 +28,8 @@ double Evaluator::evaluate(Individual& individual)
     unsigned int rows = individual.board.size();
     unsigned int cols = individual.board[0].size();
 
-    // Reducido a 32MB por hilo (antes 512MB) para prevenir Out Of Memory (OOM) en ejecución multihilo masiva.
-    game_solver solver(level, rows, cols, 32);
+    // Reducido a 64MB por hilo (antes 512MB) para prevenir Out Of Memory (OOM) en ejecución multihilo masiva.
+    game_solver solver(level, rows, cols, 64);
     std::vector<game_node> solution;
 
     // MAGIA AQUI: Solo activamos el simulador de path si el fitness es FO3

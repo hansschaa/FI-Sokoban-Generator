@@ -273,7 +273,25 @@ Individual EvolutionStrategy::run(
             break;
         }
 
+        //
+        // TERMINATION:
+        // TIME LIMIT
+        //
+
+        if (maxCircuitTimeSeconds > 0) {
+            auto now = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::seconds>(now - circuitStartTime).count();
+            if (duration >= maxCircuitTimeSeconds) {
+                std::cout << "\n[ES] Criterio de Parada Alcanzado: TIME LIMIT (" << maxCircuitTimeSeconds << " segundos del circuito transcurridos)\n";
+                break;
+            }
+        }
+
         generation++;
+        std::cout << "[ES] Gen " << generation 
+                  << " | Evals: " << evaluations << "/" << maxEvaluations 
+                  << " | Stagnation: " << stagnationCount << "/" << stagnationLimit 
+                  << " | Best Fit: " << best.fitness << std::endl;
     }
 
     //

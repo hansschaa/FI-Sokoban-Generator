@@ -37,7 +37,7 @@ struct SolverStats {
     double runtime_ms = 0.0;
 
     int pushes = 0;
-    int moves;
+    int moves = 0;
 
     size_t generated_states = 0;
 

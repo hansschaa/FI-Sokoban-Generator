@@ -7,6 +7,7 @@
 #include "../mutations/remove_mutation.h"
 
 #include <vector>
+#include <chrono>
 
 class EvolutionStrategy {
 
@@ -45,6 +46,13 @@ public:
     int maxEvaluations = 2000;
 
     int stagnationLimit = 200;
+
+    //
+    // TIME LIMIT
+    //
+
+    std::chrono::time_point<std::chrono::high_resolution_clock> circuitStartTime;
+    int maxCircuitTimeSeconds = -1; // -1 means no limit
 
     //
     // RUNTIME STATE

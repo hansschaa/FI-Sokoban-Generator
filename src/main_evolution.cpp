@@ -58,18 +58,24 @@ int main(int argc, char** argv)
     int factorX = 2;
     int factorY = 2;
     int current_arg = 4;
+    
+    bool random_factor_x = true;
+    bool random_factor_y = true;
 
     if (argc > current_arg && argv[current_arg][0] != '-')
     {
         factorX = std::stoi(argv[current_arg++]);
+        random_factor_x = false;
     }
     if (argc > current_arg && argv[current_arg][0] != '-')
     {
         factorY = std::stoi(argv[current_arg++]);
+        random_factor_y = false;
     }
 
     bool show_stats = false;
     bool no_parallel = false;
+    int time_limit_mins = -1;
     
     // Parse optional arguments
     for (int i = current_arg; i < argc; i++) {
@@ -78,6 +84,8 @@ int main(int argc, char** argv)
             show_stats = true;
         } else if (arg == "--no-parallel") {
             no_parallel = true;
+        } else if (arg == "--time-limit-mins" && i + 1 < argc) {
+            time_limit_mins = std::stoi(argv[++i]);
         }
     }
 
@@ -125,39 +133,6 @@ int main(int argc, char** argv)
     std::cout << "Available Hardware Threads: " << hardware_threads << "\n";
     std::cout << "START\n";
 
-    //
-    // GENERATE SHELL
-    //
-    SokobanGenerator generator(factorX, factorY);
-    std::cout << "Generando cascaron de topologia " << factorX << "x" << factorY << "...\n";
-    generator.generate();
-    std::vector<std::vector<char>> shell = generator.getBoard();
-
-    //
-    // max_boxes: upper bound available to mutation operators that add boxes.
-    // The initial population always starts with 1 box; complexity grows
-    // through evolution, not initialization.
-    //
-
-    const int free_cells = count_free_cells(shell);
-    const int max_boxes  = std::max(1, std::min(6, free_cells / 15));
-
-    std::cout
-        << "\nBOARD SHELL:\n"
-        << board_to_pretty_string(shell)
-        << "Free cells: " << free_cells
-        << "  |  Max boxes for mutation: " << max_boxes << "\n\n";
-
-    //
-    // COMPUTE DEADLOCK MASK
-    //
-    auto deadlock_mask = compute_deadlock_mask(shell);
-    int deadlocks_count = 0;
-    for (const auto& row : deadlock_mask) {
-        for (bool b : row) if (b) deadlocks_count++;
-    }
-    std::cout << "Computed deadlock mask. Deadlock cells found: " << deadlocks_count << "\n\n";
-
     Evaluator evaluator;
     evaluator.fitnessType = fitnessType;
 
@@ -165,9 +140,39 @@ int main(int argc, char** argv)
 
     for (int run = 0; run < num_runs; run++)
     {
+        auto circuit_start_time = std::chrono::high_resolution_clock::now();
+
         std::cout << "\n=========================================\n";
-        std::cout << "  RUN " << (run + 1) << " / " << num_runs << "\n";
+        std::cout << "  RUN " << (run + 1) << " / " << num_runs << " (CIRCUITO COMPLETO)\n";
         std::cout << "=========================================\n\n";
+
+        //
+        // 1. GENERATE SHELL (CON DIMENSIONES ALEATORIAS SI CORRESPONDE)
+        //
+        
+        if (random_factor_x) factorX = 2 + (rand() % 3); // 2, 3 o 4
+        if (random_factor_y) factorY = 2 + (rand() % 3); // 2, 3 o 4
+
+        SokobanGenerator generator(factorX, factorY);
+        std::cout << "Generando cascaron de topologia " << factorX << "x" << factorY << "...\n";
+        generator.generate();
+        std::vector<std::vector<char>> shell = generator.getBoard();
+
+        const int free_cells = count_free_cells(shell);
+        const int max_boxes  = std::max(1, std::min(6, free_cells / 15));
+
+        std::cout
+            << "\nBOARD SHELL:\n"
+            << board_to_pretty_string(shell)
+            << "Free cells: " << free_cells
+            << "  |  Max boxes for mutation: " << max_boxes << "\n\n";
+
+        auto deadlock_mask = compute_deadlock_mask(shell);
+        int deadlocks_count = 0;
+        for (const auto& row : deadlock_mask) {
+            for (bool b : row) if (b) deadlocks_count++;
+        }
+        std::cout << "Computed deadlock mask. Deadlock cells found: " << deadlocks_count << "\n\n";
 
         //
         // INITIAL POPULATION
@@ -206,8 +211,8 @@ int main(int argc, char** argv)
                 std::string  level = board_to_string(board);
                 unsigned int rows  = board.size();
                 unsigned int cols  = board[0].size();
-
-                game_solver solver(level, rows, cols, 512);
+                // Reducido a 128 MB (antes 512) para evitar OOM con muchos hilos
+                game_solver solver(level, rows, cols, 128);
                 std::vector<game_node> solution;
 
                 auto stats = solver.test_template(Method::a_star, solution);
@@ -309,6 +314,8 @@ int main(int argc, char** argv)
         es.mutationRate    = 1.0;
         es.maxEvaluations  = 20000;
         es.stagnationLimit = 1000;
+        es.circuitStartTime = circuit_start_time;
+        es.maxCircuitTimeSeconds = time_limit_mins > 0 ? time_limit_mins * 60 : -1;
 
         std::cout << "RUNNING MU + LAMBDA ES\n";
         best = es.run(population);
@@ -324,6 +331,8 @@ int main(int argc, char** argv)
         ga.maxFailedAttempts = 10;
         ga.maxEvaluations  = 2000;
         ga.stagnationLimit = 30;
+        ga.circuitStartTime = circuit_start_time;
+        ga.maxCircuitTimeSeconds = time_limit_mins > 0 ? time_limit_mins * 60 : -1;
 
         std::cout << "RUNNING GENETIC ALGORITHM\n";
         best = ga.run(population);
@@ -336,6 +345,8 @@ int main(int argc, char** argv)
         sa.coolingRate        = 0.01;
         sa.maxEvaluations     = 500;
         sa.stagnationLimit    = 15;
+        sa.circuitStartTime = circuit_start_time;
+        sa.maxCircuitTimeSeconds = time_limit_mins > 0 ? time_limit_mins * 60 : -1;
 
         //
         // START FROM BEST INDIVIDUAL

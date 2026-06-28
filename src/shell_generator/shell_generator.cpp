@@ -51,8 +51,8 @@ std::string SokobanGenerator::getBoardString() const {
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
             char c = (char)board[y][x];
-            if (c == T_FLOOR) c = ' '; // Convertir a piso vacio normal
-            if (c == T_IGNORE) c = ' '; // Por si queda algun interior sin conectar
+            if (board[y][x] == T_FLOOR) c = ' '; // Convertir a piso vacio normal
+            else if (board[y][x] == T_IGNORE) c = '#'; // Espacios indefinidos se dejan como roca solida (muro)
             s += c;
         }
         s += '\n';
@@ -65,8 +65,8 @@ std::vector<std::vector<char>> SokobanGenerator::getBoard() const {
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
             char c = (char)board[y][x];
-            if (c == T_FLOOR) c = ' ';
-            if (c == T_IGNORE) c = ' ';
+            if (board[y][x] == T_FLOOR) c = ' ';
+            else if (board[y][x] == T_IGNORE) c = '#';
             charBoard[y][x] = c;
         }
     }

@@ -206,7 +206,9 @@ CMakeFiles/test_solver.dir/src/game_solver.cpp.o: \
  /usr/include/c++/15/bits/locale_facets.tcc \
  /usr/include/c++/15/bits/basic_ios.tcc \
  /usr/include/c++/15/bits/ostream.tcc /usr/include/c++/15/istream \
- /usr/include/c++/15/bits/istream.tcc \
+ /usr/include/c++/15/bits/istream.tcc /usr/include/c++/15/mutex \
+ /usr/include/c++/15/bits/std_mutex.h \
+ /usr/include/c++/15/bits/unique_lock.h \
  /home/hanss/FI-sokoban-generator/include/game_solver.h \
  /home/hanss/FI-sokoban-generator/include/game_node.h \
  /home/hanss/FI-sokoban-generator/include/point.h /usr/include/c++/15/set \

@@ -5,6 +5,7 @@
 #include <queue>      // Añadido para el BFS de reconstruct_lurd
 #include <string>     // Añadido para std::string
 #include <iostream>
+#include <mutex>
 #include "game_solver.h"
 #include "constant.h"
 #include "locked.h"
@@ -652,6 +653,14 @@ SolverStats game_solver::test_template(
             }
         }
         gsolver0.orphan_nodes.clear(); 
+
+        for (const game_node* n : gsolver0.discarded_nodes) {
+            if (n != nullptr) {
+                n->~game_node();
+                game_mem.deallocate(const_cast<game_node*>(n));
+            }
+        }
+        gsolver0.discarded_nodes.clear();
     }
 
     // Evaluación del Estado Final

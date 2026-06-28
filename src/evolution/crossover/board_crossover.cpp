@@ -207,7 +207,7 @@ void BoardCrossover::repairIllegal(
     //
 
     const int free_cells = count_free_cells(board);
-    const int maxBoxes   = std::max(3, std::min(6, free_cells / 15));
+    const int maxBoxes   = 7;
 
     //
     // ENFORCE MAX BOXES

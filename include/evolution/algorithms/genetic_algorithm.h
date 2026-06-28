@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <chrono>
 
 #include "../individual.h"
 
@@ -23,7 +24,14 @@ public:
 
     int maxEvaluations = 500;
 
-    int stagnationLimit = 20;
+    int stagnationLimit = 50;
+
+    //
+    // TIME LIMIT
+    //
+
+    std::chrono::time_point<std::chrono::high_resolution_clock> circuitStartTime;
+    int maxCircuitTimeSeconds = -1; // -1 means no limit
 
     int maxFailedAttempts = 10;
     

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../individual.h"
+#include <chrono>
 #include "../mutations/mutation.h"
 #include "../evaluator/evaluator.h"
 
@@ -25,6 +26,13 @@ public:
     int maxEvaluations = 1000;
 
     int stagnationLimit = 200;
+
+    //
+    // TIME LIMIT
+    //
+
+    std::chrono::time_point<std::chrono::high_resolution_clock> circuitStartTime;
+    int maxCircuitTimeSeconds = -1; // -1 means no limit
 
     int maxFailedAttempts = 100;
 
