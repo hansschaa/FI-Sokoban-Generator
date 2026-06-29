@@ -42,12 +42,15 @@ void draw_picture::draw_pic(vector<vector<char>>& matrix) {
 }
 
 point draw_picture::get_end(game_node& first, game_node& second) {
-    auto s_box = second.box_list;
-    auto f_box = first.box_list;
     point p;
-    for (auto s = s_box.begin(); s != s_box.end(); s++) {
-        if (f_box.find(*s) == f_box.end()) {
-            p = *s;
+    for (int i = 0; i < second.box_count; i++) {
+        point s = second.box_list[i];
+        bool found = false;
+        for (int j = 0; j < first.box_count; j++) {
+            if (s == first.box_list[j]) { found = true; break; }
+        }
+        if (!found) {
+            p = s;
             break;
         }
     }

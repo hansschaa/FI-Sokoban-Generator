@@ -30,8 +30,11 @@ public:
             for (auto& direction : constant::four_direction) {
                 point p = direction + *n;
                 if (constant::is_inside(p) and ((*grid)[p.x][p.y] == constant::BLANK) and zero_matrix[p.x][p.y] == false){
-                    point* new_point = new(constant::maze_mp.allocate()) point(p.x, p.y);
-                    callback(new_point);
+                    void* mem = constant::maze_mp.allocate();
+                    if (mem) {
+                        point* new_point = new(mem) point(p.x, p.y);
+                        callback(new_point);
+                    }
                 }
             }
         };

@@ -61,4 +61,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/irace_generator.dir/DependInfo.cmake"
   "CMakeFiles/batch_solver.dir/DependInfo.cmake"
   "CMakeFiles/test_shell.dir/DependInfo.cmake"
+  "CMakeFiles/dataset_generator.dir/DependInfo.cmake"
   )

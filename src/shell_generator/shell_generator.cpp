@@ -21,21 +21,20 @@ void SokobanGenerator::generate() {
     int tries = 0;
     while (!valid) {
         tries++;
-        if (tries % 1000 == 0) std::cout << "Intento " << tries << "...\n";
+        if (tries % 1000 == 0) {} // std::cout << "Intento " << tries << "...\n";
         
         board.assign(height, std::vector<Tile>(width, T_IGNORE));
         
         if (!step2_placeTemplates()) {
-            if (tries % 1000 == 0) std::cout << "  Fallo step2\n";
+            if (tries % 1000 == 0) {} // std::cout << "  Fallo step2\n";
             continue; 
         }
         if (!step3_postProcessing()) {
             if (tries % 1000 == 0) {
-                if (hasLargeSpaces()) std::cout << "  Fallo step3 (hasLargeSpaces)\n";
-                else if (!isConnected()) {
-                    std::cout << "  Fallo step3 (!isConnected)\n";
-                    std::cout << getBoardString() << "\n";
-                }
+                // if (hasLargeSpaces()) std::cout << "  Fallo step3 (hasLargeSpaces)\n";
+                // else if (!isConnected()) {
+                //     std::cout << "  Fallo step3 (!isConnected)\n";
+                // }
             }
             continue; 
         }
@@ -43,7 +42,7 @@ void SokobanGenerator::generate() {
         step4_exteriorFloodFill();
         valid = true; 
     }
-    std::cout << "Cascaron generado en " << tries << " intentos.\n";
+    // std::cout << "Cascaron generado en " << tries << " intentos.\n";
 }
 
 std::string SokobanGenerator::getBoardString() const {

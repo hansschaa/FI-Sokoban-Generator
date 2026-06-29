@@ -158,13 +158,14 @@ bool Penalty::is_wall(int pos) const {
     return constant::blank_matrix[x][y] == constant::WALL;
 }
 
-int Penalty::calculate_penalty(const std::set<point>& box_list) const {
+int Penalty::calculate_penalty(const point* box_list, int box_count) const {
     if (m * n > 4900 || penalty_situations.empty()) {
         return 0;
     }
 
     std::vector<bool> current_situation(box_squares_count, false);
-    for (const auto& box : box_list) {
+    for (int i = 0; i < box_count; i++) {
+        auto box = box_list[i];
         int pos = box.x * n + box.y;
         if (pos >= 0 && pos < m * n) {
             int box_sq = board_squares_to_box_squares[pos];

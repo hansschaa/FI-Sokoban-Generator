@@ -40,5 +40,5 @@ public:
         const std::vector<std::vector<bool>>& side_point
     );
 
-    int calculate_penalty(const std::set<point>& box_list) const;
+    int calculate_penalty(const point* box_list, int box_count) const;
 };

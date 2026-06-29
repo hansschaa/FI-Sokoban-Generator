@@ -13,6 +13,7 @@ namespace constant {
     extern thread_local std::vector<std::vector<bool>> end_vec;
     extern thread_local std::vector<std::vector<bool>> matrix0;
     extern thread_local my_memory_pool maze_mp;
+    extern thread_local my_memory_pool solver_mp;
     enum game_items {WALL = 0, FINAL, BLANK, BOX, REDBOX, PERSON, PERSONF};
     enum game_items_char {WALL_CHAR    = '#',
                           FINAL_CHAR   = '.',

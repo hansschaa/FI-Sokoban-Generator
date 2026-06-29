@@ -69,7 +69,7 @@ game_solver::game_solver(string& game_map, unsigned int mm, unsigned int nn, int
     blank_matrix = vector<vector<char>>(mm, vector<char>(nn, 0));
 
     point person_start;
-    set<point> box_point_start;
+    vector<point> box_point_start;
 
     char temp_c;
     point temp_p;
@@ -88,11 +88,11 @@ game_solver::game_solver(string& game_map, unsigned int mm, unsigned int nn, int
                 break;
             case '$':
                 blank_matrix[x][y] = BLANK;
-                box_point_start.insert(temp_p);
+                box_point_start.push_back(temp_p);
                 break;
             case '*':
                 blank_matrix[x][y] = BLANK;
-                box_point_start.insert(temp_p);
+                box_point_start.push_back(temp_p);
                 end_vec[x][y] = true;
                 break;
             case '.':
@@ -115,12 +115,11 @@ game_solver::game_solver(string& game_map, unsigned int mm, unsigned int nn, int
     }
     //
     // INIT MEMORY POOLS
-    // my_memory_pool::init() now safely frees any previous allocation,
     // so constructing multiple game_solver instances is leak-free.
     //
-    game_mem.init(sizeof(game_node), memval * 1024 * 1024 / sizeof(game_node));
+    constant::solver_mp.init(sizeof(game_node), memval * 1024 * 1024 / sizeof(game_node));
     constant::maze_mp.init(sizeof(point), mm * nn * 4);
-    init = game_node(box_point_start,person_start);
+    init = game_node(box_point_start.data(), box_point_start.size(), person_start);
     lk.init();
     penalty_solver = Penalty(mm, nn);
     set_lambda_function();
@@ -130,7 +129,7 @@ game_solver::game_solver(string& game_map, unsigned int mm, unsigned int nn, int
 void game_solver::vars_init(game_node& input){
     rpt.init(input);
     lk.init();
-    game_mem.clear();
+    constant::solver_mp.clear();
     stat_expanded_nodes     = 0;
     stat_total_children     = 0;
     stat_effective_children = 0;
@@ -141,11 +140,10 @@ void game_solver::vars_init(game_node& input){
 void game_solver::vars_clear(game_node& input){
     rpt.zobrist_hash.erase(&input);
     for (auto tp: rpt.zobrist_hash){
-        tp->~game_node();
-        game_mem.deallocate((void *)tp);
+        constant::solver_mp.deallocate((void *)tp);
     }
     rpt.zobrist_hash.clear();
-    game_mem.clear();
+    constant::solver_mp.clear();
 
     // --- ARREGLO DE LEAK: Vaciar y liberar capacidad de vectores anidados ---
     goal_positions.clear();
@@ -158,13 +156,13 @@ void game_solver::vars_clear(game_node& input){
 // FIX: antes recibía game_node por valor, copiando el set<point> completo
 // en cada celda del doble loop m×n de Astar_init(). Ahora es const ref.
 int game_solver::get_nums2(const game_node& input) {
-    auto p = *(input.box_list.begin());
+    auto p = input.box_list[0];
     if (end_vec[p.x][p.y] == true) { return 0; }
 
     //
     // USE A SEPARATE LOCAL MEMORY POOL
     // get_nums2 is called from Astar_init(), which runs before test_template,
-    // but sharing game_mem would cause vars_init/vars_clear to clobber the
+    // but sharing constant::solver_mp would cause vars_init/vars_clear to clobber the
     // pool mid-solve if ever called in a nested context.
     //
     my_memory_pool local_mem;
@@ -177,19 +175,18 @@ int game_solver::get_nums2(const game_node& input) {
 
     auto local_get_neighbors = [&](const game_node* n_min, std::function<void(const game_node*)> callback) {
         detect_legal test(n_min);
-        for (auto item = n_min->box_list.begin(); item != n_min->box_list.end(); item++) {
-            auto box = *item;
+        for (int i_box = 0; i_box < n_min->box_count; i_box++) {
+            auto box = n_min->box_list[i_box];
             for (auto direction : four_direction) {
                 auto new_point = box + direction;
                 if (test.can_get(new_point)) {
                     if (test.can_box_move(box, new_point)) {
-                        auto new_box_point = *item * 2 - new_point;
+                        auto new_box_point = box * 2 - new_point;
                         game_node* temp_box2 = new(local_mem.allocate()) game_node;
-                        n_min->get_moved(*item, new_box_point, temp_box2);
+                        n_min->get_moved(box, new_box_point, temp_box2);
                         vector<vector<char>> temp_matrix2;
                         temp_box2->get_matrix0(temp_matrix2);
-                        if (local_lk.is_locked(new_box_point, temp_matrix2) || local_rpt.is_repeat2(temp_box2)) {
-                            temp_box2->~game_node();
+                        if (local_rpt.is_repeat2(temp_box2)) {
                             local_mem.deallocate(temp_box2);
                         } else {
                             callback(temp_box2);
@@ -215,7 +212,6 @@ int game_solver::get_nums2(const game_node& input) {
     //
     local_rpt.zobrist_hash.erase(&input);
     for (auto tp : local_rpt.zobrist_hash) {
-        tp->~game_node();
         local_mem.deallocate((void*)tp);
     }
     local_rpt.zobrist_hash.clear();
@@ -380,8 +376,8 @@ void game_solver::set_lambda_function(){
         stat_expanded_nodes++;          // un nodo expandido = Java: localExpandedNodes++
 
         detect_legal test(n_min);
-        for (auto item = n_min->box_list.begin(); item != n_min->box_list.end(); item++) {
-            auto box = *item;
+        for (int i_box = 0; i_box < n_min->box_count; i_box++) {
+            auto box = n_min->box_list[i_box];
             for (auto direction : four_direction) {
                 auto new_point = box + direction;
 
@@ -389,9 +385,9 @@ void game_solver::set_lambda_function(){
 
                 if (test.can_get(new_point)) {
                     if (test.can_box_move(box, new_point)) {
-                        auto new_box_point = *item * 2 - new_point;
-                        game_node* temp_box2 = new(game_mem.allocate()) game_node;
-                        n_min->get_moved(*item, new_box_point, temp_box2);
+                        auto new_box_point = box * 2 - new_point;
+                        game_node* temp_box2 = new(constant::solver_mp.allocate()) game_node;
+                        n_min->get_moved(box, new_box_point, temp_box2);
                         vector<vector<char>> temp_matrix2;
                         temp_box2->get_matrix0(temp_matrix2);
 
@@ -422,12 +418,10 @@ void game_solver::set_lambda_function(){
 
                         if (is_deadlocked) {
                             stat_deadlocks++;           // Java: deadlocksCount++
-                            temp_box2->~game_node();
-                            game_mem.deallocate(temp_box2);
+                            constant::solver_mp.deallocate(temp_box2);
                         } else if (rpt.is_repeat2(temp_box2)) {
                             stat_repeated_nodes++;      // Java: repeatedChildren++
-                            temp_box2->~game_node();
-                            game_mem.deallocate(temp_box2);
+                            constant::solver_mp.deallocate(temp_box2);
                         } else {
                             stat_effective_children++;  // Java: totalEffectiveChildren++
                             callback(temp_box2);
@@ -463,15 +457,22 @@ static std::string reconstruct_lurd(const std::vector<game_node>& solution, poin
 
         // 1. Identificar qué caja se movió comparando los sets
         point box_from = point(-1, -1);
-        for (auto p : a.box_list) {
-            if (b.box_list.find(p) == b.box_list.end()) {
+        for(int i = 0; i < a.box_count; i++) {
+            point p = a.box_list[i];
+            bool found = false;
+            for(int j = 0; j < b.box_count; j++) if(p == b.box_list[j]) found = true;
+            if(!found) {
                 box_from = p; 
                 break;
             }
         }
+        
         point box_to = point(-1, -1);
-        for (auto p : b.box_list) {
-            if (a.box_list.find(p) == a.box_list.end()) {
+        for(int i = 0; i < b.box_count; i++) {
+            point p = b.box_list[i];
+            bool found = false;
+            for(int j = 0; j < a.box_count; j++) if(p == a.box_list[j]) found = true;
+            if(!found) {
                 box_to = p; 
                 break;
             }
@@ -555,26 +556,27 @@ SolverStats game_solver::test_template(
 
     auto heuristic = [&](const game_node* a, const game_node*) {
         if (heuristic_type == Heuristic::hungarian) {
-            int num_boxes = (int)a->box_list.size();
+            int num_boxes = a->box_count;
             int num_goals = (int)goal_positions.size();
             int sz = std::max(num_boxes, num_goals);
 
             vector<vector<int>> cost(sz, vector<int>(sz, 0));
-            int i = 0;
-            for (auto it = a->box_list.begin(); it != a->box_list.end(); ++it, ++i)
+            for (int i = 0; i < a->box_count; ++i) {
                 for (int j = 0; j < num_goals; j++)
-                    cost[i][j] = dist_to_goal[j][it->x][it->y];
+                    cost[i][j] = dist_to_goal[j][a->box_list[i].x][a->box_list[i].y];
+            }
 
             Hungarian h(cost);
             int min_cost = h.solve();
 
-            int penalty_cost = penalty_solver.calculate_penalty(a->box_list);
+            int penalty_cost = penalty_solver.calculate_penalty(a->box_list, a->box_count);
             return min_cost >= 1000 ? min_cost : min_cost + penalty_cost;
         }
         else {
             int f = 0;
-            for (auto i = a->box_list.begin(); i != a->box_list.end(); i++)
-                f += vec[i->x][i->y];
+            for (int i = 0; i < a->box_count; i++) {
+                f += vec[a->box_list[i].x][a->box_list[i].y];
+            }
             return f;
         }
     };
@@ -595,14 +597,26 @@ SolverStats game_solver::test_template(
     Solver_template<vector<game_node>, game_node, Method::dfs> gsolver1;
     Solver_template<vector<game_node>, game_node, Method::bfs> gsolver2;
 
-    if (input == Method::a_star) {
-        solution = gsolver0.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal, heuristic);
-    }
-    else if (input == Method::dfs) {
-        solution = gsolver1.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal);
-    }
-    else if (input == Method::bfs) {
-        solution = gsolver2.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal);
+    try {
+        if (input == Method::a_star) {
+            solution = gsolver0.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal, heuristic);
+        }
+        else if (input == Method::dfs) {
+            solution = gsolver1.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal);
+        }
+        else if (input == Method::bfs) {
+            solution = gsolver2.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal);
+        }
+    } catch (const std::runtime_error& e) {
+        if (std::string(e.what()) == "OOM") {
+            // Limpieza inmediata y salida temprana
+            vars_clear(init);
+            SolverStats s;
+            s.status = SolveStatus::TIMEOUT;
+            s.expanded_nodes = stat_expanded_nodes;
+            return s;
+        }
+        throw; // Otra excepcion
     }
 
     // 3. Si no lo resolvió (Timeout o Unsolvable), el tiempo total es hasta este punto
@@ -648,16 +662,14 @@ SolverStats game_solver::test_template(
     if (input == Method::a_star) {
         for (const game_node* n : gsolver0.orphan_nodes) {
             if (n != nullptr && rpt.zobrist_hash.count(n) == 0) { 
-                n->~game_node();
-                game_mem.deallocate(const_cast<game_node*>(n));
+                constant::solver_mp.deallocate(const_cast<game_node*>(n));
             }
         }
         gsolver0.orphan_nodes.clear(); 
 
         for (const game_node* n : gsolver0.discarded_nodes) {
             if (n != nullptr) {
-                n->~game_node();
-                game_mem.deallocate(const_cast<game_node*>(n));
+                constant::solver_mp.deallocate(const_cast<game_node*>(n));
             }
         }
         gsolver0.discarded_nodes.clear();
@@ -757,7 +769,7 @@ void print_solver_stats(const SolverStats& stats) {
 // DETECCIÓN DE BIPARTITE DEADLOCK (ALGORITMO HÚNGARO)
 // ==============================================================================
 bool game_solver::is_bipartite_deadlock(const game_node& node) {
-    int num_boxes = (int)node.box_list.size();
+    int num_boxes = node.box_count;
     int num_goals = (int)goal_positions.size();
     
     // Matriz cuadrada requerida por el Algoritmo Húngaro
@@ -769,11 +781,10 @@ bool game_solver::is_bipartite_deadlock(const game_node& node) {
 
     vector<vector<int>> cost(sz, vector<int>(sz, 0));
 
-    int i = 0;
-    for (auto it = node.box_list.begin(); it != node.box_list.end(); ++it, ++i) {
+    for (int i = 0; i < node.box_count; ++i) {
         for (int j = 0; j < num_goals; j++) {
             // Utilizamos la tabla de distancias invertidas que ya precalculaste
-            cost[i][j] = dist_to_goal[j][it->x][it->y];
+            cost[i][j] = dist_to_goal[j][node.box_list[i].x][node.box_list[i].y];
         }
     }
 

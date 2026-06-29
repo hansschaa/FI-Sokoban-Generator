@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cstring>
 #include "my_memory.h"
+#include <stdexcept>
  
 my_memory_pool::my_memory_pool()
     : used_size(0)
@@ -13,7 +14,21 @@ my_memory_pool::my_memory_pool()
 {}
 
 void my_memory_pool::init(size_t blockSize, size_t numBlocks){
+    size_t newPoolSize = blockSize * numBlocks;
+    
     if (pool_) {
+        // Reuse if the new size is the same or smaller, and block size matches
+        if (blockSize_ == blockSize && newPoolSize <= poolSize_) {
+            numBlocks_ = numBlocks;
+            used_size = 0;
+            freeList_.clear();
+            freeList_.reserve(numBlocks_);
+            for (size_t i = 0; i < numBlocks_; ++i) {
+                freeList_.push_back(pool_ + i * blockSize_);
+            }
+            return;
+        }
+        
         std::free(pool_);
         pool_ = nullptr;
         freeList_.clear();
@@ -21,7 +36,7 @@ void my_memory_pool::init(size_t blockSize, size_t numBlocks){
 
     blockSize_ = blockSize;
     numBlocks_ = numBlocks;
-    poolSize_ = blockSize_ * numBlocks_;
+    poolSize_ = newPoolSize;
     used_size = 0;
     pool_ = static_cast<char*>(std::malloc(poolSize_));
     if (!pool_) {
@@ -53,7 +68,7 @@ my_memory_pool::~my_memory_pool() {
 
 void* my_memory_pool::allocate() {
     if (freeList_.empty()) {
-        throw std::bad_alloc();
+        throw std::runtime_error("OOM");
     }
     void* block = freeList_.back();
     freeList_.pop_back();

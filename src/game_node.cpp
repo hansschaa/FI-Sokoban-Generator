@@ -4,10 +4,17 @@
 #include "repeat.h"
 
 using namespace constant;
+#include <algorithm>
+
+using namespace constant;
 using namespace std;
 
-game_node::game_node(set<point>& bxp,point& ps) {
-    box_list = bxp;
+game_node::game_node(const point* boxes, int8_t count, point& ps) {
+    box_count = count;
+    for(int i = 0; i < count; i++) {
+        box_list[i] = boxes[i];
+    }
+    std::sort(box_list, box_list + box_count);
     person_point = ps;
     normalize_player();
 }
@@ -16,16 +23,16 @@ game_node::game_node(){}
 
 void game_node::get_matrix0(vector<vector<char>>& result)const {
     result = blank_matrix;
-    for (auto item = box_list.begin(); item != box_list.end(); item++) {
-        result[(*item).x][(*item).y] = BOX;
+    for (int i = 0; i < box_count; i++) {
+        result[box_list[i].x][box_list[i].y] = BOX;
     }
 }
 
 vector<vector<char>> game_node::get_matrix()const {
     auto result = blank_matrix;
 
-    for (auto item = box_list.begin(); item != box_list.end(); item++) {
-        result[(*item).x][(*item).y] = BOX;
+    for (int i = 0; i < box_count; i++) {
+        result[box_list[i].x][box_list[i].y] = BOX;
     }
     return result;
 }
@@ -41,12 +48,9 @@ vector<vector<char>> game_node::get_matrix2()const {
             }
         }
     }
-    for (auto item_box = box_list.begin();item_box != box_list.end();item_box++) {
-        //
-        // READ end_vec, do NOT mutate it — method is const
-        //
-        bool onGoal = end_vec[(*item_box).x][(*item_box).y];
-        result[(*item_box).x][(*item_box).y] = onGoal ? REDBOX : BOX;
+    for (int i = 0; i < box_count; i++) {
+        bool onGoal = end_vec[box_list[i].x][box_list[i].y];
+        result[box_list[i].x][box_list[i].y] = onGoal ? REDBOX : BOX;
     }
 
     bool playerOnGoal = end_vec[person_point.x][person_point.y];
@@ -55,12 +59,16 @@ vector<vector<char>> game_node::get_matrix2()const {
 }
 
 bool game_node::operator==(const game_node &a)const {
-    return (a.box_list == box_list && a.person_point == person_point);
+    if (a.box_count != box_count || !(a.person_point == person_point)) return false;
+    for (int i = 0; i < box_count; i++) {
+        if (!(a.box_list[i] == box_list[i])) return false;
+    }
+    return true;
 }
 
 bool game_node::game_over() const {
-    for (auto i = box_list.begin(); i != box_list.end(); i++) {
-        auto p = *i;
+    for (int i = 0; i < box_count; i++) {
+        auto p = box_list[i];
         if (end_vec[p.x][p.y] == false) {return false;}
     }
     return true;
@@ -68,9 +76,13 @@ bool game_node::game_over() const {
 
 void game_node::get_moved(const point& box_before, point& box_new, game_node* result) const {
     *result = *this;
-    auto item = result->box_list.find(box_before);
-    result->box_list.erase(item);
-    result->box_list.insert(box_new);
+    for (int i = 0; i < result->box_count; i++) {
+        if (result->box_list[i] == box_before) {
+            result->box_list[i] = box_new;
+            break;
+        }
+    }
+    std::sort(result->box_list, result->box_list + result->box_count);
     result->person_point = box_before;
     result->normalize_player();
 
@@ -86,8 +98,8 @@ void game_node::get_moved(const point& box_before, point& box_new, game_node* re
 size_t game_node::get_hash() const {
     if (!hash_calculated) {
         size_t result = 0;
-        for (auto x = box_list.begin(); x != box_list.end(); x++) {
-            result = result ^ repeat::zobrist[(*x).x][(*x).y];
+        for (int i = 0; i < box_count; i++) {
+            result = result ^ repeat::zobrist[box_list[i].x][box_list[i].y];
         }
         cached_hash = result;
         hash_calculated = true;
@@ -106,8 +118,8 @@ void game_node::normalize_player() {
             blocked[r][c] = (constant::blank_matrix[r][c] == constant::WALL);
         }
     }
-    for (auto item = box_list.begin(); item != box_list.end(); item++) {
-        auto box = *item;
+    for (int i = 0; i < box_count; i++) {
+        auto box = box_list[i];
         if (box.x >= 0 && box.x < rows && box.y >= 0 && box.y < cols) {
             blocked[box.x][box.y] = true;
         }

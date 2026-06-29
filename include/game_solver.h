@@ -75,7 +75,6 @@ private:
     game_node init;
     repeat rpt;
     locked lk;
-    my_memory_pool game_mem;
     std::function<void(const game_node*, std::function<void(const game_node*)>)> get_neighbors;
     std::function<bool(const game_node*)> is_visited;
     std::function<void(const game_node*)> mark_visited;
