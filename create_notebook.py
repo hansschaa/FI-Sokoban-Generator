@@ -210,19 +210,22 @@ ax.tick_params(axis="x", rotation=0)
 plt.tight_layout()
 plt.show()"""))
 
-cells.append(markdown_cell("""### 3b. Distribución de fitness por (Algoritmo, FO) — inspección visual
+cells.append(markdown_cell("""### 3b. Distribución de fitness por Algoritmo × FO — figura para RQ2
 
-Visualiza la dispersión de cada algoritmo en cada FO para corroborar el CV."""))
+Para RQ2, la figura clave es **1 subplot por algoritmo** con las FOs en el eje X.
+Así se ve directamente si las cajas de cada algoritmo se mantienen alineadas al cambiar de landscape (robusto)
+o si se desplazan marcadamente (sensible al paisaje)."""))
 cells.append(code_cell("""fig, axes = plt.subplots(1, 3, figsize=(15, 5), sharey=True)
-fos = sorted(df_norm["FO"].unique())
-for ax, fo in zip(axes, fos):
-    sub = df_norm[df_norm["FO"] == fo]
-    sns.boxplot(data=sub, x="Algoritmo", y="Fitness_norm",
-                order=["SA","ES","GA"], palette=PALETTE, ax=ax)
-    ax.set_title(f"FO: {fo}")
-    ax.set_xlabel("Algoritmo")
-    ax.set_ylabel("Fitness Normalizado" if ax == axes[0] else "")
-fig.suptitle("RQ2 — Distribución de Fitness por Algoritmo × FO", y=1.02)
+fo_order = sorted(df_norm["FO"].unique())
+for ax, algo in zip(axes, ["SA", "ES", "GA"]):
+    sub = df_norm[df_norm["Algoritmo"] == algo]
+    sns.boxplot(data=sub, x="FO", y="Fitness_norm",
+                order=fo_order, color=PALETTE[algo], ax=ax)
+    ax.set_title(algo, fontsize=13, fontweight="bold")
+    ax.set_xlabel("Función Objetivo")
+    ax.set_ylabel("Fitness Normalizado [0-1]" if ax == axes[0] else "")
+    ax.tick_params(axis="x", rotation=15)
+fig.suptitle("RQ2 — Robustez: Distribución por Algoritmo × Landscape", y=1.02)
 plt.tight_layout()
 plt.show()"""))
 
