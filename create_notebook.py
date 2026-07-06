@@ -58,20 +58,28 @@ df = df.rename(columns={
 df["Fitness"] = pd.to_numeric(df["Fitness"], errors="coerce")
 df = df.dropna(subset=["Fitness"])
 
+# Convertir a positivo: los algoritmos internamente minimizan (fitness negativo).
+# Para coherencia visual, trabajamos con el valor absoluto.
+# Mayor valor absoluto = mayor complejidad/calidad del nivel generado.
+df["Fitness"] = df["Fitness"].abs()
+
 print(f"Filas totales: {len(df)}")
 print(f"Algoritmos: {sorted(df['Algoritmo'].unique())}")
 print(f"FOs: {sorted(df['FO'].unique())}")
 print(f"Tableros: {df['Shell_ID'].nunique()}")
 print(f"Repeticiones: {df['Rep'].nunique()}")
+print(f"Fitness min/max tras abs(): {df['Fitness'].min():.1f} / {df['Fitness'].max():.1f}")
 df.head()"""))
 
 # ── NORMALIZACIÓN ──────────────────────────────────────────────────────────────
 cells.append(markdown_cell("""## 1. Normalización Min-Max del Fitness
 
-Los fitness de distintas FOs tienen escalas incomparables (ej. Pushes puede llegar a -100, Deadlocks a -20).
-Para hacer comparaciones justas inter-FO, aplicamos normalización **Min-Max por grupo (FO, Shell_ID)**.
+Los fitness ya fueron convertidos a positivos (valor absoluto) en la celda anterior.
+Dado que las 3 FOs operan en escalas distintas (ej. Pushes puede superar 100 empujes,
+mientras Deadlocks puede quedarse en 20), aplicamos **normalización Min-Max por grupo (FO, Shell_ID)**
+para hacer las comparaciones inter-FO justas.
 
-Esto relativiza el fitness de cada run: 1.0 = mejor resultado logrado en ese tablero+FO, 0.0 = peor.
+Resultado: 1.0 = mejor resultado en ese tablero+FO, 0.0 = peor. Siempre: mayor = mejor.
 ⚠️ El ranking dentro de cada grupo es relativo a los 3 algoritmos que compiten en él."""))
 cells.append(code_cell("""df_norm = df.copy()
 df_norm["Fitness_norm"] = np.nan
