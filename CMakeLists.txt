@@ -77,6 +77,7 @@ list(REMOVE_ITEM MY_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_experiment1.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_shell.cpp     # Nuevo main para pruebas
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_dataset.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_playable_dataset.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_experiment.cpp
 )
 
@@ -166,6 +167,12 @@ add_executable(
     ${MY_SRC}
 )
 
+add_executable(
+    playable_dataset_generator
+    src/main_playable_dataset.cpp
+    ${MY_SRC}
+)
+
 #
 # Common compiler flags
 #
@@ -179,6 +186,7 @@ foreach(target
     batch_solver                                        # <- MODIFICADO: Añadido al bucle de optimizacion
     test_shell
     dataset_generator
+    playable_dataset_generator
     experiment_runner
 )
     target_compile_options(

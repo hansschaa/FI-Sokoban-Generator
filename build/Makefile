@@ -233,6 +233,19 @@ dataset_generator/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/build
 .PHONY : dataset_generator/fast
 
+#=============================================================================
+# Target rules for targets named playable_dataset_generator
+
+# Build rule for target.
+playable_dataset_generator: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 playable_dataset_generator
+.PHONY : playable_dataset_generator
+
+# fast build rule for target.
+playable_dataset_generator/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/build
+.PHONY : playable_dataset_generator/fast
+
 src/constant.o: src/constant.cpp.o
 .PHONY : src/constant.o
 
@@ -247,6 +260,7 @@ src/constant.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/constant.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/constant.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/constant.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/constant.cpp.o
 .PHONY : src/constant.cpp.o
 
 src/constant.i: src/constant.cpp.i
@@ -263,6 +277,7 @@ src/constant.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/constant.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/constant.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/constant.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/constant.cpp.i
 .PHONY : src/constant.cpp.i
 
 src/constant.s: src/constant.cpp.s
@@ -279,6 +294,7 @@ src/constant.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/constant.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/constant.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/constant.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/constant.cpp.s
 .PHONY : src/constant.cpp.s
 
 src/draw.o: src/draw.cpp.o
@@ -295,6 +311,7 @@ src/draw.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/draw.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/draw.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/draw.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/draw.cpp.o
 .PHONY : src/draw.cpp.o
 
 src/draw.i: src/draw.cpp.i
@@ -311,6 +328,7 @@ src/draw.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/draw.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/draw.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/draw.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/draw.cpp.i
 .PHONY : src/draw.cpp.i
 
 src/draw.s: src/draw.cpp.s
@@ -327,6 +345,7 @@ src/draw.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/draw.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/draw.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/draw.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/draw.cpp.s
 .PHONY : src/draw.cpp.s
 
 src/evolution/algorithms/evolution_strategy.o: src/evolution/algorithms/evolution_strategy.cpp.o
@@ -343,6 +362,7 @@ src/evolution/algorithms/evolution_strategy.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/algorithms/evolution_strategy.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/algorithms/evolution_strategy.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/algorithms/evolution_strategy.cpp.o
 .PHONY : src/evolution/algorithms/evolution_strategy.cpp.o
 
 src/evolution/algorithms/evolution_strategy.i: src/evolution/algorithms/evolution_strategy.cpp.i
@@ -359,6 +379,7 @@ src/evolution/algorithms/evolution_strategy.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/algorithms/evolution_strategy.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/algorithms/evolution_strategy.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/algorithms/evolution_strategy.cpp.i
 .PHONY : src/evolution/algorithms/evolution_strategy.cpp.i
 
 src/evolution/algorithms/evolution_strategy.s: src/evolution/algorithms/evolution_strategy.cpp.s
@@ -375,6 +396,7 @@ src/evolution/algorithms/evolution_strategy.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/algorithms/evolution_strategy.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/algorithms/evolution_strategy.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/algorithms/evolution_strategy.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/algorithms/evolution_strategy.cpp.s
 .PHONY : src/evolution/algorithms/evolution_strategy.cpp.s
 
 src/evolution/algorithms/genetic_algorithm.o: src/evolution/algorithms/genetic_algorithm.cpp.o
@@ -391,6 +413,7 @@ src/evolution/algorithms/genetic_algorithm.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/algorithms/genetic_algorithm.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/algorithms/genetic_algorithm.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/algorithms/genetic_algorithm.cpp.o
 .PHONY : src/evolution/algorithms/genetic_algorithm.cpp.o
 
 src/evolution/algorithms/genetic_algorithm.i: src/evolution/algorithms/genetic_algorithm.cpp.i
@@ -407,6 +430,7 @@ src/evolution/algorithms/genetic_algorithm.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/algorithms/genetic_algorithm.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/algorithms/genetic_algorithm.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/algorithms/genetic_algorithm.cpp.i
 .PHONY : src/evolution/algorithms/genetic_algorithm.cpp.i
 
 src/evolution/algorithms/genetic_algorithm.s: src/evolution/algorithms/genetic_algorithm.cpp.s
@@ -423,6 +447,7 @@ src/evolution/algorithms/genetic_algorithm.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/algorithms/genetic_algorithm.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/algorithms/genetic_algorithm.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/algorithms/genetic_algorithm.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/algorithms/genetic_algorithm.cpp.s
 .PHONY : src/evolution/algorithms/genetic_algorithm.cpp.s
 
 src/evolution/algorithms/simulated_annealing.o: src/evolution/algorithms/simulated_annealing.cpp.o
@@ -439,6 +464,7 @@ src/evolution/algorithms/simulated_annealing.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/algorithms/simulated_annealing.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.o
 .PHONY : src/evolution/algorithms/simulated_annealing.cpp.o
 
 src/evolution/algorithms/simulated_annealing.i: src/evolution/algorithms/simulated_annealing.cpp.i
@@ -455,6 +481,7 @@ src/evolution/algorithms/simulated_annealing.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/algorithms/simulated_annealing.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.i
 .PHONY : src/evolution/algorithms/simulated_annealing.cpp.i
 
 src/evolution/algorithms/simulated_annealing.s: src/evolution/algorithms/simulated_annealing.cpp.s
@@ -471,6 +498,7 @@ src/evolution/algorithms/simulated_annealing.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/algorithms/simulated_annealing.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/algorithms/simulated_annealing.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/algorithms/simulated_annealing.cpp.s
 .PHONY : src/evolution/algorithms/simulated_annealing.cpp.s
 
 src/evolution/crossover/board_crossover.o: src/evolution/crossover/board_crossover.cpp.o
@@ -487,6 +515,7 @@ src/evolution/crossover/board_crossover.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/crossover/board_crossover.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/crossover/board_crossover.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/crossover/board_crossover.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/crossover/board_crossover.cpp.o
 .PHONY : src/evolution/crossover/board_crossover.cpp.o
 
 src/evolution/crossover/board_crossover.i: src/evolution/crossover/board_crossover.cpp.i
@@ -503,6 +532,7 @@ src/evolution/crossover/board_crossover.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/crossover/board_crossover.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/crossover/board_crossover.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/crossover/board_crossover.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/crossover/board_crossover.cpp.i
 .PHONY : src/evolution/crossover/board_crossover.cpp.i
 
 src/evolution/crossover/board_crossover.s: src/evolution/crossover/board_crossover.cpp.s
@@ -519,6 +549,7 @@ src/evolution/crossover/board_crossover.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/crossover/board_crossover.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/crossover/board_crossover.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/crossover/board_crossover.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/crossover/board_crossover.cpp.s
 .PHONY : src/evolution/crossover/board_crossover.cpp.s
 
 src/evolution/evaluator/evaluator.o: src/evolution/evaluator/evaluator.cpp.o
@@ -535,6 +566,7 @@ src/evolution/evaluator/evaluator.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/evaluator/evaluator.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/evaluator/evaluator.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/evaluator/evaluator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/evaluator/evaluator.cpp.o
 .PHONY : src/evolution/evaluator/evaluator.cpp.o
 
 src/evolution/evaluator/evaluator.i: src/evolution/evaluator/evaluator.cpp.i
@@ -551,6 +583,7 @@ src/evolution/evaluator/evaluator.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/evaluator/evaluator.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/evaluator/evaluator.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/evaluator/evaluator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/evaluator/evaluator.cpp.i
 .PHONY : src/evolution/evaluator/evaluator.cpp.i
 
 src/evolution/evaluator/evaluator.s: src/evolution/evaluator/evaluator.cpp.s
@@ -567,6 +600,7 @@ src/evolution/evaluator/evaluator.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/evaluator/evaluator.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/evaluator/evaluator.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/evaluator/evaluator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/evaluator/evaluator.cpp.s
 .PHONY : src/evolution/evaluator/evaluator.cpp.s
 
 src/evolution/mutations/add_mutation.o: src/evolution/mutations/add_mutation.cpp.o
@@ -583,6 +617,7 @@ src/evolution/mutations/add_mutation.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/mutations/add_mutation.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/mutations/add_mutation.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/mutations/add_mutation.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/mutations/add_mutation.cpp.o
 .PHONY : src/evolution/mutations/add_mutation.cpp.o
 
 src/evolution/mutations/add_mutation.i: src/evolution/mutations/add_mutation.cpp.i
@@ -599,6 +634,7 @@ src/evolution/mutations/add_mutation.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/mutations/add_mutation.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/mutations/add_mutation.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/mutations/add_mutation.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/mutations/add_mutation.cpp.i
 .PHONY : src/evolution/mutations/add_mutation.cpp.i
 
 src/evolution/mutations/add_mutation.s: src/evolution/mutations/add_mutation.cpp.s
@@ -615,6 +651,7 @@ src/evolution/mutations/add_mutation.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/mutations/add_mutation.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/mutations/add_mutation.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/mutations/add_mutation.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/mutations/add_mutation.cpp.s
 .PHONY : src/evolution/mutations/add_mutation.cpp.s
 
 src/evolution/mutations/move_mutation.o: src/evolution/mutations/move_mutation.cpp.o
@@ -631,6 +668,7 @@ src/evolution/mutations/move_mutation.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/mutations/move_mutation.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/mutations/move_mutation.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/mutations/move_mutation.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/mutations/move_mutation.cpp.o
 .PHONY : src/evolution/mutations/move_mutation.cpp.o
 
 src/evolution/mutations/move_mutation.i: src/evolution/mutations/move_mutation.cpp.i
@@ -647,6 +685,7 @@ src/evolution/mutations/move_mutation.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/mutations/move_mutation.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/mutations/move_mutation.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/mutations/move_mutation.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/mutations/move_mutation.cpp.i
 .PHONY : src/evolution/mutations/move_mutation.cpp.i
 
 src/evolution/mutations/move_mutation.s: src/evolution/mutations/move_mutation.cpp.s
@@ -663,6 +702,7 @@ src/evolution/mutations/move_mutation.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/mutations/move_mutation.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/mutations/move_mutation.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/mutations/move_mutation.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/mutations/move_mutation.cpp.s
 .PHONY : src/evolution/mutations/move_mutation.cpp.s
 
 src/evolution/mutations/remove_mutation.o: src/evolution/mutations/remove_mutation.cpp.o
@@ -679,6 +719,7 @@ src/evolution/mutations/remove_mutation.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/mutations/remove_mutation.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/mutations/remove_mutation.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/mutations/remove_mutation.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/mutations/remove_mutation.cpp.o
 .PHONY : src/evolution/mutations/remove_mutation.cpp.o
 
 src/evolution/mutations/remove_mutation.i: src/evolution/mutations/remove_mutation.cpp.i
@@ -695,6 +736,7 @@ src/evolution/mutations/remove_mutation.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/mutations/remove_mutation.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/mutations/remove_mutation.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/mutations/remove_mutation.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/mutations/remove_mutation.cpp.i
 .PHONY : src/evolution/mutations/remove_mutation.cpp.i
 
 src/evolution/mutations/remove_mutation.s: src/evolution/mutations/remove_mutation.cpp.s
@@ -711,6 +753,7 @@ src/evolution/mutations/remove_mutation.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/evolution/mutations/remove_mutation.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/evolution/mutations/remove_mutation.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/evolution/mutations/remove_mutation.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/evolution/mutations/remove_mutation.cpp.s
 .PHONY : src/evolution/mutations/remove_mutation.cpp.s
 
 src/game_node.o: src/game_node.cpp.o
@@ -727,6 +770,7 @@ src/game_node.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/game_node.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/game_node.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/game_node.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/game_node.cpp.o
 .PHONY : src/game_node.cpp.o
 
 src/game_node.i: src/game_node.cpp.i
@@ -743,6 +787,7 @@ src/game_node.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/game_node.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/game_node.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/game_node.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/game_node.cpp.i
 .PHONY : src/game_node.cpp.i
 
 src/game_node.s: src/game_node.cpp.s
@@ -759,6 +804,7 @@ src/game_node.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/game_node.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/game_node.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/game_node.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/game_node.cpp.s
 .PHONY : src/game_node.cpp.s
 
 src/game_solver.o: src/game_solver.cpp.o
@@ -775,6 +821,7 @@ src/game_solver.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/game_solver.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/game_solver.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/game_solver.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/game_solver.cpp.o
 .PHONY : src/game_solver.cpp.o
 
 src/game_solver.i: src/game_solver.cpp.i
@@ -791,6 +838,7 @@ src/game_solver.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/game_solver.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/game_solver.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/game_solver.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/game_solver.cpp.i
 .PHONY : src/game_solver.cpp.i
 
 src/game_solver.s: src/game_solver.cpp.s
@@ -807,6 +855,7 @@ src/game_solver.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/game_solver.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/game_solver.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/game_solver.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/game_solver.cpp.s
 .PHONY : src/game_solver.cpp.s
 
 src/locked.o: src/locked.cpp.o
@@ -823,6 +872,7 @@ src/locked.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/locked.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/locked.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/locked.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/locked.cpp.o
 .PHONY : src/locked.cpp.o
 
 src/locked.i: src/locked.cpp.i
@@ -839,6 +889,7 @@ src/locked.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/locked.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/locked.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/locked.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/locked.cpp.i
 .PHONY : src/locked.cpp.i
 
 src/locked.s: src/locked.cpp.s
@@ -855,6 +906,7 @@ src/locked.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/locked.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/locked.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/locked.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/locked.cpp.s
 .PHONY : src/locked.cpp.s
 
 src/main.o: src/main.cpp.o
@@ -1025,6 +1077,30 @@ src/main_irace.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/irace_generator.dir/build.make CMakeFiles/irace_generator.dir/src/main_irace.cpp.s
 .PHONY : src/main_irace.cpp.s
 
+src/main_playable_dataset.o: src/main_playable_dataset.cpp.o
+.PHONY : src/main_playable_dataset.o
+
+# target to build an object file
+src/main_playable_dataset.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/main_playable_dataset.cpp.o
+.PHONY : src/main_playable_dataset.cpp.o
+
+src/main_playable_dataset.i: src/main_playable_dataset.cpp.i
+.PHONY : src/main_playable_dataset.i
+
+# target to preprocess a source file
+src/main_playable_dataset.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/main_playable_dataset.cpp.i
+.PHONY : src/main_playable_dataset.cpp.i
+
+src/main_playable_dataset.s: src/main_playable_dataset.cpp.s
+.PHONY : src/main_playable_dataset.s
+
+# target to generate assembly for a file
+src/main_playable_dataset.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/main_playable_dataset.cpp.s
+.PHONY : src/main_playable_dataset.cpp.s
+
 src/main_shell.o: src/main_shell.cpp.o
 .PHONY : src/main_shell.o
 
@@ -1087,6 +1163,7 @@ src/my_memory.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/my_memory.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/my_memory.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/my_memory.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/my_memory.cpp.o
 .PHONY : src/my_memory.cpp.o
 
 src/my_memory.i: src/my_memory.cpp.i
@@ -1103,6 +1180,7 @@ src/my_memory.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/my_memory.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/my_memory.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/my_memory.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/my_memory.cpp.i
 .PHONY : src/my_memory.cpp.i
 
 src/my_memory.s: src/my_memory.cpp.s
@@ -1119,6 +1197,7 @@ src/my_memory.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/my_memory.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/my_memory.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/my_memory.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/my_memory.cpp.s
 .PHONY : src/my_memory.cpp.s
 
 src/path_simulator.o: src/path_simulator.cpp.o
@@ -1135,6 +1214,7 @@ src/path_simulator.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/path_simulator.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/path_simulator.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/path_simulator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/path_simulator.cpp.o
 .PHONY : src/path_simulator.cpp.o
 
 src/path_simulator.i: src/path_simulator.cpp.i
@@ -1151,6 +1231,7 @@ src/path_simulator.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/path_simulator.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/path_simulator.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/path_simulator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/path_simulator.cpp.i
 .PHONY : src/path_simulator.cpp.i
 
 src/path_simulator.s: src/path_simulator.cpp.s
@@ -1167,6 +1248,7 @@ src/path_simulator.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/path_simulator.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/path_simulator.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/path_simulator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/path_simulator.cpp.s
 .PHONY : src/path_simulator.cpp.s
 
 src/penalty.o: src/penalty.cpp.o
@@ -1183,6 +1265,7 @@ src/penalty.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/penalty.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/penalty.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/penalty.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/penalty.cpp.o
 .PHONY : src/penalty.cpp.o
 
 src/penalty.i: src/penalty.cpp.i
@@ -1199,6 +1282,7 @@ src/penalty.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/penalty.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/penalty.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/penalty.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/penalty.cpp.i
 .PHONY : src/penalty.cpp.i
 
 src/penalty.s: src/penalty.cpp.s
@@ -1215,6 +1299,7 @@ src/penalty.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/penalty.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/penalty.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/penalty.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/penalty.cpp.s
 .PHONY : src/penalty.cpp.s
 
 src/point.o: src/point.cpp.o
@@ -1231,6 +1316,7 @@ src/point.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/point.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/point.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/point.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/point.cpp.o
 .PHONY : src/point.cpp.o
 
 src/point.i: src/point.cpp.i
@@ -1247,6 +1333,7 @@ src/point.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/point.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/point.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/point.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/point.cpp.i
 .PHONY : src/point.cpp.i
 
 src/point.s: src/point.cpp.s
@@ -1263,6 +1350,7 @@ src/point.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/point.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/point.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/point.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/point.cpp.s
 .PHONY : src/point.cpp.s
 
 src/repeat.o: src/repeat.cpp.o
@@ -1279,6 +1367,7 @@ src/repeat.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/repeat.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/repeat.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/repeat.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/repeat.cpp.o
 .PHONY : src/repeat.cpp.o
 
 src/repeat.i: src/repeat.cpp.i
@@ -1295,6 +1384,7 @@ src/repeat.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/repeat.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/repeat.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/repeat.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/repeat.cpp.i
 .PHONY : src/repeat.cpp.i
 
 src/repeat.s: src/repeat.cpp.s
@@ -1311,6 +1401,7 @@ src/repeat.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/repeat.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/repeat.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/repeat.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/repeat.cpp.s
 .PHONY : src/repeat.cpp.s
 
 src/shell_generator/shell_generator.o: src/shell_generator/shell_generator.cpp.o
@@ -1327,6 +1418,7 @@ src/shell_generator/shell_generator.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/shell_generator/shell_generator.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/shell_generator/shell_generator.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/shell_generator/shell_generator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/shell_generator/shell_generator.cpp.o
 .PHONY : src/shell_generator/shell_generator.cpp.o
 
 src/shell_generator/shell_generator.i: src/shell_generator/shell_generator.cpp.i
@@ -1343,6 +1435,7 @@ src/shell_generator/shell_generator.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/shell_generator/shell_generator.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/shell_generator/shell_generator.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/shell_generator/shell_generator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/shell_generator/shell_generator.cpp.i
 .PHONY : src/shell_generator/shell_generator.cpp.i
 
 src/shell_generator/shell_generator.s: src/shell_generator/shell_generator.cpp.s
@@ -1359,6 +1452,7 @@ src/shell_generator/shell_generator.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/shell_generator/shell_generator.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/shell_generator/shell_generator.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/shell_generator/shell_generator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/shell_generator/shell_generator.cpp.s
 .PHONY : src/shell_generator/shell_generator.cpp.s
 
 # Help Target
@@ -1374,6 +1468,7 @@ help:
 	@echo "... evolution_generator"
 	@echo "... experiment_runner"
 	@echo "... irace_generator"
+	@echo "... playable_dataset_generator"
 	@echo "... sokoban_solver"
 	@echo "... solver_benchmark"
 	@echo "... test_shell"
@@ -1438,6 +1533,9 @@ help:
 	@echo "... src/main_irace.o"
 	@echo "... src/main_irace.i"
 	@echo "... src/main_irace.s"
+	@echo "... src/main_playable_dataset.o"
+	@echo "... src/main_playable_dataset.i"
+	@echo "... src/main_playable_dataset.s"
 	@echo "... src/main_shell.o"
 	@echo "... src/main_shell.i"
 	@echo "... src/main_shell.s"
