@@ -195,6 +195,8 @@ int main(int argc, char* argv[]) {
 
         std::cout << "Running ES for run " << run_id << "...\n";
         es.run(population);
+        
+        file.flush(); // <-- Flush al terminar el ciclo evolutivo
         successful_runs++;
     }
 
