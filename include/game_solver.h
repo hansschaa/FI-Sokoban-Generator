@@ -58,6 +58,9 @@ struct SolverStats {
     // AÑADIDO: Estadísticas calculadas desde la solución LURD
     bool path_stats_calculated = false;
     PathBranchingStats path_stats;
+    
+    // AÑADIDO: Distancia Bipartita Inicial
+    double initial_optimal_distance = 0.0;
 };
 
 // AÑADIDO: Declaración de la función global para imprimir las stats

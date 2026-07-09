@@ -2895,6 +2895,7 @@ CMakeFiles/playable_dataset_generator.dir/src/main_playable_dataset.cpp.o: /home
   /home/hanss/FI-sokoban-generator/include/point.h \
   /home/hanss/FI-sokoban-generator/include/repeat.h \
   /home/hanss/FI-sokoban-generator/include/shell_generator/shell_generator.h \
+  /home/hanss/FI-sokoban-generator/include/structural_metrics.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/bitsperlong.h \
   /usr/include/asm-generic/errno-base.h \
@@ -2928,6 +2929,7 @@ CMakeFiles/playable_dataset_generator.dir/src/main_playable_dataset.cpp.o: /home
   /usr/include/c++/15/bits/cpp_type_traits.h \
   /usr/include/c++/15/bits/cxxabi_forced.h \
   /usr/include/c++/15/bits/cxxabi_init_exception.h \
+  /usr/include/c++/15/bits/deque.tcc \
   /usr/include/c++/15/bits/enable_special_members.h \
   /usr/include/c++/15/bits/erase_if.h \
   /usr/include/c++/15/bits/exception.h \
@@ -2977,6 +2979,7 @@ CMakeFiles/playable_dataset_generator.dir/src/main_playable_dataset.cpp.o: /home
   /usr/include/c++/15/bits/stl_algobase.h \
   /usr/include/c++/15/bits/stl_bvector.h \
   /usr/include/c++/15/bits/stl_construct.h \
+  /usr/include/c++/15/bits/stl_deque.h \
   /usr/include/c++/15/bits/stl_function.h \
   /usr/include/c++/15/bits/stl_heap.h \
   /usr/include/c++/15/bits/stl_iterator.h \
@@ -2985,6 +2988,7 @@ CMakeFiles/playable_dataset_generator.dir/src/main_playable_dataset.cpp.o: /home
   /usr/include/c++/15/bits/stl_multiset.h \
   /usr/include/c++/15/bits/stl_numeric.h \
   /usr/include/c++/15/bits/stl_pair.h \
+  /usr/include/c++/15/bits/stl_queue.h \
   /usr/include/c++/15/bits/stl_raw_storage_iter.h \
   /usr/include/c++/15/bits/stl_set.h \
   /usr/include/c++/15/bits/stl_tempbuf.h \
@@ -3023,6 +3027,7 @@ CMakeFiles/playable_dataset_generator.dir/src/main_playable_dataset.cpp.o: /home
   /usr/include/c++/15/cwctype \
   /usr/include/c++/15/debug/assertions.h \
   /usr/include/c++/15/debug/debug.h \
+  /usr/include/c++/15/deque \
   /usr/include/c++/15/exception \
   /usr/include/c++/15/ext/aligned_buffer.h \
   /usr/include/c++/15/ext/alloc_traits.h \
@@ -3050,6 +3055,7 @@ CMakeFiles/playable_dataset_generator.dir/src/main_playable_dataset.cpp.o: /home
   /usr/include/c++/15/pstl/glue_memory_defs.h \
   /usr/include/c++/15/pstl/glue_numeric_defs.h \
   /usr/include/c++/15/pstl/pstl_config.h \
+  /usr/include/c++/15/queue \
   /usr/include/c++/15/random \
   /usr/include/c++/15/ratio \
   /usr/include/c++/15/set \
@@ -4318,6 +4324,8 @@ CMakeFiles/playable_dataset_generator.dir/src/evolution/algorithms/genetic_algor
 /usr/include/c++/15/pstl/glue_numeric_defs.h:
 
 /usr/include/c++/15/bits/stl_numeric.h:
+
+/home/hanss/FI-sokoban-generator/include/structural_metrics.h:
 
 /home/hanss/FI-sokoban-generator/src/evolution/mutations/remove_mutation.cpp:
 

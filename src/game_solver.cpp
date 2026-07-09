@@ -554,6 +554,22 @@ SolverStats game_solver::test_template(
     auto vec = Astar_init();
     vars_init(init);
 
+    // Calcular distancia óptima inicial con el algoritmo húngaro
+    double initial_opt_dist = 0.0;
+    int num_boxes = init.box_count;
+    int num_goals = (int)goal_positions.size();
+    int sz = std::max(num_boxes, num_goals);
+    if (sz > 0) {
+        vector<vector<int>> cost(sz, vector<int>(sz, 0));
+        for (int i = 0; i < num_boxes; ++i) {
+            for (int j = 0; j < num_goals; j++) {
+                cost[i][j] = dist_to_goal[j][init.box_list[i].x][init.box_list[i].y];
+            }
+        }
+        Hungarian h(cost);
+        initial_opt_dist = h.solve();
+    }
+
     auto heuristic = [&](const game_node* a, const game_node*) {
         if (heuristic_type == Heuristic::hungarian) {
             int num_boxes = a->box_count;
@@ -625,6 +641,7 @@ SolverStats game_solver::test_template(
     }
 
     SolverStats stats;
+    stats.initial_optimal_distance = initial_opt_dist;
 
     // 4. GUARDAR EN MILISEGUNDOS EXACTOS
     stats.runtime_ms = std::chrono::duration<double, std::milli>(t_end - t_start).count();
