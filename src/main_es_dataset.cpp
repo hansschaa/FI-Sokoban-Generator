@@ -5,6 +5,7 @@
 #include <fstream>
 #include <mutex>
 #include <future>
+#include <unordered_set>
 
 #include "shell_generator/shell_generator.h"
 #include "game_solver.h"
@@ -53,6 +54,7 @@ int main(int argc, char* argv[]) {
     // Header
     file << "run_id,generation,pushes,board_string,width,height,boxes\n";
     std::mutex file_mutex;
+    std::unordered_set<std::string> saved_boards;
 
     // Evaluator con FO1
     Evaluator evaluator;
@@ -164,6 +166,14 @@ int main(int argc, char* argv[]) {
         // Callback para guardar el mejor de cada generacion
         es.on_generation = [&](int gen, const Individual& best_ind) {
             std::string serialized = serialize_board(best_ind.board);
+            
+            std::lock_guard<std::mutex> lock(file_mutex);
+            // Evitar guardar duplicados
+            if (saved_boards.find(serialized) != saved_boards.end()) {
+                return;
+            }
+            saved_boards.insert(serialized);
+            
             unsigned int rows = best_ind.board.size();
             unsigned int cols = best_ind.board.empty() ? 0 : best_ind.board[0].size();
             int boxes = 0;
@@ -173,7 +183,6 @@ int main(int argc, char* argv[]) {
                 }
             }
             
-            std::lock_guard<std::mutex> lock(file_mutex);
             // run_id,generation,pushes,board_string,width,height,boxes
             file << run_id << ","
                  << gen << ","
