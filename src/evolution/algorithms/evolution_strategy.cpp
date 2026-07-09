@@ -69,6 +69,10 @@ Individual EvolutionStrategy::run(
         }
     }
 
+    if (on_generation) {
+        on_generation(generation, best);
+    }
+
     //
     // MAIN LOOP
     //
@@ -292,6 +296,10 @@ Individual EvolutionStrategy::run(
                   << " | Evals: " << evaluations << "/" << maxEvaluations 
                   << " | Stagnation: " << stagnationCount << "/" << stagnationLimit 
                   << " | Best Fit: " << best.fitness << std::endl;
+
+        if (on_generation) {
+            on_generation(generation, best);
+        }
     }
 
     //

@@ -209,6 +209,14 @@ CMakeFiles/evolution_generator.dir/src/main_evolution.cpp.o: \
  /home/hanss/FI-sokoban-generator/src/../include/evolution/algorithms/../mutations/../utils/pair.h \
  /home/hanss/FI-sokoban-generator/src/../include/evolution/algorithms/../mutations/add_mutation.h \
  /home/hanss/FI-sokoban-generator/src/../include/evolution/algorithms/../mutations/remove_mutation.h \
+ /usr/include/c++/15/functional /usr/include/c++/15/unordered_map \
+ /usr/include/c++/15/bits/unordered_map.h \
+ /usr/include/c++/15/bits/hashtable.h \
+ /usr/include/c++/15/bits/hashtable_policy.h \
+ /usr/include/c++/15/bits/enable_special_members.h \
+ /usr/include/c++/15/bits/node_handle.h \
+ /usr/include/c++/15/bits/erase_if.h /usr/include/c++/15/array \
+ /usr/include/c++/15/compare \
  /home/hanss/FI-sokoban-generator/src/../include/evolution/algorithms/genetic_algorithm.h \
  /home/hanss/FI-sokoban-generator/src/../include/evolution/algorithms/../crossover/board_crossover.h \
  /home/hanss/FI-sokoban-generator/src/../include/evolution/algorithms/../crossover/crossover.h \
@@ -253,16 +261,11 @@ CMakeFiles/evolution_generator.dir/src/main_evolution.cpp.o: \
  /home/hanss/FI-sokoban-generator/src/../include/game_node.h \
  /home/hanss/FI-sokoban-generator/src/../include/point.h \
  /usr/include/c++/15/set /usr/include/c++/15/bits/stl_tree.h \
- /usr/include/c++/15/bits/node_handle.h \
  /usr/include/c++/15/bits/stl_set.h \
  /usr/include/c++/15/bits/stl_multiset.h \
- /usr/include/c++/15/bits/erase_if.h \
  /home/hanss/FI-sokoban-generator/src/../include/repeat.h \
  /usr/include/c++/15/unordered_set \
  /usr/include/c++/15/bits/unordered_set.h \
- /usr/include/c++/15/bits/hashtable.h \
- /usr/include/c++/15/bits/hashtable_policy.h \
- /usr/include/c++/15/bits/enable_special_members.h \
  /home/hanss/FI-sokoban-generator/src/../include/locked.h \
  /home/hanss/FI-sokoban-generator/src/../include/my_memory.h \
  /home/hanss/FI-sokoban-generator/src/../include/method.h \
@@ -274,7 +277,4 @@ CMakeFiles/evolution_generator.dir/src/main_evolution.cpp.o: \
  /usr/include/c++/15/backward/auto_ptr.h \
  /usr/include/c++/15/pstl/glue_memory_defs.h \
  /home/hanss/FI-sokoban-generator/src/../include/penalty.h \
- /usr/include/c++/15/functional /usr/include/c++/15/unordered_map \
- /usr/include/c++/15/bits/unordered_map.h /usr/include/c++/15/array \
- /usr/include/c++/15/compare \
  /home/hanss/FI-sokoban-generator/src/../include/evolution/algorithms/simulated_annealing.h

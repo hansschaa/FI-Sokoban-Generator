@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <chrono>
+#include <functional>
 
 class EvolutionStrategy {
 
@@ -59,6 +60,10 @@ public:
     //
 
     int evaluations = 0;
+
+    // Optional callback triggered at the end of each generation (and for initial population).
+    // Passes generation number and the best individual so far.
+    std::function<void(int gen, const Individual& best_ind)> on_generation;
 
     //
     // MAIN ALGORITHM
