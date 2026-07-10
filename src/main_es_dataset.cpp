@@ -5,14 +5,24 @@
 #include <fstream>
 #include <mutex>
 #include <future>
-#include <unordered_set>
+#include <map>
+#include <filesystem>
+#include <algorithm>
+#include <cmath>
+#include <atomic>
+#include <thread>
 
 #include "shell_generator/shell_generator.h"
 #include "game_solver.h"
-#include "evolution/algorithms/evolution_strategy.h"
 #include "evolution/evaluator/evaluator.h"
 #include "evolution/utils/board_utils.h"
 #include "evolution/individual.h"
+
+#include "evolution/mutations/add_mutation.h"
+#include "evolution/mutations/move_mutation.h"
+#include "evolution/mutations/remove_mutation.h"
+
+namespace fs = std::filesystem;
 
 // Usar \n real para que sea compatible con copy-paste a JSoko
 std::string serialize_board(const std::vector<std::vector<char>>& board) {
@@ -26,186 +36,285 @@ std::string serialize_board(const std::vector<std::vector<char>>& board) {
     return s;
 }
 
+// =====================================================================
+// CLASE MINERO DE DATASET CON CUBETAS
+// =====================================================================
+class SokobanMiner {
+private:
+    std::map<int, int> bucket_counts;
+    std::map<int, std::unordered_set<int>> run_ids_in_bucket; // Rastrear qué bases ya contribuyeron a cada cubeta
+    const int BUCKET_CAPACITY = 1000;
+    const int MAX_PUSHES_RANGE = 100; // Para la cubeta de 101+
+    const int BUCKET_STEP = 10;
+    fs::path base_dir;
+    std::mutex miner_mutex;
+
+    int getBucketId(int pushes) {
+        if (pushes > MAX_PUSHES_RANGE) return MAX_PUSHES_RANGE + 1; // 101+
+        return ((pushes - 1) / BUCKET_STEP) * BUCKET_STEP + 1; 
+    }
+
+    std::string getBucketName(int bucket_id) {
+        if (bucket_id > MAX_PUSHES_RANGE) {
+            return "101_plus";
+        }
+        int upper_bound = bucket_id + BUCKET_STEP - 1;
+        return std::to_string(bucket_id) + "_to_" + std::to_string(upper_bound);
+    }
+
+public:
+    SokobanMiner(const std::string& directory = "sokoban_dataset_buckets") : base_dir(directory) {
+        if (!fs::exists(base_dir)) {
+            fs::create_directories(base_dir);
+        }
+    }
+
+    bool addBoard(const std::vector<std::vector<char>>& board, int pushes, int run_id) {
+        if (pushes <= 0) return false;
+
+        int bucket = getBucketId(pushes);
+        
+        std::lock_guard<std::mutex> lock(miner_mutex);
+        if (bucket_counts[bucket] >= BUCKET_CAPACITY) {
+            return false;
+        }
+
+        // REGLA ESTRICTA: Solo 1 tablero por base (run_id) por cubeta
+        if (run_ids_in_bucket[bucket].find(run_id) != run_ids_in_bucket[bucket].end()) {
+            return false;
+        }
+
+        std::string bucket_name = getBucketName(bucket);
+        fs::path file_path = base_dir / (bucket_name + ".sok");
+
+        std::ofstream outfile(file_path, std::ios::app);
+        if (outfile.is_open()) {
+            std::string board_str = serialize_board(board);
+            size_t board_hash = std::hash<std::string>{}(board_str);
+            
+            outfile << board_hash << " - " << pushes << "\n";
+            outfile << board_str << "\n\n";
+            outfile.close();
+            
+            bucket_counts[bucket]++;
+            run_ids_in_bucket[bucket].insert(run_id); // Marcar esta base como ya usada en esta cubeta
+            
+            std::cout << "[Miner] Guardado tablero (" << pushes << " empujes) en [" 
+                      << bucket_name << ".sok] -> (" << bucket_counts[bucket] << "/" << BUCKET_CAPACITY << ")\n";
+            return true;
+        }
+        
+        return false;
+    }
+
+    void printProgress() {
+        std::lock_guard<std::mutex> lock(miner_mutex);
+        std::cout << "\n--- Estado de las Cubetas ---\n";
+        for (const auto& [bucket, count] : bucket_counts) {
+            std::cout << "Cubeta [" << getBucketName(bucket) << "]: " << count << "/" << BUCKET_CAPACITY << "\n";
+        }
+        std::cout << "-----------------------------\n";
+    }
+
+    void getDynamicFactors(int& factorX, int& factorY) {
+        std::lock_guard<std::mutex> lock(miner_mutex);
+        
+        int lowest_unfilled = MAX_PUSHES_RANGE + 1; // Default to 101+
+        
+        for (int b = 1; b <= MAX_PUSHES_RANGE; b += BUCKET_STEP) {
+            if (bucket_counts[b] < BUCKET_CAPACITY) {
+                lowest_unfilled = b;
+                break;
+            }
+        }
+        
+        if (lowest_unfilled <= 30) {
+            // Fase 1: Cubetas de 1 a 30 (Pequeños)
+            factorX = 2 + (rand() % 2); // 2 o 3
+            factorY = 2 + (rand() % 2); // 2 o 3
+        } else if (lowest_unfilled <= 60) {
+            // Fase 2: Cubetas de 31 a 60 (Medianos)
+            factorX = 3 + (rand() % 2); // 3 o 4
+            factorY = 3 + (rand() % 2); // 3 o 4
+        } else {
+            // Fase 3: Cubetas de 61+ (Grandes, limitados a 5 max)
+            factorX = 4 + (rand() % 2); // 4 o 5
+            factorY = 4 + (rand() % 2); // 4 o 5
+        }
+    }
+};
+
+// Generador de template base (cascaron)
+bool generateBaseTemplate(std::vector<std::vector<char>>& board, std::vector<std::vector<bool>>& deadlock_mask, SokobanMiner& miner) {
+    int factorX, factorY;
+    miner.getDynamicFactors(factorX, factorY);
+
+    SokobanGenerator generator(factorX, factorY);
+    generator.generate();
+    board = generator.getBoard();
+
+    const int free_cells = count_free_cells(board);
+    if (free_cells < 5) {
+        return false;
+    }
+
+    deadlock_mask = compute_deadlock_mask(board);
+
+    // Intentar colocar al menos un jugador y una caja
+    int max_boxes = std::min(6, free_cells / 15);
+    if(max_boxes < 1) max_boxes = 1;
+    int numBoxes = 1;
+
+    try {
+        placeRandom(board, '@', deadlock_mask);
+        for (int k = 0; k < numBoxes; k++) {
+            placeRandom(board, '$', deadlock_mask);
+            placeRandom(board, '.', deadlock_mask);
+        }
+    } catch (...) {
+        return false;
+    }
+
+    return true;
+}
+
 int main(int argc, char* argv[]) {
     srand(time(NULL));
     
     int runs = 2000;
-    std::string output_file = "es_dataset.csv";
     
     for (int i = 1; i < argc; i++) {
         std::string arg = argv[i];
         if (arg == "--runs" && i + 1 < argc) {
             runs = std::stoi(argv[++i]);
-        } else if (arg == "--output" && i + 1 < argc) {
-            output_file = argv[++i];
         }
     }
     
-    std::cout << "Starting ES Dataset Generation...\n";
-    std::cout << "Target runs (base boards): " << runs << "\n";
-    std::cout << "Output file: " << output_file << "\n\n";
+    std::cout << "Starting Sokoban Dataset Miner...\n";
+    std::cout << "Target base templates: " << runs << "\n\n";
     
-    std::ofstream file(output_file);
-    if (!file.is_open()) {
-        std::cerr << "Error opening output file!\n";
-        return 1;
-    }
-    
-    // Header
-    file << "run_id,generation,pushes,board_string,width,height,boxes\n";
-    std::mutex file_mutex;
-    std::unordered_set<std::string> saved_boards;
+    unsigned int num_threads = std::thread::hardware_concurrency();
+    if (num_threads == 0) num_threads = 4;
+    std::cout << "Launching " << num_threads << " parallel miner threads...\n\n";
 
-    // Evaluator con FO1
+    SokobanMiner miner("sokoban_dataset_buckets");
     Evaluator evaluator;
     evaluator.fitnessType = FitnessType::FO1_PUSHES;
     
     auto global_start_time = std::chrono::high_resolution_clock::now();
-    
-    int successful_runs = 0;
+    std::atomic<int> successful_runs{0};
+    std::atomic<int> current_run{0};
+    std::mutex cout_mutex;
 
-    for (int run_id = 0; run_id < runs; run_id++) {
-        std::cout << "\n=========================================\n";
-        std::cout << "  RUN " << (run_id + 1) << " / " << runs << "\n";
-        std::cout << "=========================================\n";
+    auto worker_task = [&]() {
+        while (true) {
+            int run_id = current_run.fetch_add(1);
+            if (run_id >= runs) break;
 
-        int factorX = 2 + (rand() % 3); // 2, 3 o 4
-        int factorY = 2 + (rand() % 3); // 2, 3 o 4
-
-        SokobanGenerator generator(factorX, factorY);
-        generator.generate();
-        std::vector<std::vector<char>> shell = generator.getBoard();
-
-        const int free_cells = count_free_cells(shell);
-        if (free_cells < 5) {
-            std::cout << "Shell too small, skipping...\n";
-            continue;
-        }
-
-        auto deadlock_mask = compute_deadlock_mask(shell);
-        
-        // Inicializar poblacion
-        std::vector<Individual> population;
-        const int POP_SIZE = 10;
-        std::mutex pop_mutex;
-
-        auto generate_individual = [&](int i) {
-            bool valid = false;
-            int attempts = 0;
-            while (!valid && attempts < 10000) {
-                auto board = shell;
-                int max_boxes = std::min(6, free_cells / 15);
-                if(max_boxes < 1) max_boxes = 1;
-                int numBoxes = 1; // Start simple
-
-                bool placed = true;
-                {
-                    std::lock_guard<std::mutex> lock(pop_mutex);
-                    try {
-                        placeRandom(board, '@', deadlock_mask);
-                        for (int k = 0; k < numBoxes; k++) {
-                            placeRandom(board, '$', deadlock_mask);
-                            placeRandom(board, '.', deadlock_mask);
-                        }
-                    } catch (...) {
-                        placed = false;
-                    }
-                }
-                
-                if(!placed) {
-                    attempts++;
-                    continue;
-                }
-
-                std::string level = board_to_string(board);
-                unsigned int rows = board.size();
-                unsigned int cols = board[0].size();
-                
-                game_solver solver(level, rows, cols, 128);
-                std::vector<game_node> solution;
-
-                auto stats = solver.test_template(Method::a_star, solution);
-                if (stats.status == SolveStatus::SOLVED) {
-                    Individual ind;
-                    ind.board = board;
-                    
-                    std::lock_guard<std::mutex> lock(pop_mutex);
-                    ind.fitness = evaluator.evaluate(ind);
-                    population.push_back(ind);
-                    valid = true;
-                }
-                attempts++;
+            {
+                std::lock_guard<std::mutex> lock(cout_mutex);
+                std::cout << "\n=========================================\n";
+                std::cout << "  RUN " << (run_id + 1) << " / " << runs << "\n";
+                std::cout << "=========================================\n";
             }
-        };
 
-        // Generar poblacion inicial
-        std::vector<std::future<void>> init_futures;
-        for (int i = 0; i < POP_SIZE; i++) {
-            init_futures.push_back(std::async(std::launch::async, generate_individual, i));
-        }
-        for (auto& f : init_futures) {
-            f.get();
-        }
+        std::vector<std::vector<char>> current_board;
+        std::vector<std::vector<bool>> deadlock_mask;
 
-        if (population.empty()) {
-            std::cout << "Failed to generate initial population. Skipping run...\n";
-            continue;
-        }
+        // 1. Reinicio: Generar un template base válido
+        bool valid_base = false;
+        double current_pushes = 0;
+        Individual current_ind;
 
-        EvolutionStrategy es;
-        es.evaluator = evaluator;
-        es.use_parallel = true;
-        es.setDeadlockMask(deadlock_mask);
-        es.mu = 6;
-        es.lambda = 30;
-        es.mutationRate = 0.9878;
-        es.maxEvaluations = 1000;
-        es.stagnationLimit = 50;
-        es.circuitStartTime = std::chrono::high_resolution_clock::now();
-
-        // Callback para guardar el mejor de cada generacion
-        es.on_generation = [&](int gen, const Individual& best_ind) {
-            std::string serialized = serialize_board(best_ind.board);
-            
-            std::lock_guard<std::mutex> lock(file_mutex);
-            // Evitar guardar duplicados
-            if (saved_boards.find(serialized) != saved_boards.end()) {
-                return;
-            }
-            saved_boards.insert(serialized);
-            
-            unsigned int rows = best_ind.board.size();
-            unsigned int cols = best_ind.board.empty() ? 0 : best_ind.board[0].size();
-            int boxes = 0;
-            for(const auto& r : best_ind.board) {
-                for(char c : r) {
-                    if(c == '$' || c == '*') boxes++;
+        while (!valid_base) {
+            if (generateBaseTemplate(current_board, deadlock_mask, miner)) {
+                current_ind.board = current_board;
+                current_pushes = evaluator.evaluate(current_ind);
+                if (current_pushes > 0 && !std::isnan(current_pushes)) {
+                    valid_base = true;
                 }
             }
-            
-            // run_id,generation,pushes,board_string,width,height,boxes
-            file << run_id << ","
-                 << gen << ","
-                 << best_ind.fitness << ",\""
-                 << serialized << "\","
-                 << cols << ","
-                 << rows << ","
-                 << boxes << "\n";
-        };
+        }
 
-        std::cout << "Running ES for run " << run_id << "...\n";
-        es.run(population);
-        
-        file.flush(); // <-- Flush al terminar el ciclo evolutivo
-        successful_runs++;
+        // Instanciar mutaciones para este template
+        MoveMutation moveMut;
+        moveMut.deadlock_mask = deadlock_mask;
+        AddMutation addMut;
+        addMut.deadlock_mask = deadlock_mask;
+        RemoveMutation removeMut;
+
+        // Alimentar minero con base
+        miner.addBoard(current_ind.board, static_cast<int>(current_pushes), run_id);
+
+        int failed_mutations = 0;
+        const int MAX_PATIENCE = 2000; // Aumentado para alcanzar mayor dificultad
+
+        // 2. Proceso Evolutivo (1+1)-ES
+        while (failed_mutations < MAX_PATIENCE) {
+            Individual child = current_ind;
+            bool success = false;
+
+            int mutationType = rand() % 3;
+            if (mutationType == 0) {
+                success = moveMut.apply(child);
+            } else if (mutationType == 1) {
+                success = addMut.apply(child);
+            } else {
+                success = removeMut.apply(child);
+            }
+
+            if (!success) {
+                failed_mutations++;
+                continue;
+            }
+
+            double child_pushes = evaluator.evaluate(child);
+
+            // Descartar inmediatamente injugables
+            if (std::isnan(child_pushes) || child_pushes <= 0) {
+                failed_mutations++;
+                continue;
+            }
+
+            // Alimentar minero
+            miner.addBoard(child.board, static_cast<int>(child_pushes), run_id);
+
+            // 3. Presión de Selección Estricta: MÁS DIFÍCIL
+            if (child_pushes > current_pushes) {
+                current_ind = child;
+                current_pushes = child_pushes;
+                failed_mutations = 0; // Reiniciamos paciencia por mejora
+            } else {
+                failed_mutations++;
+            }
+        }
+
+            {
+                std::lock_guard<std::mutex> lock(cout_mutex);
+                std::cout << "[Anti-Estancamiento] (Run " << (run_id + 1) << ") Paciencia agotada (" << MAX_PATIENCE 
+                          << " intentos). Mejor tablero alcanzó " << current_pushes << " empujes.\n";
+            }
+                  
+            miner.printProgress();
+            successful_runs++;
+        }
+    };
+
+    std::vector<std::thread> threads;
+    for (unsigned int t = 0; t < num_threads; t++) {
+        threads.push_back(std::thread(worker_task));
     }
 
-    file.close();
-    
+    for (auto& t : threads) {
+        if (t.joinable()) {
+            t.join();
+        }
+    }
+
     auto global_end_time = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(global_end_time - global_start_time);
     
-    std::cout << "\nES Dataset generation completed!\n";
+    std::cout << "\nMiner generation completed!\n";
     std::cout << "Time elapsed: " << duration.count() << " seconds.\n";
     std::cout << "Successful base board runs: " << successful_runs << " / " << runs << "\n";
     
