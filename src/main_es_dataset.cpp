@@ -70,7 +70,7 @@ public:
     }
 
     bool addBoard(const std::vector<std::vector<char>>& board, int pushes, int run_id) {
-        if (pushes <= 0) return false;
+        if (pushes <= 60) return false; // Ignoramos todos los tableros menores a 61 empujes
 
         int bucket = getBucketId(pushes);
         
@@ -119,28 +119,9 @@ public:
     void getDynamicFactors(int& factorX, int& factorY) {
         std::lock_guard<std::mutex> lock(miner_mutex);
         
-        int lowest_unfilled = MAX_PUSHES_RANGE + 1; // Default to 101+
-        
-        for (int b = 1; b <= MAX_PUSHES_RANGE; b += BUCKET_STEP) {
-            if (bucket_counts[b] < BUCKET_CAPACITY) {
-                lowest_unfilled = b;
-                break;
-            }
-        }
-        
-        if (lowest_unfilled <= 30) {
-            // Fase 1: Cubetas de 1 a 30 (Pequeños)
-            factorX = 2 + (rand() % 2); // 2 o 3
-            factorY = 2 + (rand() % 2); // 2 o 3
-        } else if (lowest_unfilled <= 60) {
-            // Fase 2: Cubetas de 31 a 60 (Medianos)
-            factorX = 3 + (rand() % 2); // 3 o 4
-            factorY = 3 + (rand() % 2); // 3 o 4
-        } else {
-            // Fase 3: Cubetas de 61+ (Grandes, limitados a 5 max)
-            factorX = 4 + (rand() % 2); // 4 o 5
-            factorY = 4 + (rand() % 2); // 4 o 5
-        }
+        // Forzamos Fase 3 permanentemente para buscar > 60 empujes
+        factorX = 4 + (rand() % 2); // 4 o 5
+        factorY = 4 + (rand() % 2); // 4 o 5
     }
 };
 
@@ -247,7 +228,7 @@ int main(int argc, char* argv[]) {
         miner.addBoard(current_ind.board, static_cast<int>(current_pushes), run_id);
 
         int failed_mutations = 0;
-        const int MAX_PATIENCE = 2000; // Aumentado para alcanzar mayor dificultad
+        const int MAX_PATIENCE = 3000;
 
         // 2. Proceso Evolutivo (1+1)-ES
         while (failed_mutations < MAX_PATIENCE) {
