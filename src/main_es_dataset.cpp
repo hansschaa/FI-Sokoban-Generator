@@ -118,9 +118,52 @@ private:
         return std::to_string(bucket_id) + "_to_" + std::to_string(upper_bound);
     }
 
+    // Carga los conteos de tableros existentes en los archivos .sok del directorio
+    void loadExistingCounts() {
+        if (!fs::exists(base_dir)) return;
+
+        for (auto& entry : fs::directory_iterator(base_dir)) {
+            if (entry.path().extension() != ".sok") continue;
+
+            // Contar líneas con "pushes:" = número de tableros en ese archivo
+            std::ifstream file(entry.path());
+            int count = 0;
+            std::string line;
+            while (std::getline(file, line)) {
+                if (line.find("pushes:") != std::string::npos) {
+                    count++;
+                    // Extraer el bucket_id del nombre del archivo (ej: "21_to_30.sok" → 21)
+                }
+            }
+
+            if (count > 0) {
+                // Parsear el bucket_id desde el nombre del archivo
+                std::string stem = entry.path().stem().string(); // "21_to_30" o "101_plus"
+                int bucket_id = -1;
+                if (stem == "101_plus") {
+                    bucket_id = MAX_PUSHES_RANGE + 1;
+                } else {
+                    // El nombre tiene forma "N_to_M", extraemos N
+                    auto pos = stem.find("_to_");
+                    if (pos != std::string::npos) {
+                        bucket_id = std::stoi(stem.substr(0, pos));
+                    }
+                }
+
+                if (bucket_id >= 0) {
+                    bucket_counts[bucket_id] = count;
+                    std::cout << "[Resume] Cubeta [" << stem << "]: " << count << "/" << BUCKET_CAPACITY << " tableros existentes." << std::endl;
+                }
+            }
+        }
+    }
+
 public:
     SokobanMiner(const std::string& directory = "sokoban_dataset_buckets") : base_dir(directory) {
         if (!fs::exists(base_dir)) fs::create_directories(base_dir);
+        // Cargar conteos existentes para reanudar sin sobreescribir
+        loadExistingCounts();
+        std::cout << "\n";
     }
 
     // Retorna true si el tablero debe ser guardado (pasa todos los filtros)
