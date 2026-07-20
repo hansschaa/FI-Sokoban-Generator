@@ -83,9 +83,9 @@ def make_loaders(batch_size):
     sample_weights = [1.0 / bucket_counts[d["bucket"]] for d in _train_data]
     sampler = WeightedRandomSampler(sample_weights, num_samples=len(sample_weights), replacement=True)
     train_loader = DataLoader(FoldDataset(_train_data), batch_size=batch_size,
-                              sampler=sampler, num_workers=0, pin_memory=True)
+                              sampler=sampler, num_workers=0, pin_memory=False)
     test_loader  = DataLoader(_test_dataset, batch_size=256,
-                              shuffle=False, num_workers=0, pin_memory=True)
+                              shuffle=False, num_workers=0, pin_memory=False)
     return train_loader, test_loader
 
 
