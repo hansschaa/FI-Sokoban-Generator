@@ -137,6 +137,8 @@ def objective(trial):
         mae = total_mae / n
         scheduler.step(mae)
 
+        print(f"  [Trial {trial.number}] Época {epoch:02d} | MAE Pushes: {mae:.2f}")
+
         # Pruning de Optuna (cancela trials malos antes de que terminen)
         trial.report(mae, epoch)
         if trial.should_prune():
