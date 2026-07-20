@@ -119,9 +119,11 @@ def objective(trial):
         # ── Train ────────────────────────────────────────────────────────────
         model.train()
         batch_idx = 0
+        total_batches = len(train_loader)
+        
         for tensors, p_norm, b_norm, _, _ in train_loader:
-            if batch_idx == 0 and epoch == 1:
-                print("  -> [Época 1] Primer batch cargado desde la RAM con éxito. Iniciando forward pass...")
+            if batch_idx > 0 and batch_idx % 400 == 0:
+                print(f"    [Trial {trial.number}] Epoca {epoch:02d} | Progreso: {batch_idx}/{total_batches} batches...")
             
             tensors = tensors.to(device)
             p_norm  = p_norm.to(device)
@@ -132,6 +134,8 @@ def objective(trial):
             loss.backward()
             nn.utils.clip_grad_norm_(model.parameters(), 5.0)
             optimizer.step()
+            
+            batch_idx += 1
 
         # ── Eval ─────────────────────────────────────────────────────────────
         model.eval()
