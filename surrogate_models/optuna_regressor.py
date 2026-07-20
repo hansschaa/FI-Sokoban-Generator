@@ -100,8 +100,12 @@ def objective(trial):
     w_branch     = trial.suggest_float("w_branch",     0.1,  1.0)
     batch_size   = trial.suggest_categorical("batch_size", [64, 128, 256])
 
+    print(f"\n[Trial {trial.number}] -> Iniciando Trial...")
+    print("  -> Creando Dataloaders...")
     train_loader, test_loader = make_loaders(batch_size)
+    print("  -> Dataloaders creados. Inicializando modelo...")
     model     = SokobanResNetRegressor(dropout_p=dropout_p).to(device)
+    print("  -> Modelo en GPU. Configurando optimizador...")
     criterion = MultiHeadRegressorLoss(w_pushes=1.0, w_branch=w_branch)
     optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min",
@@ -110,10 +114,15 @@ def objective(trial):
     best_mae    = float("inf")
     patience_ctr = 0
 
+    print(f"  -> ¡Todo listo! Arrancando época 1...")
     for epoch in range(1, MAX_EPOCHS + 1):
         # ── Train ────────────────────────────────────────────────────────────
         model.train()
+        batch_idx = 0
         for tensors, p_norm, b_norm, _, _ in train_loader:
+            if batch_idx == 0 and epoch == 1:
+                print("  -> [Época 1] Primer batch cargado desde la RAM con éxito. Iniciando forward pass...")
+            
             tensors = tensors.to(device)
             p_norm  = p_norm.to(device)
             b_norm  = b_norm.to(device)
