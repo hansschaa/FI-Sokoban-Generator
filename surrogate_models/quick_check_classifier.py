@@ -65,7 +65,7 @@ def main():
         
         for tensors, labels in train_loader:
             tensors = tensors.to(device)
-            labels = labels.to(device).float().unsqueeze(1)
+            labels = labels.to(device).float()
             
             optimizer.zero_grad()
             logits = model(tensors)
@@ -86,7 +86,7 @@ def main():
         with torch.no_grad():
             for tensors, labels in test_loader:
                 tensors = tensors.to(device)
-                labels = labels.to(device).float().unsqueeze(1)
+                labels = labels.to(device).float()
                 
                 logits = model(tensors)
                 loss = criterion(logits, labels)
