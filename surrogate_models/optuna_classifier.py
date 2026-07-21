@@ -1,0 +1,199 @@
+"""
+optuna_classifier.py
+--------------------
+Búsqueda de hiperparámetros con Optuna para el Surrogate Classifier.
+
+- Usa SOLO el Fold 1 para ser eficiente
+- Busca: lr, weight_decay, dropout_p, pos_weight, batch_size
+- Métrica: F_0.5 (premia la Precisión sobre el Recall para evitar falsos positivos)
+- Cada trial tiene Early Stopping propio y Pruning de Optuna
+- Al terminar, guarda los mejores hiperparámetros en results/best_hparams_classifier.json
+
+Ejecutar en los PCs del laboratorio (todos conectados a la misma DB):
+    export OPTUNA_DB_URL="mysql+pymysql://sokoban:laboratorio123@172.16.16.124/optuna_db"
+    export OPTUNA_STUDY_NAME="sokoban_classifier_lab"
+    venv/bin/python surrogate_models/optuna_classifier.py
+"""
+
+import sys, os, json, gc, time
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+import optuna
+from optuna.pruners import MedianPruner
+from sklearn.metrics import fbeta_score
+
+from models.resnet import SokobanResNetClassifier, ClassifierLoss
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CONFIGURACIÓN
+# ─────────────────────────────────────────────────────────────────────────────
+BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
+RESULTS_DIR = os.path.join(BASE_DIR, "results")
+N_TRIALS    = 30
+FOLD        = 1
+MAX_EPOCHS  = 20     # Reducido por trial (el pruner corta los malos antes)
+PATIENCE    = 5
+BETA        = 0.5    # F_0.5 premia la precisión (evitar falsos positivos)
+
+db_url     = os.environ.get("OPTUNA_DB_URL",     f"sqlite:///{RESULTS_DIR}/optuna_classifier.db")
+study_name = os.environ.get("OPTUNA_STUDY_NAME", "sokoban_classifier")
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"{'='*55}")
+print(f"  OPTUNA — Surrogate Classifier (Fold {FOLD})")
+print(f"  Dispositivo: {device.type.upper()}")
+if device.type == "cuda":
+    print(f"  GPU: {torch.cuda.get_device_name(0)}")
+print(f"  Trials: {N_TRIALS} | Max épocas/trial: {MAX_EPOCHS}")
+print(f"  Métrica objetivo: F_{BETA} (precision > recall)")
+print(f"  Storage: {db_url}")
+print(f"{'='*55}\n")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DATASET
+# ─────────────────────────────────────────────────────────────────────────────
+class FoldDataset(Dataset):
+    def __init__(self, data_list):
+        self.data = data_list
+    def __len__(self):
+        return len(self.data)
+    def __getitem__(self, idx):
+        item = self.data[idx]
+        return item["tensor"].float(), torch.tensor(item["is_solvable"], dtype=torch.float32)
+
+
+# Cargar datos UNA sola vez (no recargar en cada trial)
+print(f"Cargando Fold {FOLD} (puede tardar ~30s)...")
+_train_data = torch.load(f"{RESULTS_DIR}/classifier_fold{FOLD}_train.pt", weights_only=False)
+_test_data  = torch.load(f"{RESULTS_DIR}/classifier_fold{FOLD}_test.pt",  weights_only=False)
+
+_N_pos = sum(1 for d in _train_data if d["is_solvable"] == 1)
+_N_neg = len(_train_data) - _N_pos
+_default_pos_weight = _N_neg / _N_pos if _N_pos > 0 else 1.0
+
+print(f"Train: {len(_train_data):,} | Test: {len(_test_data):,}")
+print(f"Solubles: {_N_pos:,} | Deadlocks: {_N_neg:,} | pos_weight base: {_default_pos_weight:.2f}\n")
+
+_test_dataset = FoldDataset(_test_data)
+
+
+def make_loaders(batch_size):
+    train_loader = DataLoader(FoldDataset(_train_data), batch_size=batch_size,
+                              shuffle=True, num_workers=0, pin_memory=False)
+    test_loader  = DataLoader(_test_dataset, batch_size=256,
+                              shuffle=False, num_workers=0, pin_memory=False)
+    return train_loader, test_loader
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# OBJECTIVE
+# ─────────────────────────────────────────────────────────────────────────────
+def objective(trial):
+    lr           = trial.suggest_float("lr",           1e-4, 5e-3,  log=True)
+    weight_decay = trial.suggest_float("weight_decay", 1e-6, 1e-3,  log=True)
+    dropout_p    = trial.suggest_float("dropout_p",    0.1,  0.5)
+    # pos_weight < 1 → penaliza menos los falsos positivos (más precisión)
+    # pos_weight > 1 → penaliza menos los falsos negativos (más recall)
+    pos_weight   = trial.suggest_float("pos_weight",   0.2,  2.0)
+    batch_size   = trial.suggest_categorical("batch_size", [64, 128, 256])
+
+    print(f"\n[Trial {trial.number}] lr={lr:.5f} | wd={weight_decay:.6f} | "
+          f"drop={dropout_p:.2f} | pw={pos_weight:.2f} | bs={batch_size}")
+
+    train_loader, test_loader = make_loaders(batch_size)
+
+    model     = SokobanResNetClassifier(dropout_p=dropout_p).to(device)
+    criterion = ClassifierLoss(pos_weight_val=pos_weight)
+    optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="max",
+                                                     factor=0.5, patience=3)
+
+    best_f_beta  = 0.0
+    patience_ctr = 0
+
+    for epoch in range(1, MAX_EPOCHS + 1):
+        # ── Train ────────────────────────────────────────────────────────────
+        model.train()
+        for tensors, labels in train_loader:
+            tensors = tensors.to(device)
+            labels  = labels.to(device)
+            optimizer.zero_grad()
+            logits  = model(tensors)
+            loss    = criterion(logits, labels)
+            loss.backward()
+            nn.utils.clip_grad_norm_(model.parameters(), 5.0)
+            optimizer.step()
+
+        # ── Eval ─────────────────────────────────────────────────────────────
+        model.eval()
+        all_preds, all_targets = [], []
+        with torch.no_grad():
+            for tensors, labels in test_loader:
+                tensors = tensors.to(device)
+                logits  = model(tensors)
+                # Umbral conservador 0.5 (Optuna busca la arquitectura, no el umbral)
+                preds   = (torch.sigmoid(logits) >= 0.5).cpu().numpy()
+                all_preds.extend(preds)
+                all_targets.extend(labels.numpy())
+
+        f_beta = fbeta_score(all_targets, all_preds, beta=BETA, zero_division=0)
+        scheduler.step(f_beta)
+
+        print(f"  [Trial {trial.number}] Época {epoch:02d} | F_{BETA}={f_beta:.4f}")
+
+        # Optuna Pruner: cancela trials malos temprano
+        trial.report(f_beta, epoch)
+        if trial.should_prune():
+            raise optuna.exceptions.TrialPruned()
+
+        if f_beta > best_f_beta:
+            best_f_beta  = f_beta
+            patience_ctr = 0
+        else:
+            patience_ctr += 1
+            if patience_ctr >= PATIENCE:
+                print(f"  [Trial {trial.number}] Early stopping en época {epoch}.")
+                break
+
+    return best_f_beta
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ESTUDIO OPTUNA
+# ─────────────────────────────────────────────────────────────────────────────
+if __name__ == "__main__":
+    optuna.logging.set_verbosity(optuna.logging.INFO)
+
+    study = optuna.create_study(
+        direction="maximize",   # queremos F_0.5 lo más alto posible
+        pruner=MedianPruner(n_startup_trials=5, n_warmup_steps=5),
+        study_name=study_name,
+        storage=db_url,
+        load_if_exists=True,
+    )
+
+    study.optimize(objective, n_trials=N_TRIALS, show_progress_bar=True)
+
+    print("\n" + "="*55)
+    print("  RESULTADOS FINALES DEL ENJAMBRE — CLASIFICADOR")
+    print("="*55)
+    print(f"  Total de Trials: {len(study.trials)}")
+    print(f"  Mejor F_{BETA}: {study.best_value:.4f}")
+    print(f"  Mejores hiperparámetros:")
+    for k, v in study.best_params.items():
+        print(f"    {k}: {v}")
+
+    out_path = os.path.join(RESULTS_DIR, "best_hparams_classifier.json")
+    with open(out_path, "w") as f:
+        json.dump({"best_f_beta": study.best_value, "beta": BETA,
+                   "params": study.best_params}, f, indent=2)
+    print(f"\n  ✅ Hiperparámetros guardados en: {out_path}")
+
+    completed = [t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE]
+    pruned    = [t for t in study.trials if t.state == optuna.trial.TrialState.PRUNED]
+    print(f"\n  Completados: {len(completed)} | Podados: {len(pruned)}")
