@@ -52,7 +52,7 @@ def main():
     scaler    = torch.amp.GradScaler('cuda', enabled=use_amp)
 
     n_batches  = (N + BATCH - 1) // BATCH
-    PRINT_EVERY = max(1, n_batches // 10)   # imprime 10 veces por época
+    PRINT_EVERY = 5   # imprime cada 5 batches (~cada pocos segundos)
 
     print(f"\nEntrenando {EPOCHS} épocas...\n")
 
