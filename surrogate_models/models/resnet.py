@@ -132,22 +132,20 @@ class SokobanResNetClassifier(nn.Module):
     Red similar al regresor, pero con una sola cabeza terminando en 1 neurona (sin activación,
     para usar con BCEWithLogitsLoss).
     """
-    def __init__(self, in_channels=5, base_filters=64, dropout_p=0.4):
+    def __init__(self, dropout_p: float = 0.4):
         super().__init__()
-        self.stem = nn.Sequential(
-            nn.Conv2d(in_channels, base_filters, kernel_size=3, padding=1, bias=False),
-            nn.BatchNorm2d(base_filters),
-            nn.ReLU(inplace=True)
+        self.stem   = nn.Sequential(
+            nn.Conv2d(5, 32, 3, padding=1, bias=False),
+            nn.BatchNorm2d(32), nn.ReLU(inplace=True),
         )
-        self.layer1 = ResidualBlock(base_filters, base_filters)
-        self.layer2 = ResidualBlock(base_filters, base_filters * 2, stride=2)
-        self.layer3 = ResidualBlock(base_filters * 2, base_filters * 4, stride=2)
-        self.pool = nn.AdaptiveAvgPool2d((1, 1))
+        self.layer1 = nn.Sequential(BasicBlock(32,  64),  BasicBlock(64,  64))
+        self.layer2 = nn.Sequential(BasicBlock(64,  128), BasicBlock(128, 128))
+        self.layer3 = nn.Sequential(BasicBlock(128, 256), BasicBlock(256, 256))
+        self.pool   = nn.AdaptiveAvgPool2d((1, 1))
 
         self.neck = nn.Sequential(
-            nn.Linear(base_filters * 4, 128),
-            nn.BatchNorm1d(128),
-            nn.ReLU(inplace=True),
+            nn.Linear(256, 256), nn.ReLU(inplace=True), nn.Dropout(dropout_p),
+            nn.Linear(256, 128), nn.ReLU(inplace=True), nn.Dropout(dropout_p),
             nn.Dropout(p=dropout_p)
         )
         self.head = nn.Linear(128, 1)
