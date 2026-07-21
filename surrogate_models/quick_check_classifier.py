@@ -28,24 +28,25 @@ def main():
         print("Debes ejecutar primero: python3 surrogate_models/data/prepare_classifier.py")
         sys.exit(1)
         
-    print("Cargando y apilando datos en RAM contigua...")
+    print("Cargando y moviendo el dataset directamente a la VRAM de la GPU...")
     train_data = torch.load(train_path, weights_only=False)
     test_data  = torch.load(test_path, weights_only=False)
     
-    X_train = torch.stack([d["tensor"] for d in train_data])
-    y_train = torch.tensor([d["is_solvable"] for d in train_data], dtype=torch.float32)
+    # Mover directamente a la GPU para eliminar cualquier cuello de botella PCIe/RAM
+    X_train = torch.stack([d["tensor"] for d in train_data]).to(device)
+    y_train = torch.tensor([d["is_solvable"] for d in train_data], dtype=torch.float32).to(device)
     
-    X_test = torch.stack([d["tensor"] for d in test_data])
-    y_test = torch.tensor([d["is_solvable"] for d in test_data], dtype=torch.float32)
+    X_test = torch.stack([d["tensor"] for d in test_data]).to(device)
+    y_test = torch.tensor([d["is_solvable"] for d in test_data], dtype=torch.float32).to(device)
     
-    # Liberar memoria de listas sueltas para no ahogar la RAM de WSL
+    # Liberar memoria CPU al instante
     del train_data, test_data
     gc.collect()
     
-    train_loader = DataLoader(TensorDataset(X_train, y_train), batch_size=256, shuffle=True, num_workers=0, pin_memory=False)
-    test_loader  = DataLoader(TensorDataset(X_test, y_test), batch_size=256, shuffle=False, num_workers=0, pin_memory=False)
+    train_loader = DataLoader(TensorDataset(X_train, y_train), batch_size=512, shuffle=True)
+    test_loader  = DataLoader(TensorDataset(X_test, y_test), batch_size=512, shuffle=False)
     
-    print(f"Train: {len(X_train)} | Test: {len(X_test)}")
+    print(f"Train (VRAM): {len(X_train):,} | Test (VRAM): {len(X_test):,}")
     
     # Calcular class weights para ClassifierLoss
     N_pos = (y_train == 1.0).sum().item()
@@ -69,9 +70,6 @@ def main():
         start_time = time.time()
         
         for tensors, labels in tqdm(train_loader, desc=f"Ep {epoch:02d} Train", leave=False):
-            tensors = tensors.to(device, non_blocking=True)
-            labels = labels.to(device, non_blocking=True)
-            
             optimizer.zero_grad()
             with torch.amp.autocast('cuda', enabled=use_amp):
                 logits = model(tensors)
@@ -93,8 +91,6 @@ def main():
         
         with torch.no_grad():
             for tensors, labels in tqdm(test_loader, desc=f"Ep {epoch:02d} Eval ", leave=False):
-                tensors = tensors.to(device, non_blocking=True)
-                labels = labels.to(device, non_blocking=True)
                 
                 with torch.amp.autocast('cuda', enabled=use_amp):
                     logits = model(tensors)
