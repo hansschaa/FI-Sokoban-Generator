@@ -39,8 +39,8 @@ def main():
     train_data = torch.load(train_path, weights_only=False)
     test_data  = torch.load(test_path, weights_only=False)
     
-    train_loader = DataLoader(FoldDataset(train_data), batch_size=128, shuffle=True, num_workers=0, pin_memory=False)
-    test_loader  = DataLoader(FoldDataset(test_data), batch_size=128, shuffle=False, num_workers=0, pin_memory=False)
+    train_loader = DataLoader(FoldDataset(train_data), batch_size=512, shuffle=True, num_workers=4, pin_memory=True)
+    test_loader  = DataLoader(FoldDataset(test_data), batch_size=512, shuffle=False, num_workers=4, pin_memory=True)
     
     print(f"Train: {len(train_data)} | Test: {len(test_data)}")
     
@@ -55,9 +55,10 @@ def main():
     model = SokobanResNetClassifier().to(device)
     criterion = ClassifierLoss(pos_weight_val=pos_weight)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
+    scaler = torch.cuda.amp.GradScaler(enabled=(device.type == 'cuda'))
     
     epochs = 5
-    print(f"\nIniciando entrenamiento piloto de {epochs} épocas...")
+    print(f"\nIniciando entrenamiento piloto de {epochs} épocas (acelerado con AMP)...")
     
     for epoch in range(1, epochs + 1):
         model.train()
@@ -65,14 +66,17 @@ def main():
         start_time = time.time()
         
         for tensors, labels in tqdm(train_loader, desc=f"Ep {epoch:02d} Train", leave=False):
-            tensors = tensors.to(device)
-            labels = labels.to(device).float()
+            tensors = tensors.to(device, non_blocking=True)
+            labels = labels.to(device, non_blocking=True).float()
             
             optimizer.zero_grad()
-            logits = model(tensors)
-            loss = criterion(logits, labels)
-            loss.backward()
-            optimizer.step()
+            with torch.cuda.amp.autocast(enabled=(device.type == 'cuda')):
+                logits = model(tensors)
+                loss = criterion(logits, labels)
+            
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
             
             train_loss += loss.item() * len(labels)
             
@@ -86,8 +90,13 @@ def main():
         
         with torch.no_grad():
             for tensors, labels in tqdm(test_loader, desc=f"Ep {epoch:02d} Eval ", leave=False):
-                tensors = tensors.to(device)
-                labels = labels.to(device).float()
+                tensors = tensors.to(device, non_blocking=True)
+                labels = labels.to(device, non_blocking=True).float()
+                
+                with torch.cuda.amp.autocast(enabled=(device.type == 'cuda')):
+                    logits = model(tensors)
+                    loss = criterion(logits, labels)
+                test_loss += loss.item() * len(labels)
                 
                 logits = model(tensors)
                 loss = criterion(logits, labels)
