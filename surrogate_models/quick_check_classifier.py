@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import TensorDataset, DataLoader
 import numpy as np
 from tqdm import tqdm
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
@@ -12,15 +12,6 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from models.resnet import SokobanResNetClassifier, ClassifierLoss
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
-
-class FoldDataset(Dataset):
-    def __init__(self, data_list):
-        self.data = data_list
-    def __len__(self):
-        return len(self.data)
-    def __getitem__(self, idx):
-        item = self.data[idx]
-        return item["tensor"], item["is_solvable"]
 
 def main():
     print("=== EXAMEN PILOTO: CLASIFICADOR ===")
@@ -35,30 +26,36 @@ def main():
         print("Debes ejecutar primero: python3 surrogate_models/data/prepare_classifier.py")
         sys.exit(1)
         
-    print("Cargando datos...")
+    print("Cargando y apilando datos en RAM contigua...")
     train_data = torch.load(train_path, weights_only=False)
     test_data  = torch.load(test_path, weights_only=False)
     
-    train_loader = DataLoader(FoldDataset(train_data), batch_size=512, shuffle=True, num_workers=4, pin_memory=True)
-    test_loader  = DataLoader(FoldDataset(test_data), batch_size=512, shuffle=False, num_workers=4, pin_memory=True)
+    X_train = torch.stack([d["tensor"] for d in train_data])
+    y_train = torch.tensor([d["is_solvable"] for d in train_data], dtype=torch.float32)
     
-    print(f"Train: {len(train_data)} | Test: {len(test_data)}")
+    X_test = torch.stack([d["tensor"] for d in test_data])
+    y_test = torch.tensor([d["is_solvable"] for d in test_data], dtype=torch.float32)
+    
+    train_loader = DataLoader(TensorDataset(X_train, y_train), batch_size=1024, shuffle=True, num_workers=0, pin_memory=True)
+    test_loader  = DataLoader(TensorDataset(X_test, y_test), batch_size=1024, shuffle=False, num_workers=0, pin_memory=True)
+    
+    print(f"Train: {len(X_train)} | Test: {len(X_test)}")
     
     # Calcular class weights para ClassifierLoss
-    targets = [d["is_solvable"] for d in train_data]
-    N = len(targets)
-    N_pos = sum(targets)
-    N_neg = N - N_pos
+    N_pos = (y_train == 1.0).sum().item()
+    N_neg = (y_train == 0.0).sum().item()
     pos_weight = N_neg / N_pos if N_pos > 0 else 1.0
     print(f"Pesos de clase: pos_weight={pos_weight:.2f} (para contrarrestar el exceso de deadlocks)")
 
     model = SokobanResNetClassifier().to(device)
     criterion = ClassifierLoss(pos_weight_val=pos_weight)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
-    scaler = torch.cuda.amp.GradScaler(enabled=(device.type == 'cuda'))
+    
+    use_amp = (device.type == 'cuda')
+    scaler = torch.amp.GradScaler('cuda', enabled=use_amp)
     
     epochs = 5
-    print(f"\nIniciando entrenamiento piloto de {epochs} épocas (acelerado con AMP)...")
+    print(f"\nIniciando entrenamiento piloto de {epochs} épocas (aceleración ultra-rápida)...")
     
     for epoch in range(1, epochs + 1):
         model.train()
@@ -67,10 +64,10 @@ def main():
         
         for tensors, labels in tqdm(train_loader, desc=f"Ep {epoch:02d} Train", leave=False):
             tensors = tensors.to(device, non_blocking=True)
-            labels = labels.to(device, non_blocking=True).float()
+            labels = labels.to(device, non_blocking=True)
             
             optimizer.zero_grad()
-            with torch.cuda.amp.autocast(enabled=(device.type == 'cuda')):
+            with torch.amp.autocast('cuda', enabled=use_amp):
                 logits = model(tensors)
                 loss = criterion(logits, labels)
             
@@ -80,7 +77,7 @@ def main():
             
             train_loss += loss.item() * len(labels)
             
-        train_loss /= len(train_data)
+        train_loss /= len(X_train)
         
         # Test
         model.eval()
@@ -91,15 +88,18 @@ def main():
         with torch.no_grad():
             for tensors, labels in tqdm(test_loader, desc=f"Ep {epoch:02d} Eval ", leave=False):
                 tensors = tensors.to(device, non_blocking=True)
-                labels = labels.to(device, non_blocking=True).float()
+                labels = labels.to(device, non_blocking=True)
                 
-                with torch.cuda.amp.autocast(enabled=(device.type == 'cuda')):
+                with torch.amp.autocast('cuda', enabled=use_amp):
                     logits = model(tensors)
                     loss = criterion(logits, labels)
                 test_loss += loss.item() * len(labels)
                 
-                logits = model(tensors)
-                loss = criterion(logits, labels)
+                probs = torch.sigmoid(logits)
+                preds = (probs >= 0.5).float()
+                
+                all_preds.extend(preds.cpu().numpy())
+                all_targets.extend(labels.cpu().numpy())
                 test_loss += loss.item() * len(labels)
                 
                 probs = torch.sigmoid(logits)
