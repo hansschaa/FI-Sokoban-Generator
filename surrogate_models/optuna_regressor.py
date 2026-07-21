@@ -122,7 +122,9 @@ def objective(trial):
         total_batches = len(train_loader)
         
         for tensors, p_norm, b_norm, _, _ in train_loader:
-            if batch_idx > 0 and batch_idx % 400 == 0:
+            if batch_idx == 0:
+                print(f"    [Trial {trial.number}] Epoca {epoch:02d} | ¡Primer batch completado! La GPU está viva.")
+            elif batch_idx % 10 == 0:
                 print(f"    [Trial {trial.number}] Epoca {epoch:02d} | Progreso: {batch_idx}/{total_batches} batches...")
             
             tensors = tensors.to(device)
