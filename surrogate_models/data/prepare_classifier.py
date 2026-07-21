@@ -169,14 +169,16 @@ def main():
         train_df = df.iloc[train_idx]
         test_df  = df.iloc[test_idx]
 
-        print("  Generando Train con Augmentation (x8)...")
+        print("  Generando Train con Augmentation (solo Solubles x8)...")
         train_data = []
         for _, row in tqdm(train_df.iterrows(), total=len(train_df)):
             t = encode_board(row["board_str"])
-            for v in augment_tensor(t):
+            # Solo aumentamos los solubles. Esto evita que los 83k deadlocks se vuelvan 664k (Out of Memory)
+            variants = augment_tensor(t) if row["label"] == 1 else [t]
+            for v in variants:
                 train_data.append({
                     "tensor": torch.from_numpy(v.copy()),
-                    "label": row["label"]
+                    "is_solvable": row["label"]
                 })
                 
         print("  Generando Test (sin Augmentation)...")
@@ -184,7 +186,7 @@ def main():
         for _, row in tqdm(test_df.iterrows(), total=len(test_df)):
             test_data.append({
                 "tensor": torch.from_numpy(encode_board(row["board_str"])),
-                "label": row["label"]
+                "is_solvable": row["label"]
             })
 
         print(f"  Train tensors: {len(train_data):,} | Test tensors: {len(test_data):,}")
