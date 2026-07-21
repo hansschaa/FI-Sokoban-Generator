@@ -37,6 +37,10 @@ FOLD        = 1          # Solo Fold 1 para la búsqueda
 MAX_EPOCHS  = 60         # Epochs reducidas por trial
 PATIENCE    = 10
 
+# Configurar storage distribuido si existe la variable de entorno
+db_url = os.environ.get("OPTUNA_DB_URL", f"sqlite:///{RESULTS_DIR}/optuna_regressor.db")
+study_name = os.environ.get("OPTUNA_STUDY_NAME", "sokoban_regressor")
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"{'='*55}")
 print(f"  OPTUNA — Surrogate Regressor (Fold {FOLD})")
@@ -44,6 +48,7 @@ print(f"  Dispositivo: {device.type.upper()}")
 if device.type == "cuda":
     print(f"  GPU: {torch.cuda.get_device_name(0)}")
 print(f"  Trials: {N_TRIALS} | Max épocas/trial: {MAX_EPOCHS}")
+print(f"  Storage: {db_url}")
 print(f"{'='*55}\n")
 
 
@@ -179,8 +184,8 @@ if __name__ == "__main__":
     study = optuna.create_study(
         direction="minimize",
         pruner=MedianPruner(n_startup_trials=5, n_warmup_steps=15),
-        study_name="sokoban_regressor",
-        storage=f"sqlite:///{RESULTS_DIR}/optuna_regressor.db",
+        study_name=study_name,
+        storage=db_url,
         load_if_exists=True,   # permite reanudar si se interrumpe
     )
 
