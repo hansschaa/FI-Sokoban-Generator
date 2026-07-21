@@ -8,7 +8,7 @@ from torch.utils.data import Dataset, DataLoader
 import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
-from models.resnet import SokobanResNetClassifier, WeightedBCEWithLogitsLoss
+from models.resnet import SokobanResNetClassifier, ClassifierLoss
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
 
@@ -43,17 +43,16 @@ def main():
     
     print(f"Train: {len(train_data)} | Test: {len(test_data)}")
     
-    # Calcular class weights para WeightedBCE
+    # Calcular class weights para ClassifierLoss
     targets = [d["is_solvable"] for d in train_data]
     N = len(targets)
     N_pos = sum(targets)
     N_neg = N - N_pos
-    w_pos = N / (2 * N_pos) if N_pos > 0 else 1.0
-    w_neg = N / (2 * N_neg) if N_neg > 0 else 1.0
-    print(f"Pesos de clase: Negativos={w_neg:.2f}, Positivos={w_pos:.2f}")
+    pos_weight = N_neg / N_pos if N_pos > 0 else 1.0
+    print(f"Pesos de clase: pos_weight={pos_weight:.2f} (para contrarrestar el exceso de deadlocks)")
 
-    model = SokobanResNetClassifier(num_blocks=3, filters=64).to(device)
-    criterion = WeightedBCEWithLogitsLoss(w_pos=w_pos, w_neg=w_neg)
+    model = SokobanResNetClassifier().to(device)
+    criterion = ClassifierLoss(pos_weight_val=pos_weight)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     
     epochs = 5
