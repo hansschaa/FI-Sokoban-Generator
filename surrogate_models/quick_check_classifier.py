@@ -11,6 +11,8 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 from models.resnet import SokobanResNetClassifier, ClassifierLoss
 
+import gc
+
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
 
 def main():
@@ -36,8 +38,12 @@ def main():
     X_test = torch.stack([d["tensor"] for d in test_data])
     y_test = torch.tensor([d["is_solvable"] for d in test_data], dtype=torch.float32)
     
-    train_loader = DataLoader(TensorDataset(X_train, y_train), batch_size=1024, shuffle=True, num_workers=0, pin_memory=True)
-    test_loader  = DataLoader(TensorDataset(X_test, y_test), batch_size=1024, shuffle=False, num_workers=0, pin_memory=True)
+    # Liberar memoria de listas sueltas para no ahogar la RAM de WSL
+    del train_data, test_data
+    gc.collect()
+    
+    train_loader = DataLoader(TensorDataset(X_train, y_train), batch_size=256, shuffle=True, num_workers=0, pin_memory=False)
+    test_loader  = DataLoader(TensorDataset(X_test, y_test), batch_size=256, shuffle=False, num_workers=0, pin_memory=False)
     
     print(f"Train: {len(X_train)} | Test: {len(X_test)}")
     
