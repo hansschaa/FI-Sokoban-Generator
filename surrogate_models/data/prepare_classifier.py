@@ -128,7 +128,7 @@ def augment_tensor(tensor):
 def main():
     print("1. Cargando y parseando Solubles (label=1)...")
     solvables = []
-    solvable_files = glob.glob(os.path.join(SOLVABLES_DIR, "*", "*.sok"))
+    solvable_files = glob.glob(os.path.join(SOLVABLES_DIR, "**", "*.sok"), recursive=True)
     for f in tqdm(solvable_files):
         solvables.extend(parse_sok_file(f, default_label=1))
         
