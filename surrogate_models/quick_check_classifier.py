@@ -6,6 +6,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 import numpy as np
+from tqdm import tqdm
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 from models.resnet import SokobanResNetClassifier, ClassifierLoss
@@ -63,7 +64,7 @@ def main():
         train_loss = 0.0
         start_time = time.time()
         
-        for tensors, labels in train_loader:
+        for tensors, labels in tqdm(train_loader, desc=f"Ep {epoch:02d} Train", leave=False):
             tensors = tensors.to(device)
             labels = labels.to(device).float()
             
@@ -84,7 +85,7 @@ def main():
         all_targets = []
         
         with torch.no_grad():
-            for tensors, labels in test_loader:
+            for tensors, labels in tqdm(test_loader, desc=f"Ep {epoch:02d} Eval ", leave=False):
                 tensors = tensors.to(device)
                 labels = labels.to(device).float()
                 
