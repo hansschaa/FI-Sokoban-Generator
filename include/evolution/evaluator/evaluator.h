@@ -11,8 +11,14 @@ public:
     FitnessType fitnessType =
         FitnessType::FO1_PUSHES; // Valor por defecto, puede ser cambiado antes de evaluar
 
+    // Boolean flag to toggle between A* and Surrogate models
+    bool use_surrogate = true;
+
     double evaluate(
         Individual& individual);
+
+    // Evaluate an entire population using the Python Surrogate Server via HTTP
+    void evaluate_surrogate_batch(std::vector<Individual>& population);
 
 private:
     // Guarda el estado del tablero justo antes de enviarlo al solver A*

@@ -76,25 +76,29 @@ Individual GeneticAlgorithm::run(
     unsigned int num_threads = use_parallel ? std::thread::hardware_concurrency() : 1;
     if (num_threads == 0) num_threads = 4;
     
-    std::atomic<int> current_task{0};
-    std::vector<std::future<void>> futures;
+    if (evaluator.use_surrogate) {
+        evaluator.evaluate_surrogate_batch(population);
+    } else {
+        std::atomic<int> current_task{0};
+        std::vector<std::future<void>> futures;
 
-    auto eval_task = [&]() {
-        while (true) {
-            int i = current_task.fetch_add(1);
-            if (i >= (int)population.size()) break;
-            
-            Evaluator local_eval = evaluator;
-            local_eval.evaluate(population[i]);
+        auto eval_task = [&]() {
+            while (true) {
+                int i = current_task.fetch_add(1);
+                if (i >= (int)population.size()) break;
+                
+                Evaluator local_eval = evaluator;
+                local_eval.evaluate(population[i]);
+            }
+        };
+
+        unsigned int threads_to_launch = std::min((unsigned int)population.size(), num_threads);
+        for (unsigned int t = 0; t < threads_to_launch; t++) {
+            futures.push_back(std::async(std::launch::async, eval_task));
         }
-    };
-
-    unsigned int threads_to_launch = std::min((unsigned int)population.size(), num_threads);
-    for (unsigned int t = 0; t < threads_to_launch; t++) {
-        futures.push_back(std::async(std::launch::async, eval_task));
-    }
-    for (auto& f : futures) {
-        f.get();
+        for (auto& f : futures) {
+            f.get();
+        }
     }
 
     evaluations += population.size();
@@ -192,24 +196,28 @@ Individual GeneticAlgorithm::run(
 
         // PARALLEL EVALUATION OF BATCH
         if (!batch_to_evaluate.empty()) {
-            std::atomic<int> current_child{0};
-            std::vector<std::future<void>> child_futures;
-            
-            auto child_eval_task = [&]() {
-                while(true) {
-                    int i = current_child.fetch_add(1);
-                    if (i >= (int)batch_to_evaluate.size()) break;
-                    
-                    Evaluator local_eval = evaluator;
-                    local_eval.evaluate(batch_to_evaluate[i]);
+            if (evaluator.use_surrogate) {
+                evaluator.evaluate_surrogate_batch(batch_to_evaluate);
+            } else {
+                std::atomic<int> current_child{0};
+                std::vector<std::future<void>> child_futures;
+                
+                auto child_eval_task = [&]() {
+                    while(true) {
+                        int i = current_child.fetch_add(1);
+                        if (i >= (int)batch_to_evaluate.size()) break;
+                        
+                        Evaluator local_eval = evaluator;
+                        local_eval.evaluate(batch_to_evaluate[i]);
+                    }
+                };
+                
+                unsigned int c_threads = std::min((unsigned int)batch_to_evaluate.size(), num_threads);
+                for (unsigned int t = 0; t < c_threads; t++) {
+                    child_futures.push_back(std::async(std::launch::async, child_eval_task));
                 }
-            };
-            
-            unsigned int c_threads = std::min((unsigned int)batch_to_evaluate.size(), num_threads);
-            for (unsigned int t = 0; t < c_threads; t++) {
-                child_futures.push_back(std::async(std::launch::async, child_eval_task));
+                for(auto& f : child_futures) f.get();
             }
-            for(auto& f : child_futures) f.get();
             
             evaluations += batch_to_evaluate.size();
         }

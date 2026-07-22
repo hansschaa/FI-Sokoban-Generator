@@ -4,6 +4,11 @@
 #include <cmath>
 #include <vector>
 #include <fstream>
+#include <iostream>
+#include "../../../include/httplib.h"
+#include "../../../include/nlohmann/json.hpp"
+
+using json = nlohmann::json;
 
 
 void Evaluator::registrar_tablero_critico(const std::vector<std::vector<char>>& board) {
@@ -85,3 +90,79 @@ double Evaluator::evaluate(Individual& individual)
 
 // Puedes borrar computeEffectiveBranchingFactor de este archivo ya que ahora
 // usaremos las métricas precisas reales que calcula game_solver y path_simulator.
+
+void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
+{
+    if (population.empty()) return;
+
+    // 1. Prepare JSON payload
+    json payload;
+    payload["boards"] = json::array();
+    
+    for (const auto& ind : population) {
+        payload["boards"].push_back(board_to_string(ind.board));
+    }
+
+    // 2. Send HTTP POST request
+    httplib::Client cli("localhost", 5000);
+    cli.set_connection_timeout(5); // 5 seconds timeout
+    cli.set_read_timeout(30);
+
+    auto res = cli.Post("/evaluate", payload.dump(), "application/json");
+
+    if (!res) {
+        std::cerr << "Error: Failed to connect to Python Surrogate Server at localhost:5000\n";
+        std::cerr << "Falling back to A* solver for this batch...\n";
+        // Fallback
+        for (auto& ind : population) {
+            evaluate(ind);
+        }
+        return;
+    }
+
+    if (res->status != 200) {
+        std::cerr << "Error: Python Server returned HTTP " << res->status << "\n";
+        std::cerr << "Response: " << res->body << "\n";
+        // Fallback
+        for (auto& ind : population) {
+            evaluate(ind);
+        }
+        return;
+    }
+
+    // 3. Parse JSON response
+    try {
+        json j_res = json::parse(res->body);
+        
+        for (size_t i = 0; i < population.size(); ++i) {
+            bool is_solvable = j_res[i]["is_solvable"];
+            
+            if (!is_solvable) {
+                population[i].fitness = -1e9;
+            } else {
+                double pushes = j_res[i]["pushes"];
+                double branching = j_res[i]["branching"];
+                
+                // Asignamos el fitness dependiendo de lo que el usuario esté buscando
+                if (fitnessType == FitnessType::FO1_PUSHES) {
+                    population[i].fitness = pushes;
+                } 
+                else if (fitnessType == FitnessType::FO2_ASTAR_EFF_BF || fitnessType == FitnessType::FO3_SOL_EFF_BF) {
+                    // Queremos ramas pequeñas, por lo que invertimos para que el EA que MAXIMIZA
+                    // empuje el branching_factor hacia valores más bajos.
+                    population[i].fitness = -branching;
+                }
+                else {
+                    // Default fallback
+                    population[i].fitness = pushes;
+                }
+            }
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "JSON Parsing Error: " << e.what() << "\n";
+        std::cerr << "Falling back to A* solver...\n";
+        for (auto& ind : population) {
+            evaluate(ind);
+        }
+    }
+}

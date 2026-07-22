@@ -325,12 +325,27 @@ int main(int argc, char** argv)
         GeneticAlgorithm ga;
         ga.use_parallel    = !no_parallel;
         ga.setDeadlockMask(deadlock_mask);
-        ga.offspringSize   = 10;
-        ga.mutationRate    = 1.0;
-        ga.crossoverRate   = 1.0;
-        ga.maxFailedAttempts = 10;
-        ga.maxEvaluations  = 2000;
-        ga.stagnationLimit = 30;
+
+        // Parametros óptimos encontrados por IRACE
+        if (fitnessType == FitnessType::FO1_PUSHES) {
+            ga.offspringSize   = 45;
+            ga.maxFailedAttempts = 41;
+            ga.mutationRate    = 0.8339;
+            ga.crossoverRate   = 0.3729;
+        } else if (fitnessType == FitnessType::FO4_DEADLOCKS) { // FO2 en IRACE (Deadlocks)
+            ga.offspringSize   = 35;
+            ga.maxFailedAttempts = 14;
+            ga.mutationRate    = 0.9462;
+            ga.crossoverRate   = 0.9140;
+        } else { // FO3 (Repeated Nodes / Branching)
+            ga.offspringSize   = 33;
+            ga.maxFailedAttempts = 18;
+            ga.mutationRate    = 0.7570;
+            ga.crossoverRate   = 0.8483;
+        }
+
+        ga.maxEvaluations  = 20000;
+        ga.stagnationLimit = 1000;
         ga.circuitStartTime = circuit_start_time;
         ga.maxCircuitTimeSeconds = time_limit_mins > 0 ? time_limit_mins * 60 : -1;
 
