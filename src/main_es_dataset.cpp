@@ -221,6 +221,93 @@ public:
     }
 };
 
+// =====================================================================
+// MEJORA 1: Elite Seed Pool — carga tableros existentes como semillas
+// =====================================================================
+class EliteSeedPool {
+private:
+    std::vector<std::vector<std::vector<char>>> seeds;
+    std::mutex seed_mutex;
+
+    std::vector<std::vector<char>> parse_board(const std::string& block_str) {
+        std::vector<std::vector<char>> board;
+        std::istringstream ss(block_str);
+        std::string line;
+        while (std::getline(ss, line)) {
+            if (!line.empty() && (line[0] == '#' || line[0] == ' ' || line[0] == '@'
+                                  || line[0] == '$' || line[0] == '.' || line[0] == '*'
+                                  || line[0] == '+')) {
+                board.push_back(std::vector<char>(line.begin(), line.end()));
+            }
+        }
+        return board;
+    }
+
+public:
+    // Carga tableros de cubetas en el rango [min_pushes, max_pushes] como semillas
+    void load(const std::string& dir, int min_pushes = 41, int max_pushes = 70) {
+        fs::path base(dir);
+        if (!fs::exists(base)) return;
+
+        for (auto& entry : fs::directory_iterator(base)) {
+            if (entry.path().extension() != ".sok") continue;
+
+            // Extraer el rango inferior del nombre del archivo
+            std::string stem = entry.path().stem().string();
+            auto pos = stem.find("_to_");
+            if (pos == std::string::npos) continue;
+            int low = std::stoi(stem.substr(0, pos));
+            if (low < min_pushes || low > max_pushes) continue;
+
+            std::ifstream f(entry.path());
+            std::string content((std::istreambuf_iterator<char>(f)),
+                                 std::istreambuf_iterator<char>());
+            auto blocks = [&]() {
+                std::vector<std::string> result;
+                std::string current;
+                std::istringstream iss(content);
+                std::string line;
+                while (std::getline(iss, line)) {
+                    if (line.empty() && !current.empty()) {
+                        result.push_back(current);
+                        current.clear();
+                    } else {
+                        current += line + "\n";
+                    }
+                }
+                if (!current.empty()) result.push_back(current);
+                return result;
+            }();
+
+            for (auto& blk : blocks) {
+                // Saltar la linea de stats, parsear solo el tablero
+                std::istringstream bss(blk);
+                std::string header;
+                std::getline(bss, header);
+                std::string body((std::istreambuf_iterator<char>(bss)),
+                                  std::istreambuf_iterator<char>());
+                auto board = parse_board(body);
+                if (board.size() >= 3 && board[0].size() >= 3) {
+                    seeds.push_back(board);
+                }
+            }
+        }
+        std::cout << "[EliteSeed] " << seeds.size()
+                  << " semillas elite cargadas (pushes " << min_pushes
+                  << "-" << max_pushes << ")." << std::endl;
+    }
+
+    // Retorna un tablero elite aleatorio, o vacio si no hay semillas
+    std::vector<std::vector<char>> getSeed() {
+        std::lock_guard<std::mutex> lock(seed_mutex);
+        if (seeds.empty()) return {};
+        return seeds[rand() % seeds.size()];
+    }
+
+    bool empty() const { return seeds.empty(); }
+    size_t size() const { return seeds.size(); }
+};
+
 // FIX 1: Tamano uniforme 2-5 (sin size bias)
 // FIX 2: Cajas iniciales aleatorias 1..min(5, espacio) (sin density bias)
 bool generateBaseTemplate(std::vector<std::vector<char>>& board, std::vector<std::vector<bool>>& deadlock_mask) {
@@ -262,7 +349,7 @@ int main(int argc, char* argv[]) {
         if (arg == "--runs" && i + 1 < argc) runs = std::stoi(argv[++i]);
     }
 
-    std::cout << "Starting Sokoban Dataset Miner (v6: Full Stats)...\n";
+    std::cout << "Starting Sokoban Dataset Miner (v7: Elite Seeding + Adaptive)...\n";
     std::cout << "Target base templates: " << runs << "\n\n";
 
     unsigned int num_threads = std::thread::hardware_concurrency();
@@ -270,6 +357,11 @@ int main(int argc, char* argv[]) {
     std::cout << "Launching " << num_threads << " parallel miner threads...\n\n";
 
     SokobanMiner miner("sokoban_dataset_buckets");
+
+    // MEJORA 1: Cargar semillas elite de cubetas 41-70
+    EliteSeedPool seed_pool;
+    seed_pool.load("sokoban_dataset_buckets", 41, 70);
+    std::cout << "\n";
 
     auto global_start_time = std::chrono::high_resolution_clock::now();
     std::atomic<int> successful_runs{0};
@@ -299,6 +391,22 @@ int main(int argc, char* argv[]) {
             double current_pushes = 0;
             Individual current_ind;
 
+            // MEJORA 1: Elite Seeding — 50% de runs arrancan desde un tablero duro existente
+            bool used_elite_seed = false;
+            if (!seed_pool.empty() && (rand() % 2 == 0)) {
+                auto seed_board = seed_pool.getSeed();
+                if (!seed_board.empty()) {
+                    current_ind.board = seed_board;
+                    current_pushes = local_evaluator.evaluate(current_ind);
+                    if (current_pushes > 0 && !std::isnan(current_pushes)) {
+                        deadlock_mask = compute_deadlock_mask(seed_board);
+                        valid_base = true;
+                        used_elite_seed = true;
+                    }
+                }
+            }
+
+            // Si no hay semilla elite o fallo, generar cascarón normal
             int base_attempts = 0;
             while (!valid_base && base_attempts < 50) {
                 base_attempts++;
@@ -318,7 +426,7 @@ int main(int argc, char* argv[]) {
             addMut.deadlock_mask = deadlock_mask;
             RemoveMutation removeMut;
 
-            // Guardar snapshot base con stats completas (FIX 3)
+            // Guardar snapshot base con stats completas
             if (miner.shouldSave(static_cast<int>(current_pushes), run_id)) {
                 SolverStats full_stats = evaluate_full(current_ind.board);
                 if (full_stats.status == SolveStatus::SOLVED && full_stats.pushes > 0) {
@@ -328,13 +436,28 @@ int main(int argc, char* argv[]) {
             double last_snapshot_pushes = current_pushes;
 
             int failed_mutations = 0;
-            const int MAX_PATIENCE = 3000;
 
-            while (failed_mutations < MAX_PATIENCE) {
+            while (true) {
+                // MEJORA 3: Adaptive Patience — mas intentos si ya estamos en zona dificil
+                const int MAX_PATIENCE = (current_pushes >= 50) ? 8000 : 3000;
+                if (failed_mutations >= MAX_PATIENCE) break;
+
                 Individual child = current_ind;
                 bool success = false;
 
-                int mutationType = rand() % 3;
+                // MEJORA 2: Adaptive Mutation Weights
+                // En zona dificil (>=50 pushes): casi sin RemoveMutation
+                // Add=50% Move=45% Remove=5%  vs  normal Add=33% Move=33% Remove=33%
+                int mutationType;
+                if (current_pushes >= 50) {
+                    int r = rand() % 100;
+                    if (r < 50)      mutationType = 1; // AddMutation
+                    else if (r < 95) mutationType = 0; // MoveMutation
+                    else             mutationType = 2; // RemoveMutation (5%)
+                } else {
+                    mutationType = rand() % 3;
+                }
+
                 if (mutationType == 0)      success = moveMut.apply(child);
                 else if (mutationType == 1) success = addMut.apply(child);
                 else                        success = removeMut.apply(child);
@@ -355,10 +478,15 @@ int main(int argc, char* argv[]) {
                     }
                 }
 
-                if (child_pushes > current_pushes) {
+                // MEJORA: Aceptación no estricta (>=) para explorar mesetas de dificultad
+                if (child_pushes >= current_pushes) {
+                    if (child_pushes > current_pushes) {
+                        failed_mutations = 0; // Reiniciar paciencia solo si mejora estrictamente
+                    } else {
+                        failed_mutations++;   // Los movimientos laterales consumen paciencia para evitar bucles
+                    }
                     current_ind = child;
                     current_pushes = child_pushes;
-                    failed_mutations = 0;
                 } else {
                     failed_mutations++;
                 }
@@ -366,8 +494,9 @@ int main(int argc, char* argv[]) {
 
             {
                 std::lock_guard<std::mutex> lock(cout_mutex);
+                int final_patience = (current_pushes >= 50) ? 8000 : 3000;
                 std::cout << "[Anti-Estancamiento] (Run " << (run_id + 1) << ") Paciencia agotada ("
-                          << MAX_PATIENCE << " intentos). Mejor: " << current_pushes << " empujes.\n";
+                          << final_patience << " intentos). Mejor: " << current_pushes << " empujes.\n";
             }
 
             miner.printProgress(cout_mutex);
