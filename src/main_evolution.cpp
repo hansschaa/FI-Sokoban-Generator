@@ -75,6 +75,7 @@ int main(int argc, char** argv)
 
     bool show_stats = false;
     bool no_parallel = false;
+    bool use_surrogate = true;
     int time_limit_mins = -1;
     
     // Parse optional arguments
@@ -84,6 +85,8 @@ int main(int argc, char** argv)
             show_stats = true;
         } else if (arg == "--no-parallel") {
             no_parallel = true;
+        } else if (arg == "--no-surrogate") {
+            use_surrogate = false;
         } else if (arg == "--time-limit-mins" && i + 1 < argc) {
             time_limit_mins = std::stoi(argv[++i]);
         }
@@ -135,6 +138,7 @@ int main(int argc, char** argv)
 
     Evaluator evaluator;
     evaluator.fitnessType = fitnessType;
+    evaluator.use_surrogate = use_surrogate;
 
     const int POP_SIZE = 10;
 
@@ -318,6 +322,7 @@ int main(int argc, char** argv)
         es.maxCircuitTimeSeconds = time_limit_mins > 0 ? time_limit_mins * 60 : -1;
 
         std::cout << "RUNNING MU + LAMBDA ES\n";
+        es.evaluator = evaluator;
         best = es.run(population);
     }
     else if (algorithm == "GA")
@@ -350,6 +355,7 @@ int main(int argc, char** argv)
         ga.maxCircuitTimeSeconds = time_limit_mins > 0 ? time_limit_mins * 60 : -1;
 
         std::cout << "RUNNING GENETIC ALGORITHM\n";
+        ga.evaluator = evaluator;
         best = ga.run(population);
     }
     else if (algorithm == "SA")
@@ -363,7 +369,7 @@ int main(int argc, char** argv)
         sa.circuitStartTime = circuit_start_time;
         sa.maxCircuitTimeSeconds = time_limit_mins > 0 ? time_limit_mins * 60 : -1;
 
-        //
+        sa.evaluator = evaluator;        //
         // START FROM BEST INDIVIDUAL
         // Avoids dependency on random ordering of the initial population.
         //
