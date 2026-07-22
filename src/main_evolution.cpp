@@ -195,7 +195,7 @@ int main(int argc, char** argv)
             while (!valid && attempts < 10000)
             {
                 auto board = shell;
-                int numBoxes = 1;
+                int numBoxes = max_boxes;
 
                 // Bloqueamos rand() y la generacion por seguridad de hilos
                 {
