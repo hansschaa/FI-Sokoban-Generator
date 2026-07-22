@@ -199,10 +199,11 @@ Individual GeneticAlgorithm::run(
 
         // PROCESS RESULTS
         for (auto& child : batch_to_evaluate) {
-            if (child.fitness > best.fitness)
-            {
-                best = child;
-                improved = true;
+            if (!evaluator.use_surrogate) {
+                if (child.fitness > best.fitness) {
+                    best = child;
+                    improved = true;
+                }
             }
             offspring.push_back(child);
         }
@@ -260,28 +261,49 @@ Individual GeneticAlgorithm::run(
             });
 
         //
-        // ELITIST REPLACEMENT
+        // ELITIST REPLACEMENT WITH SURROGATE VERIFICATION
         //
 
         population.clear();
 
         //
-        // KEEP GLOBAL BEST
+        // KEEP GLOBAL BEST (Already verified)
         //
 
         population.push_back(best);
 
         //
-        // ADD BEST OFFSPRING
+        // ADD BEST OFFSPRING (Verify if using surrogate)
         //
+        int astar_failures = 0;
+        const int MAX_FAILURES = 3;
 
-        for (int i = 0;
-             i < (int)offspring.size() &&
-             (int)population.size() < populationSize;
-             i++)
+        for (int i = 0; i < (int)offspring.size() && (int)population.size() < populationSize; i++)
         {
-            population.push_back(
-                offspring[i]);
+            if (evaluator.use_surrogate) {
+                if (astar_failures >= MAX_FAILURES) {
+                    // Surrogate is hallucinating false positives too much this generation.
+                    // Stop verifying to save time, rest of population will be filled with clones of best.
+                    break;
+                }
+                
+                Evaluator astar_eval = evaluator;
+                astar_eval.use_surrogate = false;
+                double true_fitness = astar_eval.evaluate(offspring[i]);
+                
+                if (true_fitness > -1e8) {
+                    offspring[i].fitness = true_fitness;
+                    population.push_back(offspring[i]);
+                    if (true_fitness > best.fitness) {
+                        best = offspring[i];
+                        improved = true;
+                    }
+                } else {
+                    astar_failures++;
+                }
+            } else {
+                population.push_back(offspring[i]);
+            }
         }
 
         //
