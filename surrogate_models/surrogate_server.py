@@ -41,7 +41,7 @@ def load_models():
     regressor_model.eval()
 
     # Load Regressor stats to un-normalize predictions
-    stats = torch.load("surrogate_models/results/regressor_stats.pt", map_location="cpu", weights_only=False)
+    stats = torch.load("surrogate_models/results/regressor_fold3_stats.pt", map_location="cpu", weights_only=False)
     pushes_mean = stats["pushes_mean"]
     pushes_std = stats["pushes_std"]
     branch_mean = stats["branching_mean"]
