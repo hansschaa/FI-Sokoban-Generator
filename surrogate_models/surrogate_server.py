@@ -30,13 +30,13 @@ def load_models():
         r_params = json.load(f)
 
     # Initialize models
-    print(f"Loading Classifier (dropout={c_params['dropout_p']}) to {device}")
-    classifier_model = SokobanResNetClassifier(dropout_p=c_params["dropout_p"]).to(device)
+    print(f"Loading Classifier (dropout={c_params['params']['dropout_p']}) to {device}")
+    classifier_model = SokobanResNetClassifier(dropout_p=c_params['params']["dropout_p"]).to(device)
     classifier_model.load_state_dict(torch.load("surrogate_models/results/final_classifier_fold3.pt", map_location=device))
     classifier_model.eval()
 
-    print(f"Loading Regressor (dropout={r_params['dropout_p']}) to {device}")
-    regressor_model = SokobanResNetRegressor(dropout_p=r_params["dropout_p"]).to(device)
+    print(f"Loading Regressor (dropout={r_params['params']['dropout_p']}) to {device}")
+    regressor_model = SokobanResNetRegressor(dropout_p=r_params['params']["dropout_p"]).to(device)
     regressor_model.load_state_dict(torch.load("surrogate_models/results/final_regressor_fold3.pt", map_location=device))
     regressor_model.eval()
 
