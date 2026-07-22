@@ -21,8 +21,6 @@
 
 int main(int argc, char** argv)
 {
-    srand(time(nullptr));
-
     //
     // ARGUMENT CHECK
     //
@@ -77,6 +75,7 @@ int main(int argc, char** argv)
     bool no_parallel = false;
     bool use_surrogate = true;
     int time_limit_mins = -1;
+    unsigned int seed = time(nullptr);
     
     // Parse optional arguments
     for (int i = current_arg; i < argc; i++) {
@@ -89,8 +88,13 @@ int main(int argc, char** argv)
             use_surrogate = false;
         } else if (arg == "--time-limit-mins" && i + 1 < argc) {
             time_limit_mins = std::stoi(argv[++i]);
+        } else if (arg == "--seed" && i + 1 < argc) {
+            seed = std::stoul(argv[++i]);
         }
     }
+
+    srand(seed);
+    std::cout << "Random Seed: " << seed << "\n";
 
     //
     // PARSE FITNESS TYPE

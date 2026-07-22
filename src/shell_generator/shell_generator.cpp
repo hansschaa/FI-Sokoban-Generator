@@ -4,8 +4,7 @@
 
 // Constructor
 SokobanGenerator::SokobanGenerator(int fX, int fY) : factorX(fX), factorY(fY) {
-    std::random_device rd;
-    rng = std::mt19937(rd());
+    rng = std::mt19937(rand());
     
     // Tableros con tamaño dinámico + 2 de margen exterior
     // Tableros con tamaño dinámico + 2 de margen exterior (el borde del template)
