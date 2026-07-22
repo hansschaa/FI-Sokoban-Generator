@@ -44,8 +44,8 @@ def load_models():
     stats = torch.load("surrogate_models/results/regressor_fold3_stats.pt", map_location="cpu", weights_only=False)
     pushes_mean = stats["pushes_mean"]
     pushes_std = stats["pushes_std"]
-    branch_mean = stats["branching_mean"]
-    branch_std = stats["branching_std"]
+    branch_mean = stats["branch_mean"]
+    branch_std = stats["branch_std"]
     print("Models loaded successfully! Server ready.")
 
 @app.route('/evaluate', methods=['POST'])
