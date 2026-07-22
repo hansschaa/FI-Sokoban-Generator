@@ -71,36 +71,11 @@ Individual GeneticAlgorithm::run(
 
     //
     // INITIAL EVALUATION
+    // (Omitida: La población inicial ya viene evaluada con A* desde main_evolution.cpp)
     //
-
+    
     unsigned int num_threads = use_parallel ? std::thread::hardware_concurrency() : 1;
     if (num_threads == 0) num_threads = 4;
-    
-    if (evaluator.use_surrogate) {
-        evaluator.evaluate_surrogate_batch(population);
-    } else {
-        std::atomic<int> current_task{0};
-        std::vector<std::future<void>> futures;
-
-        auto eval_task = [&]() {
-            while (true) {
-                int i = current_task.fetch_add(1);
-                if (i >= (int)population.size()) break;
-                
-                Evaluator local_eval = evaluator;
-                local_eval.evaluate(population[i]);
-            }
-        };
-
-        unsigned int threads_to_launch = std::min((unsigned int)population.size(), num_threads);
-        for (unsigned int t = 0; t < threads_to_launch; t++) {
-            futures.push_back(std::async(std::launch::async, eval_task));
-        }
-        for (auto& f : futures) {
-            f.get();
-        }
-    }
-
     evaluations += population.size();
 
     //
