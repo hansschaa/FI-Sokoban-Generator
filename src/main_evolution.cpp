@@ -387,7 +387,7 @@ int main(int argc, char** argv)
         es.mu              = 15;
         es.lambda          = 20;  // igualado a GA para comparación justa
         es.mutationRate    = 1.0;
-        es.maxEvaluations  = 20000;
+        es.maxEvaluations  = (time_limit_mins > 0) ? 2000000000 : 20000;
         es.stagnationLimit = 1000;
         es.circuitStartTime = circuit_start_time;
         es.maxCircuitTimeSeconds = time_limit_mins > 0 ? time_limit_mins * 60 : -1;
@@ -420,7 +420,7 @@ int main(int argc, char** argv)
             ga.crossoverRate   = 0.8483;
         }
 
-        ga.maxEvaluations  = 20000;
+        ga.maxEvaluations  = (time_limit_mins > 0) ? 2000000000 : 20000;
         ga.stagnationLimit = 1000;
         ga.circuitStartTime = circuit_start_time;
         ga.maxCircuitTimeSeconds = time_limit_mins > 0 ? time_limit_mins * 60 : -1;
@@ -435,7 +435,7 @@ int main(int argc, char** argv)
         sa.setDeadlockMask(deadlock_mask);
         sa.initialTemperature = 100.0;
         sa.coolingRate        = 0.01;
-        sa.maxEvaluations     = 500;
+        sa.maxEvaluations     = (time_limit_mins > 0) ? 2000000000 : 500;
         sa.stagnationLimit    = 15;
         sa.circuitStartTime = circuit_start_time;
         sa.maxCircuitTimeSeconds = time_limit_mins > 0 ? time_limit_mins * 60 : -1;
