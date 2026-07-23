@@ -13,6 +13,7 @@
 #include "solver_template.h"
 #include "mazesolver.h"
 #include "hungarian.h"
+#include "neural_heuristic.hpp"
 
 using namespace constant;
 using namespace std;
@@ -570,8 +571,19 @@ SolverStats game_solver::test_template(
         initial_opt_dist = h.solve();
     }
 
+    std::unique_ptr<NeuralHeuristic> neural_net = nullptr;
+    if (heuristic_type == Heuristic::neural) {
+        // Hardcode path for the experiment
+        std::string model_path = "surrogate_models/results/surrogate_regressor_jit.pt";
+        neural_net = std::make_unique<NeuralHeuristic>(model_path, m, n);
+    }
+
     auto heuristic = [&](const game_node* a, const game_node*) {
-        if (heuristic_type == Heuristic::hungarian) {
+        if (heuristic_type == Heuristic::neural) {
+            // Neural network handles everything
+            return static_cast<int>(neural_net->evaluate(a, end_vec));
+        }
+        else if (heuristic_type == Heuristic::hungarian) {
             int num_boxes = a->box_count;
             int num_goals = (int)goal_positions.size();
             int sz = std::max(num_boxes, num_goals);

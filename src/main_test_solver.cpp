@@ -58,6 +58,10 @@ int main(int argc, char* argv[])
         heuristic = Heuristic::simple;
         std::cout << "Heuristica: Simple\n";
     }
+    else if (heuristic_arg == "neural") {
+        heuristic = Heuristic::neural;
+        std::cout << "Heuristica: Neural\n";
+    }
     else {
         std::cerr << "Heuristica desconocida: \"" << heuristic_arg << "\"\n";
         return 1;
