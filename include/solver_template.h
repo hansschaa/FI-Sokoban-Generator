@@ -26,16 +26,16 @@ public:
     bool did_timeout() const {
         return timeout_reached;
     }
-    Result solve (
-    const Node* start,
-    const Node* goal,
-    std::function<void(const Node*, std::function<void(const Node*)>)> get_neighbors,
-    std::function<bool(const Node*)> is_visited,
-    std::function<void(const Node*)> mark_visited,
-    std::function<bool(const Node*, const Node*)> is_equal,
-    std::function<int(const Node*, const Node*)> heuristic = nullptr,
-    double max_seconds = 120.0,
-    size_t max_nodes = 500000
+    Result solve(
+        const Node* start, const Node* goal,
+        std::function<void(const Node*, std::function<void(const Node*)>)> get_neighbors,
+        std::function<bool(const Node*)> is_visited,
+        std::function<void(const Node*)> mark_visited,
+        std::function<bool(const Node*, const Node*)> is_equal,
+        std::function<int(const Node*, const Node*)> heuristic = nullptr,
+        std::function<std::vector<int>(const std::vector<const Node*>&, const Node*)> heuristic_batch = nullptr,
+        double max_seconds = 120.0,
+        size_t max_nodes = 500000
     ) {
         if (is_equal(start, goal)) {
             if constexpr (std::is_same_v<Result, bool>) {
@@ -130,31 +130,36 @@ public:
 
             bool found = false;
 
+            std::vector<const Node*> children;
             get_neighbors(current, [&](const Node* neighbor) {
-                generated_count++;
+                children.push_back(neighbor);
+            });
+
+            if (!children.empty()) {
                 if constexpr (alg == Method::a_star) {
-                    if constexpr (!std::is_same_v<Result, bool>) {
-                        if (parent.find(neighbor) == parent.end()) {
-                            parent[neighbor] = current;
+                    std::vector<int> h_scores;
+                    if (heuristic_batch) {
+                        h_scores = heuristic_batch(children, goal);
+                    } else {
+                        h_scores.reserve(children.size());
+                        for (auto n : children) {
+                            h_scores.push_back(heuristic(n, goal));
                         }
                     }
 
-                    int g_neighbor = g_current + 1;
-                    int f_score    = g_neighbor + heuristic(neighbor, goal);
-                    container.push({f_score, g_neighbor, neighbor});
+                    for (size_t i = 0; i < children.size(); i++) {
+                        const Node* neighbor = children[i];
+                        generated_count++;
 
-                    if (is_equal(neighbor, goal)) {
-                        found = true;
-                        goal  = neighbor;
-                    }
-                }
-                else {
-                    if (!is_visited(neighbor)) {
-                        mark_visited(neighbor);
                         if constexpr (!std::is_same_v<Result, bool>) {
-                            parent[neighbor] = current;
+                            if (parent.find(neighbor) == parent.end()) {
+                                parent[neighbor] = current;
+                            }
                         }
-                        container.push(neighbor);
+
+                        int g_neighbor = g_current + 1;
+                        int f_score    = g_neighbor + h_scores[i];
+                        container.push({f_score, g_neighbor, neighbor});
 
                         if (is_equal(neighbor, goal)) {
                             found = true;
@@ -162,7 +167,24 @@ public:
                         }
                     }
                 }
-            });
+                else {
+                    for (const Node* neighbor : children) {
+                        generated_count++;
+                        if (!is_visited(neighbor)) {
+                            mark_visited(neighbor);
+                            if constexpr (!std::is_same_v<Result, bool>) {
+                                parent[neighbor] = current;
+                            }
+                            container.push(neighbor);
+
+                            if (is_equal(neighbor, goal)) {
+                                found = true;
+                                goal  = neighbor;
+                            }
+                        }
+                    }
+                }
+            }
 
             if (found) {
                 // --- ARREGLO DE LEAK: Drenar la open list antes de salir con éxito (SOLVED) ---

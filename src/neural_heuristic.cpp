@@ -114,3 +114,81 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
 
     return std::max(0.0f, predicted_pushes);
 }
+
+std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_node*>& nodes, const std::vector<std::vector<bool>>& end_vec) {
+    if (nodes.empty()) return {};
+
+    int N = nodes.size();
+    int max_h = 25;
+    int max_w = 25;
+    int offset_r = (max_h - m) / 2;
+    int offset_c = (max_w - n) / 2;
+
+    std::vector<float> batch_data(N * 5 * max_h * max_w, 0.0f);
+
+    for (int i = 0; i < N; ++i) {
+        const game_node* node = nodes[i];
+        int batch_offset = i * 5 * max_h * max_w;
+
+        // Default background is Wall (Channel 0 = 1.0)
+        for (int r = 0; r < max_h; ++r) {
+            for (int c = 0; c < max_w; ++c) {
+                batch_data[batch_offset + 0 * max_h * max_w + r * max_w + c] = 1.0f;
+            }
+        }
+
+        // 1. Static Layout (Walls and Floors)
+        for (int r = 0; r < m; ++r) {
+            for (int c = 0; c < n; ++c) {
+                int rr = r + offset_r;
+                int cc = c + offset_c;
+                int base_idx = batch_offset + rr * max_w + cc;
+                
+                batch_data[base_idx] = 0.0f; // Clear wall
+
+                if (constant::blank_matrix[r][c] == constant::WALL) {
+                    batch_data[base_idx] = 1.0f;
+                } else {
+                    batch_data[batch_offset + 1 * max_h * max_w + rr * max_w + cc] = 1.0f;
+                }
+
+                if (end_vec[r][c]) {
+                    batch_data[batch_offset + 3 * max_h * max_w + rr * max_w + cc] = 1.0f;
+                }
+            }
+        }
+
+        // 2. Dynamic State (Boxes and Player)
+        for (int b = 0; b < node->box_count; ++b) {
+            int br = node->box_list[b].x + offset_r;
+            int bc = node->box_list[b].y + offset_c;
+            batch_data[batch_offset + 2 * max_h * max_w + br * max_w + bc] = 1.0f;
+        }
+
+        int pr = node->person_point.x + offset_r;
+        int pc = node->person_point.y + offset_c;
+        batch_data[batch_offset + 4 * max_h * max_w + pr * max_w + pc] = 1.0f;
+    }
+
+    auto input_tensor = torch::from_blob(batch_data.data(), {N, 5, max_h, max_w}, torch::kFloat32);
+
+    std::vector<torch::jit::IValue> inputs;
+    inputs.push_back(input_tensor);
+
+    auto outputs = model->forward(inputs).toTuple();
+    auto pushes_tensor = outputs->elements()[0].toTensor();
+
+    std::vector<float> results;
+    results.reserve(N);
+
+    float pushes_mean = 42.447f;
+    float pushes_std = 27.029f;
+
+    for (int i = 0; i < N; ++i) {
+        float z_score = pushes_tensor[i].item<float>();
+        float pushes_pred = z_score * pushes_std + pushes_mean;
+        results.push_back(pushes_pred);
+    }
+
+    return results;
+}

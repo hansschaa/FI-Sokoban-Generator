@@ -27,4 +27,5 @@ public:
     ~NeuralHeuristic();
 
     float evaluate(const game_node* node, const std::vector<std::vector<bool>>& end_vec);
+    std::vector<float> evaluate_batch(const std::vector<const game_node*>& nodes, const std::vector<std::vector<bool>>& end_vec);
 };
