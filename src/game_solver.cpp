@@ -584,25 +584,10 @@ SolverStats game_solver::test_template(
             int penalty_cost = penalty_solver.calculate_penalty(a->box_list, a->box_count);
             if (penalty_cost >= 1000) return penalty_cost;
 
-            // 2. Base Heuristica Húngara (toma microsegundos)
-            int num_boxes = a->box_count;
-            int num_goals = (int)goal_positions.size();
-            int sz = std::max(num_boxes, num_goals);
-            vector<vector<int>> cost(sz, vector<int>(sz, 0));
-            for (int i = 0; i < a->box_count; ++i) {
-                for (int j = 0; j < num_goals; j++)
-                    cost[i][j] = dist_to_goal[j][a->box_list[i].x][a->box_list[i].y];
-            }
-            Hungarian h(cost);
-            int hungarian_cost = h.solve();
-
-            // 3. Heurística Neuronal Profunda (toma ~33ms)
+            // 2. Heurística Neuronal Profunda
             int neural_cost = static_cast<int>(neural_net->evaluate(a, end_vec));
-
-            // 4. Estrategia Dominante: max(h1, h2)
-            int dominant_cost = std::max(hungarian_cost, neural_cost);
             
-            return dominant_cost + penalty_cost;
+            return neural_cost + penalty_cost;
         }
         else if (heuristic_type == Heuristic::hungarian) {
             int num_boxes = a->box_count;

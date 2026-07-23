@@ -69,7 +69,8 @@ void print_solver_stats(const SolverStats& stats);
 
 enum class Heuristic {
     simple,    
-    hungarian  
+    hungarian,
+    neural
 };
 
 class game_solver {
