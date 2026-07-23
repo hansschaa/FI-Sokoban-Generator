@@ -143,39 +143,40 @@ Individual EvolutionStrategy::run(
             generated++;
         }
 
-        // PARALLEL EVALUATION OF BATCH
+        // EVALUATION OF BATCH
         if (!batch_to_evaluate.empty()) {
-            std::atomic<int> current_child{0};
-            std::vector<std::future<void>> child_futures;
-            
-            auto child_eval_task = [&]() {
-                while(true) {
-                    int i = current_child.fetch_add(1);
-                    if (i >= (int)batch_to_evaluate.size()) break;
-                    
-                    Evaluator local_eval = evaluator;
-                    local_eval.evaluate(batch_to_evaluate[i]);
+            if (evaluator.use_surrogate) {
+                evaluator.evaluate_surrogate_batch(batch_to_evaluate);
+            } else {
+                std::atomic<int> current_child{0};
+                std::vector<std::future<void>> child_futures;
+                
+                for (unsigned int i = 0; i < num_threads; i++) {
+                    child_futures.push_back(std::async(std::launch::async, [&]() {
+                        while (true) {
+                            int idx = current_child++;
+                            if (idx >= (int)batch_to_evaluate.size()) break;
+                            evaluator.evaluate(batch_to_evaluate[idx]);
+                        }
+                    }));
                 }
-            };
-            
-            unsigned int c_threads = std::min((unsigned int)batch_to_evaluate.size(), num_threads);
-            for (unsigned int t = 0; t < c_threads; t++) {
-                child_futures.push_back(std::async(std::launch::async, child_eval_task));
+                for (auto& f : child_futures) {
+                    f.get();
+                }
             }
-            for(auto& f : child_futures) f.get();
             
             evaluations += batch_to_evaluate.size();
         }
 
         // PROCESS RESULTS
         for (auto& child : batch_to_evaluate) {
-            if (!std::isnan(child.fitness)) {
-                offspring.push_back(child);
+            if (!evaluator.use_surrogate) {
                 if (child.fitness > best.fitness) {
                     best = child;
                     improved = true;
                 }
             }
+            offspring.push_back(child);
         }
         for (auto& child : batch_no_evaluation) {
             if (!std::isnan(child.fitness)) {
@@ -237,20 +238,62 @@ Individual EvolutionStrategy::run(
             return a.fitness > b.fitness;
         });
 
-        //
         // SELECT BEST μ
         // Guard against combined being smaller than mu
-        // (can happen if all offspring failed every generation)
-        //
+        int toSelect = std::min(mu, (int)combined.size());
+        std::vector<Individual> next_population;
+        
+        int astar_failures = 0;
+        const int MAX_FAILURES = 3;
 
-        population.clear();
-
-        int toSelect =
-            std::min(mu, (int)combined.size());
-
-        for (int i = 0; i < toSelect; i++)
+        for (int i = 0; i < (int)combined.size() && (int)next_population.size() < toSelect; i++)
         {
-            population.push_back(combined[i]);
+            auto& ind = combined[i];
+            
+            if (evaluator.use_surrogate) {
+                // Check if this individual came from the old population (already verified)
+                bool is_parent = false;
+                for (const auto& parent : population) {
+                    if (parent.board == ind.board) {
+                        is_parent = true;
+                        break;
+                    }
+                }
+                
+                if (!is_parent) {
+                    if (astar_failures >= MAX_FAILURES) {
+                        // Stop verifying to save time
+                        continue;
+                    }
+                    
+                    Evaluator astar_eval = evaluator;
+                    astar_eval.use_surrogate = false;
+                    double true_fitness = astar_eval.evaluate(ind);
+                    
+                    if (true_fitness > -1e8) {
+                        ind.fitness = true_fitness;
+                        next_population.push_back(ind);
+                        if (true_fitness > best.fitness) {
+                            best = ind;
+                            improved = true;
+                        }
+                    } else {
+                        astar_failures++;
+                        continue; // Discard False Positive
+                    }
+                } else {
+                    next_population.push_back(ind);
+                }
+            } else {
+                next_population.push_back(ind);
+            }
+        }
+        
+        population = next_population;
+        
+        // If we rejected too many and couldn't fill mu, fill with clones of best
+        while ((int)population.size() < toSelect) {
+            population.push_back(best);
         }
 
         //

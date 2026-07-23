@@ -142,8 +142,25 @@ Individual SimulatedAnnealing::run(
         evaluations++;
 
         //
-        // ACCEPTANCE
+        // ACCEPTANCE & VERIFICATION
         //
+        
+        bool verified = false;
+        
+        if (evaluator.use_surrogate && neighbor.fitness > current.fitness) {
+            // Active verification for improving moves to avoid False Positives
+            Evaluator astar_eval = evaluator;
+            astar_eval.use_surrogate = false;
+            double true_fit = astar_eval.evaluate(neighbor);
+            
+            if (true_fit <= -1e8) {
+                // False Positive! Reject it.
+                neighbor.fitness = true_fit;
+            } else {
+                neighbor.fitness = true_fit;
+                verified = true;
+            }
+        }
 
         double probability =
             acceptanceProbability(
@@ -156,8 +173,7 @@ Individual SimulatedAnnealing::run(
 
         if (probability > r)
         {
-            current =
-                neighbor;
+            current = neighbor;
         }
 
         //
@@ -166,15 +182,8 @@ Individual SimulatedAnnealing::run(
 
         if (current.fitness > best.fitness)
         {
-            best =
-                current;
-
+            best = current;
             improved = true;
-
-            /*std::cout
-                << "NEW BEST "
-                << best.fitness
-                << std::endl;*/
         }
 
         //

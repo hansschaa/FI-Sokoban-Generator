@@ -18,6 +18,63 @@
 #include "../include/game_solver.h"
 
 #include "../include/evolution/algorithms/simulated_annealing.h"
+#include <fstream>
+#include <queue>
+
+std::vector<std::vector<char>> load_and_flood_fill_shell(const std::string& filename) {
+    std::ifstream file(filename);
+    std::vector<std::vector<char>> board;
+    std::string line;
+    
+    if (!file.is_open()) {
+        std::cerr << "Error: No se pudo abrir el archivo de shell: " << filename << "\n";
+        exit(1);
+    }
+    
+    int max_cols = 0;
+    while (std::getline(file, line)) {
+        if (!line.empty() && line.back() == '\r') line.pop_back();
+        std::vector<char> row(line.begin(), line.end());
+        max_cols = std::max(max_cols, (int)row.size());
+        board.push_back(row);
+    }
+    
+    // Rellenar las filas para que todas tengan el mismo ancho
+    for (auto& row : board) {
+        while ((int)row.size() < max_cols) {
+            row.push_back(' ');
+        }
+    }
+    
+    int rows = board.size();
+    if (rows == 0) return board;
+    int cols = board[0].size();
+    
+    // Flood fill desde todos los bordes
+    std::queue<std::pair<int, int>> q;
+    auto add_if_empty = [&](int r, int c) {
+        if (r >= 0 && r < rows && c >= 0 && c < cols && board[r][c] == ' ') {
+            board[r][c] = '#';
+            q.push({r, c});
+        }
+    };
+    
+    for (int r = 0; r < rows; r++) { add_if_empty(r, 0); add_if_empty(r, cols - 1); }
+    for (int c = 0; c < cols; c++) { add_if_empty(0, c); add_if_empty(rows - 1, c); }
+    
+    int dr[] = {-1, 1, 0, 0};
+    int dc[] = {0, 0, -1, 1};
+    
+    while (!q.empty()) {
+        auto [r, c] = q.front();
+        q.pop();
+        for (int i = 0; i < 4; i++) {
+            add_if_empty(r + dr[i], c + dc[i]);
+        }
+    }
+    
+    return board;
+}
 
 int main(int argc, char** argv)
 {
@@ -76,6 +133,7 @@ int main(int argc, char** argv)
     bool use_surrogate = true;
     int time_limit_mins = -1;
     unsigned int seed = time(nullptr);
+    std::string shell_file = "";
     
     // Parse optional arguments
     for (int i = current_arg; i < argc; i++) {
@@ -90,6 +148,8 @@ int main(int argc, char** argv)
             time_limit_mins = std::stoi(argv[++i]);
         } else if (arg == "--seed" && i + 1 < argc) {
             seed = std::stoul(argv[++i]);
+        } else if (arg == "--shell" && i + 1 < argc) {
+            shell_file = argv[++i];
         }
     }
 
@@ -155,16 +215,23 @@ int main(int argc, char** argv)
         std::cout << "=========================================\n\n";
 
         //
-        // 1. GENERATE SHELL (CON DIMENSIONES ALEATORIAS SI CORRESPONDE)
+        // 1. GENERATE SHELL (CON DIMENSIONES ALEATORIAS SI CORRESPONDE O DESDE ARCHIVO)
         //
         
-        if (random_factor_x) factorX = 2 + (rand() % 3); // 2, 3 o 4
-        if (random_factor_y) factorY = 2 + (rand() % 3); // 2, 3 o 4
+        std::vector<std::vector<char>> shell;
+        
+        if (shell_file != "") {
+            std::cout << "Cargando cascaron desde " << shell_file << "...\n";
+            shell = load_and_flood_fill_shell(shell_file);
+        } else {
+            if (random_factor_x) factorX = 2 + (rand() % 3); // 2, 3 o 4
+            if (random_factor_y) factorY = 2 + (rand() % 3); // 2, 3 o 4
 
-        SokobanGenerator generator(factorX, factorY);
-        std::cout << "Generando cascaron de topologia " << factorX << "x" << factorY << "...\n";
-        generator.generate();
-        std::vector<std::vector<char>> shell = generator.getBoard();
+            SokobanGenerator generator(factorX, factorY);
+            std::cout << "Generando cascaron de topologia " << factorX << "x" << factorY << "...\n";
+            generator.generate();
+            shell = generator.getBoard();
+        }
 
         const int free_cells = count_free_cells(shell);
         const int max_boxes  = std::max(1, std::min(6, free_cells / 15));
