@@ -58,6 +58,8 @@ public:
 
     bool use_parallel = true;
 
+    std::vector<std::vector<bool>> deadlock_mask;
+
     BoardCrossover crossover;
 
     void setDeadlockMask(const std::vector<std::vector<bool>>& mask) {

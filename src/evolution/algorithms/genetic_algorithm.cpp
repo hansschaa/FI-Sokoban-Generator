@@ -63,6 +63,11 @@ Individual GeneticAlgorithm::run(
     std::vector<Individual>& population)
 {
     evaluations = 0;
+    
+    // Configurar deadlock_mask para las mutaciones y el crossover
+    setDeadlockMask(deadlock_mask);
+    crossover.deadlock_mask = deadlock_mask;
+
 
     const int populationSize =
         population.size();

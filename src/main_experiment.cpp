@@ -183,12 +183,16 @@ int main(int argc, char** argv)
     }
 
     Individual best;
+    
+    // Calcular deadlock mask para el cascarón base
+    std::vector<std::vector<bool>> deadlock_mask = compute_deadlock_mask(shell);
 
     // 6. Ejecución silenciosa de Metaheurísticas con Parseo Blindado
     try {
         if (algorithm == "ES")
         {
             EvolutionStrategy es;
+            es.setDeadlockMask(deadlock_mask);
             es.maxEvaluations  = maxEvals;
             es.stagnationLimit = stagLimit;
             es.evaluator.fitnessType = fitnessType;
@@ -216,6 +220,8 @@ int main(int argc, char** argv)
         else if (algorithm == "GA")
         {
             GeneticAlgorithm ga;
+            ga.setDeadlockMask(deadlock_mask);
+            ga.deadlock_mask = deadlock_mask; // For crossover
             ga.maxEvaluations  = maxEvals;
             ga.stagnationLimit = stagLimit;
             ga.evaluator.fitnessType = fitnessType;
@@ -246,6 +252,8 @@ int main(int argc, char** argv)
         else if (algorithm == "SA")
         {
             SimulatedAnnealing sa;
+            sa.moveMutation.deadlock_mask = deadlock_mask;
+            sa.addMutation.deadlock_mask = deadlock_mask;
             sa.maxEvaluations     = maxEvals;   
             sa.stagnationLimit    = stagLimit;
             sa.evaluator.fitnessType = fitnessType;  

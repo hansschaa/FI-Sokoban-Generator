@@ -14,6 +14,7 @@ public:
     //
 
     int crossoverSpacing = 2;
+    std::vector<std::vector<bool>> deadlock_mask;
 
     bool apply(
         const Individual& parent1,
@@ -62,7 +63,7 @@ private:
     //
 
     Pair getRandomEmpty(
-        const std::vector<std::vector<char>>& board);
+        const std::vector<std::vector<char>>& board, bool check_deadlock = false);
 
     //
     // REPAIR ILLEGAL BOARD

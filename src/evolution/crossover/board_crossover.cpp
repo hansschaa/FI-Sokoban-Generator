@@ -45,14 +45,20 @@ int BoardCrossover::countPlayers(
 // ─────────────────────────────────────────────────────────────────────────────
 
 Pair BoardCrossover::getRandomEmpty(
-    const std::vector<std::vector<char>>& board)
+    const std::vector<std::vector<char>>& board, bool check_deadlock)
 {
     std::vector<Pair> empty;
 
     for (int i = 0; i < (int)board.size(); i++)
         for (int j = 0; j < (int)board[i].size(); j++)
-            if (board[i][j] == ' ')
+            if (board[i][j] == ' ') {
+                if (check_deadlock && !deadlock_mask.empty() && 
+                    i < (int)deadlock_mask.size() && j < (int)deadlock_mask[i].size() && 
+                    deadlock_mask[i][j]) {
+                    continue; // Skip deadlock cells
+                }
                 empty.push_back({i, j});
+            }
 
     if (empty.empty())
         return {-1, -1};
@@ -285,7 +291,7 @@ void BoardCrossover::repairIllegal(
 
     while (goals > boxes)
     {
-        Pair e = getRandomEmpty(board);
+        Pair e = getRandomEmpty(board, true);
 
         if (e.i == -1) break;
 
@@ -302,7 +308,7 @@ void BoardCrossover::repairIllegal(
 
     if (boxes == 0)
     {
-        Pair e1 = getRandomEmpty(board);
+        Pair e1 = getRandomEmpty(board, true);
 
         if (e1.i == -1) return;
 
@@ -326,7 +332,7 @@ void BoardCrossover::repairIllegal(
         std::vector<std::vector<char>> temp = board;
         temp[e1.i][e1.j] = '.';
 
-        Pair e2 = getRandomEmpty(temp);
+        Pair e2 = getRandomEmpty(temp, true);
 
         if (e2.i == -1) return;
 
