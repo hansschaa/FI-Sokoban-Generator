@@ -58,7 +58,6 @@ class SokobanResNetRegressor(nn.Module):
             nn.Linear(256, 128), nn.ReLU(inplace=True), nn.Dropout(dropout_p),
         )
         self.head_pushes    = nn.Sequential(nn.Linear(128, 64), nn.ReLU(inplace=True), nn.Linear(64, 1))
-        self.head_branching = nn.Sequential(nn.Linear(128, 64), nn.ReLU(inplace=True), nn.Linear(64, 1))
         self._init_weights()
 
     def _init_weights(self):
@@ -77,7 +76,7 @@ class SokobanResNetRegressor(nn.Module):
         x = self.layer3(x)
         x = self.pool(x).flatten(1)
         x = self.neck(x)
-        return self.head_pushes(x).squeeze(1), self.head_branching(x).squeeze(1)
+        return self.head_pushes(x).squeeze(1)
 
 
 class AsymmetricHuberLoss(nn.Module):
@@ -98,18 +97,8 @@ class AsymmetricHuberLoss(nn.Module):
 
 
 class MultiHeadRegressorLoss(nn.Module):
-    def __init__(self, w_pushes=1.0, w_branch=0.5, delta=1.0, alpha=1.5):
-        super().__init__()
-        self.w_pushes       = w_pushes
-        self.w_branch       = w_branch
-        self.loss_pushes    = AsymmetricHuberLoss(delta, alpha)
-        self.loss_branching = nn.HuberLoss(delta=delta)
-
-    def forward(self, p_pred, p_target, b_pred, b_target):
-        lp = self.loss_pushes(p_pred, p_target)
-        lb = self.loss_branching(b_pred, b_target)
-        total = self.w_pushes * lp + self.w_branch * lb
-        return total, {"loss_pushes": lp.item(), "loss_branch": lb.item()}
+    # Ya no se usa, pero la mantenemos vacía por compatibilidad de imports en otros lados o la borramos
+    pass
 
 
 if __name__ == "__main__":
@@ -118,9 +107,8 @@ if __name__ == "__main__":
     n = sum(p.numel() for p in model.parameters())
     print(f"Parámetros: {n:,}")
     x = torch.randn(8, 5, 25, 25).to(device)
-    p, b = model(x)
+    p = model(x)
     print(f"Pushes:    {p.shape}  sample={p[:3].tolist()}")
-    print(f"Branching: {b.shape}  sample={b[:3].tolist()}")
     print("✅ Smoke test OK")
 
 # ─────────────────────────────────────────────────────────────────────────────

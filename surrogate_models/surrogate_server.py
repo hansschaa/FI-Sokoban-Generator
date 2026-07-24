@@ -83,20 +83,18 @@ def evaluate():
         if len(solvable_indices) > 0:
             solvable_tensors = batch_tensor[solvable_indices]
             with torch.no_grad():
-                p_norm_pred, b_norm_pred = regressor_model(solvable_tensors)
+                p_norm_pred = regressor_model(solvable_tensors)
                 p_norm_pred = p_norm_pred.squeeze(-1)
-                b_norm_pred = b_norm_pred.squeeze(-1)
             
             # Un-normalize
             p_pred_log = (p_norm_pred * pushes_std) + pushes_mean
             p_pred = torch.clamp(torch.expm1(p_pred_log), min=0.0)
-            b_pred = (b_norm_pred * branch_std) + branch_mean
 
             # Map back to results
             for i, idx in enumerate(solvable_indices.tolist()):
                 results[idx]["is_solvable"] = True
                 results[idx]["pushes"] = p_pred[i].item()
-                results[idx]["branching"] = b_pred[i].item()
+                results[idx]["branching"] = 1.0
 
         return jsonify(results)
 

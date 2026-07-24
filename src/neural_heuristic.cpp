@@ -100,10 +100,10 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
     inputs.push_back(input_tensor);
 
     torch::NoGradGuard no_grad;
-    auto output = model->forward(inputs).toTuple();
+    auto output = model->forward(inputs);
     
-    // Regressor returns: pushes_pred (B,), branching_pred (B,)
-    torch::Tensor pushes_pred = output->elements()[0].toTensor();
+    // Regressor returns: pushes_pred (B,)
+    torch::Tensor pushes_pred = output.toTensor();
     float z_score = pushes_pred.item<float>();
 
     // Un-normalize
@@ -176,8 +176,8 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
     inputs.push_back(input_tensor);
 
     torch::NoGradGuard no_grad;
-    auto outputs = model->forward(inputs).toTuple();
-    auto pushes_tensor = outputs->elements()[0].toTensor();
+    auto output = model->forward(inputs);
+    torch::Tensor pushes_tensor = output.toTensor();
 
     std::vector<float> results;
     results.reserve(N);

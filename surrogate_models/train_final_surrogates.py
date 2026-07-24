@@ -74,14 +74,13 @@ def train_regressor(folds_to_run):
     lr           = cfg["lr"]
     weight_decay = cfg["weight_decay"]
     dropout_p    = cfg["dropout_p"]
-    w_branch     = cfg["w_branch"]
     batch_size   = int(cfg["batch_size"])
 
     print("\n" + "="*65)
     print("  ENTRENAMIENTO FINAL: REGRESOR (MULTI-HEAD RESNET)")
     print("="*65)
     print(f"  Dispositivo  : {device.type.upper()} ({torch.cuda.get_device_name(0) if device.type=='cuda' else 'CPU'})")
-    print(f"  Hiperparámetros: lr={lr:.6f}, wd={weight_decay:.6f}, drop={dropout_p:.2f}, w_branch={w_branch:.2f}, bs={batch_size}\n")
+    print(f"  Hiperparámetros: lr={lr:.6f}, wd={weight_decay:.6f}, drop={dropout_p:.2f}, bs={batch_size}\n")
 
     fold_maes = []
 
@@ -120,18 +119,14 @@ def train_regressor(folds_to_run):
             model.train()
             train_loss = 0.0
 
-            for tensors, p_norm, b_norm, _, _, weights in train_loader:
-                tensors, p_norm, b_norm, weights = tensors.to(device), p_norm.to(device), b_norm.to(device), weights.to(device)
+            for tensors, p_norm, _, _, _, weights in train_loader:
+                tensors, p_norm, weights = tensors.to(device), p_norm.to(device), weights.to(device)
                 optimizer.zero_grad()
-                p_pred, b_pred = model(tensors)
+                p_pred = model(tensors)
                 
                 loss_p = criterion(p_pred, p_norm)
-                loss_b = criterion(b_pred, b_norm)
+                loss = (loss_p * weights).mean()
                 
-                loss_p = (loss_p * weights).mean()
-                loss_b = (loss_b * weights).mean()
-                
-                loss = loss_p + w_branch * loss_b
                 loss.backward()
                 nn.utils.clip_grad_norm_(model.parameters(), 5.0)
                 optimizer.step()
@@ -142,9 +137,9 @@ def train_regressor(folds_to_run):
             model.eval()
             total_mae, n = 0.0, 0
             with torch.no_grad():
-                for tensors, _, _, p_raw, _, _ in test_loader:
+                for tensors, _, p_raw, _ in test_loader:
                     tensors = tensors.to(device)
-                    p_pred, _ = model(tensors)
+                    p_pred = model(tensors)
                     p_desnorm = p_pred.cpu() * p_std + p_mean
                     p_desnorm_real = torch.expm1(p_desnorm)
                     total_mae += torch.abs(p_desnorm_real - p_raw).sum().item()
