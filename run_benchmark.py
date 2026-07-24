@@ -119,9 +119,10 @@ def main():
     parser = argparse.ArgumentParser(description='Run Sokoban benchmarks.')
     parser.add_argument('--start', type=int, default=0, help='Start board index (inclusive)')
     parser.add_argument('--end', type=int, default=-1, help='End board index (exclusive)')
+    parser.add_argument('--file', type=str, default='sok_files/auto_generated.sok', help='Path to .sok file')
     args = parser.parse_args()
 
-    sok_path = 'sok_files/paper.sok'
+    sok_path = args.file
     
     print(f"Extrayendo tableros de {sok_path}...")
     boards = extract_boards(sok_path)
