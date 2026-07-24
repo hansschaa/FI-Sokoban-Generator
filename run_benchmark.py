@@ -151,7 +151,13 @@ def main():
         print("-" * 60)
         
         for board_id, board_str in boards:
-            print(f"Procesando Tablero {board_id}...")
+            print(f"\nProcesando Tablero {board_id}...")
+            
+            print("[DEBUG] Tablero Original Leído:")
+            print(board_str)
+            print("[DEBUG] Tablero Preprocesado (Con Flood Fill y Padding):")
+            print(preprocess_board(board_str))
+            print("-" * 40)
             
             for heuristic in heuristics:
                 print(f"  -> Ejecutando: {heuristic}...")
