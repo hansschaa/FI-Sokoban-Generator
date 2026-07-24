@@ -18,10 +18,21 @@ std::vector<std::vector<char>> load_board(const std::string& filename)
 
     std::vector<std::vector<char>> board;
     std::string line;
+    size_t max_len = 0;
 
     while (std::getline(file, line))
     {
+        if (!line.empty() && line.back() == '\r') {
+            line.pop_back();
+        }
+        max_len = std::max(max_len, line.length());
         board.emplace_back(line.begin(), line.end());
+    }
+
+    for (auto& row : board) {
+        while (row.size() < max_len) {
+            row.push_back(' ');
+        }
     }
 
     return board;
