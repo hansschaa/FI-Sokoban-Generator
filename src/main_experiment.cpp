@@ -97,6 +97,9 @@ int main(int argc, char** argv)
     if (char* val = getCmdOption(argv, argv + argc, "--maxEvals")) {
         maxEvals = std::stoi(val);
     }
+    if (char* val = getCmdOption(argv, argv + argc, "--stagLimit")) {
+        stagLimit = std::stoi(val);
+    }
 
     // 4. Configurar el tablero inicial (Shell) y aplicar Flood Fill
     std::vector<std::vector<char>> shell;
