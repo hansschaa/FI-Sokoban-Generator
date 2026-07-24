@@ -216,10 +216,10 @@ def train_classifier(folds_to_run):
         train_loader = DataLoader(ClassifierDataset(train_data), batch_size=batch_size, shuffle=True, num_workers=0, pin_memory=True)
         test_loader  = DataLoader(ClassifierDataset(test_data),  batch_size=256, shuffle=False, num_workers=0, pin_memory=True)
 
-        model     = SokobanResNetClassifier(dropout_p=dropout_p).to(device)
+        model     = SokobanSEResNetClassifier(dropout_p=dropout_p).to(device)
         criterion = ClassifierLoss(pos_weight_val=pos_weight)
         optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
-        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="max", factor=0.5, patience=3)
+        scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2)
 
         best_f05     = 0.0
         best_metrics = {}
@@ -264,7 +264,7 @@ def train_classifier(folds_to_run):
             try: auc = roc_auc_score(all_targets, all_probs)
             except ValueError: auc = 0.0
 
-            scheduler.step(f05)
+            scheduler.step()
 
             elapsed = time.time() - t0
             tag = ""

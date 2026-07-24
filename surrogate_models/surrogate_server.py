@@ -3,7 +3,7 @@ import json
 import torch
 import traceback
 from flask import Flask, request, jsonify
-from models.resnet import SokobanResNetClassifier, SokobanResNetRegressor
+from models.resnet import SokobanSEResNetClassifier, SokobanSEResNetRegressor
 from data.prepare_classifier import encode_board
 
 app = Flask(__name__)
@@ -31,12 +31,12 @@ def load_models():
 
     # Initialize models
     print(f"Loading Classifier (dropout={c_params['params']['dropout_p']}) to {device}")
-    classifier_model = SokobanResNetClassifier(dropout_p=c_params['params']["dropout_p"]).to(device)
+    classifier_model = SokobanSEResNetClassifier(dropout_p=c_params['params']["dropout_p"]).to(device)
     classifier_model.load_state_dict(torch.load("surrogate_models/results/final_classifier_fold5.pt", map_location=device))
     classifier_model.eval()
 
     print(f"Loading Regressor (dropout={r_params['params']['dropout_p']}) to {device}")
-    regressor_model = SokobanResNetRegressor(dropout_p=r_params['params']["dropout_p"]).to(device)
+    regressor_model = SokobanSEResNetRegressor(dropout_p=r_params['params']["dropout_p"]).to(device)
     regressor_model.load_state_dict(torch.load("surrogate_models/results/final_regressor_fold3.pt", map_location=device))
     regressor_model.eval()
 

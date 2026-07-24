@@ -26,7 +26,7 @@ import optuna
 from optuna.pruners import MedianPruner
 from sklearn.metrics import fbeta_score
 
-from models.resnet import SokobanResNetClassifier, ClassifierLoss
+from models.resnet import SokobanSEResNetClassifier, ClassifierLoss
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURACIÓN
@@ -107,11 +107,10 @@ def objective(trial):
 
     train_loader, test_loader = make_loaders(batch_size)
 
-    model     = SokobanResNetClassifier(dropout_p=dropout_p).to(device)
+    model     = SokobanSEResNetClassifier(dropout_p=dropout_p).to(device)
     criterion = ClassifierLoss(pos_weight_val=pos_weight)
     optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="max",
-                                                     factor=0.5, patience=3)
+    scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2)
 
     best_f_beta  = 0.0
     patience_ctr = 0
@@ -142,7 +141,7 @@ def objective(trial):
                 all_targets.extend(labels.numpy())
 
         f_beta = fbeta_score(all_targets, all_preds, beta=BETA, zero_division=0)
-        scheduler.step(f_beta)
+        scheduler.step()
 
         print(f"  [Trial {trial.number}] Época {epoch:02d} | F_{BETA}={f_beta:.4f}")
 

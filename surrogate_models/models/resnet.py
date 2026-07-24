@@ -250,6 +250,54 @@ class SokobanResNetClassifier(nn.Module):
         return self.head(x).squeeze(1)
 
 
+class SokobanSEResNetClassifier(nn.Module):
+    """
+    Clasificador avanzado con arquitectura profunda (4 capas) y atención espacial (SE).
+    Termina en 1 neurona (logit) para BCEWithLogitsLoss.
+    """
+    def __init__(self, dropout_p: float = 0.4):
+        super().__init__()
+        self.stem   = nn.Sequential(
+            nn.Conv2d(5, 32, 3, padding=1, bias=False),
+            nn.BatchNorm2d(32), nn.ReLU(inplace=True),
+        )
+        self.layer1 = nn.Sequential(SEBasicBlock(32,  64),  SEBasicBlock(64,  64))
+        self.layer2 = nn.Sequential(SEBasicBlock(64,  128), SEBasicBlock(128, 128))
+        self.layer3 = nn.Sequential(SEBasicBlock(128, 256), SEBasicBlock(256, 256))
+        self.layer4 = nn.Sequential(SEBasicBlock(256, 512), SEBasicBlock(512, 512))
+        
+        self.pool   = nn.AdaptiveAvgPool2d((1, 1))
+
+        self.neck = nn.Sequential(
+            nn.Linear(512, 256), nn.ReLU(inplace=True), nn.Dropout(dropout_p),
+            nn.Linear(256, 128), nn.ReLU(inplace=True), nn.Dropout(dropout_p),
+        )
+        self.head = nn.Linear(128, 1)
+
+        self._init_weights()
+
+    def _init_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.ones_(m.weight); nn.init.zeros_(m.bias)
+            elif isinstance(m, nn.Linear):
+                nn.init.xavier_normal_(m.weight)
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
+
+    def forward(self, x):
+        x = self.stem(x)
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+        x = self.pool(x).flatten(1)
+        x = self.neck(x)
+        return self.head(x).squeeze(1)
+
+
 class ClassifierLoss(nn.Module):
     """
     Usa BCEWithLogitsLoss con pos_weight para lidiar con el desbalance extremo 
