@@ -165,8 +165,10 @@ int main(int argc, char** argv)
             
             try {
                 placeRandom(board, '@');
-                placeRandom(board, '$');
-                placeRandom(board, '.');
+                for (int _b = 0; _b < 3; _b++) {
+                    placeRandom(board, '$');
+                    placeRandom(board, '.');
+                }
 
                 Individual ind;
                 ind.board = board;
