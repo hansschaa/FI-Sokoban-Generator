@@ -17,11 +17,18 @@ test_solver: \
   CMakeFiles/test_solver.dir/src/game_solver.cpp.o \
   CMakeFiles/test_solver.dir/src/locked.cpp.o \
   CMakeFiles/test_solver.dir/src/my_memory.cpp.o \
+  CMakeFiles/test_solver.dir/src/neural_heuristic.cpp.o \
   CMakeFiles/test_solver.dir/src/path_simulator.cpp.o \
   CMakeFiles/test_solver.dir/src/penalty.cpp.o \
   CMakeFiles/test_solver.dir/src/point.cpp.o \
   CMakeFiles/test_solver.dir/src/repeat.cpp.o \
   CMakeFiles/test_solver.dir/src/shell_generator/shell_generator.cpp.o \
+  /home/hanss/FI-sokoban-generator/libtorch/libtorch/lib/libtorch.so \
+  /home/hanss/FI-sokoban-generator/libtorch/libtorch/lib/libc10.so \
+  /home/hanss/FI-sokoban-generator/libtorch/libtorch/lib/libkineto.a \
+  /home/hanss/FI-sokoban-generator/libtorch/libtorch/lib/libtorch_cpu.so \
+  /home/hanss/FI-sokoban-generator/libtorch/libtorch/lib/libc10.so \
+  /home/hanss/FI-sokoban-generator/libtorch/libtorch/lib/libtorch.so \
   /usr/lib/gcc/x86_64-linux-gnu/15/libstdc++.so \
   /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/libm.so \
   /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/libm.so \
@@ -49,7 +56,10 @@ test_solver: \
   /usr/lib/gcc/x86_64-linux-gnu/15/libgcc.a \
   /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o \
   /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o \
-  /lib64/ld-linux-x86-64.so.2
+  /usr/lib/x86_64-linux-gnu/librt.so.1 \
+  /usr/lib/x86_64-linux-gnu/libdl.so.2 \
+  /usr/lib/x86_64-linux-gnu/libpthread.so.0 \
+  /home/hanss/FI-sokoban-generator/libtorch/libtorch/lib/libgomp-52f2fd74.so.1
 
 /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o:
 
@@ -87,6 +97,8 @@ CMakeFiles/test_solver.dir/src/locked.cpp.o:
 
 CMakeFiles/test_solver.dir/src/my_memory.cpp.o:
 
+CMakeFiles/test_solver.dir/src/neural_heuristic.cpp.o:
+
 CMakeFiles/test_solver.dir/src/path_simulator.cpp.o:
 
 CMakeFiles/test_solver.dir/src/penalty.cpp.o:
@@ -96,6 +108,18 @@ CMakeFiles/test_solver.dir/src/point.cpp.o:
 CMakeFiles/test_solver.dir/src/repeat.cpp.o:
 
 CMakeFiles/test_solver.dir/src/shell_generator/shell_generator.cpp.o:
+
+/home/hanss/FI-sokoban-generator/libtorch/libtorch/lib/libtorch.so:
+
+/home/hanss/FI-sokoban-generator/libtorch/libtorch/lib/libc10.so:
+
+/home/hanss/FI-sokoban-generator/libtorch/libtorch/lib/libkineto.a:
+
+/home/hanss/FI-sokoban-generator/libtorch/libtorch/lib/libtorch_cpu.so:
+
+/home/hanss/FI-sokoban-generator/libtorch/libtorch/lib/libc10.so:
+
+/home/hanss/FI-sokoban-generator/libtorch/libtorch/lib/libtorch.so:
 
 /usr/lib/gcc/x86_64-linux-gnu/15/libstdc++.so:
 
@@ -151,4 +175,10 @@ CMakeFiles/test_solver.dir/src/shell_generator/shell_generator.cpp.o:
 
 /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o:
 
-/lib64/ld-linux-x86-64.so.2:
+/usr/lib/x86_64-linux-gnu/librt.so.1:
+
+/usr/lib/x86_64-linux-gnu/libdl.so.2:
+
+/usr/lib/x86_64-linux-gnu/libpthread.so.0:
+
+/home/hanss/FI-sokoban-generator/libtorch/libtorch/lib/libgomp-52f2fd74.so.1:

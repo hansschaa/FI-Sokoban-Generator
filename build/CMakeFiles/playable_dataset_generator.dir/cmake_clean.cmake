@@ -30,6 +30,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/playable_dataset_generator.dir/src/main_playable_dataset.cpp.o.d"
   "CMakeFiles/playable_dataset_generator.dir/src/my_memory.cpp.o"
   "CMakeFiles/playable_dataset_generator.dir/src/my_memory.cpp.o.d"
+  "CMakeFiles/playable_dataset_generator.dir/src/neural_heuristic.cpp.o"
+  "CMakeFiles/playable_dataset_generator.dir/src/neural_heuristic.cpp.o.d"
   "CMakeFiles/playable_dataset_generator.dir/src/path_simulator.cpp.o"
   "CMakeFiles/playable_dataset_generator.dir/src/path_simulator.cpp.o.d"
   "CMakeFiles/playable_dataset_generator.dir/src/penalty.cpp.o"

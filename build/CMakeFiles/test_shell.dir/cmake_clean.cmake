@@ -30,6 +30,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/test_shell.dir/src/main_shell.cpp.o.d"
   "CMakeFiles/test_shell.dir/src/my_memory.cpp.o"
   "CMakeFiles/test_shell.dir/src/my_memory.cpp.o.d"
+  "CMakeFiles/test_shell.dir/src/neural_heuristic.cpp.o"
+  "CMakeFiles/test_shell.dir/src/neural_heuristic.cpp.o.d"
   "CMakeFiles/test_shell.dir/src/path_simulator.cpp.o"
   "CMakeFiles/test_shell.dir/src/path_simulator.cpp.o.d"
   "CMakeFiles/test_shell.dir/src/penalty.cpp.o"

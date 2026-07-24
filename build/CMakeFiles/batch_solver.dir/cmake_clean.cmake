@@ -30,6 +30,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/batch_solver.dir/src/main_batch.cpp.o.d"
   "CMakeFiles/batch_solver.dir/src/my_memory.cpp.o"
   "CMakeFiles/batch_solver.dir/src/my_memory.cpp.o.d"
+  "CMakeFiles/batch_solver.dir/src/neural_heuristic.cpp.o"
+  "CMakeFiles/batch_solver.dir/src/neural_heuristic.cpp.o.d"
   "CMakeFiles/batch_solver.dir/src/path_simulator.cpp.o"
   "CMakeFiles/batch_solver.dir/src/path_simulator.cpp.o.d"
   "CMakeFiles/batch_solver.dir/src/penalty.cpp.o"

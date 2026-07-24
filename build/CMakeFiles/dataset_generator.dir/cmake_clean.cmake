@@ -30,6 +30,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/dataset_generator.dir/src/main_dataset.cpp.o.d"
   "CMakeFiles/dataset_generator.dir/src/my_memory.cpp.o"
   "CMakeFiles/dataset_generator.dir/src/my_memory.cpp.o.d"
+  "CMakeFiles/dataset_generator.dir/src/neural_heuristic.cpp.o"
+  "CMakeFiles/dataset_generator.dir/src/neural_heuristic.cpp.o.d"
   "CMakeFiles/dataset_generator.dir/src/path_simulator.cpp.o"
   "CMakeFiles/dataset_generator.dir/src/path_simulator.cpp.o.d"
   "CMakeFiles/dataset_generator.dir/src/penalty.cpp.o"

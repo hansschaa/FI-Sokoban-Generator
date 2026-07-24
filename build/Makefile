@@ -1279,6 +1279,60 @@ src/my_memory.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/es_dataset_generator.dir/build.make CMakeFiles/es_dataset_generator.dir/src/my_memory.cpp.s
 .PHONY : src/my_memory.cpp.s
 
+src/neural_heuristic.o: src/neural_heuristic.cpp.o
+.PHONY : src/neural_heuristic.o
+
+# target to build an object file
+src/neural_heuristic.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/neural_heuristic.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/neural_heuristic.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/neural_heuristic.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/neural_heuristic.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/irace_generator.dir/build.make CMakeFiles/irace_generator.dir/src/neural_heuristic.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/experiment_runner.dir/build.make CMakeFiles/experiment_runner.dir/src/neural_heuristic.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/neural_heuristic.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/neural_heuristic.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/neural_heuristic.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/neural_heuristic.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/es_dataset_generator.dir/build.make CMakeFiles/es_dataset_generator.dir/src/neural_heuristic.cpp.o
+.PHONY : src/neural_heuristic.cpp.o
+
+src/neural_heuristic.i: src/neural_heuristic.cpp.i
+.PHONY : src/neural_heuristic.i
+
+# target to preprocess a source file
+src/neural_heuristic.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/neural_heuristic.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/neural_heuristic.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/neural_heuristic.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/neural_heuristic.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/irace_generator.dir/build.make CMakeFiles/irace_generator.dir/src/neural_heuristic.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/experiment_runner.dir/build.make CMakeFiles/experiment_runner.dir/src/neural_heuristic.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/neural_heuristic.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/neural_heuristic.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/neural_heuristic.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/neural_heuristic.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/es_dataset_generator.dir/build.make CMakeFiles/es_dataset_generator.dir/src/neural_heuristic.cpp.i
+.PHONY : src/neural_heuristic.cpp.i
+
+src/neural_heuristic.s: src/neural_heuristic.cpp.s
+.PHONY : src/neural_heuristic.s
+
+# target to generate assembly for a file
+src/neural_heuristic.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sokoban_solver.dir/build.make CMakeFiles/sokoban_solver.dir/src/neural_heuristic.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/solver_benchmark.dir/build.make CMakeFiles/solver_benchmark.dir/src/neural_heuristic.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/evolution_generator.dir/build.make CMakeFiles/evolution_generator.dir/src/neural_heuristic.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/neural_heuristic.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/irace_generator.dir/build.make CMakeFiles/irace_generator.dir/src/neural_heuristic.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/experiment_runner.dir/build.make CMakeFiles/experiment_runner.dir/src/neural_heuristic.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/batch_solver.dir/build.make CMakeFiles/batch_solver.dir/src/neural_heuristic.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_shell.dir/build.make CMakeFiles/test_shell.dir/src/neural_heuristic.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dataset_generator.dir/build.make CMakeFiles/dataset_generator.dir/src/neural_heuristic.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/playable_dataset_generator.dir/build.make CMakeFiles/playable_dataset_generator.dir/src/neural_heuristic.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/es_dataset_generator.dir/build.make CMakeFiles/es_dataset_generator.dir/src/neural_heuristic.cpp.s
+.PHONY : src/neural_heuristic.cpp.s
+
 src/path_simulator.o: src/path_simulator.cpp.o
 .PHONY : src/path_simulator.o
 
@@ -1643,6 +1697,9 @@ help:
 	@echo "... src/my_memory.o"
 	@echo "... src/my_memory.i"
 	@echo "... src/my_memory.s"
+	@echo "... src/neural_heuristic.o"
+	@echo "... src/neural_heuristic.i"
+	@echo "... src/neural_heuristic.s"
 	@echo "... src/path_simulator.o"
 	@echo "... src/path_simulator.i"
 	@echo "... src/path_simulator.s"

@@ -254,4 +254,5 @@ CMakeFiles/test_solver.dir/src/game_solver.cpp.o: \
  /home/hanss/FI-sokoban-generator/include/solver_template.h \
  /usr/include/c++/15/stack /usr/include/c++/15/bits/stl_stack.h \
  /home/hanss/FI-sokoban-generator/include/mazesolver.h \
- /home/hanss/FI-sokoban-generator/include/hungarian.h
+ /home/hanss/FI-sokoban-generator/include/hungarian.h \
+ /home/hanss/FI-sokoban-generator/src/neural_heuristic.hpp

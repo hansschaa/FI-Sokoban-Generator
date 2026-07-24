@@ -30,6 +30,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/solver_benchmark.dir/src/main_benchmark.cpp.o.d"
   "CMakeFiles/solver_benchmark.dir/src/my_memory.cpp.o"
   "CMakeFiles/solver_benchmark.dir/src/my_memory.cpp.o.d"
+  "CMakeFiles/solver_benchmark.dir/src/neural_heuristic.cpp.o"
+  "CMakeFiles/solver_benchmark.dir/src/neural_heuristic.cpp.o.d"
   "CMakeFiles/solver_benchmark.dir/src/path_simulator.cpp.o"
   "CMakeFiles/solver_benchmark.dir/src/path_simulator.cpp.o.d"
   "CMakeFiles/solver_benchmark.dir/src/penalty.cpp.o"

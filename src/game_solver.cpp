@@ -615,36 +615,36 @@ SolverStats game_solver::test_template(
         }
     };
 
-    auto heuristic_batch = [&](const std::vector<const game_node*>& nodes, const game_node*) -> std::vector<int> {
-        if (heuristic_type != Heuristic::neural_batched) {
-            return {};
-        }
+    std::function<std::vector<int>(const std::vector<const game_node*>&, const game_node*)> heuristic_batch_func = nullptr;
+    
+    if (heuristic_type == Heuristic::neural_batched) {
+        heuristic_batch_func = [&](const std::vector<const game_node*>& nodes, const game_node*) -> std::vector<int> {
+            std::vector<int> final_scores(nodes.size(), 0);
+            std::vector<const game_node*> to_evaluate;
+            std::vector<int> evaluate_indices;
 
-        std::vector<int> final_scores(nodes.size(), 0);
-        std::vector<const game_node*> to_evaluate;
-        std::vector<int> evaluate_indices;
-
-        for (size_t i = 0; i < nodes.size(); i++) {
-            int penalty_cost = penalty_solver.calculate_penalty(nodes[i]->box_list, nodes[i]->box_count);
-            if (penalty_cost >= 1000) {
-                final_scores[i] = penalty_cost;
-            } else {
-                to_evaluate.push_back(nodes[i]);
-                evaluate_indices.push_back(i);
+            for (size_t i = 0; i < nodes.size(); i++) {
+                int penalty_cost = penalty_solver.calculate_penalty(nodes[i]->box_list, nodes[i]->box_count);
+                if (penalty_cost >= 1000) {
+                    final_scores[i] = penalty_cost;
+                } else {
+                    to_evaluate.push_back(nodes[i]);
+                    evaluate_indices.push_back(i);
+                }
             }
-        }
 
-        if (!to_evaluate.empty()) {
-            std::vector<float> predictions = neural_net->evaluate_batch(to_evaluate, end_vec);
-            for (size_t j = 0; j < to_evaluate.size(); j++) {
-                int penalty_cost = penalty_solver.calculate_penalty(to_evaluate[j]->box_list, to_evaluate[j]->box_count);
-                int score = static_cast<int>(std::max(0.0f, predictions[j])) + penalty_cost;
-                final_scores[evaluate_indices[j]] = score;
+            if (!to_evaluate.empty()) {
+                std::vector<float> predictions = neural_net->evaluate_batch(to_evaluate, end_vec);
+                for (size_t j = 0; j < to_evaluate.size(); j++) {
+                    int penalty_cost = penalty_solver.calculate_penalty(to_evaluate[j]->box_list, to_evaluate[j]->box_count);
+                    int score = static_cast<int>(std::max(0.0f, predictions[j])) + penalty_cost;
+                    final_scores[evaluate_indices[j]] = score;
+                }
             }
-        }
 
-        return final_scores;
-    };
+            return final_scores;
+        };
+    }
 
     // 2. EL CRONÓMETRO ESPÍA: Detiene el tiempo en el instante de la victoria
     is_equal = [&t_end, &goal_found](const game_node* a, const game_node*) -> bool {
@@ -664,7 +664,7 @@ SolverStats game_solver::test_template(
 
     try {
         if (input == Method::a_star) {
-            solution = gsolver0.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal, heuristic, heuristic_batch);
+            solution = gsolver0.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal, heuristic, heuristic_batch_func);
         }
         else if (input == Method::dfs) {
             solution = gsolver1.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal);
