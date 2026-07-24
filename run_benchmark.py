@@ -73,14 +73,28 @@ def run_solver(board_str, heuristic):
             'deadlocks': -1
         }
 
+import argparse
+
 def main():
+    parser = argparse.ArgumentParser(description='Run Sokoban benchmarks.')
+    parser.add_argument('--start', type=int, default=0, help='Start board index (inclusive)')
+    parser.add_argument('--end', type=int, default=-1, help='End board index (exclusive)')
+    args = parser.parse_args()
+
     sok_path = 'sok_files/paper.sok'
-    csv_path = 'benchmark_results.csv'
     
     print(f"Extrayendo tableros de {sok_path}...")
     boards = extract_boards(sok_path)
-    print(f"Total de tableros a procesar: {len(boards)}")
+    total_boards = len(boards)
     
+    start_idx = max(0, args.start)
+    end_idx = args.end if args.end > 0 else total_boards
+    end_idx = min(end_idx, total_boards)
+    
+    boards = boards[start_idx:end_idx]
+    print(f"Procesando chunk de tableros: {start_idx} a {end_idx} (Total: {len(boards)})")
+    
+    csv_path = f'benchmark_results_{start_idx}_to_{end_idx}.csv'
     heuristics = ['hungarian', 'neural', 'neural_batched']
     
     file_exists = os.path.isfile(csv_path)
