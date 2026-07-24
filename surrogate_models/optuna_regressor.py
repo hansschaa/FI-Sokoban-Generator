@@ -65,9 +65,10 @@ class FoldDataset(Dataset):
         return (
             item['tensor'].float(),
             torch.tensor(item['pushes_norm'],  dtype=torch.float32),
-            torch.tensor(item['branch_norm'],  dtype=torch.float32),
-            torch.tensor(item['pushes_raw'],   dtype=torch.float32),
-            torch.tensor(item['branch_raw'],   dtype=torch.float32),
+            torch.tensor(item['branch_norm'], dtype=torch.float32),
+            torch.tensor(item['pushes_raw'],  dtype=torch.float32),
+            torch.tensor(item['branch_raw'],  dtype=torch.float32),
+            torch.tensor(item.get('weight', 1.0), dtype=torch.float32),
         )
 
 # Cargar datos UNA sola vez (no recargar en cada trial)
@@ -111,7 +112,7 @@ def objective(trial):
     print("  -> Dataloaders creados. Inicializando modelo...")
     model     = SokobanResNetRegressor(dropout_p=dropout_p).to(device)
     print("  -> Modelo en GPU. Configurando optimizador...")
-    criterion = MultiHeadRegressorLoss(w_pushes=1.0, w_branch=w_branch)
+    criterion = nn.MSELoss(reduction='none')
     optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min",
                                                      factor=0.5, patience=4)
@@ -123,36 +124,37 @@ def objective(trial):
     for epoch in range(1, MAX_EPOCHS + 1):
         # ── Train ────────────────────────────────────────────────────────────
         model.train()
-        batch_idx = 0
-        total_batches = len(train_loader)
-        
-        for tensors, p_norm, b_norm, _, _ in train_loader:
-            if batch_idx == 0:
-                print(f"    [Trial {trial.number}] Epoca {epoch:02d} | ¡Primer batch completado! La GPU está viva.")
-            elif batch_idx % 10 == 0:
-                print(f"    [Trial {trial.number}] Epoca {epoch:02d} | Progreso: {batch_idx}/{total_batches} batches...")
-            
-            tensors = tensors.to(device)
-            p_norm  = p_norm.to(device)
-            b_norm  = b_norm.to(device)
+        train_loss = 0.0
+        for tensors, p_norm, b_norm, _, _, weights in train_loader:
+            tensors, p_norm, b_norm, weights = tensors.to(device), p_norm.to(device), b_norm.to(device), weights.to(device)
+
             optimizer.zero_grad()
             p_pred, b_pred = model(tensors)
-            loss, _ = criterion(p_pred, p_norm, b_pred, b_norm)
+            
+            loss_p = criterion(p_pred, p_norm)
+            loss_b = criterion(b_pred, b_norm)
+            
+            loss_p = (loss_p * weights).mean()
+            loss_b = (loss_b * weights).mean()
+            
+            loss = loss_p + w_branch * loss_b
             loss.backward()
             nn.utils.clip_grad_norm_(model.parameters(), 5.0)
             optimizer.step()
-            
-            batch_idx += 1
+            train_loss += loss.item()
+
+        train_loss /= len(train_loader)
 
         # ── Eval ─────────────────────────────────────────────────────────────
         model.eval()
         total_mae, n = 0.0, 0
         with torch.no_grad():
-            for tensors, _, _, p_raw, _ in test_loader:
+            for tensors, _, _, p_raw, _, _ in test_loader:
                 tensors = tensors.to(device)
                 p_pred, _ = model(tensors)
                 p_desnorm = p_pred.cpu() * p_std + p_mean
-                total_mae += torch.abs(p_desnorm - p_raw).sum().item()
+                p_desnorm_real = torch.expm1(p_desnorm)
+                total_mae += torch.abs(p_desnorm_real - p_raw).sum().item()
                 n += len(p_raw)
         mae = total_mae / n
         scheduler.step(mae)

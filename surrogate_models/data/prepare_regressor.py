@@ -97,13 +97,17 @@ def parse_sok_file(fpath):
             upper = lower + 9
             bucket = f"{lower}_to_{upper}"
 
+        # Extraer cantidad de cajas
+        box_count = board_str.count('$') + board_str.count('*')
+
         records.append({
-            "board_hash": board_hash,
-            "shell_hash": shell_hash,
             "board_str": board_str,
             "pushes": pushes,
             "branching_effective": branching if branching is not None else 1.0,
             "bucket": bucket,
+            "shell_hash": shell_hash,
+            "board_hash": board_hash,
+            "box_count": box_count
         })
 
     return records
@@ -297,11 +301,20 @@ def main():
         train_df = df.iloc[train_idx]
         test_df = df.iloc[test_idx]
 
-        # Calcular estadísticos de normalización SOLO sobre el train
-        pushes_mean = train_df["pushes"].mean()
-        pushes_std = train_df["pushes"].std()
+        # Normalización estricta sobre el conjunto de Train (anti-leakage)
+        pushes_train = train_df["pushes"].values.astype(float)
+        pushes_log = np.log1p(pushes_train)
+        pushes_mean = pushes_log.mean()
+        pushes_std = pushes_log.std()
+
         branch_mean = train_df["branching_effective"].mean()
         branch_std = train_df["branching_effective"].std()
+
+        # Calcular pesos de clase basados en box_count en el train
+        box_counts = train_df["box_count"].value_counts()
+        total_train = len(train_df)
+        # weight = total_train / (num_classes * count), balancea los gradientes
+        class_weights = {k: total_train / (len(box_counts) * v) for k, v in box_counts.items()}
 
         stats = {
             "pushes_mean": float(pushes_mean),
@@ -320,11 +333,12 @@ def main():
             test_data.append({
                 "tensor": torch.tensor(t),
                 "pushes_raw": float(row["pushes"]),
-                "pushes_norm": (float(row["pushes"]) - pushes_mean) / (pushes_std + 1e-8),
+                "pushes_norm": (np.log1p(float(row["pushes"])) - pushes_mean) / (pushes_std + 1e-8),
                 "branch_raw": float(row["branching_effective"]),
                 "branch_norm": (float(row["branching_effective"]) - branch_mean) / (branch_std + 1e-8),
                 "shell_hash": row["shell_hash"],
                 "bucket": row["bucket"],
+                "weight": 1.0, # Test samples no afectan el loss
             })
 
         # Codificar TRAIN (con augmentation D4 x8)
@@ -337,11 +351,12 @@ def main():
                 train_data.append({
                     "tensor": torch.tensor(v.copy()),
                     "pushes_raw": float(row["pushes"]),
-                    "pushes_norm": (float(row["pushes"]) - pushes_mean) / (pushes_std + 1e-8),
+                    "pushes_norm": (np.log1p(float(row["pushes"])) - pushes_mean) / (pushes_std + 1e-8),
                     "branch_raw": float(row["branching_effective"]),
                     "branch_norm": (float(row["branching_effective"]) - branch_mean) / (branch_std + 1e-8),
                     "shell_hash": row["shell_hash"],
                     "bucket": row["bucket"],
+                    "weight": float(class_weights.get(row["box_count"], 1.0)),
                 })
 
         # Guardar
