@@ -156,7 +156,9 @@ class SokobanSEResNetRegressor(nn.Module):
             elif isinstance(m, nn.BatchNorm2d):
                 nn.init.ones_(m.weight); nn.init.zeros_(m.bias)
             elif isinstance(m, nn.Linear):
-                nn.init.xavier_normal_(m.weight); nn.init.zeros_(m.bias)
+                nn.init.xavier_normal_(m.weight)
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
 
     def forward(self, x):
         x = self.stem(x)
