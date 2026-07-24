@@ -2,6 +2,7 @@ import os
 import subprocess
 import csv
 import time
+from collections import deque
 
 def extract_boards(sok_file):
     with open(sok_file, 'r') as f:
@@ -24,9 +25,42 @@ def extract_boards(sok_file):
         
     return boards
 
+def preprocess_board(board_str):
+    lines = board_str.split('\n')
+    if not lines:
+        return board_str
+    
+    max_len = max(len(line) for line in lines)
+    # Rellenar con espacios para que sea rectangular
+    grid = [list(line.ljust(max_len, ' ')) for line in lines]
+    
+    rows = len(grid)
+    cols = max_len
+    
+    # Flood fill exterior spaces con '#'
+    q = deque()
+    
+    for r in range(rows):
+        if grid[r][0] == ' ': q.append((r, 0)); grid[r][0] = '#'
+        if grid[r][cols-1] == ' ': q.append((r, cols-1)); grid[r][cols-1] = '#'
+    for c in range(cols):
+        if grid[0][c] == ' ': q.append((0, c)); grid[0][c] = '#'
+        if grid[rows-1][c] == ' ': q.append((rows-1, c)); grid[rows-1][c] = '#'
+        
+    while q:
+        r, c = q.popleft()
+        for dr, dc in [(-1,0), (1,0), (0,-1), (0,1)]:
+            nr, nc = r+dr, c+dc
+            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == ' ':
+                grid[nr][nc] = '#'
+                q.append((nr, nc))
+                
+    return '\n'.join(''.join(row) for row in grid)
+
 def run_solver(board_str, heuristic):
+    processed_board = preprocess_board(board_str)
     with open('temp_board.txt', 'w') as f:
-        f.write(board_str)
+        f.write(processed_board)
     
     cmd = ['./build/test_solver', 'temp_board.txt', heuristic]
     try:
