@@ -20,12 +20,13 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
+from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
+import numpy as np
 from collections import Counter
 import optuna
 from optuna.pruners import MedianPruner
 
-from models.resnet import SokobanResNetRegressor, MultiHeadRegressorLoss
+from models.resnet import SokobanSEResNetRegressor, MultiHeadRegressorLoss
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURACIÓN
@@ -107,12 +108,11 @@ def objective(trial):
     print("  -> Creando Dataloaders...")
     train_loader, test_loader = make_loaders(batch_size)
     print("  -> Dataloaders creados. Inicializando modelo...")
-    model     = SokobanResNetRegressor(dropout_p=dropout_p).to(device)
+    model     = SokobanSEResNetRegressor(dropout_p=dropout_p).to(device)
     print("  -> Modelo en GPU. Configurando optimizador...")
-    criterion = nn.MSELoss(reduction='none')
+    criterion = nn.HuberLoss(reduction='none')
     optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min",
-                                                     factor=0.5, patience=4)
+    scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2)
 
     best_mae    = float("inf")
     patience_ctr = 0
@@ -158,7 +158,7 @@ def objective(trial):
                 total_mae += torch.abs(p_desnorm_real - p_raw).sum().item()
                 n += len(p_raw)
         mae = total_mae / n
-        scheduler.step(mae)
+        scheduler.step()
 
         print(f"  [Trial {trial.number}] Época {epoch:02d} | MAE Pushes: {mae:.2f}")
 

@@ -18,12 +18,12 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader, Dataset
 import numpy as np
-from tqdm import tqdm
+import sklearn
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, fbeta_score, roc_auc_score
 
-from models.resnet import SokobanResNetRegressor, MultiHeadRegressorLoss, SokobanResNetClassifier, ClassifierLoss
+from models.resnet import SokobanSEResNetRegressor, MultiHeadRegressorLoss, SokobanResNetClassifier, ClassifierLoss
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -105,10 +105,10 @@ def train_regressor(folds_to_run):
         train_loader = DataLoader(RegressorDataset(train_data), batch_size=batch_size, shuffle=True, num_workers=0, pin_memory=True)
         test_loader  = DataLoader(RegressorDataset(test_data),  batch_size=256, shuffle=False, num_workers=0, pin_memory=True)
 
-        model     = SokobanResNetRegressor(dropout_p=dropout_p).to(device)
-        criterion = nn.MSELoss(reduction='none')
+        model     = SokobanSEResNetRegressor(dropout_p=dropout_p).to(device)
+        criterion = nn.HuberLoss(reduction='none')
         optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
-        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=4)
+        scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2)
 
         best_mae     = float("inf")
         best_weights = copy.deepcopy(model.state_dict())
@@ -146,7 +146,7 @@ def train_regressor(folds_to_run):
                     n += len(p_raw)
 
             mae = total_mae / n
-            scheduler.step(mae)
+            scheduler.step()
 
             elapsed = time.time() - t0
             tag = ""

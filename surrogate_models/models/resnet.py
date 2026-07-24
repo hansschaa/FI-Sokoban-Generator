@@ -79,6 +79,95 @@ class SokobanResNetRegressor(nn.Module):
         return self.head_pushes(x).squeeze(1)
 
 
+class SEBlock(nn.Module):
+    """Squeeze-and-Excitation block for Channel Attention."""
+    def __init__(self, channel, reduction=16):
+        super().__init__()
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
+        self.fc = nn.Sequential(
+            nn.Linear(channel, channel // reduction, bias=False),
+            nn.ReLU(inplace=True),
+            nn.Linear(channel // reduction, channel, bias=False),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        b, c, _, _ = x.size()
+        y = self.avg_pool(x).view(b, c)
+        y = self.fc(y).view(b, c, 1, 1)
+        return x * y.expand_as(x)
+
+
+class SEBasicBlock(nn.Module):
+    """BasicBlock with Squeeze-and-Excitation mechanism."""
+    def __init__(self, in_ch: int, out_ch: int):
+        super().__init__()
+        self.conv1 = nn.Conv2d(in_ch, out_ch, 3, padding=1, bias=False)
+        self.bn1   = nn.BatchNorm2d(out_ch)
+        self.conv2 = nn.Conv2d(out_ch, out_ch, 3, padding=1, bias=False)
+        self.bn2   = nn.BatchNorm2d(out_ch)
+        self.se    = SEBlock(out_ch)
+        self.shortcut = nn.Sequential()
+        if in_ch != out_ch:
+            self.shortcut = nn.Sequential(
+                nn.Conv2d(in_ch, out_ch, 1, bias=False),
+                nn.BatchNorm2d(out_ch),
+            )
+
+    def forward(self, x):
+        identity = self.shortcut(x)
+        out = F.relu(self.bn1(self.conv1(x)), inplace=True)
+        out = self.bn2(self.conv2(out))
+        out = self.se(out)
+        return F.relu(out + identity, inplace=True)
+
+
+class SokobanSEResNetRegressor(nn.Module):
+    """
+    Entrada : (B, 5, 25, 25)
+    Salida  : pushes_pred (B,) 
+    Arquitectura más profunda y con atención espacial (SE).
+    """
+    def __init__(self, dropout_p: float = 0.4):
+        super().__init__()
+        self.stem   = nn.Sequential(
+            nn.Conv2d(5, 32, 3, padding=1, bias=False),
+            nn.BatchNorm2d(32), nn.ReLU(inplace=True),
+        )
+        # 4 layers para más capacidad
+        self.layer1 = nn.Sequential(SEBasicBlock(32,  64),  SEBasicBlock(64,  64))
+        self.layer2 = nn.Sequential(SEBasicBlock(64,  128), SEBasicBlock(128, 128))
+        self.layer3 = nn.Sequential(SEBasicBlock(128, 256), SEBasicBlock(256, 256))
+        self.layer4 = nn.Sequential(SEBasicBlock(256, 512), SEBasicBlock(512, 512))
+        
+        self.pool   = nn.AdaptiveAvgPool2d((1, 1))
+
+        self.neck = nn.Sequential(
+            nn.Linear(512, 256), nn.ReLU(inplace=True), nn.Dropout(dropout_p),
+            nn.Linear(256, 128), nn.ReLU(inplace=True), nn.Dropout(dropout_p),
+        )
+        self.head_pushes = nn.Sequential(nn.Linear(128, 64), nn.ReLU(inplace=True), nn.Linear(64, 1))
+        self._init_weights()
+
+    def _init_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.ones_(m.weight); nn.init.zeros_(m.bias)
+            elif isinstance(m, nn.Linear):
+                nn.init.xavier_normal_(m.weight); nn.init.zeros_(m.bias)
+
+    def forward(self, x):
+        x = self.stem(x)
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+        x = self.pool(x).flatten(1)
+        x = self.neck(x)
+        return self.head_pushes(x).squeeze(1)
+
 class AsymmetricHuberLoss(nn.Module):
     """Penaliza más las sobreestimaciones (alpha > 1)."""
     def __init__(self, delta: float = 1.0, alpha: float = 1.5):
