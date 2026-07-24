@@ -91,6 +91,10 @@ int main(int argc, char** argv)
     // 3. Variables Fijas y Estrictas para Experimento 1
     int maxEvals = 1000;
     int stagLimit = 30;
+    int maxCircuitTimeSeconds = -1;
+    if (char* val = getCmdOption(argv, argv + argc, "--timeLimit")) {
+        maxCircuitTimeSeconds = std::stoi(val);
+    }
 
     // 4. Configurar el tablero inicial (Shell) y aplicar Flood Fill
     std::vector<std::vector<char>> shell;
@@ -215,6 +219,9 @@ int main(int argc, char** argv)
             if (char* val = getCmdOption(argv, argv + argc, "--lambda")) es.lambda = std::stoi(val);
             if (char* val = getCmdOption(argv, argv + argc, "--mutRate")) es.mutationRate = std::stod(val);
 
+            es.maxCircuitTimeSeconds = maxCircuitTimeSeconds;
+            es.circuitStartTime = std::chrono::high_resolution_clock::now();
+
             best = es.run(population);
         }
         else if (algorithm == "GA")
@@ -247,6 +254,10 @@ int main(int argc, char** argv)
             if (char* val = getCmdOption(argv, argv + argc, "--maxFailed")) ga.maxFailedAttempts = std::stoi(val);
             if (char* val = getCmdOption(argv, argv + argc, "--mutRate")) ga.mutationRate = std::stod(val);
             if (char* val = getCmdOption(argv, argv + argc, "--crossRate")) ga.crossoverRate = std::stod(val);
+            
+            ga.maxCircuitTimeSeconds = maxCircuitTimeSeconds;
+            ga.circuitStartTime = std::chrono::high_resolution_clock::now();
+            
             best = ga.run(population);
         }
         else if (algorithm == "SA")
@@ -281,6 +292,9 @@ int main(int argc, char** argv)
             if (char* val = getCmdOption(argv, argv + argc, "--initTemp")) sa.initialTemperature = std::stod(val);
             if (char* val = getCmdOption(argv, argv + argc, "--coolRate")) sa.coolingRate = std::stod(val);
             if (char* val = getCmdOption(argv, argv + argc, "--maxFailed")) sa.maxFailedAttempts = std::stoi(val);
+            
+            sa.maxCircuitTimeSeconds = maxCircuitTimeSeconds;
+            sa.circuitStartTime = std::chrono::high_resolution_clock::now();
 
             Individual initial = *std::max_element(
                 population.begin(), population.end(),

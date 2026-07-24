@@ -8834,3 +8834,96 @@
 # # #     #
 ###########
 
+10529014921762201429 - pushes:21 moves:247 runtime_ms:88.7892 generated_states:1162 expanded_nodes:1162 total_children:18592 effective_children:3649 repeated_nodes:2116 deadlocks:1824 branching_real:16.0000 branching_effective:3.1403 branching_classic:1.3995 redundancy:8.7864 closed_list:1162 initial_dist:12.0000 path_states:247 path_br_real_avg:2.8057 path_br_eff_avg:1.7773 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:239 path_deadlocks:15 box_lines:19 box_changes:16
+###########
+# ##   ####
+# ## #*#  #
+#     . $ #
+#    @.#  #
+# #. # #  #
+#   ####$ #
+##  ###   #
+### $   ###
+##      ###
+###########
+
+4574117428061126608 - pushes:29 moves:215 runtime_ms:64.3123 generated_states:665 expanded_nodes:665 total_children:15960 effective_children:4532 repeated_nodes:750 deadlocks:346 branching_real:24.0000 branching_effective:6.8150 branching_classic:1.2512 redundancy:21.2800 closed_list:665 initial_dist:26.0000 path_states:215 path_br_real_avg:2.8884 path_br_eff_avg:1.4605 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:199 path_deadlocks:108 box_lines:20 box_changes:19
+##############
+#      #.#####
+######  $ #  #
+#   ## # ### #
+###   $ $    #
+### ## $.    #
+#   ## ###$@ #
+#  ##      ###
+#  ##  ###. ##
+#  ###       #
+# ## # # #  ##
+# #  #$ # . ##
+# ## #.###.###
+# ## #   #  ##
+# ## # # #  ##
+#    # ##  ###
+##############
+
+2186031812223306394 - pushes:30 moves:142 runtime_ms:94.7145 generated_states:1519 expanded_nodes:1519 total_children:30380 effective_children:5467 repeated_nodes:1823 deadlocks:3099 branching_real:20.0000 branching_effective:3.5991 branching_classic:1.2766 redundancy:16.6648 closed_list:1519 initial_dist:29.0000 path_states:142 path_br_real_avg:2.8310 path_br_eff_avg:1.6620 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:115 path_deadlocks:51 box_lines:18 box_changes:12
+###########
+##       ##
+##$ ###..##
+##     . ##
+# . #.#   #
+# #$$  ## #
+#   # ### #
+# $ # #   #
+#    $ ####
+##### ## ##
+#      @  #
+#  #### # #
+####      #
+###########
+
+4155388515405018678 - pushes:25 moves:112 runtime_ms:57.3054 generated_states:1384 expanded_nodes:1384 total_children:22144 effective_children:2499 repeated_nodes:1086 deadlocks:1668 branching_real:16.0000 branching_effective:1.8056 branching_classic:1.3355 redundancy:20.3904 closed_list:1384 initial_dist:16.0000 path_states:112 path_br_real_avg:2.9375 path_br_eff_avg:1.9464 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:97 path_deadlocks:14 box_lines:18 box_changes:12
+###########
+##  #  # ##
+## $#.  . #
+##  #  # ##
+#     $####
+#  #     .#
+# #####. @#
+## # $  $ #
+#       # #
+## ########
+###########
+
+13256882850600022598 - pushes:21 moves:67 runtime_ms:1.5928 generated_states:59 expanded_nodes:59 total_children:472 effective_children:126 repeated_nodes:24 deadlocks:21 branching_real:8.0000 branching_effective:2.1356 branching_classic:1.2143 redundancy:19.6667 closed_list:59 initial_dist:16.0000 path_states:67 path_br_real_avg:2.6567 path_br_eff_avg:1.7761 path_br_real_min:1 path_br_real_max:3 path_br_eff_min:0 path_br_eff_max:3 path_repeated:47 path_deadlocks:12 box_lines:10 box_changes:5
+###########
+#       # #
+#  # #  # #
+# ##  $$# #
+# ## ##   #
+# ###@  # #
+#   ##    #
+#  # .    #
+#  #  ### #
+#  ###### #
+#      # .#
+### #  # ##
+### #######
+###########
+
+18139530194974469070 - pushes:22 moves:112 runtime_ms:13.1106 generated_states:219 expanded_nodes:219 total_children:3504 effective_children:1197 repeated_nodes:283 deadlocks:184 branching_real:16.0000 branching_effective:5.4658 branching_classic:1.2776 redundancy:12.3816 closed_list:219 initial_dist:21.0000 path_states:112 path_br_real_avg:2.8482 path_br_eff_avg:1.9732 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:95 path_deadlocks:3 box_lines:14 box_changes:11
+########
+####  ##
+# #  ###
+#   . ##
+# $ $###
+#@#$ ###
+#      #
+#   # ##
+# #$####
+#      #
+#  .####
+# # #  #
+#.   . #
+########
+

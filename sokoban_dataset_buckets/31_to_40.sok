@@ -8359,3 +8359,96 @@
 ##      ####### #
 #################
 
+13377092849475970008 - pushes:32 moves:249 runtime_ms:991.0615 generated_states:14492 expanded_nodes:14492 total_children:347808 effective_children:47881 repeated_nodes:32952 deadlocks:29821 branching_real:24.0000 branching_effective:3.3040 branching_classic:1.3491 redundancy:10.5550 closed_list:14492 initial_dist:17.0000 path_states:249 path_br_real_avg:2.7510 path_br_eff_avg:1.4779 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:231 path_deadlocks:86 box_lines:23 box_changes:17
+###########
+# ##   ####
+# ## #*#  #
+#     .$$ #
+#     .#  #
+# #. # #@ #
+#   ####$ #
+## .###   #
+###$$ . ###
+##      ###
+###########
+
+8189931289895455808 - pushes:39 moves:294 runtime_ms:586.7053 generated_states:5591 expanded_nodes:5591 total_children:156548 effective_children:30482 repeated_nodes:9415 deadlocks:3282 branching_real:28.0000 branching_effective:5.4520 branching_classic:1.2476 redundancy:16.6275 closed_list:5591 initial_dist:36.0000 path_states:294 path_br_real_avg:2.8946 path_br_eff_avg:1.7245 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:265 path_deadlocks:79 box_lines:28 box_changes:23
+##############
+#      #.#####
+######  $ #  #
+#   ## # ### #
+###   $ $    #
+### ## $     #
+#   ## ###$@ #
+#  ##      ###
+#  ##  ###. ##
+#  ### ..    #
+# ## # # #$ ##
+# #  #$ # . ##
+# ## #.###.###
+# ## #   #  ##
+# ## # # #  ##
+#    # ##  ###
+##############
+
+4736860740403323905 - pushes:35 moves:126 runtime_ms:233.4359 generated_states:5840 expanded_nodes:5840 total_children:116800 effective_children:12331 repeated_nodes:5391 deadlocks:6497 branching_real:20.0000 branching_effective:2.1115 branching_classic:1.2812 redundancy:21.6657 closed_list:5840 initial_dist:24.0000 path_states:126 path_br_real_avg:2.9127 path_br_eff_avg:1.9762 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:99 path_deadlocks:19 box_lines:23 box_changes:19
+###########
+##  #  # ##
+## $#   ..#
+##  #  # ##
+#     $####
+#  #   . .#
+# #####   #
+##@# $  $ #
+#.  $   # #
+## ########
+###########
+
+17570264368322236476 - pushes:34 moves:144 runtime_ms:107.8650 generated_states:2448 expanded_nodes:2448 total_children:48960 effective_children:5443 repeated_nodes:2813 deadlocks:4159 branching_real:20.0000 branching_effective:2.2234 branching_classic:1.2580 redundancy:17.4049 closed_list:2448 initial_dist:19.0000 path_states:144 path_br_real_avg:2.6944 path_br_eff_avg:1.6875 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:3 path_repeated:119 path_deadlocks:26 box_lines:15 box_changes:13
+###########
+#       # #
+#  # #  # #
+# ##  $ # #
+# ## ## $ #
+# ### .$# #
+#   ##$   #
+#  # .  . #
+# .#  ### #
+# $######@#
+#      # .#
+### #  # ##
+### #######
+###########
+
+6307123924371065320 - pushes:40 moves:299 runtime_ms:1203.3161 generated_states:14399 expanded_nodes:14399 total_children:345576 effective_children:50845 repeated_nodes:20379 deadlocks:22783 branching_real:24.0000 branching_effective:3.5311 branching_classic:1.2705 redundancy:16.9575 closed_list:14399 initial_dist:39.0000 path_states:299 path_br_real_avg:2.6455 path_br_eff_avg:0.9465 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:263 path_deadlocks:245 box_lines:31 box_changes:24
+###########
+##  .   .##
+##$ ###. ##
+##    .. ##
+# . # #   #
+# #$$  ## #
+#   # ### #
+# $$# #   #
+#    $ ####
+##### ## ##
+#      @  #
+#  #### # #
+####      #
+###########
+
+8831029649235306419 - pushes:32 moves:210 runtime_ms:17.0323 generated_states:327 expanded_nodes:327 total_children:5232 effective_children:1386 repeated_nodes:455 deadlocks:303 branching_real:16.0000 branching_effective:4.2385 branching_classic:1.1983 redundancy:11.4989 closed_list:327 initial_dist:29.0000 path_states:210 path_br_real_avg:2.9286 path_br_eff_avg:1.5095 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:194 path_deadlocks:104 box_lines:22 box_changes:20
+########
+####  ##
+# #  ###
+# $$  ##
+#  $ ###
+# #  ###
+#      #
+#   # ##
+# # ####
+#  $   #
+#  .####
+# #.#  #
+#.   .@#
+########
+
