@@ -175,6 +175,7 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
     std::vector<torch::jit::IValue> inputs;
     inputs.push_back(input_tensor);
 
+    torch::NoGradGuard no_grad;
     auto outputs = model->forward(inputs).toTuple();
     auto pushes_tensor = outputs->elements()[0].toTensor();
 

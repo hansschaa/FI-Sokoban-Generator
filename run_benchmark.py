@@ -30,8 +30,14 @@ def run_solver(board_str, heuristic):
     
     cmd = ['./build/test_solver', 'temp_board.txt', heuristic]
     try:
+        # Prevent PyTorch from spawning hundreds of threads
+        env = os.environ.copy()
+        env['OMP_NUM_THREADS'] = '1'
+        env['MKL_NUM_THREADS'] = '1'
+        env['OPENBLAS_NUM_THREADS'] = '1'
+        
         # 180 seconds to allow the internal 120s C++ timeout to trigger gracefully
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=180, env=env)
         output = result.stdout
         
         metrics = {
