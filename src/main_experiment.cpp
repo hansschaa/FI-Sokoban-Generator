@@ -88,12 +88,14 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    // 3. Variables Fijas y Estrictas para Experimento 1
     int maxEvals = 1000;
     int stagLimit = 30;
     int maxCircuitTimeSeconds = -1;
     if (char* val = getCmdOption(argv, argv + argc, "--timeLimit")) {
         maxCircuitTimeSeconds = std::stoi(val);
+    }
+    if (char* val = getCmdOption(argv, argv + argc, "--maxEvals")) {
+        maxEvals = std::stoi(val);
     }
 
     // 4. Configurar el tablero inicial (Shell) y aplicar Flood Fill

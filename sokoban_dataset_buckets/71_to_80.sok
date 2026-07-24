@@ -4767,3 +4767,19 @@
 #         #
 ###########
 
+10322882246502631515 - pushes:75 moves:511 runtime_ms:5806.6900 generated_states:53482 expanded_nodes:53482 total_children:1069640 effective_children:282620 repeated_nodes:109345 deadlocks:51451 branching_real:20.0000 branching_effective:5.2844 branching_classic:1.1562 redundancy:9.7822 closed_list:53482 initial_dist:72.0000 path_states:511 path_br_real_avg:3.0665 path_br_eff_avg:1.2153 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:469 path_deadlocks:477 box_lines:60 box_changes:49
+#################
+##      ## #  ###
+##   #   # #.# ##
+## $   ##@ # # .#
+###           . #
+###$ #     #  # #
+#  $   ###    . #
+#   #$     #    #
+# ### $ #  # # .#
+# ###      # ####
+#   ##  #     ###
+# #  # ### #   ##
+#   ##  #    ####
+#################
+
