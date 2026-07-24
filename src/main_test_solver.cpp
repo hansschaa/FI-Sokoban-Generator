@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <torch/torch.h>
 
 #include "../include/game_solver.h"
 #include "../include/evolution/utils/board_utils.h"
@@ -28,6 +29,7 @@ std::vector<std::vector<char>> load_board(const std::string& filename)
 
 int main(int argc, char* argv[])
 {
+    torch::set_num_threads(1);
     if (argc < 3)
     {
         std::cerr << "Uso: ./test_solver <ruta/al/level.txt> <heuristica> [calc]\n"

@@ -547,9 +547,9 @@ SolverStats game_solver::test_template(
     std::vector<game_node>& solution,
     bool calc_path_branching
 ) {
-    // 1. INICIAMOS EL TIMER AQUÍ (Contabiliza el setup de la heurística y la memoria)
-    auto t_start = std::chrono::high_resolution_clock::now();
-    auto t_end = t_start; // Se sobreescribirá en el instante exacto del éxito
+    // 1. Declarar timers
+    std::chrono::high_resolution_clock::time_point t_start;
+    std::chrono::high_resolution_clock::time_point t_end;
     bool goal_found = false;
 
     auto vec = Astar_init();
@@ -645,6 +645,13 @@ SolverStats game_solver::test_template(
             return final_scores;
         };
     }
+
+    // Realizar warmup de JIT y arrancar timer puro
+    if (neural_net) {
+        neural_net->evaluate(&init, end_vec);
+    }
+    t_start = std::chrono::high_resolution_clock::now();
+    t_end = t_start;
 
     // 2. EL CRONÓMETRO ESPÍA: Detiene el tiempo en el instante de la victoria
     is_equal = [&t_end, &goal_found](const game_node* a, const game_node*) -> bool {
