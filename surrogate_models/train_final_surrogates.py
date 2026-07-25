@@ -12,7 +12,7 @@ Soporta paralelización entre computadoras:
 Muestra progreso en tiempo real época por época con tiempo estimado (ETA).
 """
 
-import sys, os, json, copy, time, argparse, gc
+import sys, os, json, copy, time, argparse
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import torch
@@ -20,8 +20,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 import numpy as np
-import sklearn
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, fbeta_score, roc_auc_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, fbeta_score, roc_auc_score, average_precision_score
 
 from models.resnet import SokobanSEResNetRegressor, MultiHeadRegressorLoss, SokobanSEResNetClassifier, ClassifierLoss
 
@@ -239,7 +238,7 @@ def train_classifier(folds_to_run):
 
         model     = SokobanSEResNetClassifier(dropout_p=dropout_p).to(device)
         criterion = ClassifierLoss(pos_weight_val=pos_weight)
-        optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+        optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
         scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2)
 
         best_f05     = 0.0
@@ -286,62 +285,63 @@ def train_classifier(folds_to_run):
                     best_epoch_f05 = fb
                     best_epoch_thresh = thresh
 
-            # ── Evaluación en Test con el mejor Umbral ──
-            all_preds, all_probs, all_targets = [], [], []
-            with torch.no_grad():
-                for x, y in test_loader:
-                    x = x.to(device)
-                    logits = model(x)
-                    probs = torch.sigmoid(logits)
-                    preds = (probs >= best_epoch_thresh).float()
-                    all_probs.extend(probs.cpu().numpy())
-                    all_preds.extend(preds.cpu().numpy())
-                    all_targets.extend(y.numpy())
-
-            acc  = accuracy_score(all_targets, all_preds)
-            prec = precision_score(all_targets, all_preds, zero_division=0)
-            rec  = recall_score(all_targets, all_preds, zero_division=0)
-            f1   = f1_score(all_targets, all_preds, zero_division=0)
-            f05  = fbeta_score(all_targets, all_preds, beta=0.5, zero_division=0)
-            
-            try: auc = roc_auc_score(all_targets, all_probs)
-            except ValueError: auc = 0.0
-            
-            from sklearn.metrics import average_precision_score
-            try: pr_auc = average_precision_score(all_targets, all_probs)
-            except ValueError: pr_auc = 0.0
-
             scheduler.step()
 
             elapsed = time.time() - t0
             tag = ""
             if best_epoch_f05 > best_f05:
                 best_f05 = best_epoch_f05
-                best_metrics = {"acc": acc, "prec": prec, "rec": rec, "f1": f1, "f05": f05, "auc": auc, "prauc": pr_auc, "thresh": best_epoch_thresh}
+                best_thresh = best_epoch_thresh
                 best_weights = copy.deepcopy(model.state_dict())
                 patience_ctr = 0
                 tag = " ★ (Nuevo récord Val)"
             else:
                 patience_ctr += 1
 
-            print(f"  Ep {epoch:02d} | T: {elapsed:.1f}s | Loss: {train_loss:.4f} | Umbral Val: {best_epoch_thresh:.2f} | Test F0.5: {f05:.3f}{tag}")
+            print(f"  Ep {epoch:02d} | T: {elapsed:.1f}s | Loss: {train_loss:.4f} | Umbral Val: {best_epoch_thresh:.2f} | Val F0.5: {best_epoch_f05:.3f}{tag}")
 
             if patience_ctr >= 8:
                 print(f"  🛑 Early Stopping en época {epoch}.")
                 break
 
-        fold_accs.append(best_metrics["acc"])
-        fold_precs.append(best_metrics["prec"])
-        fold_recs.append(best_metrics["rec"])
-        fold_f1s.append(best_metrics["f1"])
-        fold_f05s.append(best_metrics["f05"])
-        fold_aucs.append(best_metrics["auc"])
-        fold_praucs.append(best_metrics["prauc"])
-        fold_threshs.append(best_metrics["thresh"])
+        # ── Test Ciego ──
+        model.load_state_dict(best_weights)
+        model.eval()
+        all_preds, all_probs, all_targets = [], [], []
+        with torch.no_grad():
+            for x, y in test_loader:
+                x = x.to(device)
+                logits = model(x)
+                probs = torch.sigmoid(logits)
+                preds = (probs >= best_thresh).float()
+                all_probs.extend(probs.cpu().numpy())
+                all_preds.extend(preds.cpu().numpy())
+                all_targets.extend(y.numpy())
+
+        acc  = accuracy_score(all_targets, all_preds)
+        prec = precision_score(all_targets, all_preds, zero_division=0)
+        rec  = recall_score(all_targets, all_preds, zero_division=0)
+        f1   = f1_score(all_targets, all_preds, zero_division=0)
+        f05  = fbeta_score(all_targets, all_preds, beta=0.5, zero_division=0)
+        
+        try: auc = roc_auc_score(all_targets, all_probs)
+        except ValueError: auc = 0.0
+        
+        try: pr_auc = average_precision_score(all_targets, all_probs)
+        except ValueError: pr_auc = 0.0
+
+        fold_accs.append(acc)
+        fold_precs.append(prec)
+        fold_recs.append(rec)
+        fold_f1s.append(f1)
+        fold_f05s.append(f05)
+        fold_aucs.append(auc)
+        fold_praucs.append(pr_auc)
+        fold_threshs.append(best_thresh)
 
         save_path = os.path.join(RESULTS_DIR, f"final_classifier_fold{fold}.pt")
         torch.save(best_weights, save_path)
-        print(f"  ✅ Fold {fold} guardado en {os.path.basename(save_path)} | Mejor F0.5: {best_metrics['f05']:.4f}")
+        print(f"  ✅ Fold {fold} guardado en {os.path.basename(save_path)} | Mejor F0.5 (Test): {f05:.4f}")
 
     if len(fold_f05s) > 1:
         print("\n" + "="*65)
