@@ -135,8 +135,8 @@ def objective(trial):
             for tensors, labels in test_loader:
                 tensors = tensors.to(device)
                 logits  = model(tensors)
-                # Umbral conservador 0.5 (Optuna busca la arquitectura, no el umbral)
-                preds   = (torch.sigmoid(logits) >= 0.5).cpu().numpy()
+                # Umbral 0.75 para coincidir con producción (minimizar Falsos Positivos)
+                preds   = (torch.sigmoid(logits) >= 0.75).cpu().numpy()
                 all_preds.extend(preds)
                 all_targets.extend(labels.numpy())
 

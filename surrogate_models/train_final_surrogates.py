@@ -251,7 +251,7 @@ def train_classifier(folds_to_run):
                     x = x.to(device)
                     logits = model(x)
                     probs = torch.sigmoid(logits)
-                    preds = (probs >= 0.5).float()
+                    preds = (probs >= 0.75).float()
                     all_probs.extend(probs.cpu().numpy())
                     all_preds.extend(preds.cpu().numpy())
                     all_targets.extend(y.numpy())
