@@ -1,7 +1,7 @@
 import torch
 import json
 import os
-from models.resnet import SokobanResNetRegressor, SokobanResNetClassifier
+from models.resnet import SokobanSEResNetRegressor, SokobanSEResNetClassifier
 
 def export_model():
     print("Loading hyperparameters...")
@@ -12,12 +12,12 @@ def export_model():
         c_params = json.load(f)
 
     print("Loading Regressor Model...")
-    regressor = SokobanResNetRegressor(dropout_p=r_params['params']["dropout_p"])
+    regressor = SokobanSEResNetRegressor(dropout_p=r_params['params']["dropout_p"])
     regressor.load_state_dict(torch.load("results/final_regressor_fold3.pt", map_location="cpu"))
     regressor.eval()
 
     print("Loading Classifier Model...")
-    classifier = SokobanResNetClassifier(dropout_p=c_params['params']["dropout_p"])
+    classifier = SokobanSEResNetClassifier(dropout_p=c_params['params']["dropout_p"])
     classifier.load_state_dict(torch.load("results/final_classifier_fold5.pt", map_location="cpu"))
     classifier.eval()
 
