@@ -1,10 +1,9 @@
 {
-  "best_value": 0.4708,
   "params": {
-    "lr": 0.002828678184153724,
-    "weight_decay": 3.310489343033291e-06,
-    "dropout_p": 0.3540083597834496,
-    "pos_weight": 1.0100580692586312,
-    "batch_size": 128
+    "lr": 0.003839,
+    "weight_decay": 0.000007,
+    "dropout_p": 0.150261,
+    "pos_weight": 1.12683,
+    "batch_size": 256
   }
 }
