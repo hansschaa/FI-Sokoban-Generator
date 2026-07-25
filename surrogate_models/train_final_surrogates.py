@@ -23,7 +23,7 @@ import numpy as np
 import sklearn
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, fbeta_score, roc_auc_score
 
-from models.resnet import SokobanSEResNetRegressor, MultiHeadRegressorLoss, SokobanResNetClassifier, ClassifierLoss
+from models.resnet import SokobanSEResNetRegressor, MultiHeadRegressorLoss, SokobanSEResNetClassifier, ClassifierLoss
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -137,7 +137,7 @@ def train_regressor(folds_to_run):
             model.eval()
             total_mae, n = 0.0, 0
             with torch.no_grad():
-                for tensors, _, p_raw, _ in test_loader:
+                for tensors, _, _, p_raw, _, _ in test_loader:
                     tensors = tensors.to(device)
                     p_pred = model(tensors)
                     p_desnorm = p_pred.cpu() * p_std + p_mean
