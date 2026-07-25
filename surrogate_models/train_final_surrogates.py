@@ -86,6 +86,7 @@ def train_regressor(folds_to_run):
 
     for fold in folds_to_run:
         train_path = os.path.join(RESULTS_DIR, f"regressor_fold{fold}_train.pt")
+        val_path   = os.path.join(RESULTS_DIR, f"regressor_fold{fold}_val.pt")
         test_path  = os.path.join(RESULTS_DIR, f"regressor_fold{fold}_test.pt")
         stats_path = os.path.join(RESULTS_DIR, f"regressor_fold{fold}_stats.pt")
 
@@ -98,16 +99,18 @@ def train_regressor(folds_to_run):
         print(f"[{'─'*40}]")
 
         train_data = torch.load(train_path, weights_only=False)
+        val_data   = torch.load(val_path,   weights_only=False)
         test_data  = torch.load(test_path,  weights_only=False)
         stats      = torch.load(stats_path, weights_only=False)
         p_mean, p_std = stats["pushes_mean"], stats["pushes_std"]
 
         train_loader = DataLoader(RegressorDataset(train_data), batch_size=batch_size, shuffle=True, num_workers=0, pin_memory=True)
+        val_loader   = DataLoader(RegressorDataset(val_data),   batch_size=256, shuffle=False, num_workers=0, pin_memory=True)
         test_loader  = DataLoader(RegressorDataset(test_data),  batch_size=256, shuffle=False, num_workers=0, pin_memory=True)
 
         model     = SokobanSEResNetRegressor(dropout_p=dropout_p).to(device)
         criterion = nn.HuberLoss(reduction='none')
-        optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+        optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
         scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2)
 
         best_mae     = float("inf")
@@ -135,39 +138,54 @@ def train_regressor(folds_to_run):
             train_loss /= len(train_loader)
 
             model.eval()
-            total_mae, n = 0.0, 0
+            total_mae_val, n_val = 0.0, 0
             with torch.no_grad():
-                for tensors, _, _, p_raw, _, _ in test_loader:
+                for tensors, _, _, p_raw, _, _ in val_loader:
                     tensors = tensors.to(device)
                     p_pred = model(tensors)
                     p_desnorm = p_pred.cpu() * p_std + p_mean
                     p_desnorm_real = torch.expm1(p_desnorm)
-                    total_mae += torch.abs(p_desnorm_real - p_raw).sum().item()
-                    n += len(p_raw)
+                    total_mae_val += torch.abs(p_desnorm_real - p_raw).sum().item()
+                    n_val += len(p_raw)
 
-            mae = total_mae / n
+            val_mae = total_mae_val / n_val
             scheduler.step()
 
             elapsed = time.time() - t0
             tag = ""
-            if mae < best_mae:
-                best_mae = mae
+            if val_mae < best_mae:
+                best_mae = val_mae
                 best_weights = copy.deepcopy(model.state_dict())
                 patience_ctr = 0
-                tag = " ★ (Nuevo récord)"
+                tag = " ★ (Nuevo récord Val)"
             else:
                 patience_ctr += 1
 
-            print(f"  Ep {epoch:02d} | T: {elapsed:.1f}s | Train Loss: {train_loss:.4f} | MAE Test: {mae:.2f} empujes{tag}")
+            print(f"  Ep {epoch:02d} | T: {elapsed:.1f}s | Train Loss: {train_loss:.4f} | MAE Val: {val_mae:.2f} empujes{tag}")
 
             if patience_ctr >= 10:
                 print(f"  🛑 Early Stopping en época {epoch}.")
                 break
 
-        fold_maes.append(best_mae)
+        # ── Test Ciego ──
+        model.load_state_dict(best_weights)
+        model.eval()
+        total_mae_test, n_test = 0.0, 0
+        with torch.no_grad():
+            for tensors, _, _, p_raw, _, _ in test_loader:
+                tensors = tensors.to(device)
+                p_pred = model(tensors)
+                p_desnorm = p_pred.cpu() * p_std + p_mean
+                p_desnorm_real = torch.expm1(p_desnorm)
+                total_mae_test += torch.abs(p_desnorm_real - p_raw).sum().item()
+                n_test += len(p_raw)
+        
+        test_mae = total_mae_test / n_test
+        fold_maes.append(test_mae)
+
         save_path = os.path.join(RESULTS_DIR, f"final_regressor_fold{fold}.pt")
         torch.save(best_weights, save_path)
-        print(f"  ✅ Fold {fold} guardado en {os.path.basename(save_path)} | Mejor MAE: {best_mae:.2f}")
+        print(f"  ✅ Fold {fold} guardado en {os.path.basename(save_path)} | MAE Val: {best_mae:.2f} | MAE TEST: {test_mae:.2f}")
 
     if len(fold_maes) > 1:
         print(f"\n  🏆 REGRESOR FINAL (5-FOLD CV): MAE Pushes = {np.mean(fold_maes):.2f} ± {np.std(fold_maes):.2f} empujes")
