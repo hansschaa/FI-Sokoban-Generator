@@ -41,9 +41,13 @@ def main():
     print(f"Cargando dataset (Fold {FOLD})...")
     try:
         train_data = torch.load(f"{RESULTS_DIR}/classifier_fold{FOLD}_train.pt", weights_only=False)
-        val_data   = torch.load(f"{RESULTS_DIR}/classifier_fold{FOLD}_val.pt",  weights_only=False)
-    except FileNotFoundError:
-        print("Dataset no encontrado. Asegúrate de ejecutar este script en una máquina del lab que tenga los archivos .pt")
+        try:
+            val_data = torch.load(f"{RESULTS_DIR}/classifier_fold{FOLD}_val.pt", weights_only=False)
+        except FileNotFoundError:
+            # Fallback for older dataset format on lab machines
+            val_data = torch.load(f"{RESULTS_DIR}/classifier_fold{FOLD}_test.pt", weights_only=False)
+    except FileNotFoundError as e:
+        print(f"Dataset no encontrado: {e}. Asegúrate de ejecutar este script en la misma ruta donde funciona optuna.")
         return
 
     train_loader = DataLoader(FoldDataset(train_data), batch_size=BEST_PARAMS['batch_size'], shuffle=True, num_workers=4)
