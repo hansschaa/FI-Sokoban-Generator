@@ -99,18 +99,18 @@ class SEBlock(nn.Module):
 
 
 class SEBasicBlock(nn.Module):
-    """BasicBlock with Squeeze-and-Excitation mechanism."""
-    def __init__(self, in_ch: int, out_ch: int):
+    """BasicBlock with Squeeze-and-Excitation mechanism and optional stride."""
+    def __init__(self, in_ch: int, out_ch: int, stride: int = 1):
         super().__init__()
-        self.conv1 = nn.Conv2d(in_ch, out_ch, 3, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(in_ch, out_ch, 3, stride=stride, padding=1, bias=False)
         self.bn1   = nn.BatchNorm2d(out_ch)
-        self.conv2 = nn.Conv2d(out_ch, out_ch, 3, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(out_ch, out_ch, 3, stride=1, padding=1, bias=False)
         self.bn2   = nn.BatchNorm2d(out_ch)
         self.se    = SEBlock(out_ch)
         self.shortcut = nn.Sequential()
-        if in_ch != out_ch:
+        if stride != 1 or in_ch != out_ch:
             self.shortcut = nn.Sequential(
-                nn.Conv2d(in_ch, out_ch, 1, bias=False),
+                nn.Conv2d(in_ch, out_ch, 1, stride=stride, bias=False),
                 nn.BatchNorm2d(out_ch),
             )
 
@@ -134,11 +134,11 @@ class SokobanSEResNetRegressor(nn.Module):
             nn.Conv2d(5, 32, 3, padding=1, bias=False),
             nn.BatchNorm2d(32), nn.ReLU(inplace=True),
         )
-        # 4 layers para más capacidad
-        self.layer1 = nn.Sequential(SEBasicBlock(32,  64),  SEBasicBlock(64,  64))
-        self.layer2 = nn.Sequential(SEBasicBlock(64,  128), SEBasicBlock(128, 128))
-        self.layer3 = nn.Sequential(SEBasicBlock(128, 256), SEBasicBlock(256, 256))
-        self.layer4 = nn.Sequential(SEBasicBlock(256, 512), SEBasicBlock(512, 512))
+        # 4 layers para más capacidad, usando stride=2 para reducir la resolución espacial y acelerar
+        self.layer1 = nn.Sequential(SEBasicBlock(32,  64, stride=1), SEBasicBlock(64,  64))
+        self.layer2 = nn.Sequential(SEBasicBlock(64,  128, stride=2), SEBasicBlock(128, 128))
+        self.layer3 = nn.Sequential(SEBasicBlock(128, 256, stride=2), SEBasicBlock(256, 256))
+        self.layer4 = nn.Sequential(SEBasicBlock(256, 512, stride=2), SEBasicBlock(512, 512))
         
         self.pool   = nn.AdaptiveAvgPool2d((1, 1))
 
