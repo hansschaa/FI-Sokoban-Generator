@@ -67,7 +67,7 @@ class ClassifierDataset(Dataset):
 # ─────────────────────────────────────────────────────────────────────────────
 # RUTINAS DE ENTRENAMIENTO
 # ─────────────────────────────────────────────────────────────────────────────
-def run_training_loop(model, train_loader, test_loader, criterion, is_classifier, arch_name, fold):
+def run_training_loop(model, train_loader, val_loader, criterion, is_classifier, arch_name, fold):
     model = model.to(device)
     optimizer = optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
     scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2)
@@ -102,7 +102,7 @@ def run_training_loop(model, train_loader, test_loader, criterion, is_classifier
         val_metric = 0.0
         total = 0
         with torch.no_grad():
-            for batch in test_loader:
+            for batch in val_loader:
                 x = batch[0].to(device)
                 if is_classifier:
                     y = batch[1].to(device)
@@ -151,7 +151,7 @@ def train_ablation(task, folds_to_run):
         
         # Cargar datos para prevenir leakage
         train_path = os.path.join(RESULTS_DIR, f"{task}_fold{fold}_train.pt")
-        test_path  = os.path.join(RESULTS_DIR, f"{task}_fold{fold}_test.pt")
+        val_path   = os.path.join(RESULTS_DIR, f"{task}_fold{fold}_val.pt")
         
         if not os.path.exists(train_path):
             print(f"⚠️ Saltando Fold {fold}: No existe {train_path}")
@@ -159,13 +159,13 @@ def train_ablation(task, folds_to_run):
             
         print("Cargando datasets del disco...")
         train_data = torch.load(train_path, weights_only=False)
-        test_data  = torch.load(test_path, weights_only=False)
+        val_data   = torch.load(val_path, weights_only=False)
         
         train_ds = ClassifierDataset(train_data) if is_classifier else RegressorDataset(train_data)
-        test_ds  = ClassifierDataset(test_data)  if is_classifier else RegressorDataset(test_data)
+        val_ds   = ClassifierDataset(val_data)  if is_classifier else RegressorDataset(val_data)
         
         train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True, num_workers=4, pin_memory=True, persistent_workers=True)
-        test_loader  = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False, num_workers=4, pin_memory=True, persistent_workers=True)
+        val_loader   = DataLoader(val_ds, batch_size=BATCH_SIZE, shuffle=False, num_workers=4, pin_memory=True, persistent_workers=True)
         
         for arch_name, ModelClass in archs.items():
             out_json = os.path.join(RESULTS_DIR, f"ablation_{task}_{arch_name}_fold{fold}.json")
@@ -174,13 +174,13 @@ def train_ablation(task, folds_to_run):
                 continue
                 
             model = ModelClass(dropout_p=DROPOUT)
-            history = run_training_loop(model, train_loader, test_loader, criterion, is_classifier, arch_name, fold)
+            history = run_training_loop(model, train_loader, val_loader, criterion, is_classifier, arch_name, fold)
             
             with open(out_json, "w") as f:
                 json.dump({"history": history}, f)
                 
         # Limpiar data loaders
-        del train_data, test_data, train_ds, test_ds, train_loader, test_loader
+        del train_data, val_data, train_ds, val_ds, train_loader, val_loader
         gc.collect()
 
 # ─────────────────────────────────────────────────────────────────────────────
