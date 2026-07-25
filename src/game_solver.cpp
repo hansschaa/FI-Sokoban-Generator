@@ -702,7 +702,7 @@ SolverStats game_solver::test_template(
     // 4. GUARDAR EN MILISEGUNDOS EXACTOS
     stats.runtime_ms = std::chrono::duration<double, std::milli>(t_end - t_start).count();
 
-    stats.pushes = solution.empty() ? 0 : solution.size() - 1;
+    stats.pushes = solution.size();
     stats.generated_states = rpt.zobrist_hash.size();
 
     stats.expanded_nodes     = stat_expanded_nodes;
