@@ -261,10 +261,10 @@ class SokobanSEResNetClassifier(nn.Module):
             nn.Conv2d(5, 32, 3, padding=1, bias=False),
             nn.BatchNorm2d(32), nn.ReLU(inplace=True),
         )
-        self.layer1 = nn.Sequential(SEBasicBlock(32,  64),  SEBasicBlock(64,  64))
-        self.layer2 = nn.Sequential(SEBasicBlock(64,  128), SEBasicBlock(128, 128))
-        self.layer3 = nn.Sequential(SEBasicBlock(128, 256), SEBasicBlock(256, 256))
-        self.layer4 = nn.Sequential(SEBasicBlock(256, 512), SEBasicBlock(512, 512))
+        self.layer1 = nn.Sequential(SEBasicBlock(32,  64, stride=1),  SEBasicBlock(64,  64))
+        self.layer2 = nn.Sequential(SEBasicBlock(64,  128, stride=2), SEBasicBlock(128, 128))
+        self.layer3 = nn.Sequential(SEBasicBlock(128, 256, stride=2), SEBasicBlock(256, 256))
+        self.layer4 = nn.Sequential(SEBasicBlock(256, 512, stride=2), SEBasicBlock(512, 512))
         
         self.pool   = nn.AdaptiveAvgPool2d((1, 1))
 
