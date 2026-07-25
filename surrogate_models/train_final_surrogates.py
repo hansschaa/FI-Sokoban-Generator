@@ -77,7 +77,7 @@ def train_regressor(folds_to_run):
     batch_size   = int(cfg["batch_size"])
 
     print("\n" + "="*65)
-    print("  ENTRENAMIENTO FINAL: REGRESOR (MULTI-HEAD RESNET)")
+    print("  ENTRENAMIENTO FINAL: REGRESOR (SINGLE-HEAD SERESNET)")
     print("="*65)
     print(f"  Dispositivo  : {device.type.upper()} ({torch.cuda.get_device_name(0) if device.type=='cuda' else 'CPU'})")
     print(f"  Hiperparámetros: lr={lr:.6f}, wd={weight_decay:.6f}, drop={dropout_p:.2f}, bs={batch_size}\n")
