@@ -1,4 +1,4 @@
-843712165304679039 - pushes:36 moves:143 runtime_ms:10.7196 generated_states:259 expanded_nodes:259 total_children:5180 effective_children:765 repeated_nodes:147 deadlocks:168 branching_real:20.0000 branching_effective:2.9537 branching_classic:1.1669 redundancy:35.2381 closed_list:259 initial_dist:33.0000 path_states:143 path_br_real_avg:2.7622 path_br_eff_avg:1.1818 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:112 path_deadlocks:114 box_lines:18 box_changes:14
+843712165304679039 - pushes:35 moves:143 runtime_ms:10.7196 generated_states:259 expanded_nodes:259 total_children:5180 effective_children:765 repeated_nodes:147 deadlocks:168 branching_real:20.0000 branching_effective:2.9537 branching_classic:1.1669 redundancy:35.2381 closed_list:259 initial_dist:33.0000 path_states:143 path_br_real_avg:2.7622 path_br_eff_avg:1.1818 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:112 path_deadlocks:114 box_lines:18 box_changes:14
 ###########
 #    ######
 # #$  # # #
@@ -11,7 +11,7 @@
 #  .  .#@##
 ###########
 
-11241703581372765006 - pushes:38 moves:257 runtime_ms:24.4752 generated_states:434 expanded_nodes:434 total_children:5208 effective_children:1459 repeated_nodes:589 deadlocks:429 branching_real:12.0000 branching_effective:3.3618 branching_classic:1.1733 redundancy:8.8421 closed_list:434 initial_dist:37.0000 path_states:257 path_br_real_avg:2.8716 path_br_eff_avg:1.6381 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:241 path_deadlocks:76 box_lines:22 box_changes:14
+11241703581372765006 - pushes:37 moves:257 runtime_ms:24.4752 generated_states:434 expanded_nodes:434 total_children:5208 effective_children:1459 repeated_nodes:589 deadlocks:429 branching_real:12.0000 branching_effective:3.3618 branching_classic:1.1733 redundancy:8.8421 closed_list:434 initial_dist:37.0000 path_states:257 path_br_real_avg:2.8716 path_br_eff_avg:1.6381 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:241 path_deadlocks:76 box_lines:22 box_changes:14
 ###########
 #   ## ## #
 # @##   # #
@@ -30,7 +30,7 @@
 ##       ##
 ###########
 
-9255542691577343882 - pushes:39 moves:376 runtime_ms:132.0772 generated_states:1171 expanded_nodes:1171 total_children:32788 effective_children:9108 repeated_nodes:1348 deadlocks:2070 branching_real:28.0000 branching_effective:7.7780 branching_classic:1.1986 redundancy:24.3234 closed_list:1171 initial_dist:36.0000 path_states:376 path_br_real_avg:2.9016 path_br_eff_avg:1.8883 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:358 path_deadlocks:23 box_lines:32 box_changes:25
+9255542691577343882 - pushes:38 moves:376 runtime_ms:132.0772 generated_states:1171 expanded_nodes:1171 total_children:32788 effective_children:9108 repeated_nodes:1348 deadlocks:2070 branching_real:28.0000 branching_effective:7.7780 branching_classic:1.1986 redundancy:24.3234 closed_list:1171 initial_dist:36.0000 path_states:376 path_br_real_avg:2.9016 path_br_eff_avg:1.8883 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:358 path_deadlocks:23 box_lines:32 box_changes:25
 ##############
 #########    #
 ##     # ### #
@@ -49,7 +49,7 @@
 #######   ####
 ##############
 
-1317607298559985198 - pushes:36 moves:161 runtime_ms:145.0214 generated_states:2326 expanded_nodes:2326 total_children:55824 effective_children:10735 repeated_nodes:4836 deadlocks:6615 branching_real:24.0000 branching_effective:4.6152 branching_classic:1.2403 redundancy:11.5434 closed_list:2326 initial_dist:33.0000 path_states:161 path_br_real_avg:2.8323 path_br_eff_avg:1.2671 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:137 path_deadlocks:115 box_lines:16 box_changes:12
+1317607298559985198 - pushes:35 moves:161 runtime_ms:145.0214 generated_states:2326 expanded_nodes:2326 total_children:55824 effective_children:10735 repeated_nodes:4836 deadlocks:6615 branching_real:24.0000 branching_effective:4.6152 branching_classic:1.2403 redundancy:11.5434 closed_list:2326 initial_dist:33.0000 path_states:161 path_br_real_avg:2.8323 path_br_eff_avg:1.2671 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:137 path_deadlocks:115 box_lines:16 box_changes:12
 ###########
 ##        #
 ##. .#$ # #
@@ -59,7 +59,7 @@
 # .@      #
 ###########
 
-219211132779586936 - pushes:40 moves:189 runtime_ms:312.2623 generated_states:7968 expanded_nodes:7968 total_children:191232 effective_children:23933 repeated_nodes:9980 deadlocks:14452 branching_real:24.0000 branching_effective:3.0036 branching_classic:1.2518 redundancy:19.1615 closed_list:7968 initial_dist:35.0000 path_states:189 path_br_real_avg:2.6349 path_br_eff_avg:1.6984 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:150 path_deadlocks:27 box_lines:22 box_changes:15
+219211132779586936 - pushes:39 moves:189 runtime_ms:312.2623 generated_states:7968 expanded_nodes:7968 total_children:191232 effective_children:23933 repeated_nodes:9980 deadlocks:14452 branching_real:24.0000 branching_effective:3.0036 branching_classic:1.2518 redundancy:19.1615 closed_list:7968 initial_dist:35.0000 path_states:189 path_br_real_avg:2.6349 path_br_eff_avg:1.6984 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:150 path_deadlocks:27 box_lines:22 box_changes:15
 #################
 #   ####  ###   #
 #  .$ ### . #$# #
@@ -69,7 +69,7 @@
 ##.   .       ###
 #################
 
-11002239022441665531 - pushes:39 moves:252 runtime_ms:19.3856 generated_states:451 expanded_nodes:451 total_children:5412 effective_children:1225 repeated_nodes:514 deadlocks:590 branching_real:12.0000 branching_effective:2.7162 branching_classic:1.1696 redundancy:10.5292 closed_list:451 initial_dist:38.0000 path_states:252 path_br_real_avg:2.7937 path_br_eff_avg:1.7460 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:233 path_deadlocks:31 box_lines:21 box_changes:20
+11002239022441665531 - pushes:38 moves:252 runtime_ms:19.3856 generated_states:451 expanded_nodes:451 total_children:5412 effective_children:1225 repeated_nodes:514 deadlocks:590 branching_real:12.0000 branching_effective:2.7162 branching_classic:1.1696 redundancy:10.5292 closed_list:451 initial_dist:38.0000 path_states:252 path_br_real_avg:2.7937 path_br_eff_avg:1.7460 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:233 path_deadlocks:31 box_lines:21 box_changes:20
 ###########
 ##### #  ##
 ## $     ##
@@ -82,7 +82,7 @@
 # ### .   #
 ###########
 
-7537391432343088827 - pushes:35 moves:242 runtime_ms:112.4329 generated_states:1786 expanded_nodes:1786 total_children:50008 effective_children:9252 repeated_nodes:1462 deadlocks:2671 branching_real:28.0000 branching_effective:5.1803 branching_classic:1.2385 redundancy:34.2052 closed_list:1786 initial_dist:34.0000 path_states:242 path_br_real_avg:2.9174 path_br_eff_avg:1.1322 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:222 path_deadlocks:210 box_lines:24 box_changes:21
+7537391432343088827 - pushes:34 moves:242 runtime_ms:112.4329 generated_states:1786 expanded_nodes:1786 total_children:50008 effective_children:9252 repeated_nodes:1462 deadlocks:2671 branching_real:28.0000 branching_effective:5.1803 branching_classic:1.2385 redundancy:34.2052 closed_list:1786 initial_dist:34.0000 path_states:242 path_br_real_avg:2.9174 path_br_eff_avg:1.1322 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:222 path_deadlocks:210 box_lines:24 box_changes:21
 ##############
 # @#   ###   #
 #  # $ #   # #
@@ -95,7 +95,7 @@
 # .       ####
 ##############
 
-12334724169193337404 - pushes:38 moves:180 runtime_ms:617.8560 generated_states:15473 expanded_nodes:15473 total_children:433244 effective_children:39427 repeated_nodes:25377 deadlocks:21005 branching_real:28.0000 branching_effective:2.5481 branching_classic:1.2890 redundancy:17.0723 closed_list:15473 initial_dist:25.0000 path_states:180 path_br_real_avg:2.7667 path_br_eff_avg:0.5889 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:3 path_repeated:154 path_deadlocks:238 box_lines:31 box_changes:22
+12334724169193337404 - pushes:37 moves:180 runtime_ms:617.8560 generated_states:15473 expanded_nodes:15473 total_children:433244 effective_children:39427 repeated_nodes:25377 deadlocks:21005 branching_real:28.0000 branching_effective:2.5481 branching_classic:1.2890 redundancy:17.0723 closed_list:15473 initial_dist:25.0000 path_states:180 path_br_real_avg:2.7667 path_br_eff_avg:0.5889 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:3 path_repeated:154 path_deadlocks:238 box_lines:31 box_changes:22
 ########
 #   . .#
 # # ####
@@ -108,7 +108,7 @@
 ####.  #
 ########
 
-5160393383951017315 - pushes:35 moves:216 runtime_ms:13.7120 generated_states:287 expanded_nodes:287 total_children:5740 effective_children:1155 repeated_nodes:225 deadlocks:652 branching_real:20.0000 branching_effective:4.0244 branching_classic:1.1755 redundancy:25.5111 closed_list:287 initial_dist:34.0000 path_states:216 path_br_real_avg:2.5417 path_br_eff_avg:1.2685 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:186 path_deadlocks:89 box_lines:19 box_changes:14
+5160393383951017315 - pushes:34 moves:216 runtime_ms:13.7120 generated_states:287 expanded_nodes:287 total_children:5740 effective_children:1155 repeated_nodes:225 deadlocks:652 branching_real:20.0000 branching_effective:4.0244 branching_classic:1.1755 redundancy:25.5111 closed_list:287 initial_dist:34.0000 path_states:216 path_br_real_avg:2.5417 path_br_eff_avg:1.2685 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:186 path_deadlocks:89 box_lines:19 box_changes:14
 ##############
 #    ##      #
 ##  .## # $###
@@ -118,7 +118,7 @@
 #            #
 ##############
 
-15547447043583830640 - pushes:40 moves:245 runtime_ms:1008.8583 generated_states:27251 expanded_nodes:27251 total_children:654024 effective_children:57677 repeated_nodes:44079 deadlocks:40768 branching_real:24.0000 branching_effective:2.1165 branching_classic:1.2909 redundancy:14.8375 closed_list:27251 initial_dist:29.0000 path_states:245 path_br_real_avg:2.6122 path_br_eff_avg:1.3020 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:211 path_deadlocks:110 box_lines:25 box_changes:18
+15547447043583830640 - pushes:39 moves:245 runtime_ms:1008.8583 generated_states:27251 expanded_nodes:27251 total_children:654024 effective_children:57677 repeated_nodes:44079 deadlocks:40768 branching_real:24.0000 branching_effective:2.1165 branching_classic:1.2909 redundancy:14.8375 closed_list:27251 initial_dist:29.0000 path_states:245 path_br_real_avg:2.6122 path_br_eff_avg:1.3020 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:211 path_deadlocks:110 box_lines:25 box_changes:18
 ##############
 ##     ### ###
 ##  ####   ###
@@ -131,7 +131,7 @@
 #    #.# #   #
 ##############
 
-16467634977745804336 - pushes:33 moves:169 runtime_ms:70.2491 generated_states:795 expanded_nodes:795 total_children:15900 effective_children:4894 repeated_nodes:927 deadlocks:1118 branching_real:20.0000 branching_effective:6.1560 branching_classic:1.2243 redundancy:17.1521 closed_list:795 initial_dist:32.0000 path_states:169 path_br_real_avg:3.1006 path_br_eff_avg:1.9467 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:145 path_deadlocks:50 box_lines:23 box_changes:20
+16467634977745804336 - pushes:32 moves:169 runtime_ms:70.2491 generated_states:795 expanded_nodes:795 total_children:15900 effective_children:4894 repeated_nodes:927 deadlocks:1118 branching_real:20.0000 branching_effective:6.1560 branching_classic:1.2243 redundancy:17.1521 closed_list:795 initial_dist:32.0000 path_states:169 path_br_real_avg:3.1006 path_br_eff_avg:1.9467 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:145 path_deadlocks:50 box_lines:23 box_changes:20
 #################
 #         ##    #
 ##  #   #  #  # #
@@ -147,7 +147,7 @@
 ####   #####    #
 #################
 
-13815416902770351195 - pushes:39 moves:326 runtime_ms:955.7350 generated_states:28095 expanded_nodes:28095 total_children:674280 effective_children:59581 repeated_nodes:19239 deadlocks:37146 branching_real:24.0000 branching_effective:2.1207 branching_classic:1.3004 redundancy:35.0476 closed_list:28095 initial_dist:36.0000 path_states:326 path_br_real_avg:2.7853 path_br_eff_avg:1.6994 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:304 path_deadlocks:50 box_lines:31 box_changes:26
+13815416902770351195 - pushes:38 moves:326 runtime_ms:955.7350 generated_states:28095 expanded_nodes:28095 total_children:674280 effective_children:59581 repeated_nodes:19239 deadlocks:37146 branching_real:24.0000 branching_effective:2.1207 branching_classic:1.3004 redundancy:35.0476 closed_list:28095 initial_dist:36.0000 path_states:326 path_br_real_avg:2.7853 path_br_eff_avg:1.6994 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:304 path_deadlocks:50 box_lines:31 box_changes:26
 ##############
 ## #         #
 #     # ## # #
@@ -163,7 +163,7 @@
 #  @###    ###
 ##############
 
-10682844286624795159 - pushes:40 moves:465 runtime_ms:2975.7620 generated_states:39429 expanded_nodes:39429 total_children:1104012 effective_children:157270 repeated_nodes:88039 deadlocks:88867 branching_real:28.0000 branching_effective:3.9887 branching_classic:1.3029 redundancy:12.5400 closed_list:39429 initial_dist:33.0000 path_states:465 path_br_real_avg:2.7398 path_br_eff_avg:1.3828 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:456 path_deadlocks:175 box_lines:31 box_changes:25
+10682844286624795159 - pushes:39 moves:465 runtime_ms:2975.7620 generated_states:39429 expanded_nodes:39429 total_children:1104012 effective_children:157270 repeated_nodes:88039 deadlocks:88867 branching_real:28.0000 branching_effective:3.9887 branching_classic:1.3029 redundancy:12.5400 closed_list:39429 initial_dist:33.0000 path_states:465 path_br_real_avg:2.7398 path_br_eff_avg:1.3828 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:456 path_deadlocks:175 box_lines:31 box_changes:25
 ###########
 #   ## # ##
 #  $##    #
@@ -182,7 +182,7 @@
 #         #
 ###########
 
-2678096810684071471 - pushes:33 moves:116 runtime_ms:17.4473 generated_states:645 expanded_nodes:645 total_children:10320 effective_children:1278 repeated_nodes:640 deadlocks:406 branching_real:16.0000 branching_effective:1.9814 branching_classic:1.2166 redundancy:16.1250 closed_list:645 initial_dist:26.0000 path_states:116 path_br_real_avg:2.7241 path_br_eff_avg:1.2500 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:87 path_deadlocks:84 box_lines:21 box_changes:13
+2678096810684071471 - pushes:32 moves:116 runtime_ms:17.4473 generated_states:645 expanded_nodes:645 total_children:10320 effective_children:1278 repeated_nodes:640 deadlocks:406 branching_real:16.0000 branching_effective:1.9814 branching_classic:1.2166 redundancy:16.1250 closed_list:645 initial_dist:26.0000 path_states:116 path_br_real_avg:2.7241 path_br_eff_avg:1.2500 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:87 path_deadlocks:84 box_lines:21 box_changes:13
 ########
 #   # ##
 ###    #
@@ -198,7 +198,7 @@
 #..  ###
 ########
 
-13163619676199880214 - pushes:37 moves:264 runtime_ms:1998.4476 generated_states:39058 expanded_nodes:39058 total_children:781160 effective_children:118623 repeated_nodes:70382 deadlocks:54089 branching_real:20.0000 branching_effective:3.0371 branching_classic:1.3308 redundancy:11.0989 closed_list:39058 initial_dist:30.0000 path_states:264 path_br_real_avg:2.6818 path_br_eff_avg:1.7576 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:238 path_deadlocks:6 box_lines:23 box_changes:15
+13163619676199880214 - pushes:36 moves:264 runtime_ms:1998.4476 generated_states:39058 expanded_nodes:39058 total_children:781160 effective_children:118623 repeated_nodes:70382 deadlocks:54089 branching_real:20.0000 branching_effective:3.0371 branching_classic:1.3308 redundancy:11.0989 closed_list:39058 initial_dist:30.0000 path_states:264 path_br_real_avg:2.6818 path_br_eff_avg:1.7576 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:238 path_deadlocks:6 box_lines:23 box_changes:15
 ##############
 #   ######   #
 #   #    # $ #
@@ -214,7 +214,7 @@
 #  #      @  #
 ##############
 
-1271351964252632943 - pushes:39 moves:529 runtime_ms:2712.2684 generated_states:60504 expanded_nodes:60504 total_children:1694112 effective_children:166814 repeated_nodes:66202 deadlocks:85157 branching_real:28.0000 branching_effective:2.7571 branching_classic:1.3262 redundancy:25.5900 closed_list:60504 initial_dist:28.0000 path_states:529 path_br_real_avg:2.5917 path_br_eff_avg:0.4953 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:513 path_deadlocks:596 box_lines:30 box_changes:27
+1271351964252632943 - pushes:38 moves:529 runtime_ms:2712.2684 generated_states:60504 expanded_nodes:60504 total_children:1694112 effective_children:166814 repeated_nodes:66202 deadlocks:85157 branching_real:28.0000 branching_effective:2.7571 branching_classic:1.3262 redundancy:25.5900 closed_list:60504 initial_dist:28.0000 path_states:529 path_br_real_avg:2.5917 path_br_eff_avg:0.4953 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:513 path_deadlocks:596 box_lines:30 box_changes:27
 ###########
 ## # #### #
 #    #### #
@@ -233,7 +233,7 @@
 # ##      #
 ###########
 
-6603924658397469454 - pushes:38 moves:249 runtime_ms:1203.9876 generated_states:13662 expanded_nodes:13662 total_children:218592 effective_children:55078 repeated_nodes:33937 deadlocks:19787 branching_real:16.0000 branching_effective:4.0315 branching_classic:1.2848 redundancy:6.4411 closed_list:13662 initial_dist:29.0000 path_states:249 path_br_real_avg:2.9076 path_br_eff_avg:1.5341 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:225 path_deadlocks:117 box_lines:24 box_changes:18
+6603924658397469454 - pushes:37 moves:249 runtime_ms:1203.9876 generated_states:13662 expanded_nodes:13662 total_children:218592 effective_children:55078 repeated_nodes:33937 deadlocks:19787 branching_real:16.0000 branching_effective:4.0315 branching_classic:1.2848 redundancy:6.4411 closed_list:13662 initial_dist:29.0000 path_states:249 path_br_real_avg:2.9076 path_br_eff_avg:1.5341 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:225 path_deadlocks:117 box_lines:24 box_changes:18
 #################
 ####  .## ###   #
 #    #  #     # #
@@ -249,7 +249,7 @@
 # ##   ###     ##
 #################
 
-9507573582578539696 - pushes:31 moves:120 runtime_ms:8.3993 generated_states:325 expanded_nodes:325 total_children:2600 effective_children:547 repeated_nodes:227 deadlocks:136 branching_real:8.0000 branching_effective:1.6831 branching_classic:1.2051 redundancy:11.4537 closed_list:325 initial_dist:24.0000 path_states:120 path_br_real_avg:2.8083 path_br_eff_avg:1.9583 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:92 path_deadlocks:10 box_lines:16 box_changes:7
+9507573582578539696 - pushes:30 moves:120 runtime_ms:8.3993 generated_states:325 expanded_nodes:325 total_children:2600 effective_children:547 repeated_nodes:227 deadlocks:136 branching_real:8.0000 branching_effective:1.6831 branching_classic:1.2051 redundancy:11.4537 closed_list:325 initial_dist:24.0000 path_states:120 path_br_real_avg:2.8083 path_br_eff_avg:1.9583 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:92 path_deadlocks:10 box_lines:16 box_changes:7
 ###########
 ####      #
 # #     # #
@@ -265,7 +265,7 @@
 #   ###. ##
 ###########
 
-5174498727925943278 - pushes:31 moves:207 runtime_ms:31.7988 generated_states:463 expanded_nodes:463 total_children:7408 effective_children:2726 repeated_nodes:658 deadlocks:520 branching_real:16.0000 branching_effective:5.8877 branching_classic:1.2190 redundancy:11.2584 closed_list:463 initial_dist:30.0000 path_states:207 path_br_real_avg:2.8116 path_br_eff_avg:1.8213 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:193 path_deadlocks:12 box_lines:21 box_changes:15
+5174498727925943278 - pushes:30 moves:207 runtime_ms:31.7988 generated_states:463 expanded_nodes:463 total_children:7408 effective_children:2726 repeated_nodes:658 deadlocks:520 branching_real:16.0000 branching_effective:5.8877 branching_classic:1.2190 redundancy:11.2584 closed_list:463 initial_dist:30.0000 path_states:207 path_br_real_avg:2.8116 path_br_eff_avg:1.8213 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:193 path_deadlocks:12 box_lines:21 box_changes:15
 ##############
 ######       #
 #   ##  $ #  #
@@ -278,7 +278,7 @@
 #   . ##  . ##
 ##############
 
-6689721207288901912 - pushes:38 moves:170 runtime_ms:84.5835 generated_states:2127 expanded_nodes:2127 total_children:59556 effective_children:5861 repeated_nodes:1687 deadlocks:3640 branching_real:28.0000 branching_effective:2.7555 branching_classic:1.2234 redundancy:35.3029 closed_list:2127 initial_dist:35.0000 path_states:170 path_br_real_avg:2.9118 path_br_eff_avg:0.9941 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:140 path_deadlocks:186 box_lines:22 box_changes:18
+6689721207288901912 - pushes:37 moves:170 runtime_ms:84.5835 generated_states:2127 expanded_nodes:2127 total_children:59556 effective_children:5861 repeated_nodes:1687 deadlocks:3640 branching_real:28.0000 branching_effective:2.7555 branching_classic:1.2234 redundancy:35.3029 closed_list:2127 initial_dist:35.0000 path_states:170 path_br_real_avg:2.9118 path_br_eff_avg:0.9941 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:140 path_deadlocks:186 box_lines:22 box_changes:18
 ###########
 ##.#  # # #
 # .  ##.# #
@@ -291,7 +291,7 @@
 #      ####
 ###########
 
-5769020727540921936 - pushes:35 moves:276 runtime_ms:195.2918 generated_states:2538 expanded_nodes:2538 total_children:50760 effective_children:8848 repeated_nodes:2153 deadlocks:1442 branching_real:20.0000 branching_effective:3.4862 branching_classic:1.2510 redundancy:23.5764 closed_list:2538 initial_dist:34.0000 path_states:276 path_br_real_avg:2.8188 path_br_eff_avg:1.8225 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:269 path_deadlocks:6 box_lines:22 box_changes:16
+5769020727540921936 - pushes:34 moves:276 runtime_ms:195.2918 generated_states:2538 expanded_nodes:2538 total_children:50760 effective_children:8848 repeated_nodes:2153 deadlocks:1442 branching_real:20.0000 branching_effective:3.4862 branching_classic:1.2510 redundancy:23.5764 closed_list:2538 initial_dist:34.0000 path_states:276 path_br_real_avg:2.8188 path_br_eff_avg:1.8225 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:269 path_deadlocks:6 box_lines:22 box_changes:16
 #################
 ###        #    #
 ###   ## $ # $###
@@ -310,7 +310,7 @@
 #        .# #####
 #################
 
-15519491196441644524 - pushes:38 moves:342 runtime_ms:7602.6940 generated_states:103024 expanded_nodes:103024 total_children:2884672 effective_children:450237 repeated_nodes:197621 deadlocks:185549 branching_real:28.0000 branching_effective:4.3702 branching_classic:1.3549 redundancy:14.5970 closed_list:103024 initial_dist:33.0000 path_states:342 path_br_real_avg:2.8947 path_br_eff_avg:1.9327 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:318 path_deadlocks:11 box_lines:30 box_changes:22
+15519491196441644524 - pushes:37 moves:342 runtime_ms:7602.6940 generated_states:103024 expanded_nodes:103024 total_children:2884672 effective_children:450237 repeated_nodes:197621 deadlocks:185549 branching_real:28.0000 branching_effective:4.3702 branching_classic:1.3549 redundancy:14.5970 closed_list:103024 initial_dist:33.0000 path_states:342 path_br_real_avg:2.8947 path_br_eff_avg:1.9327 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:318 path_deadlocks:11 box_lines:30 box_changes:22
 ##############
 ###       ####
 ###    ### # #
@@ -329,7 +329,7 @@
 #   ####### ##
 ##############
 
-9132081776241335304 - pushes:31 moves:174 runtime_ms:29.6437 generated_states:522 expanded_nodes:522 total_children:10440 effective_children:2487 repeated_nodes:549 deadlocks:731 branching_real:20.0000 branching_effective:4.7644 branching_classic:1.2237 redundancy:19.0164 closed_list:522 initial_dist:28.0000 path_states:174 path_br_real_avg:2.7816 path_br_eff_avg:1.8621 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:153 path_deadlocks:7 box_lines:21 box_changes:19
+9132081776241335304 - pushes:30 moves:174 runtime_ms:29.6437 generated_states:522 expanded_nodes:522 total_children:10440 effective_children:2487 repeated_nodes:549 deadlocks:731 branching_real:20.0000 branching_effective:4.7644 branching_classic:1.2237 redundancy:19.0164 closed_list:522 initial_dist:28.0000 path_states:174 path_br_real_avg:2.7816 path_br_eff_avg:1.8621 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:153 path_deadlocks:7 box_lines:21 box_changes:19
 ########
 #   ####
 #   $  #
@@ -348,7 +348,7 @@
 #  #.# #
 ########
 
-2974732744323572410 - pushes:35 moves:223 runtime_ms:30.2861 generated_states:584 expanded_nodes:584 total_children:11680 effective_children:2541 repeated_nodes:498 deadlocks:784 branching_real:20.0000 branching_effective:4.3510 branching_classic:1.1996 redundancy:23.4538 closed_list:584 initial_dist:34.0000 path_states:223 path_br_real_avg:3.0000 path_br_eff_avg:2.0314 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:200 path_deadlocks:16 box_lines:26 box_changes:23
+2974732744323572410 - pushes:34 moves:223 runtime_ms:30.2861 generated_states:584 expanded_nodes:584 total_children:11680 effective_children:2541 repeated_nodes:498 deadlocks:784 branching_real:20.0000 branching_effective:4.3510 branching_classic:1.1996 redundancy:23.4538 closed_list:584 initial_dist:34.0000 path_states:223 path_br_real_avg:3.0000 path_br_eff_avg:2.0314 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:200 path_deadlocks:16 box_lines:26 box_changes:23
 ###########
 #   ##### #
 ### #  ## #
@@ -364,7 +364,7 @@
 #### #    #
 ###########
 
-5361761498496430816 - pushes:31 moves:111 runtime_ms:52.2753 generated_states:1502 expanded_nodes:1502 total_children:36048 effective_children:3114 repeated_nodes:1519 deadlocks:2962 branching_real:24.0000 branching_effective:2.0732 branching_classic:1.2661 redundancy:23.7314 closed_list:1502 initial_dist:16.0000 path_states:111 path_br_real_avg:2.9910 path_br_eff_avg:2.0090 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:84 path_deadlocks:25 box_lines:17 box_changes:13
+5361761498496430816 - pushes:30 moves:111 runtime_ms:52.2753 generated_states:1502 expanded_nodes:1502 total_children:36048 effective_children:3114 repeated_nodes:1519 deadlocks:2962 branching_real:24.0000 branching_effective:2.0732 branching_classic:1.2661 redundancy:23.7314 closed_list:1502 initial_dist:16.0000 path_states:111 path_br_real_avg:2.9910 path_br_eff_avg:2.0090 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:84 path_deadlocks:25 box_lines:17 box_changes:13
 #################
 #   @##   ##   ##
 ###  ## #$##$  ##
@@ -374,7 +374,7 @@
 #      ######. ##
 #################
 
-15869309541701338655 - pushes:38 moves:198 runtime_ms:30.7671 generated_states:692 expanded_nodes:692 total_children:19376 effective_children:2613 repeated_nodes:662 deadlocks:1042 branching_real:28.0000 branching_effective:3.7760 branching_classic:1.1878 redundancy:29.2689 closed_list:692 initial_dist:37.0000 path_states:198 path_br_real_avg:2.8030 path_br_eff_avg:0.7273 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:164 path_deadlocks:247 box_lines:26 box_changes:18
+15869309541701338655 - pushes:37 moves:198 runtime_ms:30.7671 generated_states:692 expanded_nodes:692 total_children:19376 effective_children:2613 repeated_nodes:662 deadlocks:1042 branching_real:28.0000 branching_effective:3.7760 branching_classic:1.1878 redundancy:29.2689 closed_list:692 initial_dist:37.0000 path_states:198 path_br_real_avg:2.8030 path_br_eff_avg:0.7273 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:164 path_deadlocks:247 box_lines:26 box_changes:18
 ###########
 # #########
 #  ##  # .#
@@ -384,7 +384,7 @@
 #.#     ###
 ###########
 
-4250794765454730663 - pushes:34 moves:128 runtime_ms:79.5630 generated_states:3445 expanded_nodes:3445 total_children:68900 effective_children:6337 repeated_nodes:2535 deadlocks:4623 branching_real:20.0000 branching_effective:1.8395 branching_classic:1.2707 redundancy:27.1795 closed_list:3445 initial_dist:27.0000 path_states:128 path_br_real_avg:2.7812 path_br_eff_avg:0.5469 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:96 path_deadlocks:190 box_lines:17 box_changes:10
+4250794765454730663 - pushes:33 moves:128 runtime_ms:79.5630 generated_states:3445 expanded_nodes:3445 total_children:68900 effective_children:6337 repeated_nodes:2535 deadlocks:4623 branching_real:20.0000 branching_effective:1.8395 branching_classic:1.2707 redundancy:27.1795 closed_list:3445 initial_dist:27.0000 path_states:128 path_br_real_avg:2.7812 path_br_eff_avg:0.5469 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:96 path_deadlocks:190 box_lines:17 box_changes:10
 ##############
 ### # #   ####
 ###. . .##   #
@@ -394,7 +394,7 @@
 #######      #
 ##############
 
-13678567272228306384 - pushes:38 moves:365 runtime_ms:58.1446 generated_states:558 expanded_nodes:558 total_children:6696 effective_children:2492 repeated_nodes:1014 deadlocks:526 branching_real:12.0000 branching_effective:4.4659 branching_classic:1.1811 redundancy:6.6036 closed_list:558 initial_dist:37.0000 path_states:365 path_br_real_avg:2.7973 path_br_eff_avg:1.7425 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:354 path_deadlocks:31 box_lines:26 box_changes:21
+13678567272228306384 - pushes:37 moves:365 runtime_ms:58.1446 generated_states:558 expanded_nodes:558 total_children:6696 effective_children:2492 repeated_nodes:1014 deadlocks:526 branching_real:12.0000 branching_effective:4.4659 branching_classic:1.1811 redundancy:6.6036 closed_list:558 initial_dist:37.0000 path_states:365 path_br_real_avg:2.7973 path_br_eff_avg:1.7425 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:354 path_deadlocks:31 box_lines:26 box_changes:21
 #################
 ###             #
 ##   # ## ###@  #
@@ -413,7 +413,7 @@
 ##     # #   ####
 #################
 
-10448220065030050981 - pushes:31 moves:167 runtime_ms:540.1656 generated_states:11094 expanded_nodes:11094 total_children:221880 effective_children:36212 repeated_nodes:19031 deadlocks:10409 branching_real:20.0000 branching_effective:3.2641 branching_classic:1.3505 redundancy:11.6589 closed_list:11094 initial_dist:22.0000 path_states:167 path_br_real_avg:2.8383 path_br_eff_avg:1.4012 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:145 path_deadlocks:95 box_lines:14 box_changes:11
+10448220065030050981 - pushes:30 moves:167 runtime_ms:540.1656 generated_states:11094 expanded_nodes:11094 total_children:221880 effective_children:36212 repeated_nodes:19031 deadlocks:10409 branching_real:20.0000 branching_effective:3.2641 branching_classic:1.3505 redundancy:11.6589 closed_list:11094 initial_dist:22.0000 path_states:167 path_br_real_avg:2.8383 path_br_eff_avg:1.4012 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:145 path_deadlocks:95 box_lines:14 box_changes:11
 #################
 ###.# ## # #   ##
 ## $      .#$ ###
@@ -426,7 +426,7 @@
 ###  ## ####    #
 #################
 
-5339931556589310644 - pushes:40 moves:411 runtime_ms:84.9004 generated_states:1594 expanded_nodes:1594 total_children:25504 effective_children:6210 repeated_nodes:2800 deadlocks:2095 branching_real:16.0000 branching_effective:3.8959 branching_classic:1.2024 redundancy:9.1086 closed_list:1594 initial_dist:37.0000 path_states:411 path_br_real_avg:2.7810 path_br_eff_avg:1.8151 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:389 path_deadlocks:8 box_lines:31 box_changes:21
+5339931556589310644 - pushes:39 moves:411 runtime_ms:84.9004 generated_states:1594 expanded_nodes:1594 total_children:25504 effective_children:6210 repeated_nodes:2800 deadlocks:2095 branching_real:16.0000 branching_effective:3.8959 branching_classic:1.2024 redundancy:9.1086 closed_list:1594 initial_dist:37.0000 path_states:411 path_br_real_avg:2.7810 path_br_eff_avg:1.8151 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:389 path_deadlocks:8 box_lines:31 box_changes:21
 ##############
 ## ####      #
 #    #  #$ ###
@@ -439,7 +439,7 @@
 # ##   ## # ##
 ##############
 
-14977151666609578969 - pushes:34 moves:336 runtime_ms:166.1519 generated_states:2482 expanded_nodes:2482 total_children:69496 effective_children:9750 repeated_nodes:3247 deadlocks:5122 branching_real:28.0000 branching_effective:3.9283 branching_classic:1.2585 redundancy:21.4031 closed_list:2482 initial_dist:33.0000 path_states:336 path_br_real_avg:2.6250 path_br_eff_avg:1.6429 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:314 path_deadlocks:16 box_lines:19 box_changes:16
+14977151666609578969 - pushes:33 moves:336 runtime_ms:166.1519 generated_states:2482 expanded_nodes:2482 total_children:69496 effective_children:9750 repeated_nodes:3247 deadlocks:5122 branching_real:28.0000 branching_effective:3.9283 branching_classic:1.2585 redundancy:21.4031 closed_list:2482 initial_dist:33.0000 path_states:336 path_br_real_avg:2.6250 path_br_eff_avg:1.6429 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:314 path_deadlocks:16 box_lines:19 box_changes:16
 #################
 # .          .  #
 ### ##  ##    ###
@@ -455,7 +455,7 @@
 ## #  . # #     #
 #################
 
-7369841258511118448 - pushes:33 moves:279 runtime_ms:56.4382 generated_states:887 expanded_nodes:887 total_children:21288 effective_children:4766 repeated_nodes:853 deadlocks:1702 branching_real:24.0000 branching_effective:5.3732 branching_classic:1.2284 redundancy:24.9566 closed_list:887 initial_dist:30.0000 path_states:279 path_br_real_avg:2.9176 path_br_eff_avg:1.8889 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:257 path_deadlocks:30 box_lines:27 box_changes:21
+7369841258511118448 - pushes:32 moves:279 runtime_ms:56.4382 generated_states:887 expanded_nodes:887 total_children:21288 effective_children:4766 repeated_nodes:853 deadlocks:1702 branching_real:24.0000 branching_effective:5.3732 branching_classic:1.2284 redundancy:24.9566 closed_list:887 initial_dist:30.0000 path_states:279 path_br_real_avg:2.9176 path_br_eff_avg:1.8889 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:257 path_deadlocks:30 box_lines:27 box_changes:21
 ##############
 ### .  ##  ###
 ##  .#$##  ###
@@ -468,7 +468,7 @@
 #   ###    ###
 ##############
 
-4233069295363845179 - pushes:40 moves:345 runtime_ms:802.7514 generated_states:7544 expanded_nodes:7544 total_children:181056 effective_children:54572 repeated_nodes:13485 deadlocks:7388 branching_real:24.0000 branching_effective:7.2338 branching_classic:1.2501 redundancy:13.4265 closed_list:7544 initial_dist:39.0000 path_states:345 path_br_real_avg:3.0667 path_br_eff_avg:1.7304 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:335 path_deadlocks:126 box_lines:31 box_changes:27
+4233069295363845179 - pushes:39 moves:345 runtime_ms:802.7514 generated_states:7544 expanded_nodes:7544 total_children:181056 effective_children:54572 repeated_nodes:13485 deadlocks:7388 branching_real:24.0000 branching_effective:7.2338 branching_classic:1.2501 redundancy:13.4265 closed_list:7544 initial_dist:39.0000 path_states:345 path_br_real_avg:3.0667 path_br_eff_avg:1.7304 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:335 path_deadlocks:126 box_lines:31 box_changes:27
 #################
 #    #  ##   #  #
 # #  # $##   #  #
@@ -484,7 +484,7 @@
 #    #        ###
 #################
 
-7072736651366474195 - pushes:38 moves:221 runtime_ms:727.4578 generated_states:21273 expanded_nodes:21273 total_children:425460 effective_children:46939 repeated_nodes:26514 deadlocks:28831 branching_real:20.0000 branching_effective:2.2065 branching_classic:1.2998 redundancy:16.0466 closed_list:21273 initial_dist:25.0000 path_states:221 path_br_real_avg:2.8643 path_br_eff_avg:1.3801 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:194 path_deadlocks:134 box_lines:29 box_changes:25
+7072736651366474195 - pushes:37 moves:221 runtime_ms:727.4578 generated_states:21273 expanded_nodes:21273 total_children:425460 effective_children:46939 repeated_nodes:26514 deadlocks:28831 branching_real:20.0000 branching_effective:2.2065 branching_classic:1.2998 redundancy:16.0466 closed_list:21273 initial_dist:25.0000 path_states:221 path_br_real_avg:2.8643 path_br_eff_avg:1.3801 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:194 path_deadlocks:134 box_lines:29 box_changes:25
 ###########
 ## # ##  ##
 #   .##  ##
@@ -500,7 +500,7 @@
 ###### # ##
 ###########
 
-10252388816641789919 - pushes:37 moves:165 runtime_ms:1054.5495 generated_states:23817 expanded_nodes:23817 total_children:666876 effective_children:70802 repeated_nodes:44798 deadlocks:30104 branching_real:28.0000 branching_effective:2.9728 branching_classic:1.3131 redundancy:14.8863 closed_list:23817 initial_dist:26.0000 path_states:165 path_br_real_avg:2.7212 path_br_eff_avg:1.0121 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:131 path_deadlocks:151 box_lines:30 box_changes:24
+10252388816641789919 - pushes:36 moves:165 runtime_ms:1054.5495 generated_states:23817 expanded_nodes:23817 total_children:666876 effective_children:70802 repeated_nodes:44798 deadlocks:30104 branching_real:28.0000 branching_effective:2.9728 branching_classic:1.3131 redundancy:14.8863 closed_list:23817 initial_dist:26.0000 path_states:165 path_br_real_avg:2.7212 path_br_eff_avg:1.0121 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:131 path_deadlocks:151 box_lines:30 box_changes:24
 ########
 ###.   #
 ##  ## #
@@ -513,7 +513,7 @@
 #.#. ###
 ########
 
-14085742538161204212 - pushes:31 moves:206 runtime_ms:3708.5958 generated_states:77424 expanded_nodes:77424 total_children:2167872 effective_children:240698 repeated_nodes:110123 deadlocks:120131 branching_real:28.0000 branching_effective:3.1088 branching_classic:1.4378 redundancy:19.6859 closed_list:77424 initial_dist:24.0000 path_states:206 path_br_real_avg:2.8835 path_br_eff_avg:1.7670 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:179 path_deadlocks:51 box_lines:24 box_changes:19
+14085742538161204212 - pushes:30 moves:206 runtime_ms:3708.5958 generated_states:77424 expanded_nodes:77424 total_children:2167872 effective_children:240698 repeated_nodes:110123 deadlocks:120131 branching_real:28.0000 branching_effective:3.1088 branching_classic:1.4378 redundancy:19.6859 closed_list:77424 initial_dist:24.0000 path_states:206 path_br_real_avg:2.8835 path_br_eff_avg:1.7670 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:179 path_deadlocks:51 box_lines:24 box_changes:19
 ###########
 ## ## #   #
 # .$  . .##
@@ -526,7 +526,7 @@
 #     .   #
 ###########
 
-17234303851491417632 - pushes:33 moves:124 runtime_ms:47.0049 generated_states:1727 expanded_nodes:1727 total_children:27632 effective_children:3673 repeated_nodes:1589 deadlocks:2112 branching_real:16.0000 branching_effective:2.1268 branching_classic:1.2534 redundancy:17.3896 closed_list:1727 initial_dist:24.0000 path_states:124 path_br_real_avg:2.8226 path_br_eff_avg:1.6855 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:100 path_deadlocks:41 box_lines:17 box_changes:12
+17234303851491417632 - pushes:32 moves:124 runtime_ms:47.0049 generated_states:1727 expanded_nodes:1727 total_children:27632 effective_children:3673 repeated_nodes:1589 deadlocks:2112 branching_real:16.0000 branching_effective:2.1268 branching_classic:1.2534 redundancy:17.3896 closed_list:1727 initial_dist:24.0000 path_states:124 path_br_real_avg:2.8226 path_br_eff_avg:1.6855 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:100 path_deadlocks:41 box_lines:17 box_changes:12
 ########
 #   ##.#
 #.#$## #
@@ -539,7 +539,7 @@
 #     ##
 ########
 
-12328468817216042447 - pushes:32 moves:253 runtime_ms:217.2091 generated_states:5654 expanded_nodes:5654 total_children:113080 effective_children:14222 repeated_nodes:9011 deadlocks:10939 branching_real:20.0000 branching_effective:2.5154 branching_classic:1.3100 redundancy:12.5491 closed_list:5654 initial_dist:25.0000 path_states:253 path_br_real_avg:2.8379 path_br_eff_avg:1.5296 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:230 path_deadlocks:101 box_lines:24 box_changes:18
+12328468817216042447 - pushes:31 moves:253 runtime_ms:217.2091 generated_states:5654 expanded_nodes:5654 total_children:113080 effective_children:14222 repeated_nodes:9011 deadlocks:10939 branching_real:20.0000 branching_effective:2.5154 branching_classic:1.3100 redundancy:12.5491 closed_list:5654 initial_dist:25.0000 path_states:253 path_br_real_avg:2.8379 path_br_eff_avg:1.5296 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:230 path_deadlocks:101 box_lines:24 box_changes:18
 ###########
 # .    ## #
 ###$   #@ #
@@ -552,7 +552,7 @@
 #         #
 ###########
 
-16260940903066238889 - pushes:31 moves:129 runtime_ms:280.8892 generated_states:8420 expanded_nodes:8420 total_children:168400 effective_children:21240 repeated_nodes:9947 deadlocks:9987 branching_real:20.0000 branching_effective:2.5226 branching_classic:1.3385 redundancy:16.9297 closed_list:8420 initial_dist:16.0000 path_states:129 path_br_real_avg:2.8217 path_br_eff_avg:1.8217 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:103 path_deadlocks:26 box_lines:17 box_changes:14
+16260940903066238889 - pushes:30 moves:129 runtime_ms:280.8892 generated_states:8420 expanded_nodes:8420 total_children:168400 effective_children:21240 repeated_nodes:9947 deadlocks:9987 branching_real:20.0000 branching_effective:2.5226 branching_classic:1.3385 redundancy:16.9297 closed_list:8420 initial_dist:16.0000 path_states:129 path_br_real_avg:2.8217 path_br_eff_avg:1.8217 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:103 path_deadlocks:26 box_lines:17 box_changes:14
 ########
 # ######
 #@ #   #
@@ -568,7 +568,7 @@
 # #### #
 ########
 
-6572689426056733225 - pushes:39 moves:162 runtime_ms:60.7520 generated_states:1746 expanded_nodes:1746 total_children:20952 effective_children:4698 repeated_nodes:1807 deadlocks:780 branching_real:12.0000 branching_effective:2.6907 branching_classic:1.2110 redundancy:11.5949 closed_list:1746 initial_dist:34.0000 path_states:162 path_br_real_avg:3.0556 path_br_eff_avg:2.0617 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:127 path_deadlocks:34 box_lines:17 box_changes:11
+6572689426056733225 - pushes:38 moves:162 runtime_ms:60.7520 generated_states:1746 expanded_nodes:1746 total_children:20952 effective_children:4698 repeated_nodes:1807 deadlocks:780 branching_real:12.0000 branching_effective:2.6907 branching_classic:1.2110 redundancy:11.5949 closed_list:1746 initial_dist:34.0000 path_states:162 path_br_real_avg:3.0556 path_br_eff_avg:2.0617 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:127 path_deadlocks:34 box_lines:17 box_changes:11
 ##############
 ## #######   #
 # .     #    #
@@ -584,7 +584,7 @@
 ## ### ###   #
 ##############
 
-12639355075328693478 - pushes:36 moves:193 runtime_ms:6721.0525 generated_states:145426 expanded_nodes:145426 total_children:3490224 effective_children:428673 repeated_nodes:242389 deadlocks:253765 branching_real:24.0000 branching_effective:2.9477 branching_classic:1.3913 redundancy:14.3993 closed_list:145426 initial_dist:19.0000 path_states:193 path_br_real_avg:2.7565 path_br_eff_avg:1.5337 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:163 path_deadlocks:73 box_lines:22 box_changes:19
+12639355075328693478 - pushes:35 moves:193 runtime_ms:6721.0525 generated_states:145426 expanded_nodes:145426 total_children:3490224 effective_children:428673 repeated_nodes:242389 deadlocks:253765 branching_real:24.0000 branching_effective:2.9477 branching_classic:1.3913 redundancy:14.3993 closed_list:145426 initial_dist:19.0000 path_states:193 path_br_real_avg:2.7565 path_br_eff_avg:1.5337 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:163 path_deadlocks:73 box_lines:22 box_changes:19
 #################
 ###     ## ## ###
 ### .## #  ## ###
@@ -594,7 +594,7 @@
 #.##    ####  ###
 #################
 
-10583610529806495459 - pushes:37 moves:253 runtime_ms:66.7932 generated_states:2696 expanded_nodes:2696 total_children:43136 effective_children:5071 repeated_nodes:2820 deadlocks:1519 branching_real:16.0000 branching_effective:1.8809 branching_classic:1.2380 redundancy:15.2965 closed_list:2696 initial_dist:32.0000 path_states:253 path_br_real_avg:2.8340 path_br_eff_avg:1.8775 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:233 path_deadlocks:9 box_lines:27 box_changes:20
+10583610529806495459 - pushes:36 moves:253 runtime_ms:66.7932 generated_states:2696 expanded_nodes:2696 total_children:43136 effective_children:5071 repeated_nodes:2820 deadlocks:1519 branching_real:16.0000 branching_effective:1.8809 branching_classic:1.2380 redundancy:15.2965 closed_list:2696 initial_dist:32.0000 path_states:253 path_br_real_avg:2.8340 path_br_eff_avg:1.8775 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:233 path_deadlocks:9 box_lines:27 box_changes:20
 ###########
 #  ##### ##
 # $## .   #
@@ -610,7 +610,7 @@
 #   ##    #
 ###########
 
-6878314684126820620 - pushes:32 moves:130 runtime_ms:17.2052 generated_states:768 expanded_nodes:768 total_children:9216 effective_children:1244 repeated_nodes:619 deadlocks:812 branching_real:12.0000 branching_effective:1.6198 branching_classic:1.2307 redundancy:14.8885 closed_list:768 initial_dist:15.0000 path_states:130 path_br_real_avg:2.7308 path_br_eff_avg:1.8231 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:104 path_deadlocks:14 box_lines:14 box_changes:10
+6878314684126820620 - pushes:31 moves:130 runtime_ms:17.2052 generated_states:768 expanded_nodes:768 total_children:9216 effective_children:1244 repeated_nodes:619 deadlocks:812 branching_real:12.0000 branching_effective:1.6198 branching_classic:1.2307 redundancy:14.8885 closed_list:768 initial_dist:15.0000 path_states:130 path_br_real_avg:2.7308 path_br_eff_avg:1.8231 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:104 path_deadlocks:14 box_lines:14 box_changes:10
 ###########
 #     ## ##
 # $   #   #
@@ -623,7 +623,7 @@
 ###@   ####
 ###########
 
-3286240031722044728 - pushes:38 moves:286 runtime_ms:72.0021 generated_states:816 expanded_nodes:816 total_children:16320 effective_children:5050 repeated_nodes:1177 deadlocks:1113 branching_real:20.0000 branching_effective:6.1887 branching_classic:1.1930 redundancy:13.8658 closed_list:816 initial_dist:37.0000 path_states:286 path_br_real_avg:3.0280 path_br_eff_avg:1.8392 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:265 path_deadlocks:75 box_lines:30 box_changes:24
+3286240031722044728 - pushes:37 moves:286 runtime_ms:72.0021 generated_states:816 expanded_nodes:816 total_children:16320 effective_children:5050 repeated_nodes:1177 deadlocks:1113 branching_real:20.0000 branching_effective:6.1887 branching_classic:1.1930 redundancy:13.8658 closed_list:816 initial_dist:37.0000 path_states:286 path_br_real_avg:3.0280 path_br_eff_avg:1.8392 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:265 path_deadlocks:75 box_lines:30 box_changes:24
 ##############
 ## # .       #
 #  $$#  # $ ##
@@ -639,7 +639,7 @@
 #     #    # #
 ##############
 
-5459854725079603811 - pushes:38 moves:343 runtime_ms:3001.0696 generated_states:33602 expanded_nodes:33602 total_children:672040 effective_children:163494 repeated_nodes:98619 deadlocks:42424 branching_real:20.0000 branching_effective:4.8656 branching_classic:1.3156 redundancy:6.8145 closed_list:33602 initial_dist:33.0000 path_states:343 path_br_real_avg:2.7580 path_br_eff_avg:1.8134 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:322 path_deadlocks:2 box_lines:27 box_changes:23
+5459854725079603811 - pushes:37 moves:343 runtime_ms:3001.0696 generated_states:33602 expanded_nodes:33602 total_children:672040 effective_children:163494 repeated_nodes:98619 deadlocks:42424 branching_real:20.0000 branching_effective:4.8656 branching_classic:1.3156 redundancy:6.8145 closed_list:33602 initial_dist:33.0000 path_states:343 path_br_real_avg:2.7580 path_br_eff_avg:1.8134 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:322 path_deadlocks:2 box_lines:27 box_changes:23
 ##############
 #          ###
 # #$ # ### ###
@@ -658,7 +658,7 @@
 ##  # ########
 ##############
 
-17034195205581852815 - pushes:40 moves:269 runtime_ms:67.3806 generated_states:1476 expanded_nodes:1476 total_children:17712 effective_children:4275 repeated_nodes:2126 deadlocks:1718 branching_real:12.0000 branching_effective:2.8963 branching_classic:1.2001 redundancy:8.3311 closed_list:1476 initial_dist:37.0000 path_states:269 path_br_real_avg:2.9591 path_br_eff_avg:1.9851 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:250 path_deadlocks:12 box_lines:26 box_changes:19
+17034195205581852815 - pushes:39 moves:269 runtime_ms:67.3806 generated_states:1476 expanded_nodes:1476 total_children:17712 effective_children:4275 repeated_nodes:2126 deadlocks:1718 branching_real:12.0000 branching_effective:2.8963 branching_classic:1.2001 redundancy:8.3311 closed_list:1476 initial_dist:37.0000 path_states:269 path_br_real_avg:2.9591 path_br_eff_avg:1.9851 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:250 path_deadlocks:12 box_lines:26 box_changes:19
 ###########
 #   ####  #
 # # $  ## #
@@ -677,7 +677,7 @@
 ## #    # #
 ###########
 
-16973221475241645687 - pushes:40 moves:293 runtime_ms:49.5077 generated_states:817 expanded_nodes:817 total_children:19608 effective_children:4571 repeated_nodes:553 deadlocks:815 branching_real:24.0000 branching_effective:5.5949 branching_classic:1.1825 redundancy:35.4575 closed_list:817 initial_dist:39.0000 path_states:293 path_br_real_avg:2.8669 path_br_eff_avg:1.7201 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:263 path_deadlocks:73 box_lines:33 box_changes:28
+16973221475241645687 - pushes:39 moves:293 runtime_ms:49.5077 generated_states:817 expanded_nodes:817 total_children:19608 effective_children:4571 repeated_nodes:553 deadlocks:815 branching_real:24.0000 branching_effective:5.5949 branching_classic:1.1825 redundancy:35.4575 closed_list:817 initial_dist:39.0000 path_states:293 path_br_real_avg:2.8669 path_br_eff_avg:1.7201 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:263 path_deadlocks:73 box_lines:33 box_changes:28
 #################
 ###. ######  ####
 ##  + #  ##    ##
@@ -690,7 +690,7 @@
 #######         #
 #################
 
-8743630658868739443 - pushes:38 moves:110 runtime_ms:17.0868 generated_states:918 expanded_nodes:918 total_children:18360 effective_children:1269 repeated_nodes:392 deadlocks:1080 branching_real:20.0000 branching_effective:1.3824 branching_classic:1.1967 redundancy:46.8367 closed_list:918 initial_dist:15.0000 path_states:110 path_br_real_avg:2.7455 path_br_eff_avg:1.8091 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:3 path_repeated:73 path_deadlocks:30 box_lines:18 box_changes:12
+8743630658868739443 - pushes:37 moves:110 runtime_ms:17.0868 generated_states:918 expanded_nodes:918 total_children:18360 effective_children:1269 repeated_nodes:392 deadlocks:1080 branching_real:20.0000 branching_effective:1.3824 branching_classic:1.1967 redundancy:46.8367 closed_list:918 initial_dist:15.0000 path_states:110 path_br_real_avg:2.7455 path_br_eff_avg:1.8091 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:3 path_repeated:73 path_deadlocks:30 box_lines:18 box_changes:12
 ###########
 #   ##.   #
 # $ ##.####
@@ -700,7 +700,7 @@
 ### ##### #
 ###########
 
-12424924246156368659 - pushes:39 moves:168 runtime_ms:146.3570 generated_states:6031 expanded_nodes:6031 total_children:120620 effective_children:11533 repeated_nodes:3785 deadlocks:6883 branching_real:20.0000 branching_effective:1.9123 branching_classic:1.2501 redundancy:31.8679 closed_list:6031 initial_dist:20.0000 path_states:168 path_br_real_avg:2.7262 path_br_eff_avg:1.3452 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:130 path_deadlocks:102 box_lines:26 box_changes:19
+12424924246156368659 - pushes:38 moves:168 runtime_ms:146.3570 generated_states:6031 expanded_nodes:6031 total_children:120620 effective_children:11533 repeated_nodes:3785 deadlocks:6883 branching_real:20.0000 branching_effective:1.9123 branching_classic:1.2501 redundancy:31.8679 closed_list:6031 initial_dist:20.0000 path_states:168 path_br_real_avg:2.7262 path_br_eff_avg:1.3452 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:130 path_deadlocks:102 box_lines:26 box_changes:19
 ##############
 ##.#####    ##
 # +  # #    ##
@@ -710,7 +710,7 @@
 ##  ##      .#
 ##############
 
-14610917877114190437 - pushes:39 moves:313 runtime_ms:176.7788 generated_states:2624 expanded_nodes:2624 total_children:73472 effective_children:14474 repeated_nodes:3964 deadlocks:2716 branching_real:28.0000 branching_effective:5.5160 branching_classic:1.2237 redundancy:18.5348 closed_list:2624 initial_dist:36.0000 path_states:313 path_br_real_avg:2.6166 path_br_eff_avg:1.4377 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:283 path_deadlocks:86 box_lines:26 box_changes:22
+14610917877114190437 - pushes:38 moves:313 runtime_ms:176.7788 generated_states:2624 expanded_nodes:2624 total_children:73472 effective_children:14474 repeated_nodes:3964 deadlocks:2716 branching_real:28.0000 branching_effective:5.5160 branching_classic:1.2237 redundancy:18.5348 closed_list:2624 initial_dist:36.0000 path_states:313 path_br_real_avg:2.6166 path_br_eff_avg:1.4377 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:283 path_deadlocks:86 box_lines:26 box_changes:22
 #################
 ### . .       ###
 ##  .# $# ###  ##
@@ -720,7 +720,7 @@
 #         ###   #
 #################
 
-11213355173388353237 - pushes:38 moves:369 runtime_ms:3465.8126 generated_states:56719 expanded_nodes:56719 total_children:1134380 effective_children:150402 repeated_nodes:74944 deadlocks:77289 branching_real:20.0000 branching_effective:2.6517 branching_classic:1.3338 redundancy:15.1364 closed_list:56719 initial_dist:31.0000 path_states:369 path_br_real_avg:2.8862 path_br_eff_avg:1.3659 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:355 path_deadlocks:206 box_lines:28 box_changes:23
+11213355173388353237 - pushes:37 moves:369 runtime_ms:3465.8126 generated_states:56719 expanded_nodes:56719 total_children:1134380 effective_children:150402 repeated_nodes:74944 deadlocks:77289 branching_real:20.0000 branching_effective:2.6517 branching_classic:1.3338 redundancy:15.1364 closed_list:56719 initial_dist:31.0000 path_states:369 path_br_real_avg:2.8862 path_br_eff_avg:1.3659 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:355 path_deadlocks:206 box_lines:28 box_changes:23
 #################
 #  #  #      ####
 # ##$ #  # ### ##
@@ -739,7 +739,7 @@
 #   # #       ###
 #################
 
-14307729904699442350 - pushes:39 moves:234 runtime_ms:2725.7939 generated_states:103054 expanded_nodes:103054 total_children:2473296 effective_children:202471 repeated_nodes:76261 deadlocks:88147 branching_real:24.0000 branching_effective:1.9647 branching_classic:1.3444 redundancy:32.4320 closed_list:103054 initial_dist:24.0000 path_states:234 path_br_real_avg:2.7906 path_br_eff_avg:1.1838 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:200 path_deadlocks:176 box_lines:24 box_changes:17
+14307729904699442350 - pushes:38 moves:234 runtime_ms:2725.7939 generated_states:103054 expanded_nodes:103054 total_children:2473296 effective_children:202471 repeated_nodes:76261 deadlocks:88147 branching_real:24.0000 branching_effective:1.9647 branching_classic:1.3444 redundancy:32.4320 closed_list:103054 initial_dist:24.0000 path_states:234 path_br_real_avg:2.7906 path_br_eff_avg:1.1838 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:200 path_deadlocks:176 box_lines:24 box_changes:17
 ###########
 ###.# #####
 ## .  .  ##
@@ -752,7 +752,7 @@
 #   #    ##
 ###########
 
-8155469065871374915 - pushes:33 moves:114 runtime_ms:31.9485 generated_states:1175 expanded_nodes:1175 total_children:14100 effective_children:2392 repeated_nodes:596 deadlocks:744 branching_real:12.0000 branching_effective:2.0357 branching_classic:1.2389 redundancy:23.6577 closed_list:1175 initial_dist:24.0000 path_states:114 path_br_real_avg:3.0263 path_br_eff_avg:2.2281 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:83 path_deadlocks:8 box_lines:14 box_changes:9
+8155469065871374915 - pushes:32 moves:114 runtime_ms:31.9485 generated_states:1175 expanded_nodes:1175 total_children:14100 effective_children:2392 repeated_nodes:596 deadlocks:744 branching_real:12.0000 branching_effective:2.0357 branching_classic:1.2389 redundancy:23.6577 closed_list:1175 initial_dist:24.0000 path_states:114 path_br_real_avg:3.0263 path_br_eff_avg:2.2281 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:83 path_deadlocks:8 box_lines:14 box_changes:9
 ##############
 ###   ###  ###
 ##  # ## #  ##
@@ -768,7 +768,7 @@
 ###.    ##   #
 ##############
 
-6656128540099193592 - pushes:34 moves:282 runtime_ms:57.7482 generated_states:747 expanded_nodes:747 total_children:11952 effective_children:4610 repeated_nodes:1178 deadlocks:638 branching_real:16.0000 branching_effective:6.1714 branching_classic:1.2148 redundancy:10.1460 closed_list:747 initial_dist:33.0000 path_states:282 path_br_real_avg:3.0142 path_br_eff_avg:1.7766 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:284 path_deadlocks:65 box_lines:26 box_changes:23
+6656128540099193592 - pushes:33 moves:282 runtime_ms:57.7482 generated_states:747 expanded_nodes:747 total_children:11952 effective_children:4610 repeated_nodes:1178 deadlocks:638 branching_real:16.0000 branching_effective:6.1714 branching_classic:1.2148 redundancy:10.1460 closed_list:747 initial_dist:33.0000 path_states:282 path_br_real_avg:3.0142 path_br_eff_avg:1.7766 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:284 path_deadlocks:65 box_lines:26 box_changes:23
 ###########
 ##        #
 ##   #  # #
@@ -787,7 +787,7 @@
 ###  ##   #
 ###########
 
-6423052437455015791 - pushes:38 moves:276 runtime_ms:2916.4700 generated_states:65671 expanded_nodes:65671 total_children:1838788 effective_children:178282 repeated_nodes:105054 deadlocks:121170 branching_real:28.0000 branching_effective:2.7148 branching_classic:1.3390 redundancy:17.5033 closed_list:65671 initial_dist:21.0000 path_states:276 path_br_real_avg:2.6812 path_br_eff_avg:0.7754 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:253 path_deadlocks:273 box_lines:25 box_changes:17
+6423052437455015791 - pushes:37 moves:276 runtime_ms:2916.4700 generated_states:65671 expanded_nodes:65671 total_children:1838788 effective_children:178282 repeated_nodes:105054 deadlocks:121170 branching_real:28.0000 branching_effective:2.7148 branching_classic:1.3390 redundancy:17.5033 closed_list:65671 initial_dist:21.0000 path_states:276 path_br_real_avg:2.6812 path_br_eff_avg:0.7754 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:253 path_deadlocks:273 box_lines:25 box_changes:17
 #################
 ## #  # ###     #
 #  . $#. ## #$# #
@@ -797,7 +797,7 @@
 #.    .      ####
 #################
 
-11898307666694032584 - pushes:31 moves:197 runtime_ms:104.7670 generated_states:2682 expanded_nodes:2682 total_children:64368 effective_children:7218 repeated_nodes:2964 deadlocks:4509 branching_real:24.0000 branching_effective:2.6913 branching_classic:1.2900 redundancy:21.7166 closed_list:2682 initial_dist:28.0000 path_states:197 path_br_real_avg:2.9340 path_br_eff_avg:1.7411 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:180 path_deadlocks:55 box_lines:21 box_changes:17
+11898307666694032584 - pushes:30 moves:197 runtime_ms:104.7670 generated_states:2682 expanded_nodes:2682 total_children:64368 effective_children:7218 repeated_nodes:2964 deadlocks:4509 branching_real:24.0000 branching_effective:2.6913 branching_classic:1.2900 redundancy:21.7166 closed_list:2682 initial_dist:28.0000 path_states:197 path_br_real_avg:2.9340 path_br_eff_avg:1.7411 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:180 path_deadlocks:55 box_lines:21 box_changes:17
 ########
 ## #####
 #  .   #
@@ -816,7 +816,7 @@
 #   ####
 ########
 
-14952872350405739363 - pushes:31 moves:130 runtime_ms:17.7541 generated_states:340 expanded_nodes:340 total_children:4080 effective_children:793 repeated_nodes:411 deadlocks:560 branching_real:12.0000 branching_effective:2.3324 branching_classic:1.2069 redundancy:9.9270 closed_list:340 initial_dist:28.0000 path_states:130 path_br_real_avg:2.9692 path_br_eff_avg:1.8692 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:105 path_deadlocks:38 box_lines:17 box_changes:10
+14952872350405739363 - pushes:30 moves:130 runtime_ms:17.7541 generated_states:340 expanded_nodes:340 total_children:4080 effective_children:793 repeated_nodes:411 deadlocks:560 branching_real:12.0000 branching_effective:2.3324 branching_classic:1.2069 redundancy:9.9270 closed_list:340 initial_dist:28.0000 path_states:130 path_br_real_avg:2.9692 path_br_eff_avg:1.8692 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:105 path_deadlocks:38 box_lines:17 box_changes:10
 ##############
 #  ## ## ### #
 #  #      ## #
@@ -835,7 +835,7 @@
 # .  #  ##   #
 ##############
 
-524236837450022317 - pushes:38 moves:182 runtime_ms:546.7047 generated_states:16291 expanded_nodes:16291 total_children:260656 effective_children:39746 repeated_nodes:17528 deadlocks:17436 branching_real:16.0000 branching_effective:2.4398 branching_classic:1.2907 redundancy:14.8708 closed_list:16291 initial_dist:27.0000 path_states:182 path_br_real_avg:2.9341 path_br_eff_avg:1.5330 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:155 path_deadlocks:100 box_lines:22 box_changes:15
+524236837450022317 - pushes:37 moves:182 runtime_ms:546.7047 generated_states:16291 expanded_nodes:16291 total_children:260656 effective_children:39746 repeated_nodes:17528 deadlocks:17436 branching_real:16.0000 branching_effective:2.4398 branching_classic:1.2907 redundancy:14.8708 closed_list:16291 initial_dist:27.0000 path_states:182 path_br_real_avg:2.9341 path_br_eff_avg:1.5330 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:155 path_deadlocks:100 box_lines:22 box_changes:15
 ##############
 #       ##  ##
 # @  #   #. ##
@@ -848,7 +848,7 @@
 #          . #
 ##############
 
-11254138883423474248 - pushes:32 moves:130 runtime_ms:42.5138 generated_states:1242 expanded_nodes:1242 total_children:24840 effective_children:3894 repeated_nodes:1302 deadlocks:1908 branching_real:20.0000 branching_effective:3.1353 branching_classic:1.2494 redundancy:19.0783 closed_list:1242 initial_dist:25.0000 path_states:130 path_br_real_avg:3.0923 path_br_eff_avg:2.1231 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:104 path_deadlocks:22 box_lines:23 box_changes:17
+11254138883423474248 - pushes:31 moves:130 runtime_ms:42.5138 generated_states:1242 expanded_nodes:1242 total_children:24840 effective_children:3894 repeated_nodes:1302 deadlocks:1908 branching_real:20.0000 branching_effective:3.1353 branching_classic:1.2494 redundancy:19.0783 closed_list:1242 initial_dist:25.0000 path_states:130 path_br_real_avg:3.0923 path_br_eff_avg:2.1231 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:104 path_deadlocks:22 box_lines:23 box_changes:17
 ########
 ##     #
 ## $  ##
@@ -861,7 +861,7 @@
 # ##   #
 ########
 
-2197813438099085027 - pushes:36 moves:113 runtime_ms:1076.4866 generated_states:31753 expanded_nodes:31753 total_children:762072 effective_children:79626 repeated_nodes:47463 deadlocks:61036 branching_real:24.0000 branching_effective:2.5077 branching_classic:1.3337 redundancy:16.0561 closed_list:31753 initial_dist:13.0000 path_states:113 path_br_real_avg:2.9115 path_br_eff_avg:1.8319 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:82 path_deadlocks:40 box_lines:17 box_changes:12
+2197813438099085027 - pushes:35 moves:113 runtime_ms:1076.4866 generated_states:31753 expanded_nodes:31753 total_children:762072 effective_children:79626 repeated_nodes:47463 deadlocks:61036 branching_real:24.0000 branching_effective:2.5077 branching_classic:1.3337 redundancy:16.0561 closed_list:31753 initial_dist:13.0000 path_states:113 path_br_real_avg:2.9115 path_br_eff_avg:1.8319 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:82 path_deadlocks:40 box_lines:17 box_changes:12
 ###########
 #   #######
 # ..$     #
@@ -871,7 +871,7 @@
 ##  ## # ##
 ###########
 
-5155860739205706718 - pushes:36 moves:207 runtime_ms:374.2691 generated_states:7945 expanded_nodes:7945 total_children:158900 effective_children:20599 repeated_nodes:10300 deadlocks:19673 branching_real:20.0000 branching_effective:2.5927 branching_classic:1.2833 redundancy:15.4272 closed_list:7945 initial_dist:25.0000 path_states:207 path_br_real_avg:2.5266 path_br_eff_avg:1.2029 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:173 path_deadlocks:101 box_lines:20 box_changes:15
+5155860739205706718 - pushes:35 moves:207 runtime_ms:374.2691 generated_states:7945 expanded_nodes:7945 total_children:158900 effective_children:20599 repeated_nodes:10300 deadlocks:19673 branching_real:20.0000 branching_effective:2.5927 branching_classic:1.2833 redundancy:15.4272 closed_list:7945 initial_dist:25.0000 path_states:207 path_br_real_avg:2.5266 path_br_eff_avg:1.2029 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:173 path_deadlocks:101 box_lines:20 box_changes:15
 ########
 ## #   #
 #      #
@@ -890,7 +890,7 @@
 ##@#   #
 ########
 
-8358025309897035452 - pushes:37 moves:143 runtime_ms:13.1246 generated_states:263 expanded_nodes:263 total_children:2104 effective_children:684 repeated_nodes:165 deadlocks:130 branching_real:8.0000 branching_effective:2.6008 branching_classic:1.1625 redundancy:12.7515 closed_list:263 initial_dist:30.0000 path_states:143 path_br_real_avg:3.1189 path_br_eff_avg:2.3287 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:111 path_deadlocks:2 box_lines:12 box_changes:6
+8358025309897035452 - pushes:36 moves:143 runtime_ms:13.1246 generated_states:263 expanded_nodes:263 total_children:2104 effective_children:684 repeated_nodes:165 deadlocks:130 branching_real:8.0000 branching_effective:2.6008 branching_classic:1.1625 redundancy:12.7515 closed_list:263 initial_dist:30.0000 path_states:143 path_br_real_avg:3.1189 path_br_eff_avg:2.3287 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:111 path_deadlocks:2 box_lines:12 box_changes:6
 #################
 #         # ## ##
 #   ###         #
@@ -909,7 +909,7 @@
 ####   ##  ######
 #################
 
-16387930988141995297 - pushes:35 moves:254 runtime_ms:1290.9884 generated_states:21025 expanded_nodes:21025 total_children:504600 effective_children:92966 repeated_nodes:52973 deadlocks:39059 branching_real:24.0000 branching_effective:4.4217 branching_classic:1.3289 redundancy:9.5256 closed_list:21025 initial_dist:30.0000 path_states:254 path_br_real_avg:2.5945 path_br_eff_avg:1.0787 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:228 path_deadlocks:157 box_lines:23 box_changes:20
+16387930988141995297 - pushes:34 moves:254 runtime_ms:1290.9884 generated_states:21025 expanded_nodes:21025 total_children:504600 effective_children:92966 repeated_nodes:52973 deadlocks:39059 branching_real:24.0000 branching_effective:4.4217 branching_classic:1.3289 redundancy:9.5256 closed_list:21025 initial_dist:30.0000 path_states:254 path_br_real_avg:2.5945 path_br_eff_avg:1.0787 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:228 path_deadlocks:157 box_lines:23 box_changes:20
 ###########
 #    ######
 # ##$##   #
@@ -922,7 +922,7 @@
 #  .  .   #
 ###########
 
-16663957365504745086 - pushes:40 moves:269 runtime_ms:596.5153 generated_states:6674 expanded_nodes:6674 total_children:80088 effective_children:22624 repeated_nodes:15742 deadlocks:4356 branching_real:12.0000 branching_effective:3.3899 branching_classic:1.2463 redundancy:5.0875 closed_list:6674 initial_dist:35.0000 path_states:269 path_br_real_avg:2.8401 path_br_eff_avg:1.5651 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:239 path_deadlocks:104 box_lines:24 box_changes:14
+16663957365504745086 - pushes:39 moves:269 runtime_ms:596.5153 generated_states:6674 expanded_nodes:6674 total_children:80088 effective_children:22624 repeated_nodes:15742 deadlocks:4356 branching_real:12.0000 branching_effective:3.3899 branching_classic:1.2463 redundancy:5.0875 closed_list:6674 initial_dist:35.0000 path_states:269 path_br_real_avg:2.8401 path_br_eff_avg:1.5651 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:239 path_deadlocks:104 box_lines:24 box_changes:14
 #################
 # ###     #   ###
 # ###  #####  ###
@@ -941,7 +941,7 @@
 ###       #     #
 #################
 
-15736269254778844851 - pushes:32 moves:173 runtime_ms:1428.1120 generated_states:37106 expanded_nodes:37106 total_children:890544 effective_children:90424 repeated_nodes:30819 deadlocks:53087 branching_real:24.0000 branching_effective:2.4369 branching_classic:1.3893 redundancy:28.8959 closed_list:37106 initial_dist:17.0000 path_states:173 path_br_real_avg:2.7630 path_br_eff_avg:1.0462 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:142 path_deadlocks:155 box_lines:25 box_changes:19
+15736269254778844851 - pushes:31 moves:173 runtime_ms:1428.1120 generated_states:37106 expanded_nodes:37106 total_children:890544 effective_children:90424 repeated_nodes:30819 deadlocks:53087 branching_real:24.0000 branching_effective:2.4369 branching_classic:1.3893 redundancy:28.8959 closed_list:37106 initial_dist:17.0000 path_states:173 path_br_real_avg:2.7630 path_br_eff_avg:1.0462 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:142 path_deadlocks:155 box_lines:25 box_changes:19
 ###########
 #    ##  ##
 # ## ## ###
@@ -960,7 +960,7 @@
 #   ##### #
 ###########
 
-12954562478426164232 - pushes:37 moves:152 runtime_ms:1059.9447 generated_states:32798 expanded_nodes:32798 total_children:918344 effective_children:61106 repeated_nodes:42932 deadlocks:55180 branching_real:28.0000 branching_effective:1.8631 branching_classic:1.3245 redundancy:21.3907 closed_list:32798 initial_dist:24.0000 path_states:152 path_br_real_avg:2.8947 path_br_eff_avg:2.0329 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:120 path_deadlocks:11 box_lines:21 box_changes:13
+12954562478426164232 - pushes:36 moves:152 runtime_ms:1059.9447 generated_states:32798 expanded_nodes:32798 total_children:918344 effective_children:61106 repeated_nodes:42932 deadlocks:55180 branching_real:28.0000 branching_effective:1.8631 branching_classic:1.3245 redundancy:21.3907 closed_list:32798 initial_dist:24.0000 path_states:152 path_br_real_avg:2.8947 path_br_eff_avg:2.0329 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:120 path_deadlocks:11 box_lines:21 box_changes:13
 #################
 #   #.#    # # ##
 # ## .@.#  #    #
@@ -970,7 +970,7 @@
 #   ###  #.     #
 #################
 
-7757578730776020023 - pushes:34 moves:115 runtime_ms:233.4584 generated_states:7512 expanded_nodes:7512 total_children:150240 effective_children:19249 repeated_nodes:9959 deadlocks:7507 branching_real:20.0000 branching_effective:2.5624 branching_classic:1.3001 redundancy:15.0859 closed_list:7512 initial_dist:29.0000 path_states:115 path_br_real_avg:2.6609 path_br_eff_avg:1.4609 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:83 path_deadlocks:55 box_lines:19 box_changes:12
+7757578730776020023 - pushes:33 moves:115 runtime_ms:233.4584 generated_states:7512 expanded_nodes:7512 total_children:150240 effective_children:19249 repeated_nodes:9959 deadlocks:7507 branching_real:20.0000 branching_effective:2.5624 branching_classic:1.3001 redundancy:15.0859 closed_list:7512 initial_dist:29.0000 path_states:115 path_br_real_avg:2.6609 path_br_eff_avg:1.4609 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:83 path_deadlocks:55 box_lines:19 box_changes:12
 ##############
 ##   @ ###   #
 ## ## $    # #
@@ -980,7 +980,7 @@
 #       .#.  #
 ##############
 
-12315986363141530791 - pushes:35 moves:212 runtime_ms:29.4627 generated_states:681 expanded_nodes:681 total_children:13620 effective_children:2642 repeated_nodes:702 deadlocks:846 branching_real:20.0000 branching_effective:3.8796 branching_classic:1.2049 redundancy:19.4017 closed_list:681 initial_dist:34.0000 path_states:212 path_br_real_avg:2.6887 path_br_eff_avg:1.6179 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:3 path_repeated:185 path_deadlocks:42 box_lines:23 box_changes:20
+12315986363141530791 - pushes:34 moves:212 runtime_ms:29.4627 generated_states:681 expanded_nodes:681 total_children:13620 effective_children:2642 repeated_nodes:702 deadlocks:846 branching_real:20.0000 branching_effective:3.8796 branching_classic:1.2049 redundancy:19.4017 closed_list:681 initial_dist:34.0000 path_states:212 path_br_real_avg:2.6887 path_br_eff_avg:1.6179 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:3 path_repeated:185 path_deadlocks:42 box_lines:23 box_changes:20
 ##############
 #   ##  ### ##
 # ### $@#    #
@@ -990,7 +990,7 @@
 #.         ..#
 ##############
 
-7806238329216191011 - pushes:38 moves:197 runtime_ms:114.6516 generated_states:3464 expanded_nodes:3464 total_children:41568 effective_children:7167 repeated_nodes:3653 deadlocks:1961 branching_real:12.0000 branching_effective:2.0690 branching_classic:1.2392 redundancy:11.3791 closed_list:3464 initial_dist:27.0000 path_states:197 path_br_real_avg:2.9036 path_br_eff_avg:2.0152 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:166 path_deadlocks:9 box_lines:23 box_changes:13
+7806238329216191011 - pushes:37 moves:197 runtime_ms:114.6516 generated_states:3464 expanded_nodes:3464 total_children:41568 effective_children:7167 repeated_nodes:3653 deadlocks:1961 branching_real:12.0000 branching_effective:2.0690 branching_classic:1.2392 redundancy:11.3791 closed_list:3464 initial_dist:27.0000 path_states:197 path_br_real_avg:2.9036 path_br_eff_avg:2.0152 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:166 path_deadlocks:9 box_lines:23 box_changes:13
 ###########
 ###   #   #
 ### # #  ##
@@ -1009,7 +1009,7 @@
 ###  #    #
 ###########
 
-11285666341920267728 - pushes:36 moves:219 runtime_ms:29.3968 generated_states:585 expanded_nodes:585 total_children:9360 effective_children:2515 repeated_nodes:917 deadlocks:1027 branching_real:16.0000 branching_effective:4.2991 branching_classic:1.1936 redundancy:10.2072 closed_list:585 initial_dist:35.0000 path_states:219 path_br_real_avg:2.8584 path_br_eff_avg:1.9132 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:197 path_deadlocks:10 box_lines:24 box_changes:20
+11285666341920267728 - pushes:35 moves:219 runtime_ms:29.3968 generated_states:585 expanded_nodes:585 total_children:9360 effective_children:2515 repeated_nodes:917 deadlocks:1027 branching_real:16.0000 branching_effective:4.2991 branching_classic:1.1936 redundancy:10.2072 closed_list:585 initial_dist:35.0000 path_states:219 path_br_real_avg:2.8584 path_br_eff_avg:1.9132 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:1 path_br_eff_max:4 path_repeated:197 path_deadlocks:10 box_lines:24 box_changes:20
 ##############
 ##       . ###
 ##  ### #   ##
@@ -1019,7 +1019,7 @@
 #.   .     ###
 ##############
 
-16081531516025024706 - pushes:31 moves:246 runtime_ms:20.8093 generated_states:669 expanded_nodes:669 total_children:10704 effective_children:1720 repeated_nodes:668 deadlocks:1024 branching_real:16.0000 branching_effective:2.5710 branching_classic:1.2335 redundancy:16.0240 closed_list:669 initial_dist:24.0000 path_states:246 path_br_real_avg:2.8008 path_br_eff_avg:1.8130 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:226 path_deadlocks:17 box_lines:23 box_changes:17
+16081531516025024706 - pushes:30 moves:246 runtime_ms:20.8093 generated_states:669 expanded_nodes:669 total_children:10704 effective_children:1720 repeated_nodes:668 deadlocks:1024 branching_real:16.0000 branching_effective:2.5710 branching_classic:1.2335 redundancy:16.0240 closed_list:669 initial_dist:24.0000 path_states:246 path_br_real_avg:2.8008 path_br_eff_avg:1.8130 path_br_real_min:2 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:226 path_deadlocks:17 box_lines:23 box_changes:17
 ##############
 #       . ####
 ##  .  .#  # #
@@ -1029,7 +1029,7 @@
 ##     # ### #
 ##############
 
-9134585798532411689 - pushes:32 moves:146 runtime_ms:28.0407 generated_states:544 expanded_nodes:544 total_children:10880 effective_children:2575 repeated_nodes:496 deadlocks:823 branching_real:20.0000 branching_effective:4.7335 branching_classic:1.2176 redundancy:21.9355 closed_list:544 initial_dist:31.0000 path_states:146 path_br_real_avg:3.0822 path_br_eff_avg:1.5959 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:117 path_deadlocks:100 box_lines:25 box_changes:19
+9134585798532411689 - pushes:31 moves:146 runtime_ms:28.0407 generated_states:544 expanded_nodes:544 total_children:10880 effective_children:2575 repeated_nodes:496 deadlocks:823 branching_real:20.0000 branching_effective:4.7335 branching_classic:1.2176 redundancy:21.9355 closed_list:544 initial_dist:31.0000 path_states:146 path_br_real_avg:3.0822 path_br_eff_avg:1.5959 path_br_real_min:1 path_br_real_max:4 path_br_eff_min:0 path_br_eff_max:4 path_repeated:117 path_deadlocks:100 box_lines:25 box_changes:19
 ########
 ###@   #
 ## $$###
