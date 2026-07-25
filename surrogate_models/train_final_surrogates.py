@@ -196,10 +196,11 @@ def train_classifier(folds_to_run):
     print(f"  Dispositivo  : {device.type.upper()} ({torch.cuda.get_device_name(0) if device.type=='cuda' else 'CPU'})")
     print(f"  Hiperparámetros: lr={lr:.6f}, wd={weight_decay:.6f}, drop={dropout_p:.2f}, pos_w={pos_weight:.2f}, bs={batch_size}\n")
 
-    fold_accs, fold_precs, fold_recs, fold_f1s, fold_f05s, fold_aucs = [], [], [], [], [], []
+    fold_accs, fold_precs, fold_recs, fold_f1s, fold_f05s, fold_aucs, fold_praucs, fold_threshs = [], [], [], [], [], [], [], []
 
     for fold in folds_to_run:
         train_path = os.path.join(RESULTS_DIR, f"classifier_fold{fold}_train.pt")
+        val_path   = os.path.join(RESULTS_DIR, f"classifier_fold{fold}_val.pt")
         test_path  = os.path.join(RESULTS_DIR, f"classifier_fold{fold}_test.pt")
 
         if not os.path.exists(train_path):
@@ -211,9 +212,11 @@ def train_classifier(folds_to_run):
         print(f"[{'─'*40}]")
 
         train_data = torch.load(train_path, weights_only=False)
+        val_data   = torch.load(val_path,   weights_only=False)
         test_data  = torch.load(test_path,  weights_only=False)
 
         train_loader = DataLoader(ClassifierDataset(train_data), batch_size=batch_size, shuffle=True, num_workers=0, pin_memory=True)
+        val_loader   = DataLoader(ClassifierDataset(val_data),   batch_size=256, shuffle=False, num_workers=0, pin_memory=True)
         test_loader  = DataLoader(ClassifierDataset(test_data),  batch_size=256, shuffle=False, num_workers=0, pin_memory=True)
 
         model     = SokobanSEResNetClassifier(dropout_p=dropout_p).to(device)
@@ -243,15 +246,36 @@ def train_classifier(folds_to_run):
 
             train_loss /= len(train_loader)
 
-            # Eval
+            # ── Threshold Optimization en Validation ──
             model.eval()
+            val_probs, val_targets = [], []
+            with torch.no_grad():
+                for x, y in val_loader:
+                    x = x.to(device)
+                    probs = torch.sigmoid(model(x))
+                    val_probs.extend(probs.cpu().numpy())
+                    val_targets.extend(y.numpy())
+            
+            val_probs = np.array(val_probs)
+            val_targets = np.array(val_targets)
+            
+            best_epoch_f05 = 0.0
+            best_epoch_thresh = 0.5
+            for thresh in np.arange(0.50, 0.96, 0.05):
+                preds = (val_probs >= thresh).astype(float)
+                fb = fbeta_score(val_targets, preds, beta=0.5, zero_division=0)
+                if fb > best_epoch_f05:
+                    best_epoch_f05 = fb
+                    best_epoch_thresh = thresh
+
+            # ── Evaluación en Test con el mejor Umbral ──
             all_preds, all_probs, all_targets = [], [], []
             with torch.no_grad():
                 for x, y in test_loader:
                     x = x.to(device)
                     logits = model(x)
                     probs = torch.sigmoid(logits)
-                    preds = (probs >= 0.75).float()
+                    preds = (probs >= best_epoch_thresh).float()
                     all_probs.extend(probs.cpu().numpy())
                     all_preds.extend(preds.cpu().numpy())
                     all_targets.extend(y.numpy())
@@ -261,23 +285,28 @@ def train_classifier(folds_to_run):
             rec  = recall_score(all_targets, all_preds, zero_division=0)
             f1   = f1_score(all_targets, all_preds, zero_division=0)
             f05  = fbeta_score(all_targets, all_preds, beta=0.5, zero_division=0)
+            
             try: auc = roc_auc_score(all_targets, all_probs)
             except ValueError: auc = 0.0
+            
+            from sklearn.metrics import average_precision_score
+            try: pr_auc = average_precision_score(all_targets, all_probs)
+            except ValueError: pr_auc = 0.0
 
             scheduler.step()
 
             elapsed = time.time() - t0
             tag = ""
-            if f05 > best_f05:
-                best_f05 = f05
-                best_metrics = {"acc": acc, "prec": prec, "rec": rec, "f1": f1, "f05": f05, "auc": auc}
+            if best_epoch_f05 > best_f05:
+                best_f05 = best_epoch_f05
+                best_metrics = {"acc": acc, "prec": prec, "rec": rec, "f1": f1, "f05": f05, "auc": auc, "prauc": pr_auc, "thresh": best_epoch_thresh}
                 best_weights = copy.deepcopy(model.state_dict())
                 patience_ctr = 0
-                tag = " ★ (Nuevo récord)"
+                tag = " ★ (Nuevo récord Val)"
             else:
                 patience_ctr += 1
 
-            print(f"  Ep {epoch:02d} | T: {elapsed:.1f}s | Loss: {train_loss:.4f} | Acc: {acc:.3f} | Prec: {prec:.3f} | Rec: {rec:.3f} | F1: {f1:.3f} | F0.5: {f05:.3f}{tag}")
+            print(f"  Ep {epoch:02d} | T: {elapsed:.1f}s | Loss: {train_loss:.4f} | Umbral Val: {best_epoch_thresh:.2f} | Test F0.5: {f05:.3f}{tag}")
 
             if patience_ctr >= 8:
                 print(f"  🛑 Early Stopping en época {epoch}.")
@@ -289,6 +318,8 @@ def train_classifier(folds_to_run):
         fold_f1s.append(best_metrics["f1"])
         fold_f05s.append(best_metrics["f05"])
         fold_aucs.append(best_metrics["auc"])
+        fold_praucs.append(best_metrics["prauc"])
+        fold_threshs.append(best_metrics["thresh"])
 
         save_path = os.path.join(RESULTS_DIR, f"final_classifier_fold{fold}.pt")
         torch.save(best_weights, save_path)
@@ -304,6 +335,8 @@ def train_classifier(folds_to_run):
         print(f"  F1-Score  : {np.mean(fold_f1s):.4f} ± {np.std(fold_f1s):.4f}")
         print(f"  F0.5-Score: {np.mean(fold_f05s):.4f} ± {np.std(fold_f05s):.4f}")
         print(f"  AUC-ROC   : {np.mean(fold_aucs):.4f} ± {np.std(fold_aucs):.4f}")
+        print(f"  AUC-PR    : {np.mean(fold_praucs):.4f} ± {np.std(fold_praucs):.4f}")
+        print(f"  Umbral Óptimo (Tau): {np.mean(fold_threshs):.3f} ± {np.std(fold_threshs):.3f}")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # MAIN PARSER

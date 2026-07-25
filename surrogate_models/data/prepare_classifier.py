@@ -166,14 +166,22 @@ def main():
         print(f" Procesando FOLD {fold}/{N_FOLDS}")
         print(f"[{'='*40}]")
         
-        train_df = df.iloc[train_idx]
+        train_df_full = df.iloc[train_idx].reset_index(drop=True)
         test_df  = df.iloc[test_idx]
+        
+        # Nested split para Validation (20% del Train original)
+        sgkf_val = StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42)
+        val_splits = list(sgkf_val.split(train_df_full.index.values, train_df_full['label'].values, train_df_full['shell_hash'].values))
+        train_final_idx, val_idx = val_splits[0]
+        
+        train_df = train_df_full.iloc[train_final_idx]
+        val_df   = train_df_full.iloc[val_idx]
 
-        print("  Generando Train con Augmentation (solo Solubles x8)...")
+        print(f"  Generando Train con Augmentation (solo Solubles x8)...")
         train_data = []
-        for _, row in tqdm(train_df.iterrows(), total=len(train_df)):
+        for _, row in tqdm(train_df.iterrows(), total=len(train_df), leave=False):
             t = encode_board(row["board_str"])
-            # Solo aumentamos los solubles. Esto evita que los 83k deadlocks se vuelvan 664k (Out of Memory)
+            # Solo aumentamos los solubles.
             variants = augment_tensor(t) if row["label"] == 1 else [t]
             for v in variants:
                 train_data.append({
@@ -181,22 +189,32 @@ def main():
                     "is_solvable": row["label"]
                 })
                 
+        print("  Generando Validation (sin Augmentation)...")
+        val_data = []
+        for _, row in tqdm(val_df.iterrows(), total=len(val_df), leave=False):
+            val_data.append({
+                "tensor": torch.from_numpy(encode_board(row["board_str"])),
+                "is_solvable": row["label"]
+            })
+                
         print("  Generando Test (sin Augmentation)...")
         test_data = []
-        for _, row in tqdm(test_df.iterrows(), total=len(test_df)):
+        for _, row in tqdm(test_df.iterrows(), total=len(test_df), leave=False):
             test_data.append({
                 "tensor": torch.from_numpy(encode_board(row["board_str"])),
                 "is_solvable": row["label"]
             })
 
-        print(f"  Train tensors: {len(train_data):,} | Test tensors: {len(test_data):,}")
+        print(f"  Train: {len(train_data):,} | Val: {len(val_data):,} | Test: {len(test_data):,}")
         
         train_path = os.path.join(RESULTS_DIR, f"classifier_fold{fold}_train.pt")
+        val_path   = os.path.join(RESULTS_DIR, f"classifier_fold{fold}_val.pt")
         test_path  = os.path.join(RESULTS_DIR, f"classifier_fold{fold}_test.pt")
         
         torch.save(train_data, train_path)
+        torch.save(val_data, val_path)
         torch.save(test_data, test_path)
-        print(f"  ✅ Guardados fold {fold} en results/")
+        print(f"  ✅ Guardados fold {fold} (Train/Val/Test) en results/")
 
 if __name__ == "__main__":
     main()

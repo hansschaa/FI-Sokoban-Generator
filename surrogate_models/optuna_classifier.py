@@ -70,24 +70,24 @@ class FoldDataset(Dataset):
 # Cargar datos UNA sola vez (no recargar en cada trial)
 print(f"Cargando Fold {FOLD} (puede tardar ~30s)...")
 _train_data = torch.load(f"{RESULTS_DIR}/classifier_fold{FOLD}_train.pt", weights_only=False)
-_test_data  = torch.load(f"{RESULTS_DIR}/classifier_fold{FOLD}_test.pt",  weights_only=False)
+_val_data   = torch.load(f"{RESULTS_DIR}/classifier_fold{FOLD}_val.pt",  weights_only=False)
 
 _N_pos = sum(1 for d in _train_data if d["is_solvable"] == 1)
 _N_neg = len(_train_data) - _N_pos
 _default_pos_weight = _N_neg / _N_pos if _N_pos > 0 else 1.0
 
-print(f"Train: {len(_train_data):,} | Test: {len(_test_data):,}")
+print(f"Train: {len(_train_data):,} | Validation: {len(_val_data):,}")
 print(f"Solubles: {_N_pos:,} | Deadlocks: {_N_neg:,} | pos_weight base: {_default_pos_weight:.2f}\n")
 
-_test_dataset = FoldDataset(_test_data)
+_val_dataset = FoldDataset(_val_data)
 
 
 def make_loaders(batch_size):
     train_loader = DataLoader(FoldDataset(_train_data), batch_size=batch_size,
                               shuffle=True, num_workers=0, pin_memory=False)
-    test_loader  = DataLoader(_test_dataset, batch_size=256,
+    val_loader   = DataLoader(_val_dataset, batch_size=256,
                               shuffle=False, num_workers=0, pin_memory=False)
-    return train_loader, test_loader
+    return train_loader, val_loader
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -105,7 +105,7 @@ def objective(trial):
     print(f"\n[Trial {trial.number}] lr={lr:.5f} | wd={weight_decay:.6f} | "
           f"drop={dropout_p:.2f} | pw={pos_weight:.2f} | bs={batch_size}")
 
-    train_loader, test_loader = make_loaders(batch_size)
+    train_loader, val_loader = make_loaders(batch_size)
 
     model     = SokobanSEResNetClassifier(dropout_p=dropout_p).to(device)
     criterion = ClassifierLoss(pos_weight_val=pos_weight)
@@ -114,6 +114,8 @@ def objective(trial):
 
     best_f_beta  = 0.0
     patience_ctr = 0
+
+    import numpy as np
 
     for epoch in range(1, MAX_EPOCHS + 1):
         # ── Train ────────────────────────────────────────────────────────────
@@ -130,28 +132,39 @@ def objective(trial):
 
         # ── Eval ─────────────────────────────────────────────────────────────
         model.eval()
-        all_preds, all_targets = [], []
+        all_probs, all_targets = [], []
         with torch.no_grad():
-            for tensors, labels in test_loader:
+            for tensors, labels in val_loader:
                 tensors = tensors.to(device)
                 logits  = model(tensors)
-                # Umbral 0.75 para coincidir con producción (minimizar Falsos Positivos)
-                preds   = (torch.sigmoid(logits) >= 0.75).cpu().numpy()
-                all_preds.extend(preds)
+                probs   = torch.sigmoid(logits).cpu().numpy()
+                all_probs.extend(probs)
                 all_targets.extend(labels.numpy())
 
-        f_beta = fbeta_score(all_targets, all_preds, beta=BETA, zero_division=0)
+        # Barrido de umbrales
+        all_probs = np.array(all_probs)
+        all_targets = np.array(all_targets)
+        best_epoch_f_beta = 0.0
+        best_epoch_thresh = 0.5
+        
+        for thresh in np.arange(0.50, 0.96, 0.05):
+            preds = (all_probs >= thresh).astype(float)
+            fb = fbeta_score(all_targets, preds, beta=BETA, zero_division=0)
+            if fb > best_epoch_f_beta:
+                best_epoch_f_beta = fb
+                best_epoch_thresh = thresh
+
         scheduler.step()
 
-        print(f"  [Trial {trial.number}] Época {epoch:02d} | F_{BETA}={f_beta:.4f}")
+        print(f"  [Trial {trial.number}] Época {epoch:02d} | Max F_{BETA}={best_epoch_f_beta:.4f} (Umbral {best_epoch_thresh:.2f})")
 
         # Optuna Pruner: cancela trials malos temprano
-        trial.report(f_beta, epoch)
+        trial.report(best_epoch_f_beta, epoch)
         if trial.should_prune():
             raise optuna.exceptions.TrialPruned()
 
-        if f_beta > best_f_beta:
-            best_f_beta  = f_beta
+        if best_epoch_f_beta > best_f_beta:
+            best_f_beta  = best_epoch_f_beta
             patience_ctr = 0
         else:
             patience_ctr += 1
