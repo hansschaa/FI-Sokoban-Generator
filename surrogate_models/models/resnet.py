@@ -1,14 +1,13 @@
 """
 resnet.py
 ---------
-Arquitectura ResNet Multi-Head para los Surrogate Models de Sokoban.
+Arquitectura ResNet para los Surrogate Models de Sokoban.
 
-Dos cabezas de salida:
-  - head_pushes:    predice pushes normalizados (regresión)
-  - head_branching: predice branching_effective normalizado (regresión)
+Dos salidas (independientes, no multi-head):
+  - SokobanSEResNetRegressor: predice pushes normalizados (regresión)
+  - SokobanSEResNetClassifier: predice logits de solubilidad (clasificación)
 
 Anti-overfit: BatchNorm + Dropout(0.4) en el cuello compartido.
-Heurística no negativa: ReLU al final de cada cabeza.
 """
 
 import torch
@@ -170,28 +169,6 @@ class SokobanSEResNetRegressor(nn.Module):
         x = self.neck(x)
         return self.head_pushes(x).squeeze(1)
 
-class AsymmetricHuberLoss(nn.Module):
-    """Penaliza más las sobreestimaciones (alpha > 1)."""
-    def __init__(self, delta: float = 1.0, alpha: float = 1.5):
-        super().__init__()
-        self.delta = delta
-        self.alpha = alpha
-
-    def forward(self, pred, target):
-        error = pred - target
-        abs_err = torch.abs(error)
-        huber = torch.where(abs_err <= self.delta,
-                            0.5 * error**2,
-                            self.delta * (abs_err - 0.5 * self.delta))
-        weight = torch.where(error > 0, self.alpha * torch.ones_like(error), torch.ones_like(error))
-        return (weight * huber).mean()
-
-
-class MultiHeadRegressorLoss(nn.Module):
-    # Ya no se usa, pero la mantenemos vacía por compatibilidad de imports en otros lados o la borramos
-    pass
-
-
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = SokobanResNetRegressor().to(device)
@@ -224,8 +201,7 @@ class SokobanResNetClassifier(nn.Module):
 
         self.neck = nn.Sequential(
             nn.Linear(256, 256), nn.ReLU(inplace=True), nn.Dropout(dropout_p),
-            nn.Linear(256, 128), nn.ReLU(inplace=True), nn.Dropout(dropout_p),
-            nn.Dropout(p=dropout_p)
+            nn.Linear(256, 128), nn.ReLU(inplace=True), nn.Dropout(dropout_p)
         )
         self.head = nn.Linear(128, 1)
 

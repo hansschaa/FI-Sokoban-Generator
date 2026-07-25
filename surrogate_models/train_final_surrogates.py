@@ -22,7 +22,7 @@ from torch.utils.data import DataLoader, Dataset
 import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, fbeta_score, roc_auc_score, average_precision_score
 
-from models.resnet import SokobanSEResNetRegressor, MultiHeadRegressorLoss, SokobanSEResNetClassifier, ClassifierLoss
+from models.resnet import SokobanSEResNetRegressor, SokobanSEResNetClassifier, ClassifierLoss
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
