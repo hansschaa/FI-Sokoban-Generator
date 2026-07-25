@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
     Heuristic heuristic_type;
     if (heuristic_arg == "hungarian") heuristic_type = Heuristic::hungarian;
     else if (heuristic_arg == "simple") heuristic_type = Heuristic::simple;
-    else if (heuristic_arg == "neural") heuristic_type = Heuristic::neural;
+    else if (heuristic_arg == "neural") heuristic_type = Heuristic::neural_batched; // Default to batched for max speed
     else {
         std::cerr << "Heuristica desconocida: " << heuristic_arg << "\n";
         return 1;

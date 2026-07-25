@@ -21,6 +21,10 @@ private:
 
     // Vector temporal para evitar realocaciones
     std::vector<float> input_tensor_data;
+    
+    // Normalization stats
+    float pushes_mean = 42.447f;
+    float pushes_std = 27.029f;
 
 public:
     NeuralHeuristic(const std::string& model_path, int rows, int cols);

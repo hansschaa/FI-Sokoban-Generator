@@ -24,7 +24,7 @@ elif [ "$TARGET" = "raspberry" ]; then
     cmake -DTARGET_OS=linux ..
 else
     # 本机编译，不设置交叉编译工具链
-    cmake ..
+    cmake -DCMAKE_PREFIX_PATH=$PWD/../libtorch/libtorch ..
 fi
 
 # 编译拷贝

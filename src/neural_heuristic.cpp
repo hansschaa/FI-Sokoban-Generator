@@ -16,6 +16,18 @@ NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int co
 
         // Allocate flat vector for the 5-channel tensor
         input_tensor_data.resize(5 * 25 * 25, 0.0f);
+        
+        // Load normalization stats
+        std::ifstream stats_file("surrogate_models/results/surrogate_stats.txt");
+        if (stats_file.is_open()) {
+            stats_file >> pushes_mean >> pushes_std;
+            stats_file.close();
+            // std::cout << "[NeuralHeuristic] Loaded stats: mean=" << pushes_mean << ", std=" << pushes_std << "\n";
+        } else {
+            std::cerr << "[NeuralHeuristic] Warning: surrogate_stats.txt not found. Using default raw stats (May cause severe inaccuracies!)\n";
+            pushes_mean = 42.447f;
+            pushes_std = 27.029f;
+        }
     }
     catch (const c10::Error& e) {
         std::cerr << "[NeuralHeuristic] Error loading the model: " << model_path << "\n";
@@ -107,12 +119,9 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
     float z_score = pushes_pred.item<float>();
 
     // Un-normalize
-    float pushes_mean = 42.44725765719096f;
-    float pushes_std = 27.029350555210492f;
-    
-    float predicted_pushes = (z_score * pushes_std) + pushes_mean;
-
-    return std::max(0.0f, predicted_pushes);
+    // Apply expm1 to reverse the log1p normalization done in training
+    float pushes_pred_val = std::expm1(z_score * pushes_std + pushes_mean);
+    return std::max(0.0f, pushes_pred_val);
 }
 
 std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_node*>& nodes, const std::vector<std::vector<bool>>& end_vec) {
@@ -182,13 +191,11 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
     std::vector<float> results;
     results.reserve(N);
 
-    float pushes_mean = 42.447f;
-    float pushes_std = 27.029f;
-
     for (int i = 0; i < N; ++i) {
         float z_score = pushes_tensor[i].item<float>();
-        float pushes_pred = z_score * pushes_std + pushes_mean;
-        results.push_back(pushes_pred);
+        // Apply expm1 to reverse the log1p normalization done in training
+        float pushes_pred = std::expm1(z_score * pushes_std + pushes_mean);
+        results.push_back(std::max(0.0f, pushes_pred));
     }
 
     return results;

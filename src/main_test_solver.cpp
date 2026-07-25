@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
         std::cout << "Heuristica: Simple\n";
     }
     else if (heuristic_arg == "neural") {
-        heuristic = Heuristic::neural;
+        heuristic = Heuristic::neural_batched; // Default to batched for max speed
         std::cout << "Heuristica: Neural\n";
     }
     else if (heuristic_arg == "neural_batched") {
