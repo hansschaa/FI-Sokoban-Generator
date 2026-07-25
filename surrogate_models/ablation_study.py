@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 from models.cnn import SokobanCNNRegressor, SokobanCNNClassifier
 from models.resnet import SokobanResNetRegressor, SokobanSEResNetRegressor
 from models.resnet import SokobanResNetClassifier, SokobanSEResNetClassifier
-from models.resnet import MultiHeadRegressorLoss, ClassifierLoss
+from models.resnet import ClassifierLoss
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -89,7 +89,8 @@ def run_training_loop(model, train_loader, test_loader, criterion, is_classifier
                 y_norm = batch[1].to(device)
                 w = batch[5].to(device)
                 preds = model(x)
-                loss = criterion(preds, y_norm, w)
+                loss_p = criterion(preds, y_norm)
+                loss = (loss_p * w).mean()
                 
             loss.backward()
             optimizer.step()
@@ -141,7 +142,7 @@ def train_ablation(task, folds_to_run):
         "SEResNet": SokobanSEResNetClassifier if is_classifier else SokobanSEResNetRegressor
     }
     
-    criterion = ClassifierLoss(pos_weight_val=3.0) if is_classifier else MultiHeadRegressorLoss()
+    criterion = ClassifierLoss(pos_weight_val=3.0) if is_classifier else nn.HuberLoss(reduction='none')
     
     for fold in folds_to_run:
         print(f"\n[{'─'*40}]")
