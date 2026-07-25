@@ -62,8 +62,8 @@ public:
     int evaluations = 0;
 
     // Optional callback triggered at the end of each generation (and for initial population).
-    // Passes generation number and the best individual so far.
-    std::function<void(int gen, const Individual& best_ind)> on_generation;
+    // Passes evaluation count, best fitness so far, and elapsed time in ms.
+    std::function<void(int evals, double best_fitness, double time_ms)> on_progress;
 
     //
     // MAIN ALGORITHM

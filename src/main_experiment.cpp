@@ -101,6 +101,20 @@ int main(int argc, char** argv)
         stagLimit = std::stoi(val);
     }
 
+    Heuristic heuristic_type = Heuristic::hungarian;
+    if (char* val = getCmdOption(argv, argv + argc, "--heuristic")) {
+        std::string h_arg = val;
+        if (h_arg == "neural") heuristic_type = Heuristic::neural_batched;
+        else if (h_arg == "neural_sequential") heuristic_type = Heuristic::neural;
+        else if (h_arg == "hungarian") heuristic_type = Heuristic::hungarian;
+        else if (h_arg == "simple") heuristic_type = Heuristic::simple;
+    }
+
+    std::string out_csv_path = "";
+    if (char* val = getCmdOption(argv, argv + argc, "--out_csv")) {
+        out_csv_path = val;
+    }
+
     // 4. Configurar el tablero inicial (Shell) y aplicar Flood Fill
     std::vector<std::vector<char>> shell;
     try {
@@ -196,6 +210,22 @@ int main(int argc, char** argv)
     // Calcular deadlock mask para el cascarón base
     std::vector<std::vector<bool>> deadlock_mask = compute_deadlock_mask(shell);
 
+    // Setup logging
+    std::shared_ptr<std::ofstream> csv_out;
+    if (out_csv_path != "") {
+        csv_out = std::make_shared<std::ofstream>(out_csv_path);
+        if (csv_out->is_open()) {
+            *csv_out << "time_ms,evaluations,fitness\n";
+        }
+    }
+    
+    auto log_progress = [csv_out](int evals, double best_fitness, double time_ms) {
+        if (csv_out && csv_out->is_open()) {
+            *csv_out << time_ms << "," << evals << "," << best_fitness << "\n";
+            csv_out->flush();
+        }
+    };
+
     // 6. Ejecución silenciosa de Metaheurísticas con Parseo Blindado
     try {
         if (algorithm == "ES")
@@ -205,6 +235,9 @@ int main(int argc, char** argv)
             es.maxEvaluations  = maxEvals;
             es.stagnationLimit = stagLimit;
             es.evaluator.fitnessType = fitnessType;
+            es.evaluator.heuristic_type = heuristic_type;
+            es.evaluator.use_surrogate = (heuristic_type != Heuristic::hungarian);
+            es.on_progress = log_progress;
             
             if (fitnessType == FitnessType::FO1_PUSHES) {
                 es.mu = 6;
@@ -237,6 +270,9 @@ int main(int argc, char** argv)
             ga.maxEvaluations  = maxEvals;
             ga.stagnationLimit = stagLimit;
             ga.evaluator.fitnessType = fitnessType;
+            ga.evaluator.heuristic_type = heuristic_type;
+            ga.evaluator.use_surrogate = (heuristic_type != Heuristic::hungarian);
+            ga.on_progress = log_progress;
             
             if (fitnessType == FitnessType::FO1_PUSHES) {
                 ga.offspringSize = 45;
@@ -273,6 +309,9 @@ int main(int argc, char** argv)
             sa.maxEvaluations     = maxEvals;   
             sa.stagnationLimit    = stagLimit;
             sa.evaluator.fitnessType = fitnessType;  
+            sa.evaluator.heuristic_type = heuristic_type;
+            sa.evaluator.use_surrogate = (heuristic_type != Heuristic::hungarian);
+            sa.on_progress = log_progress;
 
             // Valores por defecto en caso de ejecución manual
             if (fitnessType == FitnessType::FO1_PUSHES) {

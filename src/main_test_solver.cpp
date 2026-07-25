@@ -73,7 +73,11 @@ int main(int argc, char* argv[])
     }
     else if (heuristic_arg == "neural") {
         heuristic = Heuristic::neural_batched; // Default to batched for max speed
-        std::cout << "Heuristica: Neural\n";
+        std::cout << "Heuristica: Neural (Batched)\n";
+    }
+    else if (heuristic_arg == "neural_sequential") {
+        heuristic = Heuristic::neural; // Sequential mode for Ablation Study
+        std::cout << "Heuristica: Neural (Sequential)\n";
     }
     else if (heuristic_arg == "neural_batched") {
         heuristic = Heuristic::neural_batched;

@@ -2,6 +2,7 @@
 
 #include "../individual.h"
 #include <chrono>
+#include <functional>
 #include "../mutations/mutation.h"
 #include "../evaluator/evaluator.h"
 
@@ -58,6 +59,10 @@ public:
     //
 
     int evaluations = 0;
+    
+    // Optional callback triggered at the end of each generation (and for initial population).
+    // Passes evaluation count, best fitness so far, and elapsed time in ms.
+    std::function<void(int evals, double best_fitness, double time_ms)> on_progress;
 
     //
     // METHODS

@@ -370,6 +370,12 @@ Individual GeneticAlgorithm::run(
             break;
         }
 
+        if (on_progress) {
+            auto now = std::chrono::high_resolution_clock::now();
+            double elapsed_ms = std::chrono::duration<double, std::milli>(now - circuitStartTime).count();
+            on_progress(evaluations, best.fitness, elapsed_ms);
+        }
+
         if (maxCircuitTimeSeconds > 0) {
             auto now = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::seconds>(now - circuitStartTime).count();

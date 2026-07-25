@@ -69,8 +69,10 @@ Individual EvolutionStrategy::run(
         }
     }
 
-    if (on_generation) {
-        on_generation(generation, best);
+    if (on_progress) {
+        auto now = std::chrono::high_resolution_clock::now();
+        double elapsed_ms = std::chrono::duration<double, std::milli>(now - circuitStartTime).count();
+        on_progress(evaluations, best.fitness, elapsed_ms);
     }
 
     //
@@ -340,8 +342,10 @@ Individual EvolutionStrategy::run(
                   << " | Stagnation: " << stagnationCount << "/" << stagnationLimit 
                   << " | Best Fit: " << best.fitness << std::endl;
 
-        if (on_generation) {
-            on_generation(generation, best);
+        if (on_progress) {
+            auto now = std::chrono::high_resolution_clock::now();
+            double elapsed_ms = std::chrono::duration<double, std::milli>(now - circuitStartTime).count();
+            on_progress(evaluations, best.fitness, elapsed_ms);
         }
     }
 

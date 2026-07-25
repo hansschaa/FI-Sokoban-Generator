@@ -45,8 +45,8 @@ double Evaluator::evaluate(Individual& individual)
 
     solver.enable_advanced_deadlocks = true;
 
-    // Cambia esto en tu Evaluator::evaluate para usar el matching perfecto O(n³)
-    auto stats = solver.test_template(Method::a_star, Heuristic::hungarian, solution, needs_path_simulator);
+    // Cambia esto en tu Evaluator::evaluate para usar el matching perfecto O(n³) o neuronal
+    auto stats = solver.test_template(Method::a_star, this->heuristic_type, solution, needs_path_simulator);
 
     if (stats.status != SolveStatus::SOLVED || stats.pushes <= 1)
     {

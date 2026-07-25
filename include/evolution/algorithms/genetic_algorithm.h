@@ -8,6 +8,7 @@
 #include "../mutations/move_mutation.h"
 #include "../mutations/add_mutation.h"
 #include "../mutations/remove_mutation.h"
+#include <functional>
 
 #include "../crossover/board_crossover.h"
 #include "../evaluator/evaluator.h"
@@ -43,6 +44,10 @@ public:
     //
 
     int evaluations = 0;
+    
+    // Optional callback triggered at the end of each generation (and for initial population).
+    // Passes evaluation count, best fitness so far, and elapsed time in ms.
+    std::function<void(int evals, double best_fitness, double time_ms)> on_progress;
 
     //
     // OPERATORS
