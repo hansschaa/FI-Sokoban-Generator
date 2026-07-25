@@ -105,12 +105,12 @@ def make_loaders(batch_size):
 # OBJECTIVE
 # ─────────────────────────────────────────────────────────────────────────────
 def objective(trial):
-    lr           = trial.suggest_float("lr",           1e-4, 5e-3,  log=True)
+    lr           = trial.suggest_float("lr",           1e-4, 1e-3,  log=True)
     weight_decay = trial.suggest_float("weight_decay", 1e-6, 1e-3,  log=True)
     dropout_p    = trial.suggest_float("dropout_p",    0.1,  0.5)
     # pos_weight < 1 → penaliza menos los falsos positivos (más precisión)
     # pos_weight > 1 → penaliza menos los falsos negativos (más recall)
-    pos_weight   = trial.suggest_float("pos_weight",   0.2,  2.0)
+    pos_weight   = trial.suggest_float("pos_weight",   0.5,  8.0)
     batch_size   = trial.suggest_categorical("batch_size", [64, 128, 256])
 
     print(f"\n[Trial {trial.number}] lr={lr:.5f} | wd={weight_decay:.6f} | "
@@ -121,7 +121,7 @@ def objective(trial):
     model     = SokobanSEResNetClassifier(dropout_p=dropout_p).to(device)
     criterion = ClassifierLoss(pos_weight_val=pos_weight)
     optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
-    scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2)
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=MAX_EPOCHS)
 
     best_f_beta  = 0.0
     patience_ctr = 0
@@ -129,15 +129,22 @@ def objective(trial):
     for epoch in range(1, MAX_EPOCHS + 1):
         # ── Train ────────────────────────────────────────────────────────────
         model.train()
+        epoch_logits = []
         for tensors, labels in train_loader:
             tensors = tensors.to(device)
             labels  = labels.to(device)
             optimizer.zero_grad()
             logits  = model(tensors)
+            epoch_logits.extend(logits.detach().cpu().numpy())
             loss    = criterion(logits, labels)
             loss.backward()
             nn.utils.clip_grad_norm_(model.parameters(), 5.0)
             optimizer.step()
+        
+        # Logging temporal para ver si hay colapso de varianza
+        if epoch == 1 or epoch % 5 == 0:
+            el_arr = np.array(epoch_logits)
+            print(f"  [Epoch {epoch}] logits: mean={el_arr.mean():.3f} std={el_arr.std():.3f}")
 
         # ── Eval ─────────────────────────────────────────────────────────────
         model.eval()
