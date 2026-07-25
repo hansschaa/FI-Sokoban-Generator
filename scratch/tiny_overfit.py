@@ -1,4 +1,6 @@
 import sys
+import os
+import glob
 sys.path.append('surrogate_models')
 
 import torch
@@ -8,6 +10,7 @@ from torch.utils.data import Dataset, DataLoader
 import numpy as np
 
 from models.resnet import SokobanSEResNetClassifier, ClassifierLoss
+from data.prepare_classifier import parse_sok_file, encode_board, SOLVABLES_DIR, UNSOLVABLES_FILE
 
 RESULTS_DIR = "surrogate_models/results"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -21,13 +24,31 @@ class FoldDataset(Dataset):
         item = self.data[idx]
         return item["tensor"].float(), torch.tensor(item["is_solvable"], dtype=torch.float32)
 
+def generate_tiny_dataset():
+    print("Generando 20 ejemplos al vuelo desde los archivos .sok...")
+    solvable_files = glob.glob(os.path.join(SOLVABLES_DIR, "**", "*.sok"), recursive=True)
+    solvables = parse_sok_file(solvable_files[0], default_label=1)[:10]
+    deadlocks = parse_sok_file(UNSOLVABLES_FILE, default_label=0)[:10]
+    
+    tiny_data = []
+    for item in solvables + deadlocks:
+        tensor = encode_board(item["board_str"])
+        tiny_data.append({
+            "tensor": torch.from_numpy(tensor),
+            "is_solvable": item["label"]
+        })
+    return tiny_data
+
 def main():
     print("Prueba de sobreajuste (Tiny Dataset)...")
     try:
         train_data = torch.load(f"{RESULTS_DIR}/classifier_fold1_train.pt", weights_only=False)
+        pos_examples = [d for d in train_data if d["is_solvable"] == 1][:10]
+        neg_examples = [d for d in train_data if d["is_solvable"] == 0][:10]
+        tiny_data = pos_examples + neg_examples
     except FileNotFoundError:
-        print("Dataset no encontrado.")
-        return
+        print("Dataset .pt no encontrado, generándolo en memoria...")
+        tiny_data = generate_tiny_dataset()
 
     # Extraer 10 positivos y 10 negativos
     pos_examples = [d for d in train_data if d["is_solvable"] == 1][:10]
