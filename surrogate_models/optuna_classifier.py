@@ -10,8 +10,8 @@ Búsqueda de hiperparámetros con Optuna para el Surrogate Classifier.
 - Al terminar, guarda los mejores hiperparámetros en results/best_hparams_classifier.json
 
 Ejecutar en los PCs del laboratorio (todos conectados a la misma DB):
-    export OPTUNA_DB_URL="mysql+pymysql://sokoban:laboratorio123@172.16.16.124/optuna_db"
-    export OPTUNA_STUDY_NAME="sokoban_classifier_lab"
+    export OPTUNA_DB_URL="mysql+pymysql://USER:PASSWORD@HOST/optuna_db"
+    export OPTUNA_STUDY_NAME="sokoban_classifier_lab_v4"
     venv/bin/python surrogate_models/optuna_classifier.py
 """
 
@@ -25,6 +25,17 @@ from torch.utils.data import Dataset, DataLoader
 import optuna
 from optuna.pruners import MedianPruner
 from sklearn.metrics import fbeta_score
+import numpy as np
+import random
+
+def set_seed(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+
+set_seed(42)
 
 from models.resnet import SokobanSEResNetClassifier, ClassifierLoss
 
@@ -84,9 +95,9 @@ _val_dataset = FoldDataset(_val_data)
 
 def make_loaders(batch_size):
     train_loader = DataLoader(FoldDataset(_train_data), batch_size=batch_size,
-                              shuffle=True, num_workers=0, pin_memory=False)
+                              shuffle=True, num_workers=0, pin_memory=True)
     val_loader   = DataLoader(_val_dataset, batch_size=256,
-                              shuffle=False, num_workers=0, pin_memory=False)
+                              shuffle=False, num_workers=0, pin_memory=True)
     return train_loader, val_loader
 
 
@@ -109,13 +120,11 @@ def objective(trial):
 
     model     = SokobanSEResNetClassifier(dropout_p=dropout_p).to(device)
     criterion = ClassifierLoss(pos_weight_val=pos_weight)
-    optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+    optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2)
 
     best_f_beta  = 0.0
     patience_ctr = 0
-
-    import numpy as np
 
     for epoch in range(1, MAX_EPOCHS + 1):
         # ── Train ────────────────────────────────────────────────────────────
