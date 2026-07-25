@@ -12,7 +12,7 @@ def extract_boards(sok_file):
     current_board = []
     board_id = 0
     for line in content.split('\n'):
-        if line.startswith('#') or (line.strip().startswith('#') and '#' in line):
+        if line.strip().startswith('#'):
             current_board.append(line)
         elif line.strip() == '' and current_board:
             boards.append((board_id, '\n'.join(current_board)))
@@ -138,7 +138,25 @@ def main():
     csv_path = f'benchmark_results_{start_idx}_to_{end_idx}.csv'
     heuristics = ['hungarian', 'neural', 'neural_batched']
     
+    # ── Reanudación Segura (Resume) ──
+    completed_runs = set()
     file_exists = os.path.isfile(csv_path)
+    if file_exists:
+        with open(csv_path, 'r') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                completed_runs.add((int(row['board_id']), row['heuristic']))
+                
+    # ── Dummy Warm-up para Inicializar CUDA ──
+    print("\n[Warming Up] Realizando corridas dummy en GPU para inicializar CUDA/pesos...")
+    try:
+        # Usa el primer tablero disponible para calentar
+        warmup_board = boards[0][1]
+        run_solver(warmup_board, 'neural')
+        run_solver(warmup_board, 'neural_batched')
+        print("[Warming Up] Listo.")
+    except Exception as e:
+        print(f"[Warming Up] Advertencia: falló el warmup ({e})")
     
     with open(csv_path, mode='a', newline='') as csv_file:
         fieldnames = ['board_id', 'heuristic', 'status', 'runtime_ms', 'pushes', 
@@ -154,23 +172,33 @@ def main():
         for board_id, board_str in boards:
             print(f"\nProcesando Tablero {board_id}...")
             
-            print("[DEBUG] Tablero Original Leído:")
-            print(board_str)
-            print("[DEBUG] Tablero Preprocesado (Con Flood Fill y Padding):")
-            print(preprocess_board(board_str))
-            print("-" * 40)
-            
             for heuristic in heuristics:
-                print(f"  -> Ejecutando: {heuristic}...")
-                metrics = run_solver(board_str, heuristic)
+                if (board_id, heuristic) in completed_runs:
+                    print(f"  -> Saltando: {heuristic} (Ya procesado)")
+                    continue
+                    
+                print(f"  -> Ejecutando: {heuristic} (3 corridas)...")
                 
+                # Ejecutar 3 veces para reducir ruido del sistema (varianza)
+                runtimes = []
+                last_metrics = None
+                for _ in range(3):
+                    metrics = run_solver(board_str, heuristic)
+                    if metrics['runtime_ms'] > 0:
+                        runtimes.append(metrics['runtime_ms'])
+                    last_metrics = metrics
+                
+                # Promediar tiempos si las corridas fueron exitosas
+                if runtimes and last_metrics['status'] == 'SOLVED':
+                    last_metrics['runtime_ms'] = sum(runtimes) / len(runtimes)
+                    
                 row = {'board_id': board_id, 'heuristic': heuristic}
-                row.update(metrics)
+                row.update(last_metrics)
                 
                 writer.writerow(row)
                 csv_file.flush() # Guardar inmediatamente en disco
                 
-                print(f"     [Status: {metrics['status']}, Time: {metrics['runtime_ms']}ms, Nodes: {metrics['expanded_nodes']}]")
+                print(f"     [Status: {last_metrics['status']}, Time: {last_metrics['runtime_ms']:.2f}ms, Nodes: {last_metrics['expanded_nodes']}]")
 
 if __name__ == "__main__":
     main()
