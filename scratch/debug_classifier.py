@@ -8,6 +8,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, fbeta_score
 
+import sys
+sys.path.append('surrogate_models')
 from models.resnet import SokobanSEResNetClassifier, ClassifierLoss
 
 # =========================================================
