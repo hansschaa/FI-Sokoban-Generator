@@ -88,8 +88,12 @@ def main():
             all_probs = np.array(all_probs)
             all_targets = np.array(all_targets)
             
-            from sklearn.metrics import precision_score, recall_score
+            from sklearn.metrics import precision_score, recall_score, average_precision_score
             best_f_beta, best_p, best_r, best_t = 0.0, 0.0, 0.0, 0.0
+            
+            # Calcular AUC-PR independiente del umbral
+            auc_pr = average_precision_score(all_targets, all_probs)
+            
             for thresh in np.arange(0.1, 0.9, 0.05):
                 preds = (all_probs >= thresh).astype(float)
                 f_beta = fbeta_score(all_targets, preds, beta=0.5, zero_division=0)
@@ -99,7 +103,7 @@ def main():
                     best_r = recall_score(all_targets, preds, zero_division=0)
                     best_t = thresh
                 
-            print(f"  -> Val F0.5: {best_f_beta:.4f} (Prec: {best_p:.4f}, Rec: {best_r:.4f} @ umbral {best_t:.2f})")
+            print(f"  -> Val F0.5: {best_f_beta:.4f} (Prec: {best_p:.4f}, Rec: {best_r:.4f} @ umbral {best_t:.2f}) | AUC-PR: {auc_pr:.4f}")
 
 if __name__ == "__main__":
     main()
