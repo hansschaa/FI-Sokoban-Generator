@@ -37,9 +37,7 @@ def set_seed(seed=42):
         torch.cuda.manual_seed_all(seed)
 
 set_seed(42)
-
-from models.resnet import SokobanSEResNetRegressor, MultiHeadRegressorLoss
-
+from models.resnet import SokobanSEResNetRegressor
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURACIÓN
 # ─────────────────────────────────────────────────────────────────────────────

@@ -44,7 +44,7 @@ class SokobanResNetRegressor(nn.Module):
     def __init__(self, dropout_p: float = 0.4):
         super().__init__()
         self.stem   = nn.Sequential(
-            nn.Conv2d(5, 32, 3, padding=1, bias=False),
+            nn.Conv2d(6, 32, 3, padding=1, bias=False),
             nn.BatchNorm2d(32), nn.ReLU(inplace=True),
         )
         self.layer1 = nn.Sequential(BasicBlock(32,  64),  BasicBlock(64,  64))
@@ -130,7 +130,7 @@ class SokobanSEResNetRegressor(nn.Module):
     def __init__(self, dropout_p: float = 0.4):
         super().__init__()
         self.stem   = nn.Sequential(
-            nn.Conv2d(5, 32, 3, padding=1, bias=False),
+            nn.Conv2d(6, 32, 3, padding=1, bias=False),
             nn.BatchNorm2d(32), nn.ReLU(inplace=True),
         )
         # 4 layers para más capacidad, usando stride=2 para reducir la resolución espacial y acelerar
@@ -174,7 +174,7 @@ if __name__ == "__main__":
     model = SokobanResNetRegressor().to(device)
     n = sum(p.numel() for p in model.parameters())
     print(f"Parámetros: {n:,}")
-    x = torch.randn(8, 5, 25, 25).to(device)
+    x = torch.randn(8, 6, 25, 25).to(device)
     p = model(x)
     print(f"Pushes:    {p.shape}  sample={p[:3].tolist()}")
     print("✅ Smoke test OK")
@@ -191,7 +191,7 @@ class SokobanResNetClassifier(nn.Module):
     def __init__(self, dropout_p: float = 0.4):
         super().__init__()
         self.stem   = nn.Sequential(
-            nn.Conv2d(5, 32, 3, padding=1, bias=False),
+            nn.Conv2d(6, 32, 3, padding=1, bias=False),
             nn.BatchNorm2d(32), nn.ReLU(inplace=True),
         )
         self.layer1 = nn.Sequential(BasicBlock(32,  64),  BasicBlock(64,  64))
@@ -234,7 +234,7 @@ class SokobanSEResNetClassifier(nn.Module):
     def __init__(self, dropout_p: float = 0.4):
         super().__init__()
         self.stem   = nn.Sequential(
-            nn.Conv2d(5, 32, 3, padding=1, bias=False),
+            nn.Conv2d(6, 32, 3, padding=1, bias=False),
             nn.BatchNorm2d(32), nn.ReLU(inplace=True),
         )
         self.layer1 = nn.Sequential(SEBasicBlock(32,  64, stride=1),  SEBasicBlock(64,  64))

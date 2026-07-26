@@ -41,11 +41,9 @@ def main():
 
     # Hiperparámetros fijos recomendados
     lr = 5e-4
-    # ATENCIÓN: El dataset de entrenamiento YA está balanceado (aumentado x8 para solubles).
-    # Hay ~180k solubles y ~96k deadlocks en train. 
-    # El pos_weight correcto para train_loader es Neg/Pos = 96k/180k = 0.53
-    # Usar 4.3 sobrecompensa masivamente y causa la divergencia a logits positivos.
-    pos_weight = 0.54
+    # ATENCIÓN: El dataset de entrenamiento YA está balanceado en aumento (ambas clases x8).
+    # Por lo tanto, el pos_weight vuelve a ser el ratio natural: 83k / 19k = ~4.3
+    pos_weight = 4.3
     epochs = 25
 
     model = SokobanSEResNetClassifier(dropout_p=0.3).to(device)

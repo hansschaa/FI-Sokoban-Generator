@@ -3,6 +3,9 @@
 
 #include <torch/script.h>
 #include <iostream>
+#include <stdexcept>
+#include <cmath>
+#include "evolution/utils/board_utils.h"
 
 NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int cols) 
     : m(rows), n(cols) {
@@ -14,15 +17,17 @@ NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int co
         // Disable gradients for faster inference
         torch::NoGradGuard no_grad;
 
-        // Allocate flat vector for the 5-channel tensor
-        input_tensor_data.resize(5 * 25 * 25, 0.0f);
+        // Compute static deadlock mask
+        compute_deadlock_mask();
+
+        // Allocate flat vector for the 6-channel tensor
+        input_tensor_data.resize(6 * 25 * 25, 0.0f);
         
         // Load normalization stats
         std::ifstream stats_file("surrogate_models/results/surrogate_stats.txt");
         if (stats_file.is_open()) {
             stats_file >> pushes_mean >> pushes_std;
             stats_file.close();
-            // std::cout << "[NeuralHeuristic] Loaded stats: mean=" << pushes_mean << ", std=" << pushes_std << "\n";
         } else {
             std::cerr << "[NeuralHeuristic] Warning: surrogate_stats.txt not found. Using default raw stats (May cause severe inaccuracies!)\n";
             pushes_mean = 42.447f;
@@ -34,6 +39,18 @@ NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int co
         std::cerr << e.what() << "\n";
         exit(1);
     }
+}
+
+void NeuralHeuristic::compute_deadlock_mask() {
+    std::vector<std::vector<char>> shell(m, std::vector<char>(n, ' '));
+    for (int r = 0; r < m; ++r) {
+        for (int c = 0; c < n; ++c) {
+            if (constant::blank_matrix[r][c] == constant::WALL) {
+                shell[r][c] = '#';
+            }
+        }
+    }
+    deadlock_mask = ::compute_deadlock_mask(shell);
 }
 
 NeuralHeuristic::~NeuralHeuristic() {}
@@ -54,6 +71,7 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
     // Channel 2: Boxes
     // Channel 3: Targets
     // Channel 4: Player
+    // Channel 5: Deadlock Mask
 
     // Default background is Wall (Channel 0 = 1.0) for the whole 25x25 grid
     for (int r = 0; r < max_h; ++r) {
@@ -103,9 +121,20 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
     int pc = node->person_point.y + offset_c;
     input_tensor_data[4 * max_h * max_w + pr * max_w + pc] = 1.0f;
 
+    // 5. Deadlock Mask (Channel 5)
+    for (int r = 0; r < m; ++r) {
+        for (int c = 0; c < n; ++c) {
+            if (deadlock_mask[r][c]) {
+                int rr = r + offset_r;
+                int cc = c + offset_c;
+                input_tensor_data[5 * max_h * max_w + rr * max_w + cc] = 1.0f;
+            }
+        }
+    }
+
     // Create tensor from data pointer
     auto options = torch::TensorOptions().dtype(torch::kFloat32).device(torch::kCPU);
-    torch::Tensor input_tensor = torch::from_blob(input_tensor_data.data(), {1, 5, 25, 25}, options);
+    torch::Tensor input_tensor = torch::from_blob(input_tensor_data.data(), {1, 6, 25, 25}, options);
 
     // Inference
     std::vector<torch::jit::IValue> inputs;
@@ -139,53 +168,73 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
     int offset_r = (max_h - m) / 2;
     int offset_c = (max_w - n) / 2;
 
-    std::vector<float> batch_data(N * 5 * max_h * max_w, 0.0f);
+    std::vector<float> batch_data(N * 6 * max_h * max_w, 0.0f);
+    
+    // Default background is Wall (Channel 0 = 1.0) for all nodes
+    for (int i = 0; i < N; ++i) {
+        for (int r = 0; r < max_h; ++r) {
+            for (int c = 0; c < max_w; ++c) {
+                batch_data[i * 6 * max_h * max_w + 0 * max_h * max_w + r * max_w + c] = 1.0f;
+            }
+        }
+    }
 
     for (int i = 0; i < N; ++i) {
         const game_node* node = nodes[i];
-        int batch_offset = i * 5 * max_h * max_w;
+        int b_idx = i * 6 * max_h * max_w;
 
-        // Default background is Wall (Channel 0 = 1.0)
-        for (int r = 0; r < max_h; ++r) {
-            for (int c = 0; c < max_w; ++c) {
-                batch_data[batch_offset + 0 * max_h * max_w + r * max_w + c] = 1.0f;
-            }
-        }
-
-        // 1. Static Layout (Walls and Floors)
+        // 1. Static Layout
         for (int r = 0; r < m; ++r) {
             for (int c = 0; c < n; ++c) {
                 int rr = r + offset_r;
                 int cc = c + offset_c;
-                int base_idx = batch_offset + rr * max_w + cc;
                 
-                batch_data[base_idx] = 0.0f; // Clear wall
+                batch_data[b_idx + 0 * max_h * max_w + rr * max_w + cc] = 0.0f;
 
                 if (constant::blank_matrix[r][c] == constant::WALL) {
-                    batch_data[base_idx] = 1.0f;
+                    batch_data[b_idx + 0 * max_h * max_w + rr * max_w + cc] = 1.0f;
                 } else {
-                    batch_data[batch_offset + 1 * max_h * max_w + rr * max_w + cc] = 1.0f;
-                }
-
-                if (end_vec[r][c]) {
-                    batch_data[batch_offset + 3 * max_h * max_w + rr * max_w + cc] = 1.0f;
+                    batch_data[b_idx + 1 * max_h * max_w + rr * max_w + cc] = 1.0f;
                 }
             }
         }
 
-        // 2. Dynamic State (Boxes and Player)
-        for (int b = 0; b < node->box_count; ++b) {
-            int br = node->box_list[b].x + offset_r;
-            int bc = node->box_list[b].y + offset_c;
-            batch_data[batch_offset + 2 * max_h * max_w + br * max_w + bc] = 1.0f;
+        // 2. Targets
+        for (int r = 0; r < m; ++r) {
+            for (int c = 0; c < n; ++c) {
+                if (end_vec[r][c]) {
+                    int rr = r + offset_r;
+                    int cc = c + offset_c;
+                    batch_data[b_idx + 3 * max_h * max_w + rr * max_w + cc] = 1.0f;
+                }
+            }
         }
 
+        // 3. Boxes
+        for (int j = 0; j < node->box_count; ++j) {
+            int rr = node->box_list[j].x + offset_r;
+            int cc = node->box_list[j].y + offset_c;
+            batch_data[b_idx + 2 * max_h * max_w + rr * max_w + cc] = 1.0f;
+        }
+
+        // 4. Player
         int pr = node->person_point.x + offset_r;
         int pc = node->person_point.y + offset_c;
-        batch_data[batch_offset + 4 * max_h * max_w + pr * max_w + pc] = 1.0f;
+        batch_data[b_idx + 4 * max_h * max_w + pr * max_w + pc] = 1.0f;
+        
+        // 5. Deadlock Mask
+        for (int r = 0; r < m; ++r) {
+            for (int c = 0; c < n; ++c) {
+                if (deadlock_mask[r][c]) {
+                    int rr = r + offset_r;
+                    int cc = c + offset_c;
+                    batch_data[b_idx + 5 * max_h * max_w + rr * max_w + cc] = 1.0f;
+                }
+            }
+        }
     }
 
-    auto input_tensor = torch::from_blob(batch_data.data(), {N, 5, max_h, max_w}, torch::kFloat32);
+    auto input_tensor = torch::from_blob(batch_data.data(), {N, 6, max_h, max_w}, torch::kFloat32);
 
     std::vector<torch::jit::IValue> inputs;
     inputs.push_back(input_tensor);

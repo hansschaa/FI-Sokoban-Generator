@@ -26,8 +26,8 @@ def export_model():
     classifier.load_state_dict(torch.load("results/final_classifier_fold5.pt", map_location="cpu", weights_only=True))
     classifier.eval()
 
-    print("Tracing models with dummy input (1, 5, 25, 25)...")
-    dummy_input = torch.randn(1, 5, 25, 25)
+    print("Tracing models with dummy input (1, 6, 25, 25)...")
+    dummy_input = torch.randn(1, 6, 25, 25)
     
     print("Optimizing TorchScript models for inference (Freeze)...")
     traced_regressor = torch.jit.trace(regressor, dummy_input)

@@ -23,6 +23,7 @@ import torch
 import pandas as pd
 from tqdm import tqdm
 from sklearn.model_selection import GroupKFold
+from data.board_utils import encode_board, augment_tensor
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURACION
@@ -114,126 +115,6 @@ def parse_sok_file(fpath):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# CODIFICACION A TENSOR 5-CANALES
-# ─────────────────────────────────────────────────────────────────────────────
-
-def encode_board(board_str, max_h=MAX_H, max_w=MAX_W):
-    """
-    Convierte un string de tablero a un tensor float32 de forma (5, max_h, max_w).
-
-    Canales:
-      0 → Muros (#)
-      1 → Interior caminable (flood-fill)
-      2 → Cajas ($ o *)
-      3 → Metas (. o * o +)
-      4 → Jugador (@ o +)
-
-    El padding exterior rellena el Canal 0 con muros (valor 1.0) en lugar de
-    ceros, para que la CNN sepa que "afuera todo es roca".
-    """
-    lines = board_str.splitlines()
-    H = len(lines)
-    W = max(len(l) for l in lines) if lines else 0
-
-    # Recortar si excede el tamaño máximo (no debería suceder con datos limpios)
-    H = min(H, max_h)
-    W = min(W, max_w)
-
-    char_matrix = np.full((H, W), ' ', dtype=str)
-    for r, line in enumerate(lines[:H]):
-        for c, ch in enumerate(line[:W]):
-            char_matrix[r, c] = ch
-
-    # Flood-fill exterior para calcular zona interior caminable
-    exterior = _flood_fill_exterior(char_matrix, H, W)
-
-    # Tensor base: relleno con muros (canal 0 = 1.0) en toda la zona de padding
-    tensor = np.zeros((5, max_h, max_w), dtype=np.float32)
-
-    # La zona de padding (fuera del tablero real) son muros
-    tensor[0, :, :] = 1.0
-
-    # Centrar el tablero dentro del tensor max_h x max_w
-    pad_top = (max_h - H) // 2
-    pad_left = (max_w - W) // 2
-
-    for r in range(H):
-        for c in range(W):
-            ch = char_matrix[r, c]
-            tr = r + pad_top
-            tc = c + pad_left
-
-            if ch == '#':
-                tensor[0, tr, tc] = 1.0
-                continue
-
-            # Zona interior: quitar el muro de fondo del padding
-            tensor[0, tr, tc] = 0.0
-
-            if not exterior[r, c]:
-                tensor[1, tr, tc] = 1.0  # Interior caminable
-
-            if ch in ('$', '*'):
-                tensor[2, tr, tc] = 1.0  # Caja
-
-            if ch in ('.', '*', '+'):
-                tensor[3, tr, tc] = 1.0  # Meta
-
-            if ch in ('@', '+'):
-                tensor[4, tr, tc] = 1.0  # Jugador
-
-    return tensor
-
-
-def _flood_fill_exterior(char_matrix, H, W):
-    """BFS desde los bordes para marcar el exterior (fuera de las paredes)."""
-    exterior = np.zeros((H, W), dtype=bool)
-    visited = np.zeros((H, W), dtype=bool)
-    q = []
-
-    for r in range(H):
-        q.append((r, 0))
-        q.append((r, W - 1))
-    for c in range(W):
-        q.append((0, c))
-        q.append((H - 1, c))
-
-    head = 0
-    while head < len(q):
-        r, c = q[head]
-        head += 1
-        if r < 0 or r >= H or c < 0 or c >= W:
-            continue
-        if visited[r, c]:
-            continue
-        visited[r, c] = True
-        if char_matrix[r, c] == '#':
-            continue
-        exterior[r, c] = True
-        q.extend([(r - 1, c), (r + 1, c), (r, c - 1), (r, c + 1)])
-
-    return exterior
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# DATA AUGMENTATION D4 (8 SIMETRIAS)
-# ─────────────────────────────────────────────────────────────────────────────
-
-def augment_d4(tensor):
-    """
-    Genera las 8 variantes del grupo diédrico D4 (4 rotaciones x 2 reflejos).
-    Retorna una lista de 8 tensores numpy (5, H, W).
-    """
-    augmented = []
-    for k in range(4):
-        rot = np.rot90(tensor, k=k, axes=(1, 2)).copy()
-        augmented.append(rot)
-        refl = np.flip(rot, axis=2).copy()
-        augmented.append(refl)
-    return augmented
-
-
-# ─────────────────────────────────────────────────────────────────────────────
 # MAIN: PARSEO → DEDUPLICACION → GROUPKFOLD → TENSORES → GUARDADO
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -288,7 +169,7 @@ def main():
         print(f"      Fold {fold_idx + 1}: Train={len(train_idx)} | Test={len(test_idx)} | {status}")
 
     # 5. Codificar a tensores y guardar por fold
-    print(f"\n[4/5] Codificando tableros a tensores (5 canales, {MAX_H}x{MAX_W})...")
+    print(f"\n[4/5] Codificando tableros a tensores (6 canales, {MAX_H}x{MAX_W})...")
     print("      Data Augmentation D4 (x8) aplicada SOLO al train de cada fold.")
 
     for fold_idx, (outer_train_idx, test_idx) in enumerate(fold_splits):
@@ -368,10 +249,9 @@ def main():
         train_data = []
         for _, row in tqdm(train_df.iterrows(), total=len(train_df), leave=False):
             t = encode_board(row["board_str"])
-            variants = augment_d4(t)
-            for v in variants:
+            for t_aug in augment_tensor(t):
                 train_data.append({
-                    "tensor": torch.tensor(v.copy()),
+                    "tensor": torch.from_numpy(t_aug),
                     "pushes_raw": float(row["pushes"]),
                     "pushes_norm": (np.log1p(float(row["pushes"])) - pushes_mean) / (pushes_std + 1e-8),
                     "branch_raw": float(row["branching_effective"]),

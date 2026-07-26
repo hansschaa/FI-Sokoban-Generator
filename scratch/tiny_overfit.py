@@ -10,7 +10,8 @@ from torch.utils.data import Dataset, DataLoader
 import numpy as np
 
 from models.resnet import SokobanSEResNetClassifier, ClassifierLoss
-from data.prepare_classifier import parse_sok_file, encode_board, SOLVABLES_DIR, UNSOLVABLES_FILE
+from data.prepare_classifier import parse_sok_file, SOLVABLES_DIR, UNSOLVABLES_FILE
+from data.board_utils import encode_board
 
 RESULTS_DIR = "surrogate_models/results"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -49,11 +50,6 @@ def main():
     except FileNotFoundError:
         print("Dataset .pt no encontrado, generándolo en memoria...")
         tiny_data = generate_tiny_dataset()
-
-    # Extraer 10 positivos y 10 negativos
-    pos_examples = [d for d in train_data if d["is_solvable"] == 1][:10]
-    neg_examples = [d for d in train_data if d["is_solvable"] == 0][:10]
-    tiny_data = pos_examples + neg_examples
 
     if len(tiny_data) < 20:
         print("No hay suficientes datos para armar el tiny dataset.")

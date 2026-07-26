@@ -15,6 +15,7 @@ import torch
 import pandas as pd
 from tqdm import tqdm
 from sklearn.model_selection import StratifiedGroupKFold
+from data.board_utils import encode_board, augment_tensor
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURACION
@@ -26,8 +27,7 @@ RESULTS_DIR = os.path.join(BASE_DIR, "..", "results")
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
 N_FOLDS = 5
-MAX_H = 25
-MAX_W = 25
+do_augmentation = True
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PARSEO
@@ -59,70 +59,6 @@ def parse_sok_file(fpath, default_label=None):
     return records
 
 # ─────────────────────────────────────────────────────────────────────────────
-# CODIFICACION
-# ─────────────────────────────────────────────────────────────────────────────
-def encode_board(board_str, max_h=MAX_H, max_w=MAX_W):
-    lines = board_str.splitlines()
-    H, W = len(lines), max(len(l) for l in lines) if lines else 0
-    H, W = min(H, max_h), min(W, max_w)
-
-    char_matrix = np.full((H, W), ' ', dtype=str)
-    for r, line in enumerate(lines[:H]):
-        for c, ch in enumerate(line[:W]):
-            char_matrix[r, c] = ch
-
-    tensor = np.zeros((5, max_h, max_w), dtype=np.float32)
-    tensor[0, :, :] = 1.0  # Fondo es muro
-
-    # Centrado
-    offset_r = (max_h - H) // 2
-    offset_c = (max_w - W) // 2
-
-    for r in range(H):
-        for c in range(W):
-            ch = char_matrix[r, c]
-            rr, cc = r + offset_r, c + offset_c
-            tensor[0, rr, cc] = 0.0
-
-            if ch == '#':
-                tensor[0, rr, cc] = 1.0
-            elif ch == ' ':
-                tensor[1, rr, cc] = 1.0
-            elif ch == '$':
-                tensor[1, rr, cc] = 1.0
-                tensor[2, rr, cc] = 1.0
-            elif ch == '.':
-                tensor[1, rr, cc] = 1.0
-                tensor[3, rr, cc] = 1.0
-            elif ch == '*':
-                tensor[1, rr, cc] = 1.0
-                tensor[2, rr, cc] = 1.0
-                tensor[3, rr, cc] = 1.0
-            elif ch == '@':
-                tensor[1, rr, cc] = 1.0
-                tensor[4, rr, cc] = 1.0
-            elif ch == '+':
-                tensor[1, rr, cc] = 1.0
-                tensor[3, rr, cc] = 1.0
-                tensor[4, rr, cc] = 1.0
-            else:
-                tensor[1, rr, cc] = 1.0
-    return tensor
-
-def augment_tensor(tensor):
-    variants = [tensor]
-    variants.append(np.flip(tensor, axis=1)) # Vertical
-    variants.append(np.flip(tensor, axis=2)) # Horizontal
-    variants.append(np.flip(np.flip(tensor, axis=1), axis=2)) # Rot 180
-    
-    t_T = np.transpose(tensor, axes=(0, 2, 1))
-    variants.append(t_T)
-    variants.append(np.flip(t_T, axis=1))
-    variants.append(np.flip(t_T, axis=2))
-    variants.append(np.flip(np.flip(t_T, axis=1), axis=2))
-    return variants
-
-# ─────────────────────────────────────────────────────────────────────────────
 # MAIN
 # ─────────────────────────────────────────────────────────────────────────────
 def main():
@@ -145,7 +81,6 @@ def main():
     print(f"Total tras deduplicar exacto: {len(df)}")
     
     # Eliminar boards que existan en AMBAS clases (leakage semántico fatal)
-    # Raro, pero posible si el solver marcó un deadlock como soluble por bug
     hash_counts = df.groupby('board_hash')['label'].nunique()
     conflict_hashes = hash_counts[hash_counts > 1].index
     if len(conflict_hashes) > 0:
@@ -177,15 +112,26 @@ def main():
         train_df = train_df_full.iloc[train_final_idx]
         val_df   = train_df_full.iloc[val_idx]
 
-        print(f"  Generando Train con Augmentation (solo Solubles x8)...")
+        print(f"  Generando Train con Augmentation...")
         train_data = []
         for _, row in tqdm(train_df.iterrows(), total=len(train_df), leave=False):
-            t = encode_board(row["board_str"])
-            # Solo aumentamos los solubles.
-            variants = augment_tensor(t) if row["label"] == 1 else [t]
-            for v in variants:
+            if do_augmentation and row["label"] == 1:
+                t_np = encode_board(row["board_str"])
+                for t_aug in augment_tensor(t_np):
+                    train_data.append({
+                        "tensor": torch.from_numpy(t_aug.copy()),
+                        "is_solvable": row["label"]
+                    })
+            elif do_augmentation and row["label"] == 0:
+                t_np = encode_board(row["board_str"])
+                for t_aug in augment_tensor(t_np):
+                    train_data.append({
+                        "tensor": torch.from_numpy(t_aug.copy()),
+                        "is_solvable": row["label"]
+                    })
+            else:
                 train_data.append({
-                    "tensor": torch.from_numpy(v.copy()),
+                    "tensor": torch.from_numpy(encode_board(row["board_str"])),
                     "is_solvable": row["label"]
                 })
                 
