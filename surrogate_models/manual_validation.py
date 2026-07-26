@@ -9,7 +9,7 @@ from sklearn.metrics import f1_score, average_precision_score, accuracy_score, p
 from models.resnet import SokobanResNetClassifier, ClassifierLoss
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
-BATCH  = 2048
+BATCH  = 1024
 EPOCHS = 12
 
 def main():
