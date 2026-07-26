@@ -83,12 +83,16 @@ print(f"Cargando Fold {FOLD} (puede tardar ~30s)...")
 _train_data = torch.load(f"{RESULTS_DIR}/classifier_fold{FOLD}_train.pt", weights_only=False)
 _val_data   = torch.load(f"{RESULTS_DIR}/classifier_fold{FOLD}_val.pt",  weights_only=False)
 
-_N_pos = sum(1 for d in _train_data if d["is_solvable"] == 1)
-_N_neg = len(_train_data) - _N_pos
-_default_pos_weight = _N_neg / _N_pos if _N_pos > 0 else 1.0
+# Calcular pesos para BCEWithLogitsLoss
+try:
+    _N_pos = (_train_data["is_solvable"] == 1).sum().item()
+    _N_neg = len(_train_data["is_solvable"]) - _N_pos
+    _pos_weight_val = _N_neg / max(1, _N_pos)
+except Exception:
+    _pos_weight_val = 1.0
 
-print(f"Train: {len(_train_data):,} | Validation: {len(_val_data):,}")
-print(f"Solubles: {_N_pos:,} | Deadlocks: {_N_neg:,} | pos_weight base: {_default_pos_weight:.2f}\n")
+print(f"Train: {len(_train_data['is_solvable']):,} | Validation: {len(_val_data['is_solvable']):,}")
+print(f"Solubles: {_N_pos:,} | Deadlocks: {_N_neg:,} | pos_weight base: {_pos_weight_val:.2f}\n")
 
 _val_dataset = FoldDataset(_val_data)
 
