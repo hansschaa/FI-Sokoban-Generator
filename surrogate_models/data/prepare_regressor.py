@@ -251,7 +251,7 @@ def main():
             t = encode_board(row["board_str"])
             for t_aug in augment_tensor(t):
                 train_data.append({
-                    "tensor": torch.from_numpy(t_aug),
+                    "tensor": torch.from_numpy(t_aug.copy()),
                     "pushes_raw": float(row["pushes"]),
                     "pushes_norm": (np.log1p(float(row["pushes"])) - pushes_mean) / (pushes_std + 1e-8),
                     "branch_raw": float(row["branching_effective"]),
