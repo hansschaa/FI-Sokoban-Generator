@@ -41,12 +41,16 @@ def main():
 
     # Hiperparámetros fijos recomendados
     lr = 5e-4
-    pos_weight = 4.3
+    # ATENCIÓN: El dataset de entrenamiento YA está balanceado (aumentado x8 para solubles).
+    # Hay ~180k solubles y ~96k deadlocks en train. 
+    # El pos_weight correcto para train_loader es Neg/Pos = 96k/180k = 0.53
+    # Usar 4.3 sobrecompensa masivamente y causa la divergencia a logits positivos.
+    pos_weight = 0.53
     epochs = 15
 
     model = SokobanSEResNetClassifier(dropout_p=0.3).to(device)
     criterion = ClassifierLoss(pos_weight_val=pos_weight)
-    optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-5)
+    optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
 
     print(f"Iniciando entrenamiento (lr={lr}, pos_weight={pos_weight}, epochs={epochs})...")
@@ -84,13 +88,18 @@ def main():
             all_probs = np.array(all_probs)
             all_targets = np.array(all_targets)
             
-            best_f_beta = 0.0
+            from sklearn.metrics import precision_score, recall_score
+            best_f_beta, best_p, best_r, best_t = 0.0, 0.0, 0.0, 0.0
             for thresh in np.arange(0.1, 0.9, 0.05):
                 preds = (all_probs >= thresh).astype(float)
                 f_beta = fbeta_score(all_targets, preds, beta=0.5, zero_division=0)
-                best_f_beta = max(best_f_beta, f_beta)
+                if f_beta > best_f_beta:
+                    best_f_beta = f_beta
+                    best_p = precision_score(all_targets, preds, zero_division=0)
+                    best_r = recall_score(all_targets, preds, zero_division=0)
+                    best_t = thresh
                 
-            print(f"  -> Val F0.5 (mejor umbral): {best_f_beta:.4f}")
+            print(f"  -> Val F0.5: {best_f_beta:.4f} (Prec: {best_p:.4f}, Rec: {best_r:.4f} @ umbral {best_t:.2f})")
 
 if __name__ == "__main__":
     main()
