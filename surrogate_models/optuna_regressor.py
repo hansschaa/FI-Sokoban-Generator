@@ -25,6 +25,8 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
 import numpy as np
 from collections import Counter
+from sklearn.model_selection import KFold
+from scipy.stats import spearmanr
 import optuna
 from optuna.pruners import MedianPruner
 import random
@@ -86,9 +88,8 @@ _train_data = torch.load(f"{RESULTS_DIR}/regressor_fold{FOLD}_train.pt", weights
 _val_data   = torch.load(f"{RESULTS_DIR}/regressor_fold{FOLD}_val.pt",  weights_only=False)
 _stats      = torch.load(f"{RESULTS_DIR}/regressor_fold{FOLD}_stats.pt", weights_only=False)
 p_mean, p_std = _stats["pushes_mean"], _stats["pushes_std"]
-b_mean, b_std = _stats["branch_mean"], _stats["branch_std"]
 print(f"Train: {len(_train_data):,} | Validation: {len(_val_data):,}")
-print(f"Stats — pushes: {p_mean:.1f}±{p_std:.1f} | branch: {b_mean:.2f}±{b_std:.2f}\n")
+print(f"Stats — pushes: {p_mean:.1f}±{p_std:.1f}\n")
 
 _val_dataset = FoldDataset(_val_data)
 
@@ -96,10 +97,15 @@ _val_dataset = FoldDataset(_val_data)
 def make_loaders(batch_size):
     bucket_counts  = Counter(d["bucket"] for d in _train_data)
     sample_weights = [1.0 / bucket_counts[d["bucket"]] for d in _train_data]
-    sampler = WeightedRandomSampler(sample_weights, num_samples=len(sample_weights), replacement=True)
+    # Entrenar con 30k muestras por época
+    sampler = WeightedRandomSampler(sample_weights, num_samples=min(30000, len(sample_weights)), replacement=True)
     train_loader = DataLoader(FoldDataset(_train_data), batch_size=batch_size,
                               sampler=sampler, num_workers=0, pin_memory=True)
-    val_loader   = DataLoader(_val_dataset, batch_size=256,
+                              
+    # Validar con 5k muestras
+    import random
+    subset_val_data = random.sample(_val_data, min(5000, len(_val_data)))
+    val_loader   = DataLoader(FoldDataset(subset_val_data), batch_size=256,
                               shuffle=False, num_workers=0, pin_memory=True)
     return train_loader, val_loader
 
@@ -159,6 +165,8 @@ def objective(trial):
         # ── Eval ─────────────────────────────────────────────────────────────
         model.eval()
         total_mae, n = 0.0, 0
+        all_p_pred = []
+        all_p_raw = []
         with torch.no_grad():
             for tensors, _, p_raw, _ in val_loader:
                 tensors = tensors.to(device)
@@ -167,10 +175,14 @@ def objective(trial):
                 p_desnorm_real = torch.expm1(p_desnorm)
                 total_mae += torch.abs(p_desnorm_real - p_raw).sum().item()
                 n += len(p_raw)
+                all_p_pred.extend(p_desnorm_real.view(-1).numpy())
+                all_p_raw.extend(p_raw.view(-1).numpy())
+        
         mae = total_mae / n
+        spearman_rho, _ = spearmanr(all_p_raw, all_p_pred)
         scheduler.step()
 
-        print(f"  [Trial {trial.number}] Época {epoch:02d} | MAE Pushes: {mae:.2f}")
+        print(f"  [Trial {trial.number}] Época {epoch:02d} | MAE Pushes: {mae:.2f} | Spearman ρ: {spearman_rho:.3f}")
 
         # Pruning de Optuna (cancela trials malos antes de que terminen)
         trial.report(mae, epoch)

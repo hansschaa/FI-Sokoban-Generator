@@ -98,9 +98,19 @@ _val_dataset = FoldDataset(_val_data)
 
 
 def make_loaders(batch_size):
-    train_loader = DataLoader(FoldDataset(_train_data), batch_size=batch_size,
-                              shuffle=True, num_workers=0, pin_memory=True)
-    val_loader   = DataLoader(_val_dataset, batch_size=256,
+    from torch.utils.data import RandomSampler
+    ds_train = FoldDataset(_train_data)
+    # Entrenar solo con 30k muestras por época para que Optuna sea rápido
+    sampler = RandomSampler(ds_train, replacement=True, num_samples=min(30000, len(ds_train)))
+    train_loader = DataLoader(ds_train, batch_size=batch_size,
+                              sampler=sampler, num_workers=0, pin_memory=True)
+    
+    # Validar solo con 5k muestras
+    subset_val_data = {
+        "tensor": _val_data["tensor"][:5000],
+        "is_solvable": _val_data["is_solvable"][:5000]
+    }
+    val_loader   = DataLoader(FoldDataset(subset_val_data), batch_size=256,
                               shuffle=False, num_workers=0, pin_memory=True)
     return train_loader, val_loader
 
