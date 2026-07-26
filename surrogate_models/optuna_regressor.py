@@ -116,8 +116,8 @@ def make_loaders(batch_size):
 def objective(trial):
     # Espacio de búsqueda
     lr           = trial.suggest_float("lr",           1e-3, 1e-2, log=True)
-    weight_decay = trial.suggest_float("weight_decay", 1e-6, 1e-2, log=True)
-    dropout_p    = trial.suggest_float("dropout_p",    0.02, 0.15)
+    weight_decay = trial.suggest_float("weight_decay", 1e-6, 2e-4, log=True)
+    dropout_p    = trial.suggest_float("dropout_p",    0.01, 0.06)
     batch_size   = trial.suggest_categorical("batch_size", [128])
 
     print(f"\n[Trial {trial.number}] -> Iniciando Trial...")
