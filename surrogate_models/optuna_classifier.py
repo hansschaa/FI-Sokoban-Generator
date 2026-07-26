@@ -201,7 +201,10 @@ if __name__ == "__main__":
         direction="maximize",   # queremos F_0.5 lo más alto posible
         pruner=MedianPruner(n_startup_trials=5, n_warmup_steps=5),
         study_name=study_name,
-        storage=db_url,
+        storage=optuna.storages.RDBStorage(
+            url=db_url,
+            engine_kwargs={"pool_pre_ping": True, "pool_recycle": 3600}
+        ),
         load_if_exists=True,
     )
 
