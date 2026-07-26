@@ -1,8 +1,1 @@
-{
-  "params": {
-    "lr": 0.000625,
-    "weight_decay": 0.00448,
-    "dropout_p": 0.270727,
-    "batch_size": 256
-  }
-}
+{"params": {"lr": 0.000625, "dropout_p": 0.270727, "weight_decay": 0.004480, "batch_size": 256}}
