@@ -34,6 +34,7 @@ do_augmentation = True
 # ─────────────────────────────────────────────────────────────────────────────
 def parse_sok_file(fpath, default_label=None):
     records = []
+    import re
     with open(fpath, "r", encoding="utf-8", errors="replace") as f:
         content = f.read()
 
@@ -44,17 +45,41 @@ def parse_sok_file(fpath, default_label=None):
         if len(lines) < 2:
             continue
         
+        header = lines[0]
         board_str = "\n".join(lines[1:])
+        
+        # Parse metadata from header if available
+        dtype = "SOLVABLE"
+        mutations = 0
+        source_hash = ""
+        
+        if default_label == 0:
+            m_type = re.search(r"type:([A-Z_]+)", header)
+            if m_type: dtype = m_type.group(1)
+            
+            m_mut = re.search(r"mutations:(\d+)", header)
+            if m_mut: mutations = int(m_mut.group(1))
+            
+            m_src = re.search(r"source_hash:([0-9a-fA-F\-]+)", header)
+            if m_src: source_hash = m_src.group(1)
+
         MOBILE_CHARS = str.maketrans("$.*@+", "     ")
         shell_str = board_str.translate(MOBILE_CHARS)
         shell_hash = hashlib.sha256(shell_str.encode()).hexdigest()
         board_hash = hashlib.sha256(board_str.encode()).hexdigest()
+        
+        # Fallback for source_hash if not provided in header
+        if not source_hash:
+            source_hash = shell_hash
 
         records.append({
             "board_hash": board_hash,
             "shell_hash": shell_hash,
+            "source_hash": source_hash,
             "board_str": board_str,
-            "label": default_label
+            "label": default_label,
+            "deadlock_type": dtype,
+            "mutations": mutations
         })
     return records
 
@@ -115,24 +140,23 @@ def main():
         print(f"  Generando Train con Augmentation...")
         train_data = []
         for _, row in tqdm(train_df.iterrows(), total=len(train_df), leave=False):
-            if do_augmentation and row["label"] == 1:
+            if do_augmentation:
                 t_np = encode_board(row["board_str"])
                 for t_aug in augment_tensor(t_np):
                     train_data.append({
                         "tensor": torch.from_numpy(t_aug.copy()),
-                        "is_solvable": row["label"]
-                    })
-            elif do_augmentation and row["label"] == 0:
-                t_np = encode_board(row["board_str"])
-                for t_aug in augment_tensor(t_np):
-                    train_data.append({
-                        "tensor": torch.from_numpy(t_aug.copy()),
-                        "is_solvable": row["label"]
+                        "is_solvable": row["label"],
+                        "deadlock_type": row["deadlock_type"],
+                        "mutations": row["mutations"],
+                        "source_hash": row["source_hash"]
                     })
             else:
                 train_data.append({
                     "tensor": torch.from_numpy(encode_board(row["board_str"])),
-                    "is_solvable": row["label"]
+                    "is_solvable": row["label"],
+                    "deadlock_type": row["deadlock_type"],
+                    "mutations": row["mutations"],
+                    "source_hash": row["source_hash"]
                 })
                 
         print("  Generando Validation (sin Augmentation)...")
@@ -140,7 +164,10 @@ def main():
         for _, row in tqdm(val_df.iterrows(), total=len(val_df), leave=False):
             val_data.append({
                 "tensor": torch.from_numpy(encode_board(row["board_str"])),
-                "is_solvable": row["label"]
+                "is_solvable": row["label"],
+                "deadlock_type": row["deadlock_type"],
+                "mutations": row["mutations"],
+                "source_hash": row["source_hash"]
             })
                 
         print("  Generando Test (sin Augmentation)...")
@@ -148,7 +175,10 @@ def main():
         for _, row in tqdm(test_df.iterrows(), total=len(test_df), leave=False):
             test_data.append({
                 "tensor": torch.from_numpy(encode_board(row["board_str"])),
-                "is_solvable": row["label"]
+                "is_solvable": row["label"],
+                "deadlock_type": row["deadlock_type"],
+                "mutations": row["mutations"],
+                "source_hash": row["source_hash"]
             })
 
         print(f"  Train: {len(train_data):,} | Val: {len(val_data):,} | Test: {len(test_data):,}")
