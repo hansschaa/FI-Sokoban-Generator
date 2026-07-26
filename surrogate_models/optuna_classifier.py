@@ -119,13 +119,13 @@ def make_loaders(batch_size):
 # OBJECTIVE
 # ─────────────────────────────────────────────────────────────────────────────
 def objective(trial):
-    lr           = trial.suggest_float("lr",           1e-4, 1e-3,  log=True)
+    lr           = trial.suggest_float("lr",           3e-4, 8e-4,  log=True)
     weight_decay = trial.suggest_float("weight_decay", 1e-6, 1e-3,  log=True)
-    dropout_p    = trial.suggest_float("dropout_p",    0.1,  0.5)
+    dropout_p    = trial.suggest_float("dropout_p",    0.25, 0.35)
     # pos_weight < 1 → penaliza menos los falsos positivos (más precisión)
     # pos_weight > 1 → penaliza menos los falsos negativos (más recall)
-    pos_weight   = trial.suggest_float("pos_weight",   0.5,  8.0)
-    batch_size   = trial.suggest_categorical("batch_size", [64, 128, 256])
+    pos_weight   = trial.suggest_float("pos_weight",   5.0,  8.0)
+    batch_size   = trial.suggest_categorical("batch_size", [64, 128])
 
     print(f"\n[Trial {trial.number}] lr={lr:.5f} | wd={weight_decay:.6f} | "
           f"drop={dropout_p:.2f} | pw={pos_weight:.2f} | bs={batch_size}")
