@@ -45,8 +45,8 @@ def main():
     # Hay ~180k solubles y ~96k deadlocks en train. 
     # El pos_weight correcto para train_loader es Neg/Pos = 96k/180k = 0.53
     # Usar 4.3 sobrecompensa masivamente y causa la divergencia a logits positivos.
-    pos_weight = 0.53
-    epochs = 15
+    pos_weight = 0.54
+    epochs = 25
 
     model = SokobanSEResNetClassifier(dropout_p=0.3).to(device)
     criterion = ClassifierLoss(pos_weight_val=pos_weight)
