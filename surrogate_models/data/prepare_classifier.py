@@ -137,67 +137,35 @@ def main():
         train_df = train_df_full.iloc[train_final_idx]
         val_df   = train_df_full.iloc[val_idx]
 
-        print(f"  Generando Train con Augmentation...")
-        train_data = []
-        for _, row in tqdm(train_df.iterrows(), total=len(train_df), leave=False):
-            if do_augmentation:
-                t_np = encode_board(row["board_str"])
-                for t_aug in augment_tensor(t_np):
-                    train_data.append({
-                        "tensor": torch.from_numpy(t_aug.copy()),
-                        "is_solvable": row["label"],
-                        "deadlock_type": row["deadlock_type"],
-                        "mutations": row["mutations"],
-                        "source_hash": row["source_hash"]
-                    })
-            else:
-                train_data.append({
-                    "tensor": torch.from_numpy(encode_board(row["board_str"])),
-                    "is_solvable": row["label"],
-                    "deadlock_type": row["deadlock_type"],
-                    "mutations": row["mutations"],
-                    "source_hash": row["source_hash"]
-                })
-                
-        print("  Generando Validation (sin Augmentation)...")
-        val_data = []
-        for _, row in tqdm(val_df.iterrows(), total=len(val_df), leave=False):
-            val_data.append({
-                "tensor": torch.from_numpy(encode_board(row["board_str"])),
-                "is_solvable": row["label"],
-                "deadlock_type": row["deadlock_type"],
-                "mutations": row["mutations"],
-                "source_hash": row["source_hash"]
-            })
-                
-        print("  Generando Test (sin Augmentation)...")
-        test_data = []
-        for _, row in tqdm(test_df.iterrows(), total=len(test_df), leave=False):
-            test_data.append({
-                "tensor": torch.from_numpy(encode_board(row["board_str"])),
-                "is_solvable": row["label"],
-                "deadlock_type": row["deadlock_type"],
-                "mutations": row["mutations"],
-                "source_hash": row["source_hash"]
-            })
-
-        def allocate_and_fill(data_list):
-            N = len(data_list)
+        def allocate_and_fill_direct(df, do_aug):
+            aug_factor = 8 if do_aug else 1
+            N = len(df) * aug_factor
+            
             tensors = torch.empty((N, 6, 25, 25), dtype=torch.float32)
             is_solvable = torch.empty(N, dtype=torch.uint8)
             deadlock_type = []
             mutations = torch.empty(N, dtype=torch.uint8)
             source_hash = []
             
-            for i, d in enumerate(data_list):
-                tensors[i] = d["tensor"]
-                is_solvable[i] = d["is_solvable"]
-                deadlock_type.append(d["deadlock_type"])
-                mutations[i] = d["mutations"]
-                source_hash.append(d["source_hash"])
-                # Free the individual tensor to save RAM during the copy
-                d["tensor"] = None
-                
+            idx = 0
+            for _, row in tqdm(df.iterrows(), total=len(df), leave=False):
+                t_np = encode_board(row["board_str"])
+                if do_aug:
+                    for t_aug in augment_tensor(t_np):
+                        tensors[idx] = torch.from_numpy(t_aug.copy())
+                        is_solvable[idx] = row["label"]
+                        deadlock_type.append(row["deadlock_type"])
+                        mutations[idx] = row["mutations"]
+                        source_hash.append(row["source_hash"])
+                        idx += 1
+                else:
+                    tensors[idx] = torch.from_numpy(t_np)
+                    is_solvable[idx] = row["label"]
+                    deadlock_type.append(row["deadlock_type"])
+                    mutations[idx] = row["mutations"]
+                    source_hash.append(row["source_hash"])
+                    idx += 1
+                    
             return {
                 "tensor": tensors,
                 "is_solvable": is_solvable,
@@ -206,9 +174,14 @@ def main():
                 "source_hash": source_hash,
             }
 
-        train_data = allocate_and_fill(train_data)
-        val_data = allocate_and_fill(val_data)
-        test_data = allocate_and_fill(test_data)
+        print(f"  Generando Train con Augmentation...")
+        train_data = allocate_and_fill_direct(train_df, do_augmentation)
+        
+        print("  Generando Validation (sin Augmentation)...")
+        val_data = allocate_and_fill_direct(val_df, False)
+        
+        print("  Generando Test (sin Augmentation)...")
+        test_data = allocate_and_fill_direct(test_df, False)
         
         print(f"  Train: {len(train_data['is_solvable']):,} | Val: {len(val_data['is_solvable']):,} | Test: {len(test_data['is_solvable']):,}")
         
