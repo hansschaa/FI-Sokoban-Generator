@@ -181,7 +181,36 @@ def main():
                 "source_hash": row["source_hash"]
             })
 
-        print(f"  Train: {len(train_data):,} | Val: {len(val_data):,} | Test: {len(test_data):,}")
+        def allocate_and_fill(data_list):
+            N = len(data_list)
+            tensors = torch.empty((N, 6, 25, 25), dtype=torch.float32)
+            is_solvable = torch.empty(N, dtype=torch.uint8)
+            deadlock_type = []
+            mutations = torch.empty(N, dtype=torch.uint8)
+            source_hash = []
+            
+            for i, d in enumerate(data_list):
+                tensors[i] = d["tensor"]
+                is_solvable[i] = d["is_solvable"]
+                deadlock_type.append(d["deadlock_type"])
+                mutations[i] = d["mutations"]
+                source_hash.append(d["source_hash"])
+                # Free the individual tensor to save RAM during the copy
+                d["tensor"] = None
+                
+            return {
+                "tensor": tensors,
+                "is_solvable": is_solvable,
+                "deadlock_type": deadlock_type,
+                "mutations": mutations,
+                "source_hash": source_hash,
+            }
+
+        train_data = allocate_and_fill(train_data)
+        val_data = allocate_and_fill(val_data)
+        test_data = allocate_and_fill(test_data)
+        
+        print(f"  Train: {len(train_data['is_solvable']):,} | Val: {len(val_data['is_solvable']):,} | Test: {len(test_data['is_solvable']):,}")
         
         train_path = os.path.join(RESULTS_DIR, f"classifier_fold{fold}_train.pt")
         val_path   = os.path.join(RESULTS_DIR, f"classifier_fold{fold}_val.pt")

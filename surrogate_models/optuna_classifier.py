@@ -69,13 +69,13 @@ print(f"{'='*55}\n")
 # DATASET
 # ─────────────────────────────────────────────────────────────────────────────
 class FoldDataset(Dataset):
-    def __init__(self, data_list):
-        self.data = data_list
+    def __init__(self, data_dict):
+        self.tensors = data_dict["tensor"]
+        self.labels = data_dict["is_solvable"]
     def __len__(self):
-        return len(self.data)
+        return len(self.labels)
     def __getitem__(self, idx):
-        item = self.data[idx]
-        return item["tensor"].float(), torch.tensor(item["is_solvable"], dtype=torch.float32)
+        return self.tensors[idx].float(), self.labels[idx].float()
 
 
 # Cargar datos UNA sola vez (no recargar en cada trial)
