@@ -20,6 +20,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 import numpy as np
+from scipy.stats import spearmanr
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, fbeta_score, roc_auc_score, average_precision_score
 
 from models.resnet import SokobanSEResNetRegressor, SokobanSEResNetClassifier, ClassifierLoss
@@ -40,9 +41,7 @@ class RegressorDataset(Dataset):
         return (
             item['tensor'].float(),
             torch.tensor(item['pushes_norm'], dtype=torch.float32),
-            torch.tensor(item['branch_norm'], dtype=torch.float32),
             torch.tensor(item['pushes_raw'],  dtype=torch.float32),
-            torch.tensor(item['branch_raw'],  dtype=torch.float32),
             torch.tensor(item.get('weight', 1.0), dtype=torch.float32),
         )
 
@@ -113,7 +112,20 @@ def train_regressor(folds_to_run):
         best_weights = copy.deepcopy(model.state_dict())
         patience_ctr = 0
 
-        for epoch in range(1, 51):
+        ckpt_path = os.path.join(RESULTS_DIR, f"ckpt_regressor_fold{fold}.pt")
+        start_epoch = 1
+        if os.path.exists(ckpt_path):
+            print(f"  -> 🔄 Reanudando desde checkpoint: {os.path.basename(ckpt_path)}")
+            ckpt = torch.load(ckpt_path, weights_only=False)
+            model.load_state_dict(ckpt['model_state_dict'])
+            optimizer.load_state_dict(ckpt['optimizer_state_dict'])
+            scheduler.load_state_dict(ckpt['scheduler_state_dict'])
+            start_epoch = ckpt['epoch'] + 1
+            best_mae = ckpt['best_mae']
+            best_weights = ckpt['best_weights']
+            patience_ctr = ckpt['patience_ctr']
+
+        for epoch in range(start_epoch, 51):
             t0 = time.time()
             model.train()
             train_loss = 0.0
@@ -135,16 +147,21 @@ def train_regressor(folds_to_run):
 
             model.eval()
             total_mae_val, n_val = 0.0, 0
+            all_p_pred = []
+            all_p_raw = []
             with torch.no_grad():
-                for tensors, _, _, p_raw, _, _ in val_loader:
+                for tensors, _, p_raw, _ in val_loader:
                     tensors = tensors.to(device)
                     p_pred = model(tensors)
                     p_desnorm = p_pred.cpu() * p_std + p_mean
                     p_desnorm_real = torch.expm1(p_desnorm)
                     total_mae_val += torch.abs(p_desnorm_real - p_raw).sum().item()
                     n_val += len(p_raw)
+                    all_p_pred.extend(p_desnorm_real.view(-1).numpy())
+                    all_p_raw.extend(p_raw.view(-1).numpy())
 
             val_mae = total_mae_val / n_val
+            val_spearman, _ = spearmanr(all_p_raw, all_p_pred)
             scheduler.step()
 
             elapsed = time.time() - t0
@@ -157,31 +174,49 @@ def train_regressor(folds_to_run):
             else:
                 patience_ctr += 1
 
-            print(f"  Ep {epoch:02d} | T: {elapsed:.1f}s | Train Loss: {train_loss:.4f} | MAE Val: {val_mae:.2f} empujes{tag}")
+            print(f"  Ep {epoch:02d} | T: {elapsed:.1f}s | Train Loss: {train_loss:.4f} | MAE Val: {val_mae:.2f} empujes | Spearman Val: {val_spearman:.3f}{tag}")
 
             if patience_ctr >= 10:
                 print(f"  🛑 Early Stopping en época {epoch}.")
                 break
+                
+            # Guardar checkpoint
+            torch.save({
+                'epoch': epoch,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'scheduler_state_dict': scheduler.state_dict(),
+                'best_mae': best_mae,
+                'best_weights': best_weights,
+                'patience_ctr': patience_ctr
+            }, ckpt_path)
 
         # ── Test Ciego ──
         model.load_state_dict(best_weights)
         model.eval()
         total_mae_test, n_test = 0.0, 0
+        all_p_pred_test = []
+        all_p_raw_test = []
         with torch.no_grad():
-            for tensors, _, _, p_raw, _, _ in test_loader:
+            for tensors, _, p_raw, _ in test_loader:
                 tensors = tensors.to(device)
                 p_pred = model(tensors)
                 p_desnorm = p_pred.cpu() * p_std + p_mean
                 p_desnorm_real = torch.expm1(p_desnorm)
                 total_mae_test += torch.abs(p_desnorm_real - p_raw).sum().item()
                 n_test += len(p_raw)
+                all_p_pred_test.extend(p_desnorm_real.view(-1).numpy())
+                all_p_raw_test.extend(p_raw.view(-1).numpy())
         
         test_mae = total_mae_test / n_test
+        test_spearman, _ = spearmanr(all_p_raw_test, all_p_pred_test)
         fold_maes.append(test_mae)
 
         save_path = os.path.join(RESULTS_DIR, f"final_regressor_fold{fold}.pt")
         torch.save(best_weights, save_path)
-        print(f"  ✅ Fold {fold} guardado en {os.path.basename(save_path)} | MAE Val: {best_mae:.2f} | MAE TEST: {test_mae:.2f}")
+        print(f"  ✅ Fold {fold} guardado en {os.path.basename(save_path)} | MAE Val: {best_mae:.2f} | MAE TEST: {test_mae:.2f} | Spearman TEST: {test_spearman:.3f}")
+        if os.path.exists(ckpt_path):
+            os.remove(ckpt_path)
 
     if len(fold_maes) > 1:
         print(f"\n  🏆 REGRESOR FINAL (5-FOLD CV): MAE Pushes = {np.mean(fold_maes):.2f} ± {np.std(fold_maes):.2f} empujes")
@@ -239,11 +274,25 @@ def train_classifier(folds_to_run):
         scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2)
 
         best_f05     = 0.0
-        best_metrics = {}
+        best_thresh  = 0.5
         best_weights = copy.deepcopy(model.state_dict())
         patience_ctr = 0
 
-        for epoch in range(1, 41):
+        ckpt_path = os.path.join(RESULTS_DIR, f"ckpt_classifier_fold{fold}.pt")
+        start_epoch = 1
+        if os.path.exists(ckpt_path):
+            print(f"  -> 🔄 Reanudando desde checkpoint: {os.path.basename(ckpt_path)}")
+            ckpt = torch.load(ckpt_path, weights_only=False)
+            model.load_state_dict(ckpt['model_state_dict'])
+            optimizer.load_state_dict(ckpt['optimizer_state_dict'])
+            scheduler.load_state_dict(ckpt['scheduler_state_dict'])
+            start_epoch = ckpt['epoch'] + 1
+            best_f05 = ckpt['best_f05']
+            best_thresh = ckpt.get('best_thresh', 0.5)
+            best_weights = ckpt['best_weights']
+            patience_ctr = ckpt['patience_ctr']
+
+        for epoch in range(start_epoch, 41):
             t0 = time.time()
             model.train()
             train_loss = 0.0
@@ -300,6 +349,18 @@ def train_classifier(folds_to_run):
             if patience_ctr >= 8:
                 print(f"  🛑 Early Stopping en época {epoch}.")
                 break
+                
+            # Guardar checkpoint
+            torch.save({
+                'epoch': epoch,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'scheduler_state_dict': scheduler.state_dict(),
+                'best_f05': best_f05,
+                'best_thresh': best_thresh,
+                'best_weights': best_weights,
+                'patience_ctr': patience_ctr
+            }, ckpt_path)
 
         # ── Test Ciego ──
         model.load_state_dict(best_weights)
@@ -339,6 +400,8 @@ def train_classifier(folds_to_run):
         save_path = os.path.join(RESULTS_DIR, f"final_classifier_fold{fold}.pt")
         torch.save(best_weights, save_path)
         print(f"  ✅ Fold {fold} guardado en {os.path.basename(save_path)} | Mejor F0.5 (Test): {f05:.4f}")
+        if os.path.exists(ckpt_path):
+            os.remove(ckpt_path)
 
     if len(fold_f05s) > 1:
         print("\n" + "="*65)
