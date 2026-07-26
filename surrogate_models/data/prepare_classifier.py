@@ -187,9 +187,9 @@ def main():
         val_path   = os.path.join(RESULTS_DIR, f"classifier_fold{fold}_val.pt")
         test_path  = os.path.join(RESULTS_DIR, f"classifier_fold{fold}_test.pt")
         
-        torch.save(train_data, train_path)
-        torch.save(val_data, val_path)
-        torch.save(test_data, test_path)
+        torch.save(train_data, train_path, _use_new_zipfile_serialization=False)
+        torch.save(val_data, val_path, _use_new_zipfile_serialization=False)
+        torch.save(test_data, test_path, _use_new_zipfile_serialization=False)
         print(f"  ✅ Guardados fold {fold} (Train/Val/Test) en results/")
 
 if __name__ == "__main__":
