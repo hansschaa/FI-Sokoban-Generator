@@ -57,7 +57,7 @@ class ClassifierDataset(Dataset):
 # ─────────────────────────────────────────────────────────────────────────────
 # REGRESOR
 # ─────────────────────────────────────────────────────────────────────────────
-def train_regressor(folds_to_run):
+def train_regressor(folds_to_run, restart=False):
     hparams_path = os.path.join(RESULTS_DIR, "best_hparams.json")
     if not os.path.exists(hparams_path):
         print("❌ Error: No se encontró best_hparams.json")
@@ -114,6 +114,11 @@ def train_regressor(folds_to_run):
 
         ckpt_path = os.path.join(RESULTS_DIR, f"ckpt_regressor_fold{fold}.pt")
         start_epoch = 1
+        
+        if restart and os.path.exists(ckpt_path):
+            print(f"  -> ⚠️ Bandera --restart detectada. Borrando checkpoint anterior para empezar desde cero.")
+            os.remove(ckpt_path)
+            
         if os.path.exists(ckpt_path):
             print(f"  -> 🔄 Reanudando desde checkpoint: {os.path.basename(ckpt_path)}")
             ckpt = torch.load(ckpt_path, weights_only=False)
@@ -224,7 +229,7 @@ def train_regressor(folds_to_run):
 # ─────────────────────────────────────────────────────────────────────────────
 # CLASIFICADOR
 # ─────────────────────────────────────────────────────────────────────────────
-def train_classifier(folds_to_run):
+def train_classifier(folds_to_run, restart=False):
     hparams_path = os.path.join(RESULTS_DIR, "best_hparams_classifier.json")
     if not os.path.exists(hparams_path):
         print("❌ Error: No se encontró best_hparams_classifier.json")
@@ -280,6 +285,11 @@ def train_classifier(folds_to_run):
 
         ckpt_path = os.path.join(RESULTS_DIR, f"ckpt_classifier_fold{fold}.pt")
         start_epoch = 1
+        
+        if restart and os.path.exists(ckpt_path):
+            print(f"  -> ⚠️ Bandera --restart detectada. Borrando checkpoint anterior para empezar desde cero.")
+            os.remove(ckpt_path)
+            
         if os.path.exists(ckpt_path):
             print(f"  -> 🔄 Reanudando desde checkpoint: {os.path.basename(ckpt_path)}")
             ckpt = torch.load(ckpt_path, weights_only=False)
@@ -425,15 +435,17 @@ def main():
                         help="Modelo a entrenar: regressor, classifier o all (ambos)")
     parser.add_argument("--folds", type=str, default="1,2,3,4,5",
                         help="Folds a ejecutar separados por coma (ej. 1,2,3 o 1)")
+    parser.add_argument("--restart", action="store_true",
+                        help="Ignora checkpoints existentes y reinicia el entrenamiento desde cero")
 
     args = parser.parse_args()
     folds_to_run = [int(x.strip()) for x in args.folds.split(",")]
 
     if args.model in ["all", "regressor"]:
-        train_regressor(folds_to_run)
+        train_regressor(folds_to_run, restart=args.restart)
 
     if args.model in ["all", "classifier"]:
-        train_classifier(folds_to_run)
+        train_classifier(folds_to_run, restart=args.restart)
 
 if __name__ == "__main__":
     main()
