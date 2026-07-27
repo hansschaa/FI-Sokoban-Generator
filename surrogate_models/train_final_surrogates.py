@@ -135,7 +135,7 @@ def train_regressor(folds_to_run, restart=False):
             model.train()
             train_loss = 0.0
 
-            for tensors, p_norm, _, _, _, weights in train_loader:
+            for tensors, p_norm, _, weights in train_loader:
                 tensors, p_norm, weights = tensors.to(device), p_norm.to(device), weights.to(device)
                 optimizer.zero_grad()
                 p_pred = model(tensors)
