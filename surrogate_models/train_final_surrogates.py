@@ -106,7 +106,7 @@ def train_regressor(folds_to_run, restart=False):
         model     = SokobanSEResNetRegressor(dropout_p=dropout_p).to(device)
         criterion = nn.HuberLoss(reduction='none')
         optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
-        scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2)
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=50)
 
         best_mae     = float("inf")
         best_weights = copy.deepcopy(model.state_dict())
@@ -181,7 +181,7 @@ def train_regressor(folds_to_run, restart=False):
 
             print(f"  Ep {epoch:02d} | T: {elapsed:.1f}s | Train Loss: {train_loss:.4f} | MAE Val: {val_mae:.2f} empujes | Spearman Val: {val_spearman:.3f}{tag}")
 
-            if patience_ctr >= 10:
+            if patience_ctr >= 15:
                 print(f"  🛑 Early Stopping en época {epoch}.")
                 break
                 
@@ -276,7 +276,7 @@ def train_classifier(folds_to_run, restart=False):
         model     = SokobanSEResNetClassifier(dropout_p=dropout_p).to(device)
         criterion = ClassifierLoss(pos_weight_val=pos_weight)
         optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
-        scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2)
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=40)
 
         best_f05     = 0.0
         best_thresh  = 0.5
@@ -356,7 +356,7 @@ def train_classifier(folds_to_run, restart=False):
 
             print(f"  Ep {epoch:02d} | T: {elapsed:.1f}s | Loss: {train_loss:.4f} | Umbral Val: {best_epoch_thresh:.2f} | Val F0.5: {best_epoch_f05:.3f}{tag}")
 
-            if patience_ctr >= 8:
+            if patience_ctr >= 15:
                 print(f"  🛑 Early Stopping en época {epoch}.")
                 break
                 
