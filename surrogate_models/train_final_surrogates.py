@@ -334,7 +334,7 @@ def train_classifier(folds_to_run, restart=False):
             
             best_epoch_f05 = 0.0
             best_epoch_thresh = 0.5
-            for thresh in np.arange(0.50, 0.96, 0.05):
+            for thresh in np.arange(0.05, 0.96, 0.05):
                 preds = (val_probs >= thresh).astype(float)
                 fb = fbeta_score(val_targets, preds, beta=0.5, zero_division=0)
                 if fb > best_epoch_f05:
