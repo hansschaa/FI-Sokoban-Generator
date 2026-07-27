@@ -38,8 +38,9 @@ class BasicBlock(nn.Module):
 
 class SokobanResNetRegressor(nn.Module):
     """
-    Entrada : (B, 5, 25, 25)
-    Salidas : pushes_pred (B,), branching_pred (B,)  — en espacio Z-score
+    ResNet plano para regresión (línea base del ablation).
+    Entrada : (B, 6, 25, 25)  — 6 canales: muros, metas, cajas, jugador, deadlock_mask, espacio_libre
+    Salida  : pushes_pred (B,)  — en espacio Z-score (log1p normalizado por fold)
     """
     def __init__(self, dropout_p: float = 0.4):
         super().__init__()
