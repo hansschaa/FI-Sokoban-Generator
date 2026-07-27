@@ -124,9 +124,10 @@ class SEBasicBlock(nn.Module):
 
 class SokobanSEResNetRegressor(nn.Module):
     """
-    Entrada : (B, 5, 25, 25)
-    Salida  : pushes_pred (B,) 
-    Arquitectura más profunda y con atención espacial (SE).
+    SE-ResNet profundo para regresión (modelo final).
+    Entrada : (B, 6, 25, 25)  — 6 canales: muros, metas, cajas, jugador, deadlock_mask, espacio_libre
+    Salida  : pushes_pred (B,)  — en espacio Z-score (log1p normalizado por fold)
+    Arquitectura: 4 capas con SEBasicBlock + stride + atención SE por canal.
     """
     def __init__(self, dropout_p: float = 0.4):
         super().__init__()
@@ -169,6 +170,56 @@ class SokobanSEResNetRegressor(nn.Module):
         x = self.pool(x).flatten(1)
         x = self.neck(x)
         return self.head_pushes(x).squeeze(1)
+
+
+class SokobanResNetRegressorNoSE(nn.Module):
+    """
+    Ablation: misma arquitectura profunda que SokobanSEResNetRegressor pero SIN bloques SE.
+    Usa BasicBlock en lugar de SEBasicBlock para aislar la contribución del módulo de atención.
+    Entrada : (B, 6, 25, 25)
+    Salida  : pushes_pred (B,)  — en espacio Z-score
+    """
+    def __init__(self, dropout_p: float = 0.4):
+        super().__init__()
+        self.stem   = nn.Sequential(
+            nn.Conv2d(6, 32, 3, padding=1, bias=False),
+            nn.BatchNorm2d(32), nn.ReLU(inplace=True),
+        )
+        # Mismas capas/strides que SokobanSEResNetRegressor pero con BasicBlock (sin SE)
+        self.layer1 = nn.Sequential(BasicBlock(32,  64),  BasicBlock(64,  64))
+        self.layer2 = nn.Sequential(BasicBlock(64,  128), BasicBlock(128, 128))
+        self.layer3 = nn.Sequential(BasicBlock(128, 256), BasicBlock(256, 256))
+        self.layer4 = nn.Sequential(BasicBlock(256, 512), BasicBlock(512, 512))
+        self.pool   = nn.AdaptiveAvgPool2d((1, 1))
+
+        self.neck = nn.Sequential(
+            nn.Linear(512, 256), nn.ReLU(inplace=True), nn.Dropout(dropout_p),
+            nn.Linear(256, 128), nn.ReLU(inplace=True), nn.Dropout(dropout_p),
+        )
+        self.head_pushes = nn.Sequential(nn.Linear(128, 64), nn.ReLU(inplace=True), nn.Linear(64, 1))
+        self._init_weights()
+
+    def _init_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.ones_(m.weight); nn.init.zeros_(m.bias)
+            elif isinstance(m, nn.Linear):
+                nn.init.xavier_normal_(m.weight)
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
+
+    def forward(self, x):
+        x = self.stem(x)
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+        x = self.pool(x).flatten(1)
+        x = self.neck(x)
+        return self.head_pushes(x).squeeze(1)
+
 
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -251,6 +302,54 @@ class SokobanSEResNetClassifier(nn.Module):
         )
         self.head = nn.Linear(128, 1)
 
+        self._init_weights()
+
+    def _init_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.ones_(m.weight); nn.init.zeros_(m.bias)
+            elif isinstance(m, nn.Linear):
+                nn.init.xavier_normal_(m.weight)
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
+
+    def forward(self, x):
+        x = self.stem(x)
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+        x = self.pool(x).flatten(1)
+        x = self.neck(x)
+        return self.head(x).squeeze(1)
+
+
+class SokobanSEResNetClassifierNoSE(nn.Module):
+    """
+    Ablation: misma arquitectura profunda que SokobanSEResNetClassifier pero SIN bloques SE.
+    Usa BasicBlock en lugar de SEBasicBlock para aislar la contribución del módulo de atención.
+    Entrada : (B, 6, 25, 25)
+    Salida  : logit (B,) para BCEWithLogitsLoss
+    """
+    def __init__(self, dropout_p: float = 0.4):
+        super().__init__()
+        self.stem   = nn.Sequential(
+            nn.Conv2d(6, 32, 3, padding=1, bias=False),
+            nn.BatchNorm2d(32), nn.ReLU(inplace=True),
+        )
+        self.layer1 = nn.Sequential(BasicBlock(32,  64),  BasicBlock(64,  64))
+        self.layer2 = nn.Sequential(BasicBlock(64,  128), BasicBlock(128, 128))
+        self.layer3 = nn.Sequential(BasicBlock(128, 256), BasicBlock(256, 256))
+        self.layer4 = nn.Sequential(BasicBlock(256, 512), BasicBlock(512, 512))
+        self.pool   = nn.AdaptiveAvgPool2d((1, 1))
+
+        self.neck = nn.Sequential(
+            nn.Linear(512, 256), nn.ReLU(inplace=True), nn.Dropout(dropout_p),
+            nn.Linear(256, 128), nn.ReLU(inplace=True), nn.Dropout(dropout_p),
+        )
+        self.head = nn.Linear(128, 1)
         self._init_weights()
 
     def _init_weights(self):
