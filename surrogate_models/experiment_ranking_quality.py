@@ -161,14 +161,17 @@ def evaluate_fold(model, eval_data, p_mean, p_std):
     rho, _ = spearmanr(all_gt, all_pred)
 
     bucket_rhos = {}
+    bucket_ns   = {}
     for bk in sorted(set(all_buckets)):
         mask = (all_buckets == bk)
-        if mask.sum() >= SPEARMAN_MIN_N and len(np.unique(all_gt[mask])) > 1:
+        n_bk = int(mask.sum())
+        bucket_ns[bk] = n_bk
+        if n_bk >= SPEARMAN_MIN_N and len(np.unique(all_gt[mask])) > 1:
             r, _ = spearmanr(all_gt[mask], all_pred[mask])
             bucket_rhos[bk] = float(r)
         else:
             bucket_rhos[bk] = float("nan")
-    return mae, rho, bucket_rhos
+    return mae, rho, bucket_rhos, bucket_ns
 
 
 def run_experiment(variant_name, use_hard_weight, use_ranking_loss):
@@ -205,15 +208,17 @@ def run_experiment(variant_name, use_hard_weight, use_ranking_loss):
             print(f"    Ep {epoch:02d}/{N_EPOCHS_EXP} | {time.time()-t0:.1f}s | "
                   f"Huber={total_h/len(loader):.4f} | Rank={total_r/len(loader):.4f}")
 
-    mae, rho_global, bucket_rhos = evaluate_fold(model, eval_raw, p_mean, p_std)
+    mae, rho_global, bucket_rhos, bucket_ns = evaluate_fold(model, eval_raw, p_mean, p_std)
     print(f"  -> MAE={mae:.3f} | Spearman_global={rho_global:.4f}")
-    print(f"  -> Spearman por bucket critico:")
+    print(f"  -> Spearman por bucket (n, ±CI95, valor):")
     for bk in sorted(bucket_rhos.keys()):
-        r = bucket_rhos[bk]
-        r_str = f"{r:+.3f}" if not np.isnan(r) else "  n/a"
+        r   = bucket_rhos[bk]
+        n_b = bucket_ns.get(bk, 0)
+        ci  = 1.96 / np.sqrt(max(n_b - 3, 1))
+        r_str = f"{r:+.3f} ±{ci:.3f}" if not np.isnan(r) else "  n/a"
         marker = " <--" if bk in HARD_BUCKETS else ""
-        print(f"       {bk:>12}: {r_str}{marker}")
-    return {"mae": mae, "rho_global": rho_global, "bucket_rhos": bucket_rhos}
+        print(f"       {bk:>12} (n={n_b:3d}): {r_str}{marker}")
+    return {"mae": mae, "rho_global": rho_global, "bucket_rhos": bucket_rhos, "bucket_ns": bucket_ns}
 
 
 if __name__ == "__main__":
@@ -228,20 +233,61 @@ if __name__ == "__main__":
                                            use_hard_weight=True, use_ranking_loss=True)
 
     print("\n\n" + "=" * 70)
-    print("  TABLA COMPARATIVA (Fold 1 eval)")
-    print("  Referencia CV completo: MAE=5.656 | Rho(101+)=+0.217 | Rho(81-90)=+0.179")
-    print("=" * 70)
-    print(f"  {'Variante':>25}  {'MAE':>6}  {'Rho_global':>11}  {'Rho_61-70':>10}  {'Rho_81-90':>10}  {'Rho_101+':>9}")
-    print(f"  {'-'*75}")
+    print("  TABLA COMPARATIVA — control correcto: A_baseline (mismas epocas, mismo eval)")
+    print(f"  Epocas por variante: {N_EPOCHS_EXP}")
+    print("  NOTA: comparar contra 'CV completo' (MAE=5.656, Rho(101+)=+0.217) NO es valido")
+    print("        porque el CV uso mas epocas y el modelo fue entrenado con mas datos.")
+    print("="*70)
+
+    # Mostrar n y CI para que las diferencias sean interpretables
+    base_ns = results["A_baseline"]["bucket_ns"]
+    ci_81  = 1.96 / np.sqrt(max(base_ns.get("81_to_90", 3) - 3, 1))
+    ci_91  = 1.96 / np.sqrt(max(base_ns.get("91_to_100", 3) - 3, 1))
+    ci_101 = 1.96 / np.sqrt(max(base_ns.get("101_plus", 3) - 3, 1))
+    n_81   = base_ns.get("81_to_90", 0)
+    n_91   = base_ns.get("91_to_100", 0)
+    n_101  = base_ns.get("101_plus", 0)
+    print(f"  Umbrales de significancia (95% CI half-width):")
+    print(f"    81_to_90  (n={n_81:3d}): diferencia debe superar ±{ci_81:.3f} para ser señal")
+    print(f"    91_to_100 (n={n_91:3d}): diferencia debe superar ±{ci_91:.3f}")
+    print(f"    101_plus  (n={n_101:3d}): diferencia debe superar ±{ci_101:.3f}")
+    print()
+
+    base  = results["A_baseline"]["bucket_rhos"]
+    print(f"  {'Variante':>25}  {'MAE':>6}  {'Rho_global':>11}  "
+          f"{'Rho_81-90 (delta)':>20}  {'Rho_101+ (delta)':>19}")
+    print(f"  {'-'*85}")
     for name, res in results.items():
-        bk   = res["bucket_rhos"]
-        r61  = f"{bk.get('61_to_70', float('nan')):+.3f}"  if not np.isnan(bk.get('61_to_70', float('nan'))) else "  n/a"
-        r81  = f"{bk.get('81_to_90', float('nan')):+.3f}"  if not np.isnan(bk.get('81_to_90', float('nan'))) else "  n/a"
-        r101 = f"{bk.get('101_plus', float('nan')):+.3f}"  if not np.isnan(bk.get('101_plus', float('nan'))) else "  n/a"
-        print(f"  {name:>25}  {res['mae']:6.3f}  {res['rho_global']:+11.4f}  {r61:>10}  {r81:>10}  {r101:>9}")
+        bk      = res["bucket_rhos"]
+        r81_v   = bk.get("81_to_90", float("nan"))
+        r101_v  = bk.get("101_plus", float("nan"))
+        r81_b   = base.get("81_to_90", float("nan"))
+        r101_b  = base.get("101_plus", float("nan"))
+
+        if not np.isnan(r81_v) and not np.isnan(r81_b):
+            d81 = r81_v - r81_b
+            sig81 = "*" if abs(d81) > ci_81 else " "
+            r81_str = f"{r81_v:+.3f} (delta={d81:+.3f}){sig81}"
+        else:
+            r81_str = "  n/a"
+
+        if not np.isnan(r101_v) and not np.isnan(r101_b):
+            d101 = r101_v - r101_b
+            sig101 = "*" if abs(d101) > ci_101 else " "
+            r101_str = f"{r101_v:+.3f} (delta={d101:+.3f}){sig101}"
+        else:
+            r101_str = "  n/a"
+
+        print(f"  {name:>25}  {res['mae']:6.3f}  {res['rho_global']:+11.4f}  "
+              f"{r81_str:>20}  {r101_str:>19}")
 
     print()
-    print("  INTERPRETACION:")
-    print("  B mejora Rho significativamente -> volumen de datos es el cuello de botella")
-    print("  C mejora Rho significativamente -> la loss Huber no premia ranking")
-    print("  Ninguna mejora                  -> limite de representacion (6 canales)")
+    print("  * = diferencia supera CI95 (posiblemente señal real, no ruido de muestra)")
+    print()
+    print("  INTERPRETACION CORRECTA:")
+    print("  - Si ninguna diferencia marcada con * -> experimento insuficiente para")
+    print("    distinguir las variantes. Conclusion: limite de representacion probable,")
+    print("    no volumen ni loss. Minar mas datos NO esta justificado aun.")
+    print("  - Si B(*) mejora 81-90 pero destruye 101+ -> trade-off, no mejora limpia.")
+    print("    Investigar upweighting mas graduado o focal loss antes de minar mas.")
+    print("  - Si C(*) mejora zonas hard -> cambiar loss en modelo de produccion.")
