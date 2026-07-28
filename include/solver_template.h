@@ -34,6 +34,7 @@ public:
         std::function<bool(const Node*, const Node*)> is_equal,
         std::function<int(const Node*, const Node*)> heuristic = nullptr,
         std::function<std::vector<int>(const std::vector<const Node*>&, const Node*)> heuristic_batch = nullptr,
+        int batch_k = 1,           // 1 = per-node batch  |  >1 = cross-node batch (acumula batch_k nodos padres)
         double max_seconds = 120.0,
         size_t max_nodes = 500000
     ) {
@@ -138,71 +139,90 @@ public:
             if (!children.empty()) {
                 if constexpr (alg == Method::a_star) {
                     if (heuristic_batch) {
-                        // ── CROSS-NODE BATCHING (Fix 3) ──────────────────────────────
-                        // En vez de llamar a la GPU por los 2-12 hijos de UN nodo,
-                        // acumulamos hijos de hasta BATCH_K nodos padres y hacemos
-                        // UNA sola inferencia GPU con un batch grande (~400+ entradas).
-                        // Cada hijo registra el g_parent de su origen para calcular
-                        // correctamente g_child = g_parent + 1.
-                        static constexpr int BATCH_K = 64;
+                        if (batch_k > 1) {
+                            // ── CROSS-NODE BATCHING ──────────────────────────────────
+                            // Acumula hijos de hasta batch_k nodos padres antes de
+                            // una sola llamada GPU. Batch grande → GPU más eficiente.
+                            struct PendingChild {
+                                const Node* child;
+                                int          g_parent;
+                                const Node*  parent_ptr;
+                            };
+                            std::vector<PendingChild> pending;
+                            std::vector<const Node*>  child_ptrs;
 
-                        struct PendingChild {
-                            const Node* child;
-                            int          g_parent;   // g del nodo padre
-                            const Node*  parent_ptr; // para el mapa de padres del path
-                        };
-                        std::vector<PendingChild> pending;
-                        std::vector<const Node*>  child_ptrs; // array paralelo para heuristic_batch
-
-                        // Hijos del nodo `current` ya generados (primer nodo del batch)
-                        for (auto child : children) {
-                            pending.push_back({child, g_current, current});
-                            child_ptrs.push_back(child);
-                        }
-
-                        // Expandir hasta BATCH_K-1 nodos adicionales de la cola
-                        for (int k = 1; k < BATCH_K && !container.empty(); ) {
-                            auto [f2, g2, node2] = container.top();
-                            container.pop();
-
-                            if (is_visited(node2)) {
-                                discarded_nodes.push_back(node2);
-                                continue;  // nodo duplicado: descartarlo sin contar
+                            // Hijos del nodo `current` (ya expandido)
+                            for (auto child : children) {
+                                pending.push_back({child, g_current, current});
+                                child_ptrs.push_back(child);
                             }
-                            mark_visited(node2);
-                            k++;
 
-                            // Extraer a variables locales para que el lambda las capture
-                            // correctamente en C++17 (las structured bindings no son capturables
-                            // como variables en C++17, solo en C++20)
-                            const int g2_local = g2;
-                            const Node* node2_local = node2;
-                            get_neighbors(node2_local, [&](const Node* neighbor) {
-                                pending.push_back({neighbor, g2_local, node2_local});
-                                child_ptrs.push_back(neighbor);
-                            });
-                        }
+                            // Expandir hasta batch_k-1 nodos adicionales
+                            for (int k = 1; k < batch_k && !container.empty(); ) {
+                                auto [f2, g2, node2] = container.top();
+                                container.pop();
 
-                        // Una sola llamada GPU con TODOS los hijos acumulados
-                        auto h_scores = heuristic_batch(child_ptrs, goal);
+                                if (is_visited(node2)) {
+                                    discarded_nodes.push_back(node2);
+                                    continue;
+                                }
+                                mark_visited(node2);
+                                k++;
 
-                        for (size_t i = 0; i < pending.size(); i++) {
-                            const auto& [child, g_par, par] = pending[i];
-                            generated_count++;
+                                const int g2_local = g2;
+                                const Node* node2_local = node2;
+                                get_neighbors(node2_local, [&](const Node* neighbor) {
+                                    pending.push_back({neighbor, g2_local, node2_local});
+                                    child_ptrs.push_back(neighbor);
+                                });
+                            }
 
-                            if constexpr (!std::is_same_v<Result, bool>) {
-                                if (parent.find(child) == parent.end()) {
-                                    parent[child] = par;
+                            // Una sola llamada GPU con todos los hijos acumulados
+                            auto h_scores = heuristic_batch(child_ptrs, goal);
+
+                            for (size_t i = 0; i < pending.size(); i++) {
+                                const auto& [child, g_par, par] = pending[i];
+                                generated_count++;
+
+                                if constexpr (!std::is_same_v<Result, bool>) {
+                                    if (parent.find(child) == parent.end()) {
+                                        parent[child] = par;
+                                    }
+                                }
+
+                                int g_child = g_par + 1;
+                                int f_score = g_child + h_scores[i];
+                                container.push({f_score, g_child, child});
+
+                                if (is_equal(child, goal)) {
+                                    found = true;
+                                    goal  = child;
                                 }
                             }
 
-                            int g_child = g_par + 1;
-                            int f_score = g_child + h_scores[i];
-                            container.push({f_score, g_child, child});
+                        } else {
+                            // ── PER-NODE BATCHING (batch_k=1) ────────────────────────
+                            // Evalúa solo los hijos del nodo actual (2-12 típico).
+                            auto h_scores = heuristic_batch(children, goal);
 
-                            if (is_equal(child, goal)) {
-                                found = true;
-                                goal  = child;
+                            for (size_t i = 0; i < children.size(); i++) {
+                                const Node* neighbor = children[i];
+                                generated_count++;
+
+                                if constexpr (!std::is_same_v<Result, bool>) {
+                                    if (parent.find(neighbor) == parent.end()) {
+                                        parent[neighbor] = current;
+                                    }
+                                }
+
+                                int g_neighbor = g_current + 1;
+                                int f_score    = g_neighbor + h_scores[i];
+                                container.push({f_score, g_neighbor, neighbor});
+
+                                if (is_equal(neighbor, goal)) {
+                                    found = true;
+                                    goal  = neighbor;
+                                }
                             }
                         }
 

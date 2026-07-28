@@ -72,7 +72,8 @@ enum class Heuristic {
     manhattan,
     hungarian,
     neural,
-    neural_batched
+    neural_batched,         // batch de hijos de UN nodo (2-12 por llamada GPU)
+    neural_batched_massive  // cross-node batch (BATCH_K=64, ~400 por llamada GPU)
 };
 
 class game_solver {

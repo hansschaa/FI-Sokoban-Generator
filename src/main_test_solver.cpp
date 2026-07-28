@@ -85,7 +85,11 @@ int main(int argc, char* argv[])
     }
     else if (heuristic_arg == "neural_batched") {
         heuristic = Heuristic::neural_batched;
-        std::cout << "Heuristica: Neural Batched (Child Batching)\n";
+        std::cout << "Heuristica: Neural Batched (Child Batching, batch_k=1)\n";
+    }
+    else if (heuristic_arg == "neural_batched_massive") {
+        heuristic = Heuristic::neural_batched_massive;
+        std::cout << "Heuristica: Neural Batched Massive (Cross-Node, batch_k=64)\n";
     }
     else {
         std::cerr << "Heuristica desconocida: \"" << heuristic_arg << "\"\n";

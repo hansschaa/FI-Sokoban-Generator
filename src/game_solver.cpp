@@ -572,8 +572,9 @@ SolverStats game_solver::test_template(
     }
 
     std::unique_ptr<NeuralHeuristic> neural_net = nullptr;
-    if (heuristic_type == Heuristic::neural || heuristic_type == Heuristic::neural_batched) {
-        // Hardcode path for the experiment
+    if (heuristic_type == Heuristic::neural ||
+        heuristic_type == Heuristic::neural_batched ||
+        heuristic_type == Heuristic::neural_batched_massive) {
         std::string model_path = "surrogate_models/results/surrogate_regressor_jit.pt";
         neural_net = std::make_unique<NeuralHeuristic>(model_path, m, n);
     }
@@ -630,7 +631,10 @@ SolverStats game_solver::test_template(
 
     std::function<std::vector<int>(const std::vector<const game_node*>&, const game_node*)> heuristic_batch_func = nullptr;
     
-    if (heuristic_type == Heuristic::neural_batched) {
+    // El mismo lambda sirve para neural_batched (batch_k=1) y neural_batched_massive (batch_k=64).
+    // La diferencia está en cómo solver_template acumula nodos antes de llamar a esta función.
+    if (heuristic_type == Heuristic::neural_batched ||
+        heuristic_type == Heuristic::neural_batched_massive) {
         heuristic_batch_func = [&](const std::vector<const game_node*>& nodes, const game_node*) -> std::vector<int> {
             std::vector<int> final_scores(nodes.size(), 0);
             std::vector<const game_node*> to_evaluate;
@@ -685,7 +689,12 @@ SolverStats game_solver::test_template(
 
     try {
         if (input == Method::a_star) {
-            solution = gsolver0.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal, heuristic, heuristic_batch_func);
+            // batch_k controla el modo de acumulación en solver_template:
+            //   1  → per-node batch   (neural_batched: hijos de UN nodo por llamada GPU)
+            //   64 → cross-node batch (neural_batched_massive: ~400 hijos de 64 nodos por llamada)
+            int batch_k = (heuristic_type == Heuristic::neural_batched_massive) ? 64 : 1;
+            solution = gsolver0.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal,
+                                      heuristic, heuristic_batch_func, batch_k);
         }
         else if (input == Method::dfs) {
             solution = gsolver1.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal);

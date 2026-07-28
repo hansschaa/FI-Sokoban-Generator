@@ -141,7 +141,7 @@ def main():
     parser.add_argument('--resume', action='store_true', help='Reanudar desde el último progreso en el archivo CSV de salida')
     args = parser.parse_args()
 
-    HEURISTICS = ['manhattan', 'hungarian', 'neural_sequential', 'neural_batched']
+    HEURISTICS = ['manhattan', 'hungarian', 'neural_sequential', 'neural_batched', 'neural_batched_massive']
     
     csv_filename = f'benchmark_results_{args.start}_to_{args.end}.csv'
     
