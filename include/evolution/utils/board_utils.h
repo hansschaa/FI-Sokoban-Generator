@@ -114,24 +114,33 @@ inline std::vector<std::vector<bool>> compute_deadlock_mask(
                     mask[i][j] = true; // Corner
                 } else if (vert_blocked) {
                     bool trapped = true;
+                    // Scan left
                     for (int x = j - 1; x >= 0; x--) {
                         if (board[i][x] == '#') break;
-                        if (!(board[i-1][x] == '#' || board[i+1][x] == '#')) { trapped = false; break; }
+                        // A goal along the corridor means a box could be placed there — not trapped
+                        if (board[i][x] == '.' || board[i][x] == '*' || board[i][x] == '+') { trapped = false; break; }
+                        if (!((i > 0 && board[i-1][x] == '#') || (i < r-1 && board[i+1][x] == '#'))) { trapped = false; break; }
                     }
+                    // Scan right
                     for (int x = j + 1; x < c; x++) {
                         if (board[i][x] == '#') break;
-                        if (!(board[i-1][x] == '#' || board[i+1][x] == '#')) { trapped = false; break; }
+                        if (board[i][x] == '.' || board[i][x] == '*' || board[i][x] == '+') { trapped = false; break; }
+                        if (!((i > 0 && board[i-1][x] == '#') || (i < r-1 && board[i+1][x] == '#'))) { trapped = false; break; }
                     }
                     if (trapped) mask[i][j] = true;
                 } else if (horiz_blocked) {
                     bool trapped = true;
+                    // Scan up
                     for (int y = i - 1; y >= 0; y--) {
                         if (board[y][j] == '#') break;
-                        if (!(board[y][j-1] == '#' || board[y][j+1] == '#')) { trapped = false; break; }
+                        if (board[y][j] == '.' || board[y][j] == '*' || board[y][j] == '+') { trapped = false; break; }
+                        if (!((j > 0 && board[y][j-1] == '#') || (j < c-1 && board[y][j+1] == '#'))) { trapped = false; break; }
                     }
+                    // Scan down
                     for (int y = i + 1; y < r; y++) {
                         if (board[y][j] == '#') break;
-                        if (!(board[y][j-1] == '#' || board[y][j+1] == '#')) { trapped = false; break; }
+                        if (board[y][j] == '.' || board[y][j] == '*' || board[y][j] == '+') { trapped = false; break; }
+                        if (!((j > 0 && board[y][j-1] == '#') || (j < c-1 && board[y][j+1] == '#'))) { trapped = false; break; }
                     }
                     if (trapped) mask[i][j] = true;
                 }

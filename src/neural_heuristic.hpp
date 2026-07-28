@@ -20,8 +20,9 @@ private:
     int n;
     std::vector<std::vector<bool>> deadlock_mask;
 
-    void compute_deadlock_mask();
-    bool use_gpu;
+    void compute_deadlock_mask(const std::vector<std::vector<bool>>& end_vec);
+    bool mask_initialized = false;
+    bool use_gpu = false;
 
     // Vector temporal para evitar realocaciones
     std::vector<float> input_tensor_data;

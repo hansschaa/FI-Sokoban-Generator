@@ -1,6 +1,7 @@
 #include "neural_heuristic.hpp"
 #include "constant.h"
 
+#include <torch/torch.h>
 #include <torch/script.h>
 #include <iostream>
 #include <stdexcept>
@@ -21,8 +22,9 @@ NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int co
         // Disable gradients for faster inference
         torch::NoGradGuard no_grad;
 
-        // Compute static deadlock mask
-        compute_deadlock_mask();
+        // Deadlock mask is computed lazily on first evaluate() call,
+        // once end_vec (goal positions) is available.
+        // compute_deadlock_mask() is NOT called here.
 
         // Allocate flat vector for the 6-channel tensor
         input_tensor_data.resize(6 * 25 * 25, 0.0f);
@@ -45,21 +47,31 @@ NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int co
     }
 }
 
-void NeuralHeuristic::compute_deadlock_mask() {
+void NeuralHeuristic::compute_deadlock_mask(const std::vector<std::vector<bool>>& end_vec) {
+    // Build shell with walls AND goals — goals must never be flagged as deadlocks
+    // (a box pushed onto a goal is a win condition, not a deadlock)
     std::vector<std::vector<char>> shell(m, std::vector<char>(n, ' '));
     for (int r = 0; r < m; ++r) {
         for (int c = 0; c < n; ++c) {
             if (constant::blank_matrix[r][c] == constant::WALL) {
                 shell[r][c] = '#';
+            } else if (r < (int)end_vec.size() && c < (int)end_vec[r].size() && end_vec[r][c]) {
+                shell[r][c] = '.'; // Mark goal — prevents it from being a deadlock cell
             }
         }
     }
     deadlock_mask = ::compute_deadlock_mask(shell);
+    mask_initialized = true;
 }
 
 NeuralHeuristic::~NeuralHeuristic() {}
 
 float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::vector<bool>>& end_vec) {
+    // Lazy-init deadlock mask with goal positions on first call
+    if (!mask_initialized) {
+        compute_deadlock_mask(end_vec);
+    }
+
     // Zero out the input tensor
     std::fill(input_tensor_data.begin(), input_tensor_data.end(), 0.0f);
 
@@ -168,6 +180,11 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
 
 std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_node*>& nodes, const std::vector<std::vector<bool>>& end_vec) {
     if (nodes.empty()) return {};
+
+    // Lazy-init deadlock mask with goal positions on first call
+    if (!mask_initialized) {
+        compute_deadlock_mask(end_vec);
+    }
 
     int N = nodes.size();
     int max_h = 25;
