@@ -606,6 +606,19 @@ SolverStats game_solver::test_template(
             int penalty_cost = penalty_solver.calculate_penalty(a->box_list, a->box_count);
             return min_cost >= 1000 ? min_cost : min_cost + penalty_cost;
         }
+        else if (heuristic_type == Heuristic::manhattan) {
+            int f = 0;
+            for (int i = 0; i < a->box_count; i++) {
+                int min_dist = 100000;
+                for (auto goal : goal_positions) {
+                    int dist = std::abs(a->box_list[i].x - goal.x) + std::abs(a->box_list[i].y - goal.y);
+                    if (dist < min_dist) min_dist = dist;
+                }
+                f += min_dist;
+            }
+            int penalty_cost = penalty_solver.calculate_penalty(a->box_list, a->box_count);
+            return f + penalty_cost;
+        }
         else {
             int f = 0;
             for (int i = 0; i < a->box_count; i++) {

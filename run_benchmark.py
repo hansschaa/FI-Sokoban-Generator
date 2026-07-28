@@ -120,37 +120,34 @@ def run_solver(board_str, heuristic, board_id):
 import argparse
 
 def main():
-    parser = argparse.ArgumentParser(description='Run Sokoban benchmarks.')
-    parser.add_argument('--start', type=int, default=0, help='Start board index (inclusive)')
-    parser.add_argument('--end', type=int, default=-1, help='End board index (exclusive)')
-    parser.add_argument('--file', type=str, default='sok_files/auto_generated.sok', help='Path to .sok file')
+    parser = argparse.ArgumentParser(description='Benchmark Sokoban Solver')
+    parser.add_argument('--file', type=str, required=True, help='Ruta al archivo .sok')
+    parser.add_argument('--start', type=int, default=0, help='ID del tablero inicial')
+    parser.add_argument('--end', type=int, default=10, help='ID del tablero final (no inclusivo)')
+    parser.add_argument('--resume', action='store_true', help='Reanudar desde el último progreso en el archivo CSV de salida')
     args = parser.parse_args()
 
-    sok_path = args.file
+    HEURISTICS = ['manhattan', 'hungarian', 'neural_sequential', 'neural_batched']
     
+    csv_filename = f'benchmark_results_{args.start}_to_{args.end}.csv'
+    
+    # Manejar modo resume
+    start_idx = args.start
+    file_mode = 'w'
+    if args.resume and os.path.exists(csv_filename):
+        with open(csv_filename, 'r', newline='') as csvfile:
+            reader = csv.reader(csvfile)
+            rows = list(reader)
+            if len(rows) > 1: # Si tiene header y data
+                last_board = int(rows[-1][0])
+                start_idx = last_board + 1
+        file_mode = 'a'
+        print(f"[{csv_filename} encontrado] Reanudando desde el tablero {start_idx}...")
+
+    sok_path = args.file
     print(f"Extrayendo tableros de {sok_path}...")
     boards = extract_boards(sok_path)
-    total_boards = len(boards)
     
-    start_idx = max(0, args.start)
-    end_idx = args.end if args.end > 0 else total_boards
-    end_idx = min(end_idx, total_boards)
-    
-    boards = boards[start_idx:end_idx]
-    print(f"Procesando chunk de tableros: {start_idx} a {end_idx} (Total: {len(boards)})")
-    
-    csv_path = f'benchmark_results_{start_idx}_to_{end_idx}.csv'
-    heuristics = ['hungarian', 'neural_sequential', 'neural_batched']
-    
-    # ── Reanudación Segura (Resume) ──
-    completed_runs = set()
-    file_exists = os.path.isfile(csv_path)
-    if file_exists:
-        with open(csv_path, 'r') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                completed_runs.add((int(row['board_id']), row['heuristic']))
-                
     # ── Dummy Warm-up para Inicializar CUDA ──
     print("\n[Warming Up] Realizando corridas dummy en GPU para inicializar CUDA/pesos...")
     try:
@@ -162,25 +159,22 @@ def main():
     except Exception as e:
         print(f"[Warming Up] Advertencia: falló el warmup ({e})")
     
-    with open(csv_path, mode='a', newline='') as csv_file:
+    with open(csv_filename, file_mode, newline='') as csvfile:
         fieldnames = ['board_id', 'heuristic', 'status', 'runtime_ms', 'pushes', 
                       'expanded_nodes', 'total_children', 'effective_children', 'deadlocks']
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         
-        if not file_exists:
+        if file_mode == 'w':
             writer.writeheader()
             
-        print("\nINICIANDO BENCHMARK. Los resultados se guardarán en tiempo real en", csv_path)
+        print("\nINICIANDO BENCHMARK. Los resultados se guardarán en tiempo real en", csv_filename)
         print("-" * 60)
         
-        for board_id, board_str in boards:
+        for idx in range(start_idx, min(args.end, len(boards))):
+            board_id, board_str = boards[idx]
             print(f"\nProcesando Tablero {board_id}...")
             
-            for heuristic in heuristics:
-                if (board_id, heuristic) in completed_runs:
-                    print(f"  -> Saltando: {heuristic} (Ya procesado)")
-                    continue
-                    
+            for heuristic in HEURISTICS:
                 print(f"  -> Ejecutando: {heuristic} (3 corridas)...")
                 
                 # Ejecutar 3 veces para reducir ruido del sistema (varianza)
@@ -211,7 +205,7 @@ def main():
                 row.update(last_metrics)
                 
                 writer.writerow(row)
-                csv_file.flush() # Guardar inmediatamente en disco
+                csvfile.flush() # Guardar inmediatamente en disco
                 
                 print(f"     [Status: {last_metrics['status']}, Time: {last_metrics['runtime_ms']:.2f}ms, Nodes: {last_metrics['expanded_nodes']}]")
 

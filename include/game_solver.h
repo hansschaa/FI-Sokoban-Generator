@@ -69,6 +69,7 @@ void print_solver_stats(const SolverStats& stats);
 
 enum class Heuristic {
     simple,    
+    manhattan,
     hungarian,
     neural,
     neural_batched
