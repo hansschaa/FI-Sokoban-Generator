@@ -80,9 +80,14 @@ public:
         auto start_time = std::chrono::high_resolution_clock::now();
         size_t generated_count = 0;
         size_t loop_count = 0;
+        
+        // Ajuste dinámico del chequeo de timeout: si procesamos muchos nodos por iteración,
+        // chequear más seguido para no exceder max_seconds en exceso.
+        int check_interval = std::max(1, 1024 / batch_k);
+
         while (!container.empty()) {
             loop_count++;
-            if (loop_count % 1024 == 0) {
+            if (loop_count % check_interval == 0) {
                 auto current_time = std::chrono::high_resolution_clock::now();
                 double elapsed = std::chrono::duration<double>(current_time - start_time).count();
 
@@ -196,6 +201,11 @@ public:
 
                                 if (is_equal(child, goal)) {
                                     found = true;
+                                    // NOTA (Auditoría): Esto reasigna 'goal' a mitad del batch, mientras aún
+                                    // quedan hijos por evaluar. Hoy es inofensivo porque nuestro is_equal() 
+                                    // ignora su 2do parámetro (solo chequea child->game_over()), pero si 
+                                    // en el futuro is_equal llegara a comparar explícitamente contra 'goal', 
+                                    // esto se activaría como un bug real de estado inconsistente.
                                     goal  = child;
                                 }
                             }
