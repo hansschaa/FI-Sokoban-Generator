@@ -25,14 +25,14 @@ import sys
 
 # ── Heurísticas por bucket ────────────────────────────────────────────────────
 BUCKET_CONFIG = {
-    "1-10":   {"heuristics": ["manhattan", "hungarian", "neural_sequential", "neural_batched", "neural_batched_massive"], "reps": 3},
-    "11-20":  {"heuristics": ["manhattan", "hungarian", "neural_sequential", "neural_batched", "neural_batched_massive"], "reps": 3},
-    "21-30":  {"heuristics": ["manhattan", "hungarian", "neural_sequential", "neural_batched", "neural_batched_massive"], "reps": 3},
-    "31-50":  {"heuristics": ["manhattan", "hungarian",                       "neural_batched", "neural_batched_massive"], "reps": 3},
-    "51-70":  {"heuristics": ["manhattan", "hungarian",                       "neural_batched", "neural_batched_massive"], "reps": 3},
-    "71-90":  {"heuristics": [             "hungarian",                                        "neural_batched_massive"], "reps": 2},
-    "91-100": {"heuristics": [             "hungarian",                                        "neural_batched_massive"], "reps": 2},
-    "101+":   {"heuristics": [             "hungarian",                                        "neural_batched_massive"], "reps": 2},
+    "1-10":   {"heuristics": ["manhattan", "hungarian", "neural_sequential", "neural_batched", "neural_batched_massive"], "reps": 1},
+    "11-20":  {"heuristics": ["manhattan", "hungarian", "neural_sequential", "neural_batched", "neural_batched_massive"], "reps": 1},
+    "21-30":  {"heuristics": ["manhattan", "hungarian", "neural_sequential", "neural_batched", "neural_batched_massive"], "reps": 1},
+    "31-50":  {"heuristics": ["manhattan", "hungarian",                       "neural_batched", "neural_batched_massive"], "reps": 1},
+    "51-70":  {"heuristics": ["manhattan", "hungarian",                       "neural_batched", "neural_batched_massive"], "reps": 1},
+    "71-90":  {"heuristics": [             "hungarian",                                        "neural_batched_massive"], "reps": 1},
+    "91-100": {"heuristics": [             "hungarian",                                        "neural_batched_massive"], "reps": 1},
+    "101+":   {"heuristics": [             "hungarian",                                        "neural_batched_massive"], "reps": 1},
 }
 
 
