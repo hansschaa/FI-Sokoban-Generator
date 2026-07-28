@@ -21,9 +21,9 @@ def export_model():
     with open("results/surrogate_stats.txt", "w") as sf:
         sf.write(f"{stats['pushes_mean']}\n{stats['pushes_std']}\n")
 
-    print("Loading Classifier Model (Fold 5)...")
+    print("Loading Classifier Model (Production)...")
     classifier = SokobanSEResNetClassifier(dropout_p=c_params['params']["dropout_p"])
-    classifier.load_state_dict(torch.load("results/final_classifier_fold5.pt", map_location="cpu", weights_only=True))
+    classifier.load_state_dict(torch.load("results/production_classifier.pt", map_location="cpu", weights_only=True))
     classifier.eval()
 
     print("Tracing models with dummy input (1, 6, 25, 25)...")
