@@ -192,6 +192,13 @@ add_executable(
 # Common compiler flags
 #
 
+add_executable(
+    test_tensor_parity
+    tests/test_tensor_parity.cpp
+    ${MY_SRC}
+)
+
+
 foreach(target
     sokoban_solver
     solver_benchmark
@@ -204,6 +211,7 @@ foreach(target
     playable_dataset_generator
     es_dataset_generator
     experiment_runner
+    test_tensor_parity
 )
     target_compile_options(
         ${target}

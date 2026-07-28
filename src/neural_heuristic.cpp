@@ -79,8 +79,8 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
     int max_w = 25;
 
     // Centering offsets
-    int offset_r = (max_h - m) / 2;
-    int offset_c = (max_w - n) / 2;
+    int offset_r = 0; // (max_h - m) / 2; -- Removed centering to match Python training pipeline
+    int offset_c = 0; // (max_w - n) / 2; -- Removed centering to match Python training pipeline
 
     // Channel 0: Walls
     // Channel 1: Floor / Blanks
@@ -189,8 +189,8 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
     int N = nodes.size();
     int max_h = 25;
     int max_w = 25;
-    int offset_r = (max_h - m) / 2;
-    int offset_c = (max_w - n) / 2;
+    int offset_r = 0; // (max_h - m) / 2; -- Removed centering to match Python training pipeline
+    int offset_c = 0; // (max_w - n) / 2; -- Removed centering to match Python training pipeline
 
     std::vector<float> batch_data(N * 6 * max_h * max_w, 0.0f);
     

@@ -32,6 +32,7 @@ private:
     float pushes_std = 27.029f;
 
 public:
+    std::vector<float> get_last_tensor() const { return input_tensor_data; }
     NeuralHeuristic(const std::string& model_path, int rows, int cols);
     ~NeuralHeuristic();
 
