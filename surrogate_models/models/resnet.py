@@ -172,6 +172,56 @@ class SokobanSEResNetRegressor(nn.Module):
         return self.head_pushes(x).squeeze(1)
 
 
+class SokobanSEResNetRegressorSpatial(nn.Module):
+    """
+    SE-ResNet con Neck Espacial (Experimento B).
+    Reemplaza AdaptiveAvgPool2d(1,1) con AdaptiveAvgPool2d(3,3) para preservar 
+    la posición geográfica de las interacciones antes de aplanar el feature map.
+    """
+    def __init__(self, dropout_p: float = 0.4):
+        super().__init__()
+        self.stem   = nn.Sequential(
+            nn.Conv2d(6, 32, 3, padding=1, bias=False),
+            nn.BatchNorm2d(32), nn.ReLU(inplace=True),
+        )
+        self.layer1 = nn.Sequential(SEBasicBlock(32,  64, stride=1), SEBasicBlock(64,  64))
+        self.layer2 = nn.Sequential(SEBasicBlock(64,  128, stride=2), SEBasicBlock(128, 128))
+        self.layer3 = nn.Sequential(SEBasicBlock(128, 256, stride=2), SEBasicBlock(256, 256))
+        self.layer4 = nn.Sequential(SEBasicBlock(256, 512, stride=2), SEBasicBlock(512, 512))
+        
+        # En vez de colapsar a 1x1, colapsamos a 3x3 geográfico
+        self.pool   = nn.AdaptiveAvgPool2d((3, 3))
+
+        # El input al neck ahora es 512 canales * 3 alto * 3 ancho = 4608
+        self.neck = nn.Sequential(
+            nn.Linear(512 * 3 * 3, 256), nn.ReLU(inplace=True), nn.Dropout(dropout_p),
+            nn.Linear(256, 128), nn.ReLU(inplace=True), nn.Dropout(dropout_p),
+        )
+        self.head_pushes = nn.Sequential(nn.Linear(128, 64), nn.ReLU(inplace=True), nn.Linear(64, 1))
+        self._init_weights()
+
+    def _init_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.ones_(m.weight); nn.init.zeros_(m.bias)
+            elif isinstance(m, nn.Linear):
+                nn.init.xavier_normal_(m.weight)
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
+
+    def forward(self, x):
+        x = self.stem(x)
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+        x = self.pool(x).flatten(1)
+        x = self.neck(x)
+        return self.head_pushes(x).squeeze(1)
+
+
 class SokobanResNetRegressorNoSE(nn.Module):
     """
     Ablation: misma arquitectura profunda que SokobanSEResNetRegressor pero SIN bloques SE.

@@ -25,7 +25,7 @@ from torch.utils.data import DataLoader, Dataset
 import numpy as np
 from scipy.stats import spearmanr
 
-from models.resnet import SokobanSEResNetRegressor
+from models.resnet import SokobanSEResNetRegressor, SokobanSEResNetRegressorSpatial
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -143,7 +143,7 @@ def eval_spearman_by_bucket(p_raw_list, p_pred_list, bucket_list):
 # ENTRENAMIENTO
 # ─────────────────────────────────────────────────────────────────────────────
 def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pairs,
-                             max_epochs, restart):
+                             max_epochs, restart, arch="baseline"):
     hparams_path = os.path.join(RESULTS_DIR, "best_hparams.json")
     if not os.path.exists(hparams_path):
         print("❌ Error: No se encontró best_hparams.json")
@@ -161,8 +161,7 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
     ranking_criterion = nn.MarginRankingLoss(margin=margin, reduction='mean')
 
     print("\n" + "="*70)
-    print("  EXPERIMENTO A — RANKING LOSS (Architecture Untouched)")
-    print("="*70)
+    print(f"  Experimento   : Ranking Loss con Arquitectura = {arch.upper()}")
     print(f"  Dispositivo   : {device.type.upper()}")
     print(f"  α             : {alpha}  (1-α)*Huber + α*MarginRanking")
     print(f"  margin        : {margin}")
@@ -203,8 +202,12 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
                                   batch_size=256, shuffle=False,
                                   num_workers=0, pin_memory=True)
 
-        # Arquitectura IDÉNTICA al baseline — solo la loss cambia
-        model     = SokobanSEResNetRegressor(dropout_p=dropout_p).to(device)
+        # Seleccionar Arquitectura
+        if arch == "spatial":
+            model = SokobanSEResNetRegressorSpatial(dropout_p=dropout_p).to(device)
+        else:
+            model = SokobanSEResNetRegressor(dropout_p=dropout_p).to(device)
+            
         optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
         scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max_epochs)
 
@@ -212,7 +215,7 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
         best_weights = copy.deepcopy(model.state_dict())
         patience_ctr = 0
 
-        ckpt_path = os.path.join(RESULTS_DIR, f"ckpt_ranking_regressor_fold{fold}.pt")
+        ckpt_path = os.path.join(RESULTS_DIR, f"ckpt_ranking_{arch}_regressor_fold{fold}.pt")
         start_epoch = 1
 
         if restart and os.path.exists(ckpt_path):
@@ -360,7 +363,7 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
         ])
 
         fold_maes.append(test_mae)
-        save_path = os.path.join(RESULTS_DIR, f"ranking_regressor_fold{fold}.pt")
+        save_path = os.path.join(RESULTS_DIR, f"ranking_{arch}_regressor_fold{fold}.pt")
         torch.save(best_weights, save_path)
 
         print(f"\n  ✅ Fold {fold} → {os.path.basename(save_path)}")
@@ -418,6 +421,8 @@ def main():
                         help="Máximo de pares por mini-batch.")
     parser.add_argument("--epochs", type=int, default=50,
                         help="Máximo de épocas de entrenamiento.")
+    parser.add_argument("--arch", type=str, default="baseline", choices=["baseline", "spatial"],
+                        help="Arquitectura a usar: 'baseline' (AdaptiveAvgPool 1x1) o 'spatial' (AdaptiveAvgPool 3x3).")
     parser.add_argument("--restart", action="store_true",
                         help="Borra checkpoints y empieza desde cero.")
 
@@ -432,6 +437,7 @@ def main():
         max_pairs=args.max_pairs,
         max_epochs=args.epochs,
         restart=args.restart,
+        arch=args.arch
     )
 
 
