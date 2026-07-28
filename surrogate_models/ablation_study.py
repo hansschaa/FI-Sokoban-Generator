@@ -46,9 +46,7 @@ class RegressorDataset(Dataset):
         return (
             item['tensor'].float(),
             torch.tensor(item['pushes_norm'], dtype=torch.float32),
-            torch.tensor(item['branch_norm'], dtype=torch.float32),
             torch.tensor(item['pushes_raw'],  dtype=torch.float32),
-            torch.tensor(item['branch_raw'],  dtype=torch.float32),
             torch.tensor(item.get('weight', 1.0), dtype=torch.float32),
         )
 
@@ -87,7 +85,7 @@ def run_training_loop(model, train_loader, val_loader, criterion, is_classifier,
                 loss = criterion(preds, y)
             else:
                 y_norm = batch[1].to(device)
-                w = batch[5].to(device)
+                w = batch[3].to(device)
                 preds = model(x)
                 loss_p = criterion(preds, y_norm)
                 loss = (loss_p * w).mean()
@@ -111,7 +109,7 @@ def run_training_loop(model, train_loader, val_loader, criterion, is_classifier,
                     val_metric += loss.item() * x.size(0)
                     total += x.size(0)
                 else:
-                    y_raw = batch[3].to(device)
+                    y_raw = batch[2].to(device)
                     preds = model(x)
                     # Denormalize pushes: expm1(preds)
                     preds_raw = torch.expm1(preds)
