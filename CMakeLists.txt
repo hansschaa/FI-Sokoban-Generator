@@ -32,7 +32,6 @@ include_directories(
 #
 # LibTorch (PyTorch C++) Integration
 #
-set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/libtorch" "${CMAKE_SOURCE_DIR}/libtorch/libtorch")
 find_package(Torch REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
