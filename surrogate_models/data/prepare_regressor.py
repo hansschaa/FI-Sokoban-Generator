@@ -194,8 +194,8 @@ def main():
         pushes_mean = pushes_log.mean()
         pushes_std = pushes_log.std()
 
-        branch_mean = train_df["branching_effective"].mean()
-        branch_std = train_df["branching_effective"].std()
+        pushes_mean = pushes_log.mean()
+        pushes_std = pushes_log.std()
 
         # Calcular pesos de clase basados en box_count en el train
         box_counts = train_df["box_count"].value_counts()
@@ -206,11 +206,8 @@ def main():
         stats = {
             "pushes_mean": float(pushes_mean),
             "pushes_std": float(pushes_std),
-            "branch_mean": float(branch_mean),
-            "branch_std": float(branch_std),
         }
-        print(f"      Stats (solo train): pushes={pushes_mean:.1f}±{pushes_std:.1f} | "
-              f"branch={branch_mean:.2f}±{branch_std:.2f}")
+        print(f"      Stats (solo train): pushes={pushes_mean:.1f}±{pushes_std:.1f}")
 
         # Codificar TEST (sin augmentation, con normalización del train)
         print(f"      Codificando test ({len(test_df)} tableros)...")
@@ -221,8 +218,6 @@ def main():
                 "tensor": torch.tensor(t),
                 "pushes_raw": float(row["pushes"]),
                 "pushes_norm": (np.log1p(float(row["pushes"])) - pushes_mean) / (pushes_std + 1e-8),
-                "branch_raw": float(row["branching_effective"]),
-                "branch_norm": (float(row["branching_effective"]) - branch_mean) / (branch_std + 1e-8),
                 "shell_hash": row["shell_hash"],
                 "bucket": row["bucket"],
                 "weight": 1.0, # Test samples no afectan el loss
@@ -237,8 +232,6 @@ def main():
                 "tensor": torch.tensor(t),
                 "pushes_raw": float(row["pushes"]),
                 "pushes_norm": (np.log1p(float(row["pushes"])) - pushes_mean) / (pushes_std + 1e-8),
-                "branch_raw": float(row["branching_effective"]),
-                "branch_norm": (float(row["branching_effective"]) - branch_mean) / (branch_std + 1e-8),
                 "shell_hash": row["shell_hash"],
                 "bucket": row["bucket"],
                 "weight": 1.0,
@@ -254,8 +247,6 @@ def main():
                     "tensor": torch.from_numpy(t_aug.copy()),
                     "pushes_raw": float(row["pushes"]),
                     "pushes_norm": (np.log1p(float(row["pushes"])) - pushes_mean) / (pushes_std + 1e-8),
-                    "branch_raw": float(row["branching_effective"]),
-                    "branch_norm": (float(row["branching_effective"]) - branch_mean) / (branch_std + 1e-8),
                     "shell_hash": row["shell_hash"],
                     "bucket": row["bucket"],
                     "weight": float(class_weights.get(row["box_count"], 1.0)),

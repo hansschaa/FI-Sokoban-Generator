@@ -2,6 +2,9 @@ import os
 import subprocess
 import csv
 import time
+import tempfile
+import sys
+import re
 from collections import deque
 
 def extract_boards(sok_file):
@@ -57,22 +60,30 @@ def preprocess_board(board_str):
                 
     return '\n'.join(''.join(row) for row in grid)
 
-def run_solver(board_str, heuristic, board_id):
+def run_solver(board_str, heuristic, board_id, timeout_sec=180):
+    """
+    Ejecuta el test_solver con la heurística dada en el tablero provisto.
+    Retorna un diccionario con los resultados, o maneja los errores/timeouts.
+    """
     processed_board = preprocess_board(board_str)
-    temp_filename = f'temp_board_{board_id}_{os.getpid()}.txt'
-    with open(temp_filename, 'w') as f:
-        f.write(processed_board)
     
-    cmd = ['./build/test_solver', temp_filename, heuristic]
-    try:
-        # Prevent PyTorch from spawning hundreds of threads
-        env = os.environ.copy()
-        env['OMP_NUM_THREADS'] = '1'
-        env['MKL_NUM_THREADS'] = '1'
-        env['OPENBLAS_NUM_THREADS'] = '1'
+    # 1. Crear un archivo temporal con el tablero
+    fd, temp_filename = tempfile.mkstemp(prefix=f"sokoban_temp_{board_id}_", suffix=".txt")
+    with os.fdopen(fd, 'w') as f:
+        f.write(processed_board)
         
-        # 180 seconds to allow the internal 120s C++ timeout to trigger gracefully
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=180, env=env)
+    # 2. Preparar el comando
+    cmd = ['./build/test_solver', temp_filename, heuristic]
+    
+    # Aseguramos que la variable de entorno CUDA esté disponible
+    env = os.environ.copy()
+    env['OMP_NUM_THREADS'] = '1'
+    env['MKL_NUM_THREADS'] = '1'
+    env['OPENBLAS_NUM_THREADS'] = '1'
+    
+    try:
+        # 3. Ejecutar y capturar salida
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout_sec, env=env)
         output = result.stdout
         
         metrics = {
@@ -149,12 +160,12 @@ def main():
     boards = extract_boards(sok_path)
     
     # ── Dummy Warm-up para Inicializar CUDA ──
-    print("\n[Warming Up] Realizando corridas dummy en GPU para inicializar CUDA/pesos...")
+    print("\n[Warming Up] Realizando corridas dummy para inicializar pesos y CUDA si está disponible...")
     try:
-        # Usa el primer tablero disponible para calentar
+        # Usa el primer tablero disponible para calentar (con timeout corto)
         warmup_board = boards[0][1]
-        run_solver(warmup_board, 'neural_sequential', "warmup")
-        run_solver(warmup_board, 'neural_batched', "warmup")
+        run_solver(warmup_board, 'neural_sequential', "warmup", timeout_sec=5)
+        run_solver(warmup_board, 'neural_batched', "warmup", timeout_sec=5)
         print("[Warming Up] Listo.")
     except Exception as e:
         print(f"[Warming Up] Advertencia: falló el warmup ({e})")

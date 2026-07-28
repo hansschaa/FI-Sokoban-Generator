@@ -3,7 +3,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import torch
 import torch.optim as optim
-from sklearn.metrics import f1_score
+import numpy as np
+from sklearn.metrics import f1_score, average_precision_score
 
 from models.resnet import SokobanResNetClassifier, ClassifierLoss
 
@@ -29,12 +30,17 @@ def main():
     raw_train = torch.load(train_path, weights_only=False)
     raw_test  = torch.load(test_path,  weights_only=False)
 
-    X_train = torch.stack([d["tensor"] for d in raw_train]).to(device)
-    y_train = torch.tensor([d["is_solvable"] for d in raw_train], dtype=torch.float32).to(device)
-    X_test  = torch.stack([d["tensor"] for d in raw_test]).to(device)
-    y_test  = torch.tensor([d["is_solvable"] for d in raw_test], dtype=torch.float32).to(device)
-
-    del raw_train, raw_test; gc.collect()
+    # Subset for speed using random permutation
+    subset_train = min(20000, len(raw_train["tensor"]))
+    subset_test = min(2000, len(raw_test["tensor"]))
+    
+    idx_train = torch.randperm(len(raw_train["tensor"]))[:subset_train]
+    idx_test = torch.randperm(len(raw_test["tensor"]))[:subset_test]
+    
+    X_train = raw_train["tensor"][idx_train]
+    y_train = raw_train["is_solvable"].float()[idx_train]
+    X_test  = raw_test["tensor"][idx_test]
+    y_test  = raw_test["is_solvable"].float()[idx_test]
     torch.cuda.synchronize()
 
     N = len(X_train)
@@ -58,14 +64,14 @@ def main():
 
     for epoch in range(1, EPOCHS + 1):
         model.train()
-        perm = torch.randperm(N, device=device)
+        perm = torch.randperm(N, device='cpu')
         running_loss = torch.zeros(1, device=device)
         t0 = time.time()
 
         for i in range(n_batches):
             idx = perm[i * BATCH : (i + 1) * BATCH]
-            xb  = X_train[idx]
-            yb  = y_train[idx]
+            xb  = X_train[idx].to(device)
+            yb  = y_train[idx].to(device)
 
             optimizer.zero_grad(set_to_none=True)
             with torch.amp.autocast('cuda', enabled=use_amp):
@@ -91,22 +97,24 @@ def main():
 
         # Evaluación rápida al final de la época
         model.eval()
-        all_preds, all_targets = [], []
+        all_probs, all_targets = [], []
         with torch.no_grad():
             for i in range(0, len(X_test), BATCH):
-                xb = X_test[i : i + BATCH]
+                xb = X_test[i : i + BATCH].to(device)
                 with torch.amp.autocast('cuda', enabled=use_amp):
                     logits = model(xb)
-                preds = (torch.sigmoid(logits) >= 0.5).cpu().numpy()
-                all_preds.extend(preds)
+                probs = torch.sigmoid(logits).cpu().numpy()
+                all_probs.extend(probs)
                 all_targets.extend(y_test[i : i + BATCH].cpu().numpy())
 
         train_loss = running_loss.item() / N
+        all_preds = (np.array(all_probs) >= 0.5).astype(int)
         acc  = sum(p == t for p, t in zip(all_preds, all_targets)) / len(all_targets)
         f1   = f1_score(all_targets, all_preds, zero_division=0)
+        auc_pr = average_precision_score(all_targets, all_probs)
         elapsed = time.time() - t0
 
-        print(f"\n  → {elapsed:.1f}s | Loss={train_loss:.4f} | Acc={acc:.3f} | F1={f1:.3f}\n")
+        print(f"\n  → {elapsed:.1f}s | Loss={train_loss:.4f} | Acc={acc:.3f} | F1={f1:.3f} | AUC-PR={auc_pr:.3f}\n")
 
     print("✅ Piloto OK. Si Acc y F1 suben por época → el modelo está aprendiendo.")
 

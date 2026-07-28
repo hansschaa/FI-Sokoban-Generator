@@ -635,6 +635,7 @@ SolverStats game_solver::test_template(
             std::vector<int> final_scores(nodes.size(), 0);
             std::vector<const game_node*> to_evaluate;
             std::vector<int> evaluate_indices;
+            std::vector<int> cached_penalties;
 
             for (size_t i = 0; i < nodes.size(); i++) {
                 int penalty_cost = penalty_solver.calculate_penalty(nodes[i]->box_list, nodes[i]->box_count);
@@ -643,14 +644,14 @@ SolverStats game_solver::test_template(
                 } else {
                     to_evaluate.push_back(nodes[i]);
                     evaluate_indices.push_back(i);
+                    cached_penalties.push_back(penalty_cost);
                 }
             }
 
             if (!to_evaluate.empty()) {
                 std::vector<float> predictions = neural_net->evaluate_batch(to_evaluate, end_vec);
                 for (size_t j = 0; j < to_evaluate.size(); j++) {
-                    int penalty_cost = penalty_solver.calculate_penalty(to_evaluate[j]->box_list, to_evaluate[j]->box_count);
-                    int score = static_cast<int>(std::max(0.0f, predictions[j])) + penalty_cost;
+                    int score = static_cast<int>(std::max(0.0f, predictions[j])) + cached_penalties[j];
                     final_scores[evaluate_indices[j]] = score;
                 }
             }
