@@ -26,8 +26,11 @@ NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int co
         // once end_vec (goal positions) is available.
         // compute_deadlock_mask() is NOT called here.
 
-        // Allocate flat vector for the 6-channel tensor
+        // Allocate flat vector for the 6-channel tensor (sequential)
         input_tensor_data.resize(6 * 25 * 25, 0.0f);
+        
+        // Pre-alloc batch buffer (Fix 2): evita malloc en cada llamada a evaluate_batch
+        batch_tensor_data.resize(MAX_BATCH_SIZE * 6 * 25 * 25, 0.0f);
         
         // Load normalization stats
         std::ifstream stats_file("surrogate_models/results/surrogate_stats.txt");
@@ -192,9 +195,17 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
     int offset_r = 0; // (max_h - m) / 2; -- Removed centering to match Python training pipeline
     int offset_c = 0; // (max_w - n) / 2; -- Removed centering to match Python training pipeline
 
-    std::vector<float> batch_data(N * 6 * max_h * max_w, 0.0f);
+    // Reutilizar el buffer pre-asignado (Fix 2): si el batch excede MAX_BATCH_SIZE, crecer dinámicamente
+    int needed = N * 6 * max_h * max_w;
+    if ((int)batch_tensor_data.size() < needed) {
+        batch_tensor_data.resize(needed, 0.0f);
+    }
+    float* batch_data = batch_tensor_data.data();
     
-    // Default background is Wall (Channel 0 = 1.0) for all nodes
+    // Zero solo la porción que vamos a usar (Fix 2: no zeroing innecesario del buffer completo)
+    std::fill(batch_data, batch_data + needed, 0.0f);
+    
+    // Default background es Wall (Channel 0 = 1.0) para todos los nodos
     for (int i = 0; i < N; ++i) {
         for (int r = 0; r < max_h; ++r) {
             for (int c = 0; c < max_w; ++c) {
@@ -258,7 +269,7 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
         }
     }
 
-    auto input_tensor = torch::from_blob(batch_data.data(), {N, 6, max_h, max_w}, torch::kFloat32);
+    auto input_tensor = torch::from_blob(batch_data, {N, 6, max_h, max_w}, torch::kFloat32);
     if (use_gpu) {
         input_tensor = input_tensor.to(torch::kCUDA);
     }
@@ -276,12 +287,14 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
         pushes_tensor = output.toTensor();
     }
 
+    // Fix 1: mover tensor a CPU UNA sola vez, luego leer con accessor (sin sync GPU por cada elemento)
+    auto cpu_tensor = pushes_tensor.to(torch::kCPU).contiguous();
+    auto accessor = cpu_tensor.accessor<float, 1>();
+
     std::vector<float> results;
     results.reserve(N);
-
     for (int i = 0; i < N; ++i) {
-        float z_score = pushes_tensor[i].item<float>();
-        // Apply expm1 to reverse the log1p normalization done in training
+        float z_score = accessor[i];  // sin sincronización GPU individual
         float pushes_pred = std::expm1(z_score * pushes_std + pushes_mean);
         results.push_back(std::max(0.0f, pushes_pred));
     }

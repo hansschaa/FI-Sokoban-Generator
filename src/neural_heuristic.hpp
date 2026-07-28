@@ -24,8 +24,10 @@ private:
     bool mask_initialized = false;
     bool use_gpu = false;
 
-    // Vector temporal para evitar realocaciones
-    std::vector<float> input_tensor_data;
+    // Buffers pre-asignados para evitar malloc en cada llamada (Fix 2)
+    std::vector<float> input_tensor_data;       // para evaluate() secuencial [6*25*25]
+    std::vector<float> batch_tensor_data;       // para evaluate_batch()      [MAX_BATCH*6*25*25]
+    static constexpr int MAX_BATCH_SIZE = 256;  // max nodos por batch
     
     // Normalization stats
     float pushes_mean = 42.447f;
