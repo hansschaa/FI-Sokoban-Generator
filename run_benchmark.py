@@ -57,12 +57,13 @@ def preprocess_board(board_str):
                 
     return '\n'.join(''.join(row) for row in grid)
 
-def run_solver(board_str, heuristic):
+def run_solver(board_str, heuristic, board_id):
     processed_board = preprocess_board(board_str)
-    with open('temp_board.txt', 'w') as f:
+    temp_filename = f'temp_board_{board_id}_{os.getpid()}.txt'
+    with open(temp_filename, 'w') as f:
         f.write(processed_board)
     
-    cmd = ['./build/test_solver', 'temp_board.txt', heuristic]
+    cmd = ['./build/test_solver', temp_filename, heuristic]
     try:
         # Prevent PyTorch from spawning hundreds of threads
         env = os.environ.copy()
@@ -112,6 +113,9 @@ def run_solver(board_str, heuristic):
             'effective_children': -1,
             'deadlocks': -1
         }
+    finally:
+        if os.path.exists(temp_filename):
+            os.remove(temp_filename)
 
 import argparse
 
@@ -152,8 +156,8 @@ def main():
     try:
         # Usa el primer tablero disponible para calentar
         warmup_board = boards[0][1]
-        run_solver(warmup_board, 'neural_sequential')
-        run_solver(warmup_board, 'neural_batched')
+        run_solver(warmup_board, 'neural_sequential', "warmup")
+        run_solver(warmup_board, 'neural_batched', "warmup")
         print("[Warming Up] Listo.")
     except Exception as e:
         print(f"[Warming Up] Advertencia: falló el warmup ({e})")
@@ -181,13 +185,24 @@ def main():
                 
                 # Ejecutar 3 veces para reducir ruido del sistema (varianza)
                 runtimes = []
+                metrics_list = []
                 last_metrics = None
                 for _ in range(3):
-                    metrics = run_solver(board_str, heuristic)
+                    metrics = run_solver(board_str, heuristic, board_id)
+                    metrics_list.append(metrics)
                     if metrics['runtime_ms'] > 0:
                         runtimes.append(metrics['runtime_ms'])
                     last_metrics = metrics
                 
+                # Check determinism across the 3 runs (if they were solved/finished)
+                if len(metrics_list) == 3 and metrics_list[0]['status'] != 'HARD_TIMEOUT':
+                    for i in range(1, 3):
+                        if (metrics_list[i]['pushes'] != metrics_list[0]['pushes'] or
+                            metrics_list[i]['expanded_nodes'] != metrics_list[0]['expanded_nodes'] or
+                            metrics_list[i]['deadlocks'] != metrics_list[0]['deadlocks']):
+                            print(f"  [WARNING] Resultados no deterministas detectados en tablero {board_id} con {heuristic}!")
+                            break
+
                 # Promediar tiempos si las corridas fueron exitosas
                 if runtimes and last_metrics['status'] == 'SOLVED':
                     last_metrics['runtime_ms'] = sum(runtimes) / len(runtimes)
