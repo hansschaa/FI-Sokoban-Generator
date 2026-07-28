@@ -80,6 +80,9 @@ def run_solver(board_str, heuristic, board_id, timeout_sec=180):
     env['OMP_NUM_THREADS'] = '1'
     env['MKL_NUM_THREADS'] = '1'
     env['OPENBLAS_NUM_THREADS'] = '1'
+    # Deshabilitar NVFuser para evitar crash por libnvrtc-builtins faltante
+    # El modelo corre igual de rápido usando cuDNN/cuBLAS como fallback
+    env['PYTORCH_JIT_USE_NVFuser'] = '0'
     
     try:
         # 3. Ejecutar y capturar salida
