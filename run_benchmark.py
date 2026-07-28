@@ -148,15 +148,19 @@ def main():
     # Manejar modo resume
     start_idx = args.start
     file_mode = 'w'
+    # Conjunto de (board_id, heuristic) ya completados para resume fino por combinación
+    completed_pairs = set()
     if args.resume and os.path.exists(csv_filename):
         with open(csv_filename, 'r', newline='') as csvfile:
-            reader = csv.reader(csvfile)
-            rows = list(reader)
-            if len(rows) > 1: # Si tiene header y data
-                last_board = int(rows[-1][0])
-                start_idx = last_board + 1
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                completed_pairs.add((int(row['board_id']), row['heuristic']))
         file_mode = 'a'
-        print(f"[{csv_filename} encontrado] Reanudando desde el tablero {start_idx}...")
+        if completed_pairs:
+            last_board = max(b for b, _ in completed_pairs)
+            print(f"[{csv_filename} encontrado] {len(completed_pairs)} combinaciones ya completadas. Reanudando...")
+        else:
+            file_mode = 'w'
 
     sok_path = args.file
     print(f"Extrayendo tableros de {sok_path}...")
@@ -165,10 +169,11 @@ def main():
     # ── Dummy Warm-up para Inicializar CUDA ──
     print("\n[Warming Up] Realizando corridas dummy para inicializar pesos y CUDA si está disponible...")
     try:
-        # Usa el primer tablero disponible para calentar (con timeout corto)
+        # Usa el primer tablero disponible para calentar
+        # Timeout de 20s: la compilación JIT de CUDA puede tardar bastante en el primer run
         warmup_board = boards[0][1]
-        run_solver(warmup_board, 'neural_sequential', "warmup", timeout_sec=5)
-        run_solver(warmup_board, 'neural_batched', "warmup", timeout_sec=5)
+        run_solver(warmup_board, 'neural_sequential', "warmup", timeout_sec=20)
+        run_solver(warmup_board, 'neural_batched', "warmup", timeout_sec=20)
         print("[Warming Up] Listo.")
     except Exception as e:
         print(f"[Warming Up] Advertencia: falló el warmup ({e})")
@@ -189,7 +194,13 @@ def main():
             print(f"\nProcesando Tablero {board_id}...")
             
             for heuristic in HEURISTICS:
+                # Skip si ya está en el CSV (modo resume fino por combinación)
+                if (board_id, heuristic) in completed_pairs:
+                    print(f"  -> Saltando: {heuristic} (ya completado)")
+                    continue
+
                 print(f"  -> Ejecutando: {heuristic} (3 corridas)...")
+
                 
                 # Ejecutar 3 veces para reducir ruido del sistema (varianza)
                 runtimes = []
@@ -202,8 +213,9 @@ def main():
                         runtimes.append(metrics['runtime_ms'])
                     last_metrics = metrics
                 
-                # Check determinism across the 3 runs (if they were solved/finished)
-                if len(metrics_list) == 3 and metrics_list[0]['status'] != 'HARD_TIMEOUT':
+                # Check determinismo — solo tiene sentido si TODAS las corridas terminaron con SOLVED
+                # (con TIMEOUT el nº de nodos varía levemente por jitter del sistema, no es un bug)
+                if len(metrics_list) == 3 and all(m['status'] == 'SOLVED' for m in metrics_list):
                     for i in range(1, 3):
                         if (metrics_list[i]['pushes'] != metrics_list[0]['pushes'] or
                             metrics_list[i]['expanded_nodes'] != metrics_list[0]['expanded_nodes'] or
