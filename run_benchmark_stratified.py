@@ -138,12 +138,12 @@ def load_meta(meta_csv):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Benchmark estratificado por dificultad')
-    parser.add_argument('--meta', default='benchmark_stratified_meta.csv',
-                        help='CSV de metadata generado por build_difficulty_benchmark.py')
-    parser.add_argument('--sok',  default='sok_files/benchmark_stratified.sok',
-                        help='Archivo .sok de tableros estratificados')
-    parser.add_argument('--out',  default='benchmark_stratified_results.csv',
+    parser = argparse.ArgumentParser(description='Benchmark estratificado por dificultad (Held-Out)')
+    parser.add_argument('--meta', default='benchmark_stratified_heldout_meta.csv',
+                        help='CSV de metadata generado por build_fold_heldout_benchmark.py')
+    parser.add_argument('--sok',  default='sok_files/benchmark_stratified_heldout.sok',
+                        help='Archivo .sok de tableros estratificados held-out')
+    parser.add_argument('--out',  default='benchmark_heldout_results.csv',
                         help='Archivo CSV de resultados de salida')
     parser.add_argument('--resume', action='store_true',
                         help='Reanudar desde el último progreso')
