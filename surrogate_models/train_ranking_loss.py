@@ -170,6 +170,7 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
     print(f"  max_pairs/bat : {max_pairs}")
     print(f"  lr={lr:.6f}, wd={weight_decay:.6f}, drop={dropout_p:.2f}, bs={batch_size}\n")
 
+    test_sp_91 = float('nan')
     fold_maes = []
 
     for fold in folds_to_run:
