@@ -17,8 +17,8 @@ import matplotlib.pyplot as plt
 
 # Modelos
 from models.cnn import SokobanCNNRegressor, SokobanCNNClassifier
-from models.resnet import SokobanResNetRegressor, SokobanSEResNetRegressor
-from models.resnet import SokobanResNetClassifier, SokobanSEResNetClassifier
+from models.resnet import SokobanResNetRegressor, SokobanSEResNetRegressor, SokobanResNetRegressorNoSE
+from models.resnet import SokobanResNetClassifier, SokobanSEResNetClassifier, SokobanSEResNetClassifierNoSE
 from models.resnet import ClassifierLoss
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
@@ -138,7 +138,7 @@ def train_ablation(task, folds_to_run):
     
     archs = {
         "CNN": SokobanCNNClassifier if is_classifier else SokobanCNNRegressor,
-        "ResNet": SokobanResNetClassifier if is_classifier else SokobanResNetRegressor,
+        "ResNet": SokobanSEResNetClassifierNoSE if is_classifier else SokobanResNetRegressorNoSE,
         "SEResNet": SokobanSEResNetClassifier if is_classifier else SokobanSEResNetRegressor
     }
     
