@@ -12,6 +12,10 @@ NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int co
     try {
         // Load the TorchScript model
         model = std::make_shared<torch::jit::Module>(torch::jit::load(model_path));
+        use_gpu = torch::cuda::is_available();
+        if (use_gpu) {
+            model->to(torch::kCUDA);
+        }
         model->eval();
         
         // Disable gradients for faster inference
@@ -133,8 +137,11 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
     }
 
     // Create tensor from data pointer
-    auto options = torch::TensorOptions().dtype(torch::kFloat32).device(torch::kCPU);
-    torch::Tensor input_tensor = torch::from_blob(input_tensor_data.data(), {1, 6, 25, 25}, options);
+    auto options = torch::TensorOptions().dtype(torch::kFloat32).device(use_gpu ? torch::kCUDA : torch::kCPU);
+    torch::Tensor input_tensor = torch::from_blob(input_tensor_data.data(), {1, 6, 25, 25}, torch::TensorOptions().dtype(torch::kFloat32));
+    if (use_gpu) {
+        input_tensor = input_tensor.to(torch::kCUDA);
+    }
 
     // Inference
     std::vector<torch::jit::IValue> inputs;
@@ -235,6 +242,9 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
     }
 
     auto input_tensor = torch::from_blob(batch_data.data(), {N, 6, max_h, max_w}, torch::kFloat32);
+    if (use_gpu) {
+        input_tensor = input_tensor.to(torch::kCUDA);
+    }
 
     std::vector<torch::jit::IValue> inputs;
     inputs.push_back(input_tensor);

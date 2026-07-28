@@ -21,6 +21,7 @@ private:
     std::vector<std::vector<bool>> deadlock_mask;
 
     void compute_deadlock_mask();
+    bool use_gpu;
 
     // Vector temporal para evitar realocaciones
     std::vector<float> input_tensor_data;
