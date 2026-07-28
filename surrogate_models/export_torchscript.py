@@ -4,6 +4,9 @@ import os
 from models.resnet import SokobanSEResNetRegressor, SokobanSEResNetClassifier
 
 def export_model():
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Exporting on device: {device}")
+
     print("Loading hyperparameters...")
     with open("results/best_hparams.json", "r") as f:
         r_params = json.load(f)
@@ -15,6 +18,7 @@ def export_model():
     regressor = SokobanSEResNetRegressor(dropout_p=r_params['params']["dropout_p"])
     regressor.load_state_dict(torch.load("results/production_regressor.pt", map_location="cpu", weights_only=True))
     regressor.eval()
+    regressor = regressor.to(device)
 
     print("Exporting Regressor Stats...")
     stats = torch.load("results/production_regressor_stats.pt", map_location="cpu", weights_only=True)
@@ -25,9 +29,10 @@ def export_model():
     classifier = SokobanSEResNetClassifier(dropout_p=c_params['params']["dropout_p"])
     classifier.load_state_dict(torch.load("results/production_classifier.pt", map_location="cpu", weights_only=True))
     classifier.eval()
+    classifier = classifier.to(device)
 
-    print("Tracing models with dummy input (1, 6, 25, 25)...")
-    dummy_input = torch.randn(1, 6, 25, 25)
+    print(f"Tracing models with dummy input (1, 6, 25, 25) on {device}...")
+    dummy_input = torch.randn(1, 6, 25, 25, device=device)
     
     print("Optimizing TorchScript models for inference (Freeze)...")
     traced_regressor = torch.jit.trace(regressor, dummy_input)
@@ -40,7 +45,7 @@ def export_model():
     frozen_regressor.save("results/surrogate_regressor_jit.pt")
     frozen_classifier.save("results/surrogate_classifier_jit.pt")
     
-    print("Successfully exported models to TorchScript!")
+    print(f"Successfully exported models to TorchScript on {device}!")
 
 if __name__ == "__main__":
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
