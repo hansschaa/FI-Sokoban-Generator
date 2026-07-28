@@ -136,7 +136,7 @@ def main():
     print(f"Procesando chunk de tableros: {start_idx} a {end_idx} (Total: {len(boards)})")
     
     csv_path = f'benchmark_results_{start_idx}_to_{end_idx}.csv'
-    heuristics = ['hungarian', 'neural', 'neural_batched']
+    heuristics = ['hungarian', 'neural_sequential', 'neural_batched']
     
     # ── Reanudación Segura (Resume) ──
     completed_runs = set()
@@ -152,7 +152,7 @@ def main():
     try:
         # Usa el primer tablero disponible para calentar
         warmup_board = boards[0][1]
-        run_solver(warmup_board, 'neural')
+        run_solver(warmup_board, 'neural_sequential')
         run_solver(warmup_board, 'neural_batched')
         print("[Warming Up] Listo.")
     except Exception as e:
