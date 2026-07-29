@@ -17,7 +17,7 @@ from torch.utils.data import DataLoader, Dataset
 import numpy as np
 from scipy.stats import spearmanr
 
-from models.resnet import SokobanSEResNetRegressor
+from models.resnet import SokobanSEResNetRegressor, SokobanSEResNetRegressorSpatial
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -65,7 +65,7 @@ def eval_spearman_by_bucket(p_raw_list, p_pred_list, bucket_list):
             result[b] = rho
     return result
 
-def train_residual_regressor(folds_to_run, max_epochs, restart):
+def train_residual_regressor(folds_to_run, max_epochs, restart, arch="baseline"):
     hparams_path = os.path.join(RESULTS_DIR, "best_hparams.json")
     if not os.path.exists(hparams_path):
         print("❌ Error: No se encontró best_hparams.json")
@@ -82,9 +82,10 @@ def train_residual_regressor(folds_to_run, max_epochs, restart):
     criterion = nn.HuberLoss(reduction='none')
 
     print("\n" + "="*70)
-    print("  EXPERIMENT: RESIDUAL LEARNING")
+    print(f"  EXPERIMENT: RESIDUAL LEARNING  [arch={arch.upper()}]")
     print("="*70)
     print(f"  Target        : residual_norm (Z-score de log1p(pushes - hungarian_lb))")
+    print(f"  Arquitectura  : {arch} ({'AdaptiveAvgPool 3x3' if arch == 'spatial' else 'AdaptiveAvgPool 1x1'})")
     print(f"  Dispositivo   : {device.type.upper()}")
     print(f"  lr={lr:.6f}, wd={weight_decay:.6f}, drop={dropout_p:.2f}, bs={batch_size}\n")
 
@@ -115,7 +116,10 @@ def train_residual_regressor(folds_to_run, max_epochs, restart):
         val_loader   = DataLoader(RegressorDatasetResidual(val_data),   batch_size=256, shuffle=False, pin_memory=True)
         test_loader  = DataLoader(RegressorDatasetResidual(test_data),  batch_size=256, shuffle=False, pin_memory=True)
 
-        model = SokobanSEResNetRegressor(dropout_p=dropout_p).to(device)
+        if arch == "spatial":
+            model = SokobanSEResNetRegressorSpatial(dropout_p=dropout_p).to(device)
+        else:
+            model = SokobanSEResNetRegressor(dropout_p=dropout_p).to(device)
         optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
         scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max_epochs)
 
@@ -123,7 +127,7 @@ def train_residual_regressor(folds_to_run, max_epochs, restart):
         best_weights = copy.deepcopy(model.state_dict())
         patience_ctr = 0
 
-        ckpt_path = os.path.join(RESULTS_DIR, f"ckpt_residual_fold{fold}.pt")
+        ckpt_path = os.path.join(RESULTS_DIR, f"ckpt_residual_{arch}_fold{fold}.pt")
         start_epoch = 1
 
         if restart and os.path.exists(ckpt_path):
@@ -236,7 +240,7 @@ def train_residual_regressor(folds_to_run, max_epochs, restart):
         test_sp_by_bucket = eval_spearman_by_bucket(all_p_raw_test, all_p_pred_test, all_buckets_test)
         
         fold_maes.append(test_mae)
-        save_path = os.path.join(RESULTS_DIR, f"residual_regressor_fold{fold}.pt")
+        save_path = os.path.join(RESULTS_DIR, f"residual_{arch}_regressor_fold{fold}.pt")
         torch.save(best_weights, save_path)
 
         print(f"\n  ✅ Fold {fold} MAE TEST: {test_mae:.2f}")
@@ -251,9 +255,16 @@ def train_residual_regressor(folds_to_run, max_epochs, restart):
         print(f"\n  🏆 RESIDUAL REGRESSOR (5-FOLD CV): MAE = {np.mean(fold_maes):.2f} ± {np.std(fold_maes):.2f} empujes")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Residual Learning: entrena sobre pushes - hungarian_lb"
+    )
     parser.add_argument("--folds", type=str, default="1,2,3,4,5")
     parser.add_argument("--epochs", type=int, default=50)
+    parser.add_argument("--arch", type=str, default="baseline", choices=["baseline", "spatial"],
+                        help="Arquitectura: 'baseline' (pool 1x1) o 'spatial' (pool 3x3).")
     parser.add_argument("--restart", action="store_true")
     args = parser.parse_args()
-    train_residual_regressor([int(x) for x in args.folds.split(",")], args.epochs, args.restart)
+    train_residual_regressor(
+        [int(x) for x in args.folds.split(",")],
+        args.epochs, args.restart, arch=args.arch
+    )
