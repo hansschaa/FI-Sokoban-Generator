@@ -10,7 +10,7 @@ import subprocess
 
 K_STEPS = 4
 MAX_SAMPLES = 1000
-BUCKET_DIR = "../sokoban_dataset_buckets"
+BUCKET_DIR = "../training_data/Solvables"
 OUTPUT_DIR = "results/path_consistency"
 OUTPUT_SOK = "../scratch/path_consistency_sample.sok"
 OUTPUT_TSV = "../scratch/path_consistency_results.tsv"
