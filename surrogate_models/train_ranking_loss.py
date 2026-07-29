@@ -60,27 +60,25 @@ class RegressorDatasetRanking(Dataset):
 # ─────────────────────────────────────────────────────────────────────────────
 def build_ranking_pairs(p_pred, p_norm, buckets, min_diff=2.0 / 50.0, max_pairs=256):
     """
-    Construye pares (i, j) donde:
-      - bucket[i] == bucket[j]  (intra-bucket estrictamente)
-      - |p_norm[i] - p_norm[j]| >= min_diff  (diferencia real mínima, evita pares ruidosos)
+    Construye pares (i, j) intra-bucket con |p_norm_i - p_norm_j| >= min_diff.
 
     Devuelve:
       pred_i, pred_j : tensores de predicciones para cada par
-      target         : tensor de +1.0 si p_norm[i] > p_norm[j], -1.0 si i < j
-
-    `min_diff` está en espacio normalizado.  Con pushes_std ≈ 0.88 y log1p,
-    0.02 en z-score ≈ ~1 push de diferencia real — ajustable vía argumento.
+      target         : +1 si p_norm[i] > p_norm[j], -1 en caso contrario
+      pair_counts    : dict {bucket: n_pares}  ← para diagnóstico de sparsity
     """
     pairs_i, pairs_j, targets = [], [], []
+    pair_counts = {}  # bucket → nº de pares formados
 
     bucket_to_indices = {}
     for idx, b in enumerate(buckets):
         bucket_to_indices.setdefault(b, []).append(idx)
 
     for b, indices in bucket_to_indices.items():
+        bucket_pairs = 0
         if len(indices) < 2:
+            pair_counts[b] = 0
             continue
-        # Formar todos los pares del bucket (O(n²), limitado por max_pairs)
         indices = list(indices)
         for ii in range(len(indices)):
             for jj in range(ii + 1, len(indices)):
@@ -91,11 +89,13 @@ def build_ranking_pairs(p_pred, p_norm, buckets, min_diff=2.0 / 50.0, max_pairs=
                 pairs_i.append(i)
                 pairs_j.append(j)
                 targets.append(1.0 if diff > 0 else -1.0)
+                bucket_pairs += 1
+        pair_counts[b] = bucket_pairs
 
     if not pairs_i:
-        return None, None, None
+        return None, None, None, pair_counts
 
-    # Submuestrear si hay demasiados pares
+    # Submuestrear si hay demasiados pares (costo cuadrático)
     if len(pairs_i) > max_pairs:
         chosen = np.random.choice(len(pairs_i), max_pairs, replace=False)
         pairs_i = [pairs_i[k] for k in chosen]
@@ -105,7 +105,7 @@ def build_ranking_pairs(p_pred, p_norm, buckets, min_diff=2.0 / 50.0, max_pairs=
     pi = torch.stack([p_pred[k] for k in pairs_i])
     pj = torch.stack([p_pred[k] for k in pairs_j])
     tg = torch.tensor(targets, dtype=torch.float32, device=p_pred.device)
-    return pi, pj, tg
+    return pi, pj, tg, pair_counts
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -170,6 +170,7 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
     print(f"  lr={lr:.6f}, wd={weight_decay:.6f}, drop={dropout_p:.2f}, bs={batch_size}\n")
 
     test_sp_91 = float('nan')
+    fold_sp91_values = []  # para criterio multi-fold
     fold_maes = []
 
     for fold in folds_to_run:
@@ -240,6 +241,7 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
             train_loss_huber = 0.0
             train_loss_rank  = 0.0
             n_batches = 0
+            epoch_pair_counts = {}  # acumula pares por bucket a lo largo de la época
 
             for tensors, p_norm, p_raw, weights, buckets in train_loader:
                 tensors = tensors.to(device)
@@ -253,7 +255,7 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
                 loss_huber = (huber_criterion(p_pred, p_norm) * weights).mean()
 
                 # ── Ranking loss intra-bucket ─────────────────────────────
-                pi, pj, tg = build_ranking_pairs(
+                pi, pj, tg, pair_counts = build_ranking_pairs(
                     p_pred, p_norm, buckets,
                     min_diff=min_diff_norm, max_pairs=max_pairs
                 )
@@ -261,6 +263,11 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
                     loss_rank = ranking_criterion(pi, pj, tg.to(device))
                 else:
                     loss_rank = torch.tensor(0.0, device=device)
+                    pair_counts = {}
+
+                # Acumular conteo de pares por bucket para diagnóstico de sparsity
+                for b, cnt in pair_counts.items():
+                    epoch_pair_counts[b] = epoch_pair_counts.get(b, 0) + cnt
 
                 loss = (1 - alpha) * loss_huber + alpha * loss_rank
                 loss.backward()
@@ -305,6 +312,16 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
             scheduler.step()
             elapsed = time.time() - t0
 
+            # ── Log de pares por bucket (diagnóstico de sparsity) ─────────
+            def bkey(b):
+                if b == '101_plus': return 101
+                try: return int(b.split('_')[0])
+                except: return 0
+            pair_log = "  ".join(
+                f"{b}:{epoch_pair_counts.get(b,0)}"
+                for b in sorted(epoch_pair_counts, key=bkey)
+            )
+
             tag = ""
             if val_mae < best_mae:
                 best_mae = val_mae
@@ -318,7 +335,8 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
                 f"  Ep {epoch:02d} | {elapsed:.1f}s "
                 f"| Loss {train_loss_total:.4f} (H={train_loss_huber:.4f} R={train_loss_rank:.4f}) "
                 f"| MAE {val_mae:.2f} | Sp_global {val_spearman_global:.3f} "
-                f"| Sp_91+ {val_spearman_91:.3f}{tag}"
+                f"| Sp_91+ {val_spearman_91:.3f}{tag}\n"
+                f"         Pares/bucket: [{pair_log}]"
             )
 
             if patience_ctr >= 15:
@@ -363,6 +381,7 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
         ])
 
         fold_maes.append(test_mae)
+        fold_sp91_values.append(test_sp_91)
         save_path = os.path.join(RESULTS_DIR, f"ranking_{arch}_regressor_fold{fold}.pt")
         torch.save(best_weights, save_path)
 
@@ -384,22 +403,24 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
     if len(fold_maes) > 1:
         print(f"\n  🏆 RANKING REGRESSOR (5-FOLD CV): MAE = {np.mean(fold_maes):.2f} ± {np.std(fold_maes):.2f} empujes")
 
-    # ── Criterio de decisión automático ───────────────────────────────────────
+    # ── Criterio de decisión automático (agrega TODOS los folds, no solo el último) ──
     print("\n" + "="*70)
-    print("  CRITERIO DE DECISIÓN (Experimento A)")
+    print("  CRITERIO DE DECISIÓN (Experimento A — agregado multi-fold)")
     print("="*70)
-    if not np.isnan(test_sp_91):
-        if test_sp_91 >= 0.38:
-            print(f"  ✅ Sp_91+ = {test_sp_91:.3f} ≥ 0.38 (GBM floor)")
-            print("     → Éxito. El Ranking Loss resuelve el problema intra-bucket.")
-            print("     → Proceder a consolidar y benchmark end-to-end (held-out).")
-        elif test_sp_91 >= 0.25:
-            print(f"  ⚠️  Sp_91+ = {test_sp_91:.3f} ∈ [0.25, 0.38)")
-            print("     → Mejora parcial. Combinar con Experimento B (Neck Espacial).")
+    valid_sp91 = [v for v in fold_sp91_values if not np.isnan(v)]
+    if valid_sp91:
+        sp91_mean = float(np.mean(valid_sp91))
+        sp91_std  = float(np.std(valid_sp91))
+        print(f"  Sp_91+ (media ± std): {sp91_mean:.3f} ± {sp91_std:.3f}  (n={len(valid_sp91)} folds)")
+        if sp91_mean >= 0.38:
+            print(f"  ✅ Sp_91+ ≥ 0.38 (GBM floor). Éxito — proceder a benchmark end-to-end.")
+        elif sp91_mean >= 0.25:
+            print(f"  ⚠️  Sp_91+ ∈ [0.25, 0.38). Mejora parcial — combinar con Exp. B (Spatial Neck).")
         else:
-            print(f"  ❌ Sp_91+ = {test_sp_91:.3f} < 0.25")
-            print("     → Señal de ranking no penetra. Priorizar Experimento B.")
-            print("     → También explorar formulación Residual (hipótesis abierta).")
+            print(f"  ❌ Sp_91+ < 0.25. Techo real de Ranking Loss solo con esta arquitectura.")
+            print("     → Priorizar Experimento B y retomar hipótesis Residual.")
+    else:
+        print("  ⚠️  No hay folds válidos para evaluar.")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
