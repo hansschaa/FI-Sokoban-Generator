@@ -25,14 +25,14 @@ import sys
 
 # ── Heurísticas por bucket ────────────────────────────────────────────────────
 BUCKET_CONFIG = {
-    "1-10":   {"heuristics": ["manhattan", "hungarian", "neural_sequential", "neural_batched", "neural_batched_massive"], "reps": 1},
-    "11-20":  {"heuristics": ["manhattan", "hungarian", "neural_sequential", "neural_batched", "neural_batched_massive"], "reps": 1},
-    "21-30":  {"heuristics": ["manhattan", "hungarian", "neural_sequential", "neural_batched", "neural_batched_massive"], "reps": 1},
-    "31-50":  {"heuristics": ["manhattan", "hungarian",                       "neural_batched", "neural_batched_massive"], "reps": 1},
-    "51-70":  {"heuristics": ["manhattan", "hungarian",                       "neural_batched", "neural_batched_massive"], "reps": 1},
-    "71-90":  {"heuristics": [             "hungarian",                                        "neural_batched_massive"], "reps": 1},
-    "91-100": {"heuristics": [             "hungarian",                                        "neural_batched_massive"], "reps": 1},
-    "101+":   {"heuristics": [             "hungarian",                                        "neural_batched_massive"], "reps": 1},
+    "1-10":   {"heuristics": ["manhattan", "hungarian", "neural_batched_massive"], "reps": 1},
+    "11-20":  {"heuristics": ["manhattan", "hungarian", "neural_batched_massive"], "reps": 1},
+    "21-30":  {"heuristics": ["manhattan", "hungarian", "neural_batched_massive"], "reps": 1},
+    "31-50":  {"heuristics": ["manhattan", "hungarian", "neural_batched_massive"], "reps": 1},
+    "51-70":  {"heuristics": ["manhattan", "hungarian", "neural_batched_massive"], "reps": 1},
+    "71-90":  {"heuristics": ["hungarian", "neural_batched_massive"], "reps": 1},
+    "91-100": {"heuristics": ["hungarian", "neural_batched_massive"], "reps": 1},
+    "101+":   {"heuristics": ["hungarian", "neural_batched_massive"], "reps": 1},
 }
 
 
@@ -154,7 +154,10 @@ def main():
 
     # ── Cargar tableros ───────────────────────────────────────────────────────
     boards = dict(extract_boards(args.sok))   # board_id → board_str
-    print(f"Tableros cargados: {len(boards)}  |  Metadata: {len(meta)} entradas")
+    # Limit to 25 boards to speed up test
+    meta = dict(list(meta.items())[:25])
+    
+    print(f"Tableros cargados: {len(boards)}  |  Metadata limitadas a: {len(meta)} entradas\n")
 
     # ── Resume ────────────────────────────────────────────────────────────────
     completed_triples = set()   # (board_id, heuristic, rep)

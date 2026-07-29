@@ -277,10 +277,14 @@ def main():
         cmd = ["../build/batch_solver", OUTPUT_SOK, "hungarian", OUTPUT_TSV]
         try:
             # 60 seconds strict timeout per board
-            subprocess.run(cmd, check=True, timeout=60, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            result = subprocess.run(cmd, check=True, timeout=60, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
         except subprocess.TimeoutExpired:
             continue
-        except Exception:
+        except subprocess.CalledProcessError as e:
+            print(f"Error executing batch_solver: {e}. Stderr: {e.stderr}")
+            continue
+        except Exception as e:
+            print(f"Error executing batch_solver: {e}")
             continue
             
         # Parse single-row TSV

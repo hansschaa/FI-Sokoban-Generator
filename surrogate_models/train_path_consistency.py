@@ -9,29 +9,18 @@ from models.resnet import SokobanSEResNetRegressor
 
 class PathConsistencyDataset(Dataset):
     def __init__(self, pt_file):
-        data = torch.load(pt_file)
-        from collections import defaultdict
-        routes = defaultdict(list)
-        for item in data:
-            routes[item['route_id']].append(item)
-            
-        self.pairs = []
-        for route_id, states in routes.items():
-            n = len(states)
-            for i in range(n):
-                for j in range(i+1, n):
-                    self.pairs.append((states[i], states[j]))
+        self.pairs = torch.load(pt_file, weights_only=False)
                     
     def __len__(self):
         return len(self.pairs)
         
     def __getitem__(self, idx):
-        s1, s2 = self.pairs[idx]
+        item = self.pairs[idx]
         return {
-            "tensor1": s1["tensor"],
-            "pushes1": s1["pushes"],
-            "tensor2": s2["tensor"],
-            "pushes2": s2["pushes"]
+            "tensor1": item["tensor1"],
+            "pushes1": item["pushes1"],
+            "tensor2": item["tensor2"],
+            "pushes2": item["pushes2"]
         }
 
 def train():
@@ -58,7 +47,7 @@ def train():
     p_std = stats['pushes_std']
     print(f"Loaded stats: pushes_mean={p_mean:.4f}, pushes_std={p_std:.4f}")
     
-    dataset_path = "results/path_consistency/path_consistency_train.pt"
+    dataset_path = "results/path_consistency/path_fold1_train.pt"
     print(f"Loading dataset from {dataset_path}...")
     dataset = PathConsistencyDataset(dataset_path)
     print(f"Generated {len(dataset)} consistency pairs.")
@@ -74,7 +63,7 @@ def train():
     best_loss = float('inf')
     best_state = None
     
-    for epoch in range(5):
+    for epoch in range(1):
         total_loss = 0
         total_mse = 0
         total_margin = 0
