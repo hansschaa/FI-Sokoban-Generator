@@ -407,24 +407,58 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
     if len(fold_maes) > 1:
         print(f"\n  🏆 RANKING REGRESSOR (5-FOLD CV): MAE = {np.mean(fold_maes):.2f} ± {np.std(fold_maes):.2f} empujes")
 
-    # ── Criterio de decisión automático (agrega TODOS los folds, no solo el último) ──
+    # ── Criterio de decisión (consciente de arch y alpha) ─────────────────────
     print("\n" + "="*70)
-    print("  CRITERIO DE DECISIÓN (Experimento A — agregado multi-fold)")
+    print(f"  CRITERIO DE DECISIÓN  [arch={arch.upper()}  α={alpha}]")
     print("="*70)
     valid_sp91 = [v for v in fold_sp91_values if not np.isnan(v)]
-    if valid_sp91:
-        sp91_mean = float(np.mean(valid_sp91))
-        sp91_std  = float(np.std(valid_sp91))
-        print(f"  Sp_91+ (media ± std): {sp91_mean:.3f} ± {sp91_std:.3f}  (n={len(valid_sp91)} folds)")
-        if sp91_mean >= 0.38:
-            print(f"  ✅ Sp_91+ ≥ 0.38 (GBM floor). Éxito — proceder a benchmark end-to-end.")
-        elif sp91_mean >= 0.25:
-            print(f"  ⚠️  Sp_91+ ∈ [0.25, 0.38). Mejora parcial — combinar con Exp. B (Spatial Neck).")
-        else:
-            print(f"  ❌ Sp_91+ < 0.25. Techo real de Ranking Loss solo con esta arquitectura.")
-            print("     → Priorizar Experimento B y retomar hipótesis Residual.")
-    else:
+    if not valid_sp91:
         print("  ⚠️  No hay folds válidos para evaluar.")
+    else:
+        sp91_mean = float(np.mean(valid_sp91))
+        sp91_std  = float(np.std(valid_sp91)) if len(valid_sp91) > 1 else float('nan')
+        std_str   = f" ± {sp91_std:.3f}" if not np.isnan(sp91_std) else ""
+        print(f"  Sp_91+: {sp91_mean:.3f}{std_str}  (n={len(valid_sp91)} fold{'s' if len(valid_sp91)>1 else ''})")
+
+        GBM_FLOOR = 0.38
+
+        if sp91_mean >= GBM_FLOOR:
+            print(f"  ✅ Sp_91+ ≥ {GBM_FLOOR} (GBM floor). Lanzar 5 folds completos → candidato paper.")
+        elif sp91_mean >= 0.30:
+            if arch == "spatial":
+                print(f"  ✅ Sp_91+ ≥ 0.30 con Spatial Neck. Considerar lanzar 5 folds completos.")
+                if alpha == 0:
+                    print("     → Probar Spatial + Ranking α=0.10-0.15 como ajuste fino.")
+            else:
+                print(f"  ⚠️  Sp_91+ ≥ 0.30 con baseline. Buen resultado — combinar con Spatial Neck.")
+        elif sp91_mean >= 0.20:
+            if arch == "spatial" and alpha == 0:
+                print(f"  ⚠️  Sp_91+ ∈ [0.20, 0.30) con Spatial puro.")
+                print("     → Si la curva no se agotó (no disparó early stopping): extender épocas.")
+                print("     → Si se agotó: probar Spatial + Ranking α=0.10-0.15 como ajuste fino.")
+            elif arch == "spatial" and alpha > 0:
+                print(f"  ⚠️  Sp_91+ ∈ [0.20, 0.30) con Spatial+Ranking α={alpha}.")
+                print(f"     → Spatial puro (α=0) dio ~0.215. α={alpha} no mejoró sobre α=0.")
+                print("     → Bajar α (0.05-0.10) o descartar Ranking sobre Spatial.")
+            else:
+                print(f"  ⚠️  Sp_91+ ∈ [0.20, 0.30) con baseline. Cambiar a --arch spatial.")
+        elif sp91_mean >= 0.13:
+            if arch == "spatial":
+                print(f"  ⚠️  Sp_91+ ∈ [0.13, 0.20) con Spatial — por encima del baseline (~0.13).")
+                if alpha > 0:
+                    print(f"     → Spatial puro (α=0) superó esta combinación. Reducir α o usar α=0.")
+            else:
+                print(f"  ⚠️  Sp_91+ ∈ [0.13, 0.20). Mejora marginal sobre baseline.")
+                print("     → Cambiar a --arch spatial para atacar el cuello de botella estructural.")
+        else:
+            if arch == "baseline" and alpha > 0:
+                print(f"  ❌ Sp_91+ < 0.13 con Ranking Loss (baseline). Ranking Loss no penetra.")
+                print("     → Causa: sparsity de pares en buckets difíciles O cuello 1×1.")
+                print("     → Verificar log de Pares/bucket por época.")
+                print("     → Cambiar a --arch spatial --alpha 0 (Spatial puro).")
+            else:
+                print(f"  ❌ Sp_91+ < 0.13. Sin mejora sobre baseline. Revisar configuración.")
+
 
 
 # ─────────────────────────────────────────────────────────────────────────────
