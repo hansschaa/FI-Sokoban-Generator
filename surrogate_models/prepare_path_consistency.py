@@ -186,8 +186,12 @@ def main():
     print("1. Parsing boards...")
     records = parse_sok_files(BUCKET_DIR)
     print(f"Loaded {len(records)} boards.")
-    
+    if len(records) == 0:
+        print(f"Warning: No boards found in {BUCKET_DIR}. Make sure the dataset exists!")
+        return
+        
     print("2. Writing to temporary .sok file...")
+    os.makedirs(os.path.dirname(OUTPUT_SOK), exist_ok=True)
     with open(OUTPUT_SOK, "w") as f:
         for r in records:
             f.write(f"{r['name']} - pushes:{r['pushes']}\n")
