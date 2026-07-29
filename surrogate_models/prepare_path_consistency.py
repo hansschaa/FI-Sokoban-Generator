@@ -1,4 +1,5 @@
 import os
+import argparse
 import glob
 import re
 import hashlib
@@ -9,7 +10,7 @@ from tqdm import tqdm
 import subprocess
 
 K_STEPS = 4
-MAX_SAMPLES = 1000
+MAX_SAMPLES = 500
 BUCKET_DIR = "../training_data/Solvables"
 OUTPUT_DIR = "results/path_consistency"
 OUTPUT_SOK = "../scratch/path_consistency_sample.sok"
@@ -22,18 +23,10 @@ def get_bucket(pushes):
     upper = lower + 9
     return f"{lower}_to_{upper}"
 
-def parse_sok_files(directory, max_total=MAX_SAMPLES):
+def parse_sok_files(directory, fold_map):
     records = []
-    files = [
-        "21_to_30.sok",
-        "31_to_40.sok",
-        "41_to_50.sok",
-        "51_to_60.sok"
-    ]
-    
-    for fname in files:
-        fpath = os.path.join(directory, fname)
-        if not os.path.exists(fpath): continue
+    files = glob.glob(os.path.join(directory, "**/*.sok"), recursive=True)
+    for fpath in files:
         with open(fpath, "r", encoding="utf-8") as f:
             content = f.read()
         blocks = [b.strip() for b in content.split("\n\n") if b.strip()]
@@ -45,7 +38,7 @@ def parse_sok_files(directory, max_total=MAX_SAMPLES):
             
             m = re.match(r"(\d+)\s*-\s*(.*)", header)
             if not m: continue
-            level_name = m.group(1)
+            level_name = str(m.group(1)).strip()
             stats_str = m.group(2)
             
             pushes = -1
@@ -56,19 +49,22 @@ def parse_sok_files(directory, max_total=MAX_SAMPLES):
             elif stats_str.isdigit():
                 pushes = int(stats_str)
             
-            if pushes <= 0: continue
-            
             board_str = "\n".join(board_lines)
-            board_hash = hashlib.sha256(board_str.encode()).hexdigest()
+            MOBILE_CHARS = str.maketrans("$.*@+", "     ")
+            shell_str = board_str.translate(MOBILE_CHARS)
+            shell_hash = hashlib.sha256(shell_str.encode()).hexdigest()
+            
+            if shell_hash not in fold_map:
+                continue
+                
             records.append({
-                "hash": board_hash,
+                "hash": shell_hash,
                 "name": level_name,
                 "board_str": board_str,
                 "pushes": pushes,
                 "bucket": get_bucket(pushes)
             })
-            if len(records) >= max_total:
-                return records
+        # The inner loop iterates over blocks. No max check here.
     return records
 
 def simulate_path(board_str, lurd_path):
@@ -82,12 +78,15 @@ def simulate_path(board_str, lurd_path):
         if px != -1: break
         
     states = []
-    states.append(("\n".join("".join(row) for row in lines), len(lurd_path.replace('u','').replace('d','').replace('l','').replace('r',''))))
+    total_pushes = sum(1 for m in lurd_path if m.isupper())
+    
+    # State zero
+    states.append(("\n".join("".join(row) for row in lines), total_pushes))
     
     dirs = {'u': (-1, 0), 'd': (1, 0), 'l': (0, -1), 'r': (0, 1),
             'U': (-1, 0), 'D': (1, 0), 'L': (0, -1), 'R': (0, 1)}
     
-    remaining_pushes = states[0][1]
+    accumulated_pushes = 0
     
     for m in lurd_path:
         if m not in dirs: continue
@@ -103,7 +102,7 @@ def simulate_path(board_str, lurd_path):
             
             lines[nx][ny] = '-' if box_char == '$' else '.'
             lines[bx][by] = '$' if target_char in [' ', '-'] else '*'
-            remaining_pushes -= 1
+            accumulated_pushes += 1
             
         # Move player
         p_char = lines[px][py]
@@ -113,8 +112,13 @@ def simulate_path(board_str, lurd_path):
         
         px, py = nx, ny
         
-        if is_push:
-            states.append(("\n".join("".join(row) for row in lines), remaining_pushes))
+        # Take snapshot every K pushes
+        if is_push and accumulated_pushes % K_STEPS == 0:
+            states.append(("\n".join("".join(row) for row in lines), total_pushes - accumulated_pushes))
+            
+    # Always include the goal state if not already included
+    if accumulated_pushes % K_STEPS != 0:
+        states.append(("\n".join("".join(row) for row in lines), 0))
             
     return states
 
@@ -147,10 +151,10 @@ def encode_board(board_str):
     lines = board_str.splitlines()
     H = len(lines)
     W = max(len(l) for l in lines)
-    
     char_matrix = np.full((H, W), ' ', dtype=str)
-    for r, line in enumerate(lines):
-        for c, char in enumerate(line):
+    
+    for r, row in enumerate(lines):
+        for c, char in enumerate(row):
             char_matrix[r, c] = char
             
     exterior = flood_fill_exterior(char_matrix)
@@ -171,82 +175,158 @@ def encode_board(board_str):
             if not exterior[r, c] and ch != '#':
                 tensor[5, r, c] = 1.0 # Canal 5: Interior caminable
                 
-    # Pad to 25x25 (since model expects fixed or max shape? Wait, the model uses AdaptiveAvgPool2d(1), so any size works!
-    # But wait, original code might pad to 25x25. 
-    # Let's pad to 25x25 just to be safe and consistent with original data.
     padded_tensor = np.zeros((6, 25, 25), dtype=np.float32)
     h_min = min(H, 25)
     w_min = min(W, 25)
     padded_tensor[:, :h_min, :w_min] = tensor[:, :h_min, :w_min]
     return padded_tensor
 
+def build_fold_map():
+    fold_map = {}
+    print("Building fold mapping from existing datasets...")
+    for k in range(1, 6):
+        fpath = f"results/regressor_fold{k}_train.pt"
+        if not os.path.exists(fpath):
+            print(f"Warning: {fpath} not found!")
+            continue
+        try:
+            d = torch.load(fpath, map_location='cpu', weights_only=False)
+            for item in d:
+                if 'shell_hash' in item:
+                    fold_map[item['shell_hash']] = k
+        except Exception as e:
+            print(f"Error loading {fpath}: {e}")
+    
+    unique_hashes = len(fold_map)
+    print(f"Found {unique_hashes} unique shell_hashes in fold_map.")
+    if unique_hashes < 1000:
+        print("WARNING: Very few shell_hashes found. Check fold_map logic!")
+    return fold_map
+
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--part", type=int, default=0, help="Part index (0 to total_parts-1)")
+    parser.add_argument("--total-parts", type=int, default=1, help="Total number of parts")
+    args = parser.parse_args()
+
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     
-    print("1. Parsing boards...")
-    records = parse_sok_files(BUCKET_DIR)
-    print(f"Loaded {len(records)} boards.")
+    fold_map = build_fold_map()
+    if not fold_map:
+        print("Fold map is empty. Aborting.")
+        return
+
+    print("1. Parsing boards from Solvables...")
+    records = parse_sok_files(BUCKET_DIR, fold_map)
+    print(f"Loaded {len(records)} total boards.")
+    
+    # Sort deterministically and slice
+    records.sort(key=lambda r: r['hash'])
+    records = records[args.part::args.total_parts]
+    print(f"Assigned {len(records)} boards to Part {args.part} of {args.total_parts}.")
     if len(records) == 0:
         print(f"Warning: No boards found in {BUCKET_DIR}. Make sure the dataset exists!")
         return
         
-    print("2. Writing to temporary .sok file...")
-    os.makedirs(os.path.dirname(OUTPUT_SOK), exist_ok=True)
-    with open(OUTPUT_SOK, "w") as f:
-        for r in records:
-            f.write(f"{r['name']} - pushes:{r['pushes']}\n")
-            f.write(f"{r['board_str']}\n\n")
-            
-    print("3. Skipping batch_solver (already ran)...")
-    # cmd = ["../build/batch_solver", OUTPUT_SOK, "hungarian", OUTPUT_TSV]
-    # subprocess.run(cmd, check=True)
+    print("2. Simulating paths with strict 60s timeout per board...")
+    fold_datasets = {k: [] for k in range(1, 6)}
     
-    print("4. Parsing TSV and simulating paths...")
-    df = pd.read_csv(OUTPUT_TSV, sep='\t')
-    
-    # Create lookup map
-    board_map = {r['name']: r['board_str'] for r in records}
-    
-    dataset = []
+    # Intentar reanudar desde checkpoints existentes
+    start_route_id = 0
+    has_checkpoints = False
+    for k in range(1, 6):
+        out_path = os.path.join(OUTPUT_DIR, f"path_fold{k}_train_part{args.part}.pt")
+        if os.path.exists(out_path):
+            try:
+                fold_datasets[k] = torch.load(out_path, map_location='cpu', weights_only=False)
+                has_checkpoints = True
+                if len(fold_datasets[k]) > 0:
+                    start_route_id = max(start_route_id, fold_datasets[k][-1]['route_id'] + 1)
+            except Exception as e:
+                print(f"No se pudo cargar {out_path}: {e}")
+                
+    if has_checkpoints:
+        print(f"Checkpoints detectados. Reanudando desde route_id = {start_route_id}")
+        
+    discard_count = 0
     route_id_counter = 0
     
-    for idx, row in tqdm(df.iterrows(), total=len(df)):
-        if row['Status'] != 'SOLVED': continue
-        if row['LURD_Path'] == 'NONE': continue
+    os.makedirs(os.path.dirname(OUTPUT_SOK), exist_ok=True)
+    
+    for record in tqdm(records):
+        board_str = record['board_str']
+        shell_hash = record['hash']
         
-        name = str(row['LevelName']).split(' - ')[0].strip()
-        if name not in board_map: continue
-        
-        board_str = board_map[name]
-        lurd = row['LURD_Path']
-        
-        # Simulate pushes only! Our states array contains ONLY the board after a PUSH.
-        # So we can sample every K_STEPS pushes.
-        states = simulate_path(board_str, lurd)
-        
-        # states contains (board_str, remaining_pushes)
-        # Sample every K_STEPS
-        sampled_states = states[::K_STEPS]
-        if states[-1] not in sampled_states:
-            sampled_states.append(states[-1]) # always include the goal state (0 pushes)
+        # Si este tablero ya fue procesado en sesiones anteriores, saltarlo
+        if route_id_counter < start_route_id:
+            route_id_counter += 1
+            continue
             
-        if len(sampled_states) < 2: continue
+        if shell_hash not in fold_map:
+            discard_count += 1
+            continue
+            
+        fold_idx = fold_map[shell_hash]
         
-        route_id = f"route_{route_id_counter}"
+        # Write single board to .sok
+        with open(OUTPUT_SOK, "w") as f:
+            f.write(f"{record['name']} - pushes:{record['pushes']}\n")
+            f.write(f"{board_str}\n\n")
+            
+        # Run batch_solver for this single board
+        cmd = ["../build/batch_solver", OUTPUT_SOK, "hungarian", OUTPUT_TSV]
+        try:
+            # 60 seconds strict timeout per board
+            subprocess.run(cmd, check=True, timeout=60, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except subprocess.TimeoutExpired:
+            continue
+        except Exception:
+            continue
+            
+        # Parse single-row TSV
+        try:
+            df = pd.read_csv(OUTPUT_TSV, sep='\t')
+            if len(df) == 0: continue
+            row = df.iloc[0]
+            if row['Status'] != 'SOLVED' or row['LURD_Path'] == 'NONE': continue
+            lurd = str(row['LURD_Path'])
+        except Exception:
+            continue
+            
+        # Simulate path and pair states
+        states = simulate_path(board_str, lurd)
+        n = len(states)
+        for i in range(n):
+            for j in range(i+1, n):
+                s1, p1 = states[i]
+                s2, p2 = states[j]
+                t1 = encode_board(s1)
+                t2 = encode_board(s2)
+                
+                fold_datasets[fold_idx].append({
+                    "tensor1": t1, "pushes1": p1,
+                    "tensor2": t2, "pushes2": p2,
+                    "route_id": route_id_counter,
+                    "shell_hash": shell_hash
+                })
         route_id_counter += 1
         
-        for b_str, rem_pushes in sampled_states:
-            tensor = encode_board(b_str)
-            dataset.append({
-                "tensor": torch.tensor(tensor),
-                "pushes": rem_pushes,
-                "route_id": route_id
-            })
-            
-    print(f"Generated {len(dataset)} states across {route_id_counter} routes.")
+        # Guardar checkpoint cada 1000 tableros procesados
+        if route_id_counter % 1000 == 0:
+            print(f"\n[Checkpoint] Guardando progreso intermedio (Tableros resueltos: {route_id_counter})...")
+            for k in range(1, 6):
+                out_path = os.path.join(OUTPUT_DIR, f"path_fold{k}_train_part{args.part}.pt")
+                if len(fold_datasets[k]) > 0:
+                    torch.save(fold_datasets[k], out_path)
+            print("Checkpoint guardado exitosamente.")
+        
+    print(f"Discarded {discard_count} boards due to missing shell_hash in fold_map.")
     
-    print("5. Saving PyTorch dataset...")
-    torch.save(dataset, os.path.join(OUTPUT_DIR, "path_consistency_train.pt"))
+    for k in range(1, 6):
+        out_path = os.path.join(OUTPUT_DIR, f"path_fold{k}_train_part{args.part}.pt")
+        print(f"Fold {k}: saving {len(fold_datasets[k])} pairs to {out_path}")
+        torch.save(fold_datasets[k], out_path)
+        
     print("Done!")
 
 if __name__ == "__main__":
