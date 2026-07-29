@@ -212,8 +212,10 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
         optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
         scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max_epochs)
 
-        best_mae     = float("inf")
-        best_weights = copy.deepcopy(model.state_dict())
+        best_mae = float("inf")
+        best_weights_mae = copy.deepcopy(model.state_dict())
+        best_sp91 = -float("inf")
+        best_weights_sp91 = copy.deepcopy(model.state_dict())
         patience_ctr = 0
 
         ckpt_path = os.path.join(RESULTS_DIR, f"ckpt_ranking_{arch}_regressor_fold{fold}.pt")
@@ -231,7 +233,9 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
             scheduler.load_state_dict(ckpt['scheduler_state_dict'])
             start_epoch = ckpt['epoch'] + 1
             best_mae = ckpt['best_mae']
-            best_weights = ckpt['best_weights']
+            best_weights_mae = ckpt['best_weights']
+            best_sp91 = ckpt.get('best_sp91', -float('inf'))
+            best_weights_sp91 = ckpt.get('best_weights_sp91', best_weights_mae)
             patience_ctr = ckpt['patience_ctr']
 
         for epoch in range(start_epoch, max_epochs + 1):
@@ -329,11 +333,16 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
             tag = ""
             if val_mae < best_mae:
                 best_mae = val_mae
-                best_weights = copy.deepcopy(model.state_dict())
+                best_weights_mae = copy.deepcopy(model.state_dict())
                 patience_ctr = 0
-                tag = " ★"
+                tag += " ★MAE"
             else:
                 patience_ctr += 1
+
+            if not np.isnan(val_spearman_91) and val_spearman_91 > best_sp91:
+                best_sp91 = val_spearman_91
+                best_weights_sp91 = copy.deepcopy(model.state_dict())
+                tag += " ★Sp91"
 
             print(
                 f"  Ep {epoch:02d} | {elapsed:.1f}s "
@@ -353,12 +362,22 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
                 'optimizer_state_dict': optimizer.state_dict(),
                 'scheduler_state_dict': scheduler.state_dict(),
                 'best_mae': best_mae,
-                'best_weights': best_weights,
+                'best_weights': best_weights_mae,
+                'best_sp91': best_sp91,
+                'best_weights_sp91': best_weights_sp91,
                 'patience_ctr': patience_ctr,
             }, ckpt_path)
 
         # ── Test Ciego ─────────────────────────────────────────────────────
-        model.load_state_dict(best_weights)
+        if best_sp91 > -float('inf'):
+            model.load_state_dict(best_weights_sp91)
+            final_weights = best_weights_sp91
+            print(f"\n  [INFO] Test evaluado con el mejor checkpoint por Sp_91+ (Val Sp_91+ = {best_sp91:.3f})")
+        else:
+            model.load_state_dict(best_weights_mae)
+            final_weights = best_weights_mae
+            print(f"\n  [INFO] Test evaluado con el mejor checkpoint por MAE (Val MAE = {best_mae:.2f})")
+            
         model.eval()
         total_mae_test, n_test = 0.0, 0
         all_p_pred_test, all_p_raw_test, all_buckets_test = [], [], []
@@ -387,7 +406,7 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
         fold_maes.append(test_mae)
         fold_sp91_values.append(test_sp_91)
         save_path = os.path.join(RESULTS_DIR, f"ranking_{arch}_regressor_fold{fold}.pt")
-        torch.save(best_weights, save_path)
+        torch.save(final_weights, save_path)
 
         print(f"\n  ✅ Fold {fold} → {os.path.basename(save_path)}")
         print(f"     MAE Val: {best_mae:.2f}  |  MAE TEST: {test_mae:.2f}")
