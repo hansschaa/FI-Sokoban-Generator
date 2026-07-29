@@ -7,6 +7,87 @@
 #include <stdexcept>
 #include <cmath>
 #include "evolution/utils/board_utils.h"
+#include "hungarian.h"
+#include <deque>
+#include <array>
+#include <algorithm>
+
+namespace {
+    static void reverse_push_bfs(
+        const point& goal,
+        const std::vector<std::vector<char>>& blank_matrix,
+        int m, int n,
+        std::vector<std::vector<int>>& dist
+    ) {
+        const int INF = 1000;
+        std::vector<std::vector<std::array<int,4>>> dist_state(
+            m, std::vector<std::array<int,4>>(n, {INF, INF, INF, INF}));
+
+        struct State { point box; int dir_idx; };
+        std::deque<State> q;
+
+        for (int d = 0; d < 4; d++) {
+            point player_needed = goal - constant::four_direction[d];
+            if (player_needed.x < 0 || player_needed.x >= m ||
+                player_needed.y < 0 || player_needed.y >= n) continue;
+            if (blank_matrix[player_needed.x][player_needed.y] == constant::WALL) continue;
+
+            if (dist_state[goal.x][goal.y][d] == INF) {
+                dist_state[goal.x][goal.y][d] = 0;
+                q.push_back({goal, d});
+            }
+        }
+
+        while (!q.empty()) {
+            auto [box, dir_idx] = q.front();
+            q.pop_front();
+
+            int cur_cost = dist_state[box.x][box.y][dir_idx];
+
+            for (int push_d = 0; push_d < 4; push_d++) {
+                point box_prev = box - constant::four_direction[push_d];
+                if (box_prev.x < 0 || box_prev.x >= m ||
+                    box_prev.y < 0 || box_prev.y >= n) continue;
+                if (blank_matrix[box_prev.x][box_prev.y] == constant::WALL) continue;
+
+                point player_prev = box_prev - constant::four_direction[push_d];
+                if (player_prev.x < 0 || player_prev.x >= m ||
+                    player_prev.y < 0 || player_prev.y >= n) continue;
+                if (blank_matrix[player_prev.x][player_prev.y] == constant::WALL) continue;
+
+                int new_cost = cur_cost + 1;
+                if (new_cost < dist_state[box_prev.x][box_prev.y][push_d]) {
+                    dist_state[box_prev.x][box_prev.y][push_d] = new_cost;
+                    q.push_back({box_prev, push_d});
+                }
+            }
+        }
+
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++) {
+                int best = INF;
+                for (int d = 0; d < 4; d++)
+                    best = std::min(best, dist_state[i][j][d]);
+                dist[i][j] = best;
+            }
+    }
+}
+
+void NeuralHeuristic::compute_dist_to_goal(const std::vector<std::vector<bool>>& end_vec) {
+    goal_positions.clear();
+    for (int i = 0; i < m; i++)
+        for (int j = 0; j < n; j++)
+            if (i < (int)end_vec.size() && j < (int)end_vec[i].size() && end_vec[i][j])
+                goal_positions.push_back(point(i, j));
+
+    int num_goals = (int)goal_positions.size();
+    dist_to_goal.assign(num_goals, std::vector<std::vector<int>>(m, std::vector<int>(n, 1000)));
+
+    for (int g = 0; g < num_goals; g++) {
+        reverse_push_bfs(goal_positions[g], constant::blank_matrix, m, n, dist_to_goal[g]);
+    }
+    dist_initialized = true;
+}
 
 NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int cols) 
     : m(rows), n(cols) {
@@ -73,6 +154,9 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
     // Lazy-init deadlock mask with goal positions on first call
     if (!mask_initialized) {
         compute_deadlock_mask(end_vec);
+    }
+    if (!dist_initialized) {
+        compute_dist_to_goal(end_vec);
     }
 
     // Zero out the input tensor
@@ -178,7 +262,23 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
     // Un-normalize
     // Apply expm1 to reverse the log1p normalization done in training
     float pushes_pred_val = std::expm1(z_score * pushes_std + pushes_mean);
-    return std::max(0.0f, pushes_pred_val);
+    pushes_pred_val = std::max(0.0f, pushes_pred_val);
+    
+    if (dist_initialized && !goal_positions.empty()) {
+        int num_boxes = node->box_count;
+        int num_goals = (int)goal_positions.size();
+        int sz = std::max(num_boxes, num_goals);
+        std::vector<std::vector<int>> cost(sz, std::vector<int>(sz, 0));
+        for (int b = 0; b < num_boxes; ++b) {
+            for (int g = 0; g < num_goals; ++g) {
+                cost[b][g] = dist_to_goal[g][node->box_list[b].x][node->box_list[b].y];
+            }
+        }
+        Hungarian h(cost);
+        float hungarian_lb = (float)h.solve();
+        pushes_pred_val = hungarian_lb + std::clamp(pushes_pred_val - hungarian_lb, 0.0f, 1.0f * hungarian_lb);
+    }
+    return pushes_pred_val;
 }
 
 std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_node*>& nodes, const std::vector<std::vector<bool>>& end_vec) {
@@ -187,6 +287,9 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
     // Lazy-init deadlock mask with goal positions on first call
     if (!mask_initialized) {
         compute_deadlock_mask(end_vec);
+    }
+    if (!dist_initialized) {
+        compute_dist_to_goal(end_vec);
     }
 
     int N = nodes.size();
@@ -296,7 +399,24 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
     for (int i = 0; i < N; ++i) {
         float z_score = accessor[i];  // sin sincronización GPU individual
         float pushes_pred = std::expm1(z_score * pushes_std + pushes_mean);
-        results.push_back(std::max(0.0f, pushes_pred));
+        pushes_pred = std::max(0.0f, pushes_pred);
+        
+        if (dist_initialized && !goal_positions.empty()) {
+            const game_node* node = nodes[i];
+            int num_boxes = node->box_count;
+            int num_goals = (int)goal_positions.size();
+            int sz = std::max(num_boxes, num_goals);
+            std::vector<std::vector<int>> cost(sz, std::vector<int>(sz, 0));
+            for (int b = 0; b < num_boxes; ++b) {
+                for (int g = 0; g < num_goals; ++g) {
+                    cost[b][g] = dist_to_goal[g][node->box_list[b].x][node->box_list[b].y];
+                }
+            }
+            Hungarian h(cost);
+            float hungarian_lb = (float)h.solve();
+            pushes_pred = hungarian_lb + std::clamp(pushes_pred - hungarian_lb, 0.0f, 1.0f * hungarian_lb);
+        }
+        results.push_back(pushes_pred);
     }
 
     return results;

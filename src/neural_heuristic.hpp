@@ -21,8 +21,14 @@ private:
     std::vector<std::vector<bool>> deadlock_mask;
 
     void compute_deadlock_mask(const std::vector<std::vector<bool>>& end_vec);
+    void compute_dist_to_goal(const std::vector<std::vector<bool>>& end_vec);
     bool mask_initialized = false;
+    bool dist_initialized = false;
     bool use_gpu = false;
+    
+    std::vector<point> goal_positions;
+    std::vector<std::vector<std::vector<int>>> dist_to_goal;
+
 
     // Buffers pre-asignados para evitar malloc en cada llamada (Fix 2)
     std::vector<float> input_tensor_data;       // para evaluate() secuencial [6*25*25]
