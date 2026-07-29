@@ -255,19 +255,23 @@ def train_ranking_regressor(folds_to_run, alpha, margin, min_diff_norm, max_pair
                 loss_huber = (huber_criterion(p_pred, p_norm) * weights).mean()
 
                 # ── Ranking loss intra-bucket ─────────────────────────────
-                pi, pj, tg, pair_counts = build_ranking_pairs(
-                    p_pred, p_norm, buckets,
-                    min_diff=min_diff_norm, max_pairs=max_pairs
-                )
-                if pi is not None:
-                    loss_rank = ranking_criterion(pi, pj, tg.to(device))
+                # Cortocircuito: si alpha=0 (modo Spatial puro / Huber solo),
+                # no construir pares — es puro gasto de CPU sin efecto en el gradiente.
+                if alpha > 0:
+                    pi, pj, tg, pair_counts = build_ranking_pairs(
+                        p_pred, p_norm, buckets,
+                        min_diff=min_diff_norm, max_pairs=max_pairs
+                    )
+                    if pi is not None:
+                        loss_rank = ranking_criterion(pi, pj, tg.to(device))
+                    else:
+                        loss_rank = torch.tensor(0.0, device=device)
+                        pair_counts = {}
+                    # Acumular conteo de pares por bucket para diagnóstico de sparsity
+                    for b, cnt in pair_counts.items():
+                        epoch_pair_counts[b] = epoch_pair_counts.get(b, 0) + cnt
                 else:
                     loss_rank = torch.tensor(0.0, device=device)
-                    pair_counts = {}
-
-                # Acumular conteo de pares por bucket para diagnóstico de sparsity
-                for b, cnt in pair_counts.items():
-                    epoch_pair_counts[b] = epoch_pair_counts.get(b, 0) + cnt
 
                 loss = (1 - alpha) * loss_huber + alpha * loss_rank
                 loss.backward()
