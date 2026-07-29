@@ -26,12 +26,21 @@ def apply_d4(t, variant):
     return t
 
 class PathConsistencyDataset(Dataset):
-    def __init__(self, fold_k, augment=True):
+    def __init__(self, fold_k, augment=True, max_route_distance=-1):
         self.augment = augment
         path_file = os.path.join(RESULTS_DIR, "path_consistency", f"path_fold{fold_k}_train.pt")
         print(f"  Cargando dataset de Path Consistency: {os.path.basename(path_file)}...")
         self.pairs = torch.load(path_file, weights_only=False, map_location='cpu')
         
+        # Filtrar por distancia en la ruta (K=4 pushes por paso)
+        if max_route_distance > 0:
+            original_len = len(self.pairs)
+            max_diff = max_route_distance * 4
+            self.pairs = [p for p in self.pairs if (p['pushes1'] - p['pushes2']) <= max_diff]
+            print(f"  Filtro max_route_distance={max_route_distance} aplicado. Pares: {original_len} -> {len(self.pairs)}")
+        else:
+            print(f"  Pares cargados: {len(self.pairs)}")
+            
         # Cargar los pesos originales del fold de train
         train_file = os.path.join(RESULTS_DIR, f"regressor_fold{fold_k}_train.pt")
         print(f"  Extrayendo pesos originales de {os.path.basename(train_file)}...")
@@ -40,8 +49,6 @@ class PathConsistencyDataset(Dataset):
         self.weight_map = {}
         for item in orig_train:
             self.weight_map[item['shell_hash']] = item.get('weight', 1.0)
-            
-        print(f"  Pares cargados: {len(self.pairs)}")
 
     def __len__(self):
         return len(self.pairs)
@@ -89,7 +96,7 @@ class RegressorDataset(Dataset):
             torch.tensor(item.get('weight', 1.0), dtype=torch.float32),
         )
 
-def train_path_consistency(folds_to_run, max_epochs, alpha, margin, restart=False):
+def train_path_consistency(folds_to_run, max_epochs, alpha, margin, max_route_distance, restart=False):
     hparams_path = os.path.join(RESULTS_DIR, "best_hparams.json")
     if not os.path.exists(hparams_path):
         print("❌ Error: No se encontró best_hparams.json")
@@ -131,7 +138,7 @@ def train_path_consistency(folds_to_run, max_epochs, alpha, margin, restart=Fals
         p_mean, p_std = stats["pushes_mean"], stats["pushes_std"]
 
         # Loader de pares de consistencia para el Train
-        train_dataset = PathConsistencyDataset(fold, augment=True)
+        train_dataset = PathConsistencyDataset(fold, augment=True, max_route_distance=max_route_distance)
         train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0, pin_memory=True)
         
         # Loaders estándar para Val/Test
@@ -312,9 +319,10 @@ if __name__ == "__main__":
     parser.add_argument("--epochs", type=int, default=50, help="Máximo de épocas")
     parser.add_argument("--alpha", type=float, default=0.1, help="Peso del Margin Ranking Loss (0-1). Loss = (1-alpha)*Huber + alpha*Margin")
     parser.add_argument("--margin", type=float, default=0.05, help="Margen para el Margin Ranking Loss (en espacio z-score de log(pushes)). K=4 pasos -> diff real ~0.12; usar 0.05 como conservador.")
+    parser.add_argument("--max_route_distance", type=int, default=1, help="Máxima distancia (en pasos K=4) entre estados del par. 1 = consecutivos. -1 = todos.")
     parser.add_argument("--restart", action="store_true", help="Ignora checkpoints existentes y reinicia el entrenamiento desde cero")
 
     args = parser.parse_args()
     folds_to_run = [int(x.strip()) for x in args.folds.split(",")]
 
-    train_path_consistency(folds_to_run, args.epochs, args.alpha, args.margin, restart=args.restart)
+    train_path_consistency(folds_to_run, args.epochs, args.alpha, args.margin, args.max_route_distance, restart=args.restart)
