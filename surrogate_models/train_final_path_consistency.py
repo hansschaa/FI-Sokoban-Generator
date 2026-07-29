@@ -186,8 +186,12 @@ def train_path_consistency(folds_to_run, max_epochs, alpha, margin, restart=Fals
                 p1_norm = (torch.log1p(p1_raw) - p_mean) / p_std
                 p2_norm = (torch.log1p(p2_raw) - p_mean) / p_std
                 
-                pred1 = model(t1).squeeze(-1)
-                pred2 = model(t2).squeeze(-1)
+                # IMPORTANTE: concatenar t1 y t2 en un solo batch para que BatchNorm
+                # vea ambas distribuciones en la misma pasada y sus running_stats
+                # no oscilen entre las dos sub-distribuciones separadas.
+                combined = torch.cat([t1, t2], dim=0)
+                pred_combined = model(combined).squeeze(-1)
+                pred1, pred2 = pred_combined.split(t1.size(0))
                 
                 # Calcular HuberLoss ponderada por el peso del tablero original
                 loss_huber1 = huber_loss(pred1, p1_norm)
@@ -307,7 +311,7 @@ if __name__ == "__main__":
     parser.add_argument("--folds", type=str, default="1,2,3,4,5", help="Folds a ejecutar separados por coma (ej. 1)")
     parser.add_argument("--epochs", type=int, default=50, help="Máximo de épocas")
     parser.add_argument("--alpha", type=float, default=0.1, help="Peso del Margin Ranking Loss (0-1). Loss = (1-alpha)*Huber + alpha*Margin")
-    parser.add_argument("--margin", type=float, default=1.0, help="Margen para el Margin Ranking Loss")
+    parser.add_argument("--margin", type=float, default=0.05, help="Margen para el Margin Ranking Loss (en espacio z-score de log(pushes)). K=4 pasos -> diff real ~0.12; usar 0.05 como conservador.")
     parser.add_argument("--restart", action="store_true", help="Ignora checkpoints existentes y reinicia el entrenamiento desde cero")
 
     args = parser.parse_args()

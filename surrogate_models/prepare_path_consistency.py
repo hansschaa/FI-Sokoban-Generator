@@ -1,4 +1,5 @@
 import os
+import sys
 import argparse
 import glob
 import re
@@ -8,6 +9,11 @@ import torch
 import pandas as pd
 from tqdm import tqdm
 import subprocess
+
+# Importar la función canónica de encode_board desde board_utils
+# NUNCA reimplementar esta función — ya causó bugs graves dos veces (C++ y aquí).
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data'))
+from board_utils import encode_board
 
 K_STEPS = 4
 MAX_SAMPLES = 500
@@ -122,64 +128,9 @@ def simulate_path(board_str, lurd_path):
             
     return states
 
-# --- TENSOR ENCODING ---
-def flood_fill_exterior(char_matrix):
-    H, W = char_matrix.shape
-    visited = np.zeros((H, W), dtype=bool)
-    q = []
-    for r in range(H):
-        q.append((r, 0)); q.append((r, W-1))
-    for c in range(W):
-        q.append((0, c)); q.append((H-1, c))
-    
-    exterior = np.zeros((H, W), dtype=bool)
-    head = 0
-    while head < len(q):
-        r, c = q[head]
-        head += 1
-        if r < 0 or r >= H or c < 0 or c >= W: continue
-        if visited[r, c]: continue
-        visited[r, c] = True
-        
-        if char_matrix[r, c] == '#': continue
-            
-        exterior[r, c] = True
-        q.extend([(r-1, c), (r+1, c), (r, c-1), (r, c+1)])
-    return exterior
-
-def encode_board(board_str):
-    lines = board_str.splitlines()
-    H = len(lines)
-    W = max(len(l) for l in lines)
-    char_matrix = np.full((H, W), ' ', dtype=str)
-    
-    for r, row in enumerate(lines):
-        for c, char in enumerate(row):
-            char_matrix[r, c] = char
-            
-    exterior = flood_fill_exterior(char_matrix)
-    tensor = np.zeros((6, H, W), dtype=np.float32)
-    
-    for r in range(H):
-        for c in range(W):
-            ch = char_matrix[r, c]
-            if ch == '#':
-                tensor[0, r, c] = 1.0 # Canal 0: Pared
-            if ch in ['.', '*', '+']:
-                tensor[1, r, c] = 1.0 # Canal 1: Metas
-            if ch in ['$', '*']:
-                tensor[2, r, c] = 1.0 # Canal 2: Cajas
-            if ch in ['@', '+']:
-                tensor[3, r, c] = 1.0 # Canal 3: Jugador
-            # Canal 4 is deadlock_mask (zeros for now)
-            if not exterior[r, c] and ch != '#':
-                tensor[5, r, c] = 1.0 # Canal 5: Interior caminable
-                
-    padded_tensor = np.zeros((6, 25, 25), dtype=np.float32)
-    h_min = min(H, 25)
-    w_min = min(W, 25)
-    padded_tensor[:, :h_min, :w_min] = tensor[:, :h_min, :w_min]
-    return padded_tensor
+# NOTA: encode_board() se importa desde data/board_utils.py al inicio del archivo.
+# No reimplementar aquí — la convención de canales es:
+#   C0: Muros | C1: Interior/Piso | C2: Cajas | C3: Metas | C4: Jugador | C5: Deadlock mask
 
 def build_fold_map():
     fold_map = {}
