@@ -25,7 +25,7 @@ def run_benchmark_for_lr(lr, name):
     subprocess.run(["./venv/bin/python3", "surrogate_models/export_pc_to_jit.py", "--fold", "1"], check=True)
     
     print("\n[3/4] Ejecutando A* Benchmark (Tomará varios minutos)...")
-    subprocess.run(["./venv/bin/python3", "run_benchmark.py", "--sok", "sok_files/benchmark_stratified_heldout.sok", "--heuristic", "resnet"], check=True)
+    subprocess.run(["./venv/bin/python3", "run_benchmark.py", "--file", "sok_files/benchmark_stratified_heldout.sok", "--end", "40"], check=True)
     
     print(f"\n[4/4] Analizando intersección contra Hungarian ({name})...")
     result = subprocess.run(["./venv/bin/python3", "scratch/intersection_benchmark.py"], capture_output=True, text=True, check=True)
