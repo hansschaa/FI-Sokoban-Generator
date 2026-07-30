@@ -8,7 +8,10 @@ cd "$REPO_DIR"
 git pull
 
 cd surrogate_models
-echo "2. Regenerando datasets para los 5 Folds en paralelo (10 workers)..."
+echo "2. Eliminando datasets antiguos con el bug de canales..."
+rm -f results/path_consistency/path_fold*.pt
+
+echo "3. Regenerando datasets para los 5 Folds en paralelo (10 workers)..."
 mkdir -p logs_generation
 for i in {0..9}; do
     ../venv/bin/python3 prepare_path_consistency.py --part $i --total-parts 10 > logs_generation/part_$i.log 2>&1 &
