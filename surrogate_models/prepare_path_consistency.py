@@ -1,6 +1,7 @@
 import os
 import sys
 import argparse
+import json
 import glob
 import re
 import hashlib
@@ -134,19 +135,17 @@ def simulate_path(board_str, lurd_path):
 
 def build_fold_map():
     fold_map = {}
-    print("Building fold mapping from existing datasets...")
-    for k in range(1, 6):
-        fpath = f"results/regressor_fold{k}_train.pt"
-        if not os.path.exists(fpath):
-            print(f"Warning: {fpath} not found!")
-            continue
-        try:
-            d = torch.load(fpath, map_location='cpu', weights_only=False)
-            for item in d:
-                if 'shell_hash' in item:
-                    fold_map[item['shell_hash']] = k
-        except Exception as e:
-            print(f"Error loading {fpath}: {e}")
+    fpath = "results/fold_map.json"
+    print(f"Loading fold mapping from {fpath}...")
+    if not os.path.exists(fpath):
+        print(f"ERROR: {fpath} not found! Cannot build fold_map.")
+        return fold_map
+    
+    with open(fpath, "r") as f:
+        fold_map = json.load(f)
+        
+    # JSON keys are strings, but shell_hashes are integers
+    fold_map = {int(k): v for k, v in fold_map.items()}
     
     unique_hashes = len(fold_map)
     print(f"Found {unique_hashes} unique shell_hashes in fold_map.")
