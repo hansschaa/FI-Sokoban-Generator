@@ -13,6 +13,8 @@ rm -f results/path_consistency/path_fold*.pt
 
 echo "2.5. Ejecutando Test Visual de Sanidad (Padding y Tensores)..."
 ../venv/bin/python3 debug_visual.py
+echo ""
+read -p ">>> Revisa los tensores arriba. Presiona ENTER para continuar y lanzar la generación... <<<"
 
 echo "3. Regenerando datasets para los 5 Folds en paralelo (10 workers)..."
 mkdir -p logs_generation
