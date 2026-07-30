@@ -48,12 +48,16 @@ def evaluate_model_inter_branch(model, device, n_pairs=500):
             current_board = []
             for line in lines:
                 line = line.rstrip()
-                if ' - pushes:' in line or ' - moves:' in line:
+                if not line:
+                    continue
+                # A line is a board line if it only contains valid Sokoban characters
+                is_board_line = all(c in '# @$.*+-' for c in line)
+                if not is_board_line:
                     if current_name and current_board:
                         board_map[current_name] = '\n'.join(current_board)
-                    current_name = line.split(' - ')[0].strip()
+                    current_name = line
                     current_board = []
-                elif line:
+                else:
                     current_board.append(line)
             if current_name and current_board:
                 board_map[current_name] = '\n'.join(current_board)
