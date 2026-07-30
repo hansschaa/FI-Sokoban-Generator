@@ -257,7 +257,10 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
         pushes_pred = output.toTensor();
     }
     
-    float z_score = pushes_pred.item<float>();
+    // Fix 1: mover tensor a CPU UNA sola vez, luego leer con accessor
+    auto cpu_tensor = pushes_pred.to(torch::kCPU).contiguous();
+    auto accessor = cpu_tensor.accessor<float, 1>();
+    float z_score = accessor[0];
 
     // Un-normalize
     // Apply expm1 to reverse the log1p normalization done in training
