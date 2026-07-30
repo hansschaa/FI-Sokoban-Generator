@@ -23,15 +23,29 @@ def evaluate_model_inter_branch(model, device, n_pairs=500):
         print("Warning: TSV file not found for evaluation.")
         return 0.0
         
-    board_map = {}
-    files = glob.glob(os.path.join(SOK_DIR, "**/*.sok"), recursive=True)
-    for f in files:
-        with open(f, 'r') as file:
-            board_str = file.read()
-            name = os.path.basename(f).replace('.sok', '')
-            board_map[name] = board_str
-            if len(board_map) >= n_pairs * 2: break
+    print(f"Reading TSV: {TSV_FILE}")
     df = pd.read_csv(TSV_FILE, sep='\t')
+    print(f"Total rows in TSV: {len(df)}")
+    
+    board_map = {}
+    sources = ["scratch/path_consistency_sample.sok", "sok_files/benchmark_stratified_heldout.sok"]
+    for src in sources:
+        if os.path.exists(src):
+            with open(src, 'r') as f:
+                lines = f.readlines()
+            current_name = None
+            current_board = []
+            for line in lines:
+                line = line.rstrip()
+                if ' - pushes:' in line or ' - moves:' in line:
+                    if current_name and current_board:
+                        board_map[current_name] = '\n'.join(current_board)
+                    current_name = line.split(' - ')[0].strip()
+                    current_board = []
+                elif line:
+                    current_board.append(line)
+            if current_name and current_board:
+                board_map[current_name] = '\n'.join(current_board)
     
     total_pairs = 0
     correct_pairs = 0
@@ -70,6 +84,7 @@ def evaluate_model_inter_branch(model, device, n_pairs=500):
                     if pred_opt < pred_sub: # We want optimal z-score to be smaller
                         correct_pairs += 1
 
+    print(f"Evaluated pairs: {total_pairs}, Correct pairs: {correct_pairs}")
     if total_pairs > 0:
         return correct_pairs / total_pairs
     return 0.0
@@ -104,8 +119,10 @@ def objective(trial):
     # 3. Entrenamiento corto (10 épocas)
     epochs = 10
     model.train()
+    import time
     
     for epoch in range(epochs):
+        t0 = time.time()
         for batch in dataloader:
             x_board = batch['tensor1'].to(device)
             p1_raw = batch['pushes1'].float().to(device)
@@ -129,6 +146,8 @@ def objective(trial):
             total_loss = loss_huber + alpha * loss_rank
             total_loss.backward()
             optimizer.step()
+        
+        print(f"  Epoch {epoch+1}/{epochs} finalizada en {time.time()-t0:.1f}s")
             
     # 4. Evaluación Inter-branch
     acc = evaluate_model_inter_branch(model, device, n_pairs=500)
