@@ -97,9 +97,9 @@ class RegressorDataset(Dataset):
         )
 
 def train_path_consistency(folds_to_run, max_epochs, alpha, margin, max_route_distance, restart=False):
-    hparams_path = os.path.join(RESULTS_DIR, "best_hparams.json")
+    hparams_path = os.path.join(RESULTS_DIR, "best_hparams_path_consistency.json")
     if not os.path.exists(hparams_path):
-        print("❌ Error: No se encontró best_hparams.json")
+        print(f"Error: No se encontró el archivo de hiperparámetros {hparams_path}")
         return
 
     with open(hparams_path, "r") as f:
@@ -109,6 +109,8 @@ def train_path_consistency(folds_to_run, max_epochs, alpha, margin, max_route_di
     weight_decay = cfg["weight_decay"]
     dropout_p    = cfg["dropout_p"]
     batch_size   = int(cfg["batch_size"]) // 2  # Usamos pares, reducimos el batch por memoria
+    alpha        = cfg["alpha"]
+    margin       = cfg["margin"]
 
     print("\n" + "="*65)
     print("  ENTRENAMIENTO FINAL: PATH CONSISTENCY REGRESSOR")
