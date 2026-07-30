@@ -12,8 +12,8 @@ print("\n=======================================================")
 print("  TEST VISUAL DE SANIDAD (1er Tablero Real del Dataset)")
 print("=======================================================")
 
-fold_map = build_fold_map("results/fold_map.json")
-records = parse_sok_files("results/solvables/", fold_map)
+fold_map = build_fold_map()
+records = parse_sok_files("../training_data/Solvables", fold_map)
 record = records[0]
 board_str = record['board_str']
 
