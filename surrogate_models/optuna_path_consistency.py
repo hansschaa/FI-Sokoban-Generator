@@ -23,6 +23,15 @@ def evaluate_model_inter_branch(model, device, n_pairs=500):
     SOK_FILE = os.path.join(PROJECT_ROOT, "sok_files", "benchmark_stratified_heldout.sok")
     BATCH_SOLVER = os.path.join(PROJECT_ROOT, "build", "batch_solver")
     
+    if os.path.exists(TSV_FILE):
+        try:
+            df_check = pd.read_csv(TSV_FILE, sep='\t')
+            if len(df_check) < 40: # Known benchmark size
+                print(f"TSV incompleto detectado ({len(df_check)} filas). Regenerando...")
+                os.remove(TSV_FILE)
+        except Exception:
+            os.remove(TSV_FILE)
+
     if not os.path.exists(TSV_FILE):
         print(f"Generating TSV for evaluation from {SOK_FILE}...")
         import subprocess
@@ -154,8 +163,9 @@ def objective(trial):
             
             loss_huber = huber_loss(pred_opt, y_target)
             
-            # Queremos que pred_opt < pred_sub, así que y=-1
-            target_rank = torch.full_like(pred_opt, -1)
+            # x_board (tensor1) tiene más empujes reales que x_sibling (tensor2).
+            # Por lo tanto, queremos que pred_opt > pred_sub, así que y=1
+            target_rank = torch.ones_like(pred_opt)
             loss_rank = ranking_loss(pred_opt, pred_sub, target_rank)
             
             total_loss = loss_huber + alpha * loss_rank
