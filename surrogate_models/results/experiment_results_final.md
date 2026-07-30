@@ -70,14 +70,16 @@ Evaluamos empíricamente la calidad de la solución encontrada por la heurístic
 
 ---
 
-## 5. Densidad Estructural de Fallos (KNN Analysis)
-Para aislar si los 5 tableros fallidos (27, 31, 33, 34, 36) cayeron por falta de volumen general de datos o por pertenecer a un "perfil estructural" atípico, realizamos un mapeo de K-Vecinos Más Cercanos (KNN, $k=50$) contra una muestra de $\sim$9000 tableros del dataset de entrenamiento. Comparamos la distancia espacial de los tableros fallidos versus los tableros exitosos de su mismo *box count*, midiendo características morfológicas (dispersión de cajas, densidad de muros) y el "Gap" de dificultad (*Pushes Reales - Cota Húngara*).
+## 5. Análisis Exploratorio de Densidad Estructural (KNN)
+Para explorar si los 5 tableros fallidos (27, 31, 33, 34, 36) experimentaron errores por falta de volumen general de datos o por pertenecer a un "perfil estructural" atípico, realizamos un mapeo exploratorio de K-Vecinos Más Cercanos (KNN, $k=50$) contra una muestra de $\sim$9000 tableros del dataset de entrenamiento. Comparamos la distancia espacial de los tableros fallidos versus los tableros exitosos de su mismo *box count*, midiendo características morfológicas (dispersión de cajas, densidad de muros) y el "Gap" de dificultad (*Pushes Reales - Cota Húngara*).
 
-**Resultados del Espacio Latente Estructural:**
-- **Fallas de 5 y 6 Cajas (Outliers Estructurales):** Los tableros fallidos 27 (5 cajas) y 36 (6 cajas) habitan un "desierto" en el dataset de entrenamiento. Su distancia promedio a los 50 vecinos más cercanos (2.41 y 4.26 respectivamente) supera ampliamente el máximo de cualquier tablero exitoso (1.91 y 3.29). Además, presentan *Gaps* masivos (40 y 58 empujes de "rodeo"). Concluimos que estos fallos no son sistémicos, sino producto de escasez de representación extrema (outliers).
-- **Fallas de 7 Cajas (Colapso Sistémico):** A diferencia de los anteriores, los tableros fallidos 33 y 34 de 7 cajas tienen distancias al dataset de entrenamiento (1.88 y 1.47) perfectamente normales y comparables a los tableros exitosos (promedio 1.81). Tienen además *Gaps* minúsculos (2 y 6). Su fracaso demuestra que en 7 cajas, el error ya no es por falta de datos morfológicos, sino que se rompe la capacidad representacional del modelo.
+**Resultados del Espacio Latente Estructural (Muestra Pequeña):**
+- **5 Cajas (n=1 fallido vs n=3 exitosos):** El único tablero fallido (Board 27) muestra una distancia promedio a sus 50 vecinos más cercanos de 2.41, superando el máximo de los exitosos (1.91), y presenta un *Gap* masivo (40 empujes). Esta observación aislada sugiere que podría tratarse de un *outlier* estructural.
+- **6 Cajas (n=1 fallido vs n=4 exitosos):** El único tablero fallido (Board 36) muestra un patrón similar, con una distancia extrema de 4.26 (vs 3.29 máximo en exitosos) y un *Gap* inusualmente alto (58 empujes). Al igual que en 5 cajas, esto apunta a una posible falta de representación local para perfiles muy atípicos.
+- **7 Cajas (n=3 fallidos vs n=5 exitosos):** En este estrato, los tableros fallidos 33 y 34 presentan distancias al dataset de entrenamiento (1.88 y 1.47) completamente normales comparadas con los tableros exitosos (promedio 1.81). Tienen además *Gaps* bajos (2 y 6). En 2 de 3 tableros fallidos de 7 cajas, la falla no parece explicarse por escasez local de datos similares, sugiriendo que en este régimen el problema podría no ser únicamente de volumen de entrenamiento.
 
-**Conclusión:** En 5-6 cajas, los errores son solucionables mediante minería de datos dirigida (enfocada en tableros de alto Gap). En 7 cajas, el colapso cognitivo es sistémico e independiente de la densidad de datos, confirmando el techo empírico de la arquitectura.
+**Conclusión Exploratoria:** 
+Dada la escasez de fallos totales ($n=5$) en el benchmark de 40 tableros, estos resultados no son estadísticamente concluyentes. Sin embargo, sugieren dos posibles mecanismos de falla distintos: en 5-6 cajas, los errores podrían deberse a escasez de datos locales (*outliers* de alto Gap solucionables con minería dirigida); mientras que en 7 cajas, el error en tableros "fáciles" y bien representados insinúa una posible saturación de la capacidad del modelo. Se requeriría ampliar el benchmark a una muestra significativamente mayor (100-200 tableros) para confirmar estadísticamente estas hipótesis.
 
 ---
 
