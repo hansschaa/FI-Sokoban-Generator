@@ -104,6 +104,11 @@ def simulate_path(board_str, lurd_path):
         dx, dy = dirs[m]
         nx, ny = px + dx, py + dy
         
+        if nx < 0 or ny < 0 or nx >= len(lines) or ny >= len(lines[nx]):
+            # The board is leaky and the solver path walks outside the padded area.
+            # Discard this board entirely to prevent corrupted tensors.
+            return []
+
         is_push = m.isupper()
         if is_push:
             bx, by = nx + dx, ny + dy
@@ -120,7 +125,7 @@ def simulate_path(board_str, lurd_path):
         lines[px][py] = ' ' if p_char == '@' else '.'
         n_char = lines[nx][ny]
         lines[nx][ny] = '@' if n_char in [' ', '-'] else '+'
-        
+            
         px, py = nx, ny
         
         # Take snapshot every K pushes

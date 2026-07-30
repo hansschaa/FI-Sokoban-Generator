@@ -51,7 +51,7 @@ active_cols = np.where(t1.sum(axis=(0, 1)) > 0)[0]
 min_r, max_r = active_rows.min(), active_rows.max()
 min_c, max_c = active_cols.min(), active_cols.max()
 
-names = ["C0: Espacio Libre", "C1: Paredes (#)", "C2: Cajas ($)", "C3: Metas (.)", "C4: Jugador (@)"]
+names = ["C0: Paredes (#)", "C1: Espacio Libre", "C2: Cajas ($)", "C3: Metas (.)", "C4: Jugador (@)"]
 for ch_idx in range(5):
     print(f"\n{names[ch_idx]}:")
     for r in range(min_r, max_r + 1):
