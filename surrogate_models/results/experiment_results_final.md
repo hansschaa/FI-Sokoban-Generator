@@ -54,6 +54,22 @@ Ninguno de estos tableros falló por *timeout de tiempo* (lentitud). En el table
 
 ---
 
+## 4. Optimalidad de la Solución (Speed vs Optimality Trade-off)
+Evaluamos empíricamente la calidad de la solución encontrada por la heurística neuronal (`neural_batched_massive`) frente al baseline matemático (`Hungarian`), medido sobre la intersección estricta de 19 tableros resueltos por ambos. Dado que el regresor neuronal no garantiza admisibilidad estricta, existe un riesgo de encontrar rutas subóptimas.
+
+| Métrica de Optimalidad | Frecuencia | Porcentaje |
+| :--- | :--- | :--- |
+| **Igual de Óptima** (Mismos pushes) | 18 tableros | 94.7% |
+| **Subóptima** (Más pushes) | 1 tablero | 5.3% |
+| **Superóptima** (Menos pushes) | 0 tableros | 0.0% |
+
+**Desglose del caso subóptimo:**
+- **Board 14** (Cajas: 5): Hungarian encontró la solución en 28 pushes. Neural Massive la encontró en 30 pushes (+2 empujes adicionales).
+
+**Hallazgo Clave:** A pesar de carecer de garantías matemáticas de admisibilidad absoluta, la red neuronal empíricamente preserva la **optimalidad perfecta en el 94.7% de los casos**. El único caso de degradación (+2 pushes) ocurrió justamente en el umbral de las 5 cajas, lo que vuelve a correlacionar la pérdida de precisión con la densidad, alineándose con los hallazgos de resolución y explosión de nodos.
+
+---
+
 ## Recomendación Final de Arquitectura (Production Switch)
 Basado en esta evidencia exhaustiva, la arquitectura en producción debe implementar un enrutador híbrido:
 1. Si `box_count <= 5`: Usar **Neural Batched Massive** (mantiene alta tasa de resolución y gana en nodos).
