@@ -2,7 +2,9 @@
 set -e
 
 echo "1. Actualizando repositorio..."
-cd /home/hanss/FI-sokoban-generator
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+REPO_DIR="$(dirname "$SCRIPT_DIR")"
+cd "$REPO_DIR"
 git pull
 
 cd surrogate_models
