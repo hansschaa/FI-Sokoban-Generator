@@ -172,6 +172,22 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
         compute_dist_to_goal(end_vec);
     }
 
+    // Hybrid Switch: Usar Hungarian puro para tableros con 6+ cajas
+    // donde la red neuronal tiende a colapsar cognitivamente.
+    if (node->box_count >= 6) {
+        int num_boxes = node->box_count;
+        int num_goals = (int)goal_positions.size();
+        int sz = std::max(num_boxes, num_goals);
+        std::vector<std::vector<int>> cost(sz, std::vector<int>(sz, 0));
+        for (int b = 0; b < num_boxes; ++b) {
+            for (int g = 0; g < num_goals; ++g) {
+                cost[b][g] = dist_to_goal[g][node->box_list[b].x][node->box_list[b].y];
+            }
+        }
+        Hungarian h(cost);
+        return (float)h.solve();
+    }
+
     // Zero out the input tensor
     std::fill(input_tensor_data.begin(), input_tensor_data.end(), 0.0f);
 
@@ -308,6 +324,40 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
     }
     if (!dist_initialized) {
         compute_dist_to_goal(end_vec);
+    }
+
+    // Hybrid Switch: Usar Hungarian puro para tableros con 6+ cajas
+    if (nodes[0]->box_count >= 6) {
+        std::vector<float> results;
+        for (size_t i = 0; i < nodes.size(); ++i) {
+            const game_node* node = nodes[i];
+            
+            // Check deadlock first (al igual que en modo neuronal)
+            bool is_deadlock = false;
+            for (int j = 0; j < node->box_count; ++j) {
+                if (deadlock_mask[node->box_list[j].x][node->box_list[j].y]) {
+                    is_deadlock = true;
+                    break;
+                }
+            }
+            if (is_deadlock) {
+                results.push_back(10000.0f);
+                continue;
+            }
+
+            int num_boxes = node->box_count;
+            int num_goals = (int)goal_positions.size();
+            int sz = std::max(num_boxes, num_goals);
+            std::vector<std::vector<int>> cost(sz, std::vector<int>(sz, 0));
+            for (int b = 0; b < num_boxes; ++b) {
+                for (int g = 0; g < num_goals; ++g) {
+                    cost[b][g] = dist_to_goal[g][node->box_list[b].x][node->box_list[b].y];
+                }
+            }
+            Hungarian h(cost);
+            results.push_back((float)h.solve());
+        }
+        return results;
     }
 
     int N = nodes.size();
