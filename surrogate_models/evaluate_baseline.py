@@ -9,13 +9,23 @@ def evaluate_baseline():
     model = SokobanSEResNetRegressor(dropout_p=0.0) # Evaluacion pura
     
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-    ckpt_path = os.path.join(SCRIPT_DIR, "results", "production_regressor.pt")
     
-    if not os.path.exists(ckpt_path):
-        ckpt_path = os.path.join(SCRIPT_DIR, "results", "final_regressor_fold1.pt")
-        
-    if not os.path.exists(ckpt_path):
-        print(f"Error: No se encontro el modelo {ckpt_path}")
+    candidates = [
+        os.path.join(SCRIPT_DIR, "results", "production_regressor.pt"),
+        os.path.join(SCRIPT_DIR, "results", "final_regressor_fold1.pt"),
+        os.path.join(SCRIPT_DIR, "results", "path_consistency", "final_regressor_fold1.pt")
+    ]
+    
+    ckpt_path = None
+    for cand in candidates:
+        if os.path.exists(cand):
+            ckpt_path = cand
+            break
+            
+    if not ckpt_path:
+        print(f"Error: No se encontro el modelo en ninguna de las siguientes rutas:")
+        for cand in candidates:
+            print(f"  - {cand}")
         return
         
     print(f"Cargando {ckpt_path}...")
