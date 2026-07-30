@@ -92,6 +92,8 @@ void NeuralHeuristic::compute_dist_to_goal(const std::vector<std::vector<bool>>&
 NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int cols) 
     : m(rows), n(cols) {
     try {
+        auto t_start = std::chrono::high_resolution_clock::now();
+        
         // Load the TorchScript model
         model = std::make_shared<torch::jit::Module>(torch::jit::load(model_path));
         use_gpu = torch::cuda::is_available();
@@ -102,6 +104,17 @@ NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int co
         
         // Disable gradients for faster inference
         torch::NoGradGuard no_grad;
+
+        // Dummy forward pass for CUDA / cuDNN warmup
+        torch::Tensor dummy_input = torch::zeros({1, 6, 25, 25}, torch::TensorOptions().dtype(torch::kFloat32));
+        if (use_gpu) dummy_input = dummy_input.to(torch::kCUDA);
+        std::vector<torch::jit::IValue> dummy_inputs;
+        dummy_inputs.push_back(dummy_input);
+        model->forward(dummy_inputs);
+        
+        auto t_end = std::chrono::high_resolution_clock::now();
+        double warmup_ms = std::chrono::duration<double, std::milli>(t_end - t_start).count();
+        std::cout << "[CUDA WARMUP] Costo fijo de inicializacion: " << warmup_ms << " ms" << std::endl;
 
         // Deadlock mask is computed lazily on first evaluate() call,
         // once end_vec (goal positions) is available.
@@ -406,6 +419,7 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
         float pushes_pred = std::expm1(z_score * pushes_std + pushes_mean);
         pushes_pred = std::max(0.0f, pushes_pred);
         
+        /*
         if (dist_initialized && !goal_positions.empty()) {
             const game_node* node = nodes[i];
             int num_boxes = node->box_count;
@@ -421,6 +435,7 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
             float hungarian_lb = (float)h.solve();
             pushes_pred = hungarian_lb + std::clamp(pushes_pred - hungarian_lb, 0.0f, 1.0f * hungarian_lb);
         }
+        */
         results.push_back(pushes_pred);
     }
 

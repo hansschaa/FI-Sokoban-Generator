@@ -48,7 +48,7 @@ def main():
     fd, temp_sok_filename = tempfile.mkstemp(prefix="sokoban_batch_temp_", suffix=".sok")
     with os.fdopen(fd, 'w') as f:
         for board_id, board_str in target_boards:
-            f.write(board_str + "\n\n")
+            f.write(f"Board_{board_id}\n{board_str}\n\n")
 
     env = os.environ.copy()
     env['OMP_NUM_THREADS'] = '1'

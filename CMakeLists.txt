@@ -80,13 +80,13 @@ list(REMOVE_ITEM MY_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_evolution.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_test_solver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_irace.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_batch.cpp     # <- MODIFICADO: Evita conflicto en los demas binarios
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_experiment1.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_shell.cpp     # Nuevo main para pruebas
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_dataset.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_es_dataset.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_playable_dataset.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_experiment.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_shell.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_dataset.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_playable_dataset.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_es_dataset.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_validate_bfs.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_batch.cpp
 )
 
 #
