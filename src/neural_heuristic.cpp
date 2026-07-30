@@ -390,7 +390,7 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
         }
     }
 
-    auto input_tensor = torch::from_blob(batch_data, {N, 6, max_h, max_w}, torch::kFloat32);
+    auto input_tensor = torch::from_blob(batch_data, {MAX_BATCH_SIZE, 6, max_h, max_w}, torch::kFloat32);
     if (use_gpu) {
         input_tensor = input_tensor.to(torch::kCUDA);
     }
