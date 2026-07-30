@@ -42,6 +42,7 @@ private:
 public:
     std::vector<float> get_last_tensor() const { return input_tensor_data; }
     NeuralHeuristic(const std::string& model_path, int rows, int cols);
+    void reset_board(int rows, int cols);
     ~NeuralHeuristic();
 
     float evaluate(const game_node* node, const std::vector<std::vector<bool>>& end_vec);

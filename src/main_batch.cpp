@@ -10,6 +10,7 @@
 
 #include "../include/game_solver.h"
 #include "../include/evolution/utils/board_utils.h"
+#include "neural_heuristic.hpp"
 
 struct SokobanLevel {
     std::string name;
@@ -209,6 +210,13 @@ int main(int argc, char* argv[])
         << "PathBranchingEffectiveTotalNodes\tPathBranchingEffectiveMin\tPathBranchingEffectiveMax\tPathBranchingEffectiveAvg\t"
         << "PathTotalChildrenGenerated\tPathRepeatedNodes\tPathDeadlocks\tPathRedundancy\n";
 
+    std::shared_ptr<NeuralHeuristic> shared_net = nullptr;
+    if (heuristic_type == Heuristic::neural ||
+        heuristic_type == Heuristic::neural_batched ||
+        heuristic_type == Heuristic::neural_batched_massive) {
+        shared_net = std::make_shared<NeuralHeuristic>("surrogate_models/results/surrogate_regressor_jit.pt", 25, 25);
+    }
+
     int idx = 1;
     for (const auto& lvl : collection) {
         std::cout << "[" << idx++ << "/" << collection.size() << "] " 
@@ -222,7 +230,7 @@ int main(int argc, char* argv[])
         solver.enable_advanced_deadlocks = enable_advanced;
         std::vector<game_node> solution;
 
-        auto stats = solver.test_template(Method::a_star, heuristic_type, solution, calc_path_branching);
+        auto stats = solver.test_template(Method::a_star, heuristic_type, solution, calc_path_branching, shared_net);
         double duration_ms = stats.runtime_ms;
 
         std::string status_str = (stats.status == SolveStatus::SOLVED) ? "SOLVED" :

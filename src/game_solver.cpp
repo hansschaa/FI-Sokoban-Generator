@@ -545,7 +545,8 @@ SolverStats game_solver::test_template(
     Method input,
     Heuristic heuristic_type,
     std::vector<game_node>& solution,
-    bool calc_path_branching
+    bool calc_path_branching,
+    std::shared_ptr<NeuralHeuristic> external_net
 ) {
     // 1. Declarar timers
     std::chrono::high_resolution_clock::time_point t_start;
@@ -571,12 +572,14 @@ SolverStats game_solver::test_template(
         initial_opt_dist = h.solve();
     }
 
-    std::unique_ptr<NeuralHeuristic> neural_net = nullptr;
-    if (heuristic_type == Heuristic::neural ||
+    std::shared_ptr<NeuralHeuristic> neural_net = external_net;
+    if (!neural_net && (heuristic_type == Heuristic::neural ||
         heuristic_type == Heuristic::neural_batched ||
-        heuristic_type == Heuristic::neural_batched_massive) {
+        heuristic_type == Heuristic::neural_batched_massive)) {
         std::string model_path = "surrogate_models/results/surrogate_regressor_jit.pt";
-        neural_net = std::make_unique<NeuralHeuristic>(model_path, m, n);
+        neural_net = std::make_shared<NeuralHeuristic>(model_path, m, n);
+    } else if (neural_net) {
+        neural_net->reset_board(m, n);
     }
 
     auto heuristic = [&](const game_node* a, const game_node*) {

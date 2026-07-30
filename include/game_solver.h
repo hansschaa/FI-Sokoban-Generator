@@ -10,6 +10,9 @@
 #include <string>
 #include <functional>
 #include <vector>
+#include <memory>
+
+class NeuralHeuristic;
 
 class detect_legal {
 public:
@@ -120,10 +123,9 @@ public:
     // false: Solo poda básica (Lento, obligatorio para contar FO4 Deadlocks)
     bool enable_advanced_deadlocks = false;
     
-    // AÑADIDO: Flag calc_path_branching por defecto a false
-    SolverStats test_template(Method method, Heuristic heuristic, std::vector<game_node>& solution, bool calc_path_branching = false);
+    SolverStats test_template(Method method, Heuristic heuristic, std::vector<game_node>& solution, bool calc_path_branching = false, std::shared_ptr<NeuralHeuristic> external_net = nullptr);
 
-    SolverStats test_template(Method method, std::vector<game_node>& solution, bool calc_path_branching = false) {
-        return test_template(method, Heuristic::simple, solution, calc_path_branching);
+    SolverStats test_template(Method method, std::vector<game_node>& solution, bool calc_path_branching = false, std::shared_ptr<NeuralHeuristic> external_net = nullptr) {
+        return test_template(method, Heuristic::simple, solution, calc_path_branching, external_net);
     }
 };

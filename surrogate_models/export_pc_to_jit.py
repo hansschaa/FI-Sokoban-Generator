@@ -5,7 +5,7 @@ import argparse
 from models.resnet import SokobanSEResNetRegressor
 
 def export_fold_model(fold: int):
-    device = torch.device("cpu")
+    device = torch.device("cuda")
     print(f"Exporting PC Fold {fold} on device: {device}")
 
     with open("results/best_hparams.json", "r") as f:
@@ -17,12 +17,13 @@ def export_fold_model(fold: int):
     if not os.path.exists(model_path):
         raise FileNotFoundError(f"No se encontró el modelo {model_path}")
         
-    state = torch.load(model_path, map_location="cpu", weights_only=False)
+    state = torch.load(model_path, map_location=device, weights_only=False)
     if "model_state_dict" in state:
         regressor.load_state_dict(state["model_state_dict"])
     else:
         regressor.load_state_dict(state)
         
+    regressor.to(device)
     regressor.eval()
 
     stats_path = f"results/regressor_fold{fold}_stats.pt"
@@ -30,7 +31,7 @@ def export_fold_model(fold: int):
     with open("results/surrogate_stats.txt", "w") as sf:
         sf.write(f"{stats['pushes_mean']}\n{stats['pushes_std']}\n")
 
-    dummy_input = torch.randn(1, 6, 25, 25)
+    dummy_input = torch.randn(1, 6, 25, 25, device=device)
     traced_regressor = torch.jit.trace(regressor, dummy_input)
     
     out_jit = "results/surrogate_regressor_jit.pt"
