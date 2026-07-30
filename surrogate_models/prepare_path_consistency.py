@@ -79,7 +79,7 @@ def simulate_path(board_str, lurd_path):
     if lines:
         max_w = max(len(l) for l in lines)
         for l in lines:
-            l.extend([' '] * (max_w - len(l)))
+            l.extend(['#'] * (max_w - len(l)))
     px, py = -1, -1
     for r, row in enumerate(lines):
         for c, char in enumerate(row):
