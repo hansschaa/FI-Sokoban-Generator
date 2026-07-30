@@ -16,20 +16,26 @@ def evaluate_model_inter_branch(model, device, n_pairs=500):
     model.eval()
     import pandas as pd
     
-    TSV_FILE = "scratch/path_consistency_results.tsv"
-    SOK_DIR = "training_data/Solvables"
+    TSV_FILE = "results/path_consistency_heldout.tsv"
+    SOK_FILE = "../sok_files/benchmark_stratified_heldout.sok"
     
     if not os.path.exists(TSV_FILE):
-        print("Warning: TSV file not found for evaluation.")
-        return 0.0
-        
+        print(f"Generating TSV for evaluation from {SOK_FILE}...")
+        import subprocess
+        cmd = ["../build/batch_solver", SOK_FILE, "hungarian", TSV_FILE]
+        try:
+            subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL)
+        except Exception as e:
+            print(f"Failed to generate TSV: {e}")
+            return 0.0
+            
     print(f"Reading TSV: {TSV_FILE}")
     df = pd.read_csv(TSV_FILE, sep='\t')
     df = df.sample(frac=1.0, random_state=42).reset_index(drop=True)
     print(f"Total rows in TSV: {len(df)}")
     
     board_map = {}
-    sources = ["scratch/path_consistency_sample.sok", "sok_files/benchmark_stratified_heldout.sok"]
+    sources = [SOK_FILE]
     for src in sources:
         if os.path.exists(src):
             with open(src, 'r') as f:
