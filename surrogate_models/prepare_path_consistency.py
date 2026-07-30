@@ -76,6 +76,10 @@ def parse_sok_files(directory, fold_map):
 
 def simulate_path(board_str, lurd_path):
     lines = [list(l) for l in board_str.splitlines()]
+    if lines:
+        max_w = max(len(l) for l in lines)
+        for l in lines:
+            l.extend([' '] * (max_w - len(l)))
     px, py = -1, -1
     for r, row in enumerate(lines):
         for c, char in enumerate(row):
