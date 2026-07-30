@@ -144,9 +144,6 @@ def build_fold_map():
     with open(fpath, "r") as f:
         fold_map = json.load(f)
         
-    # JSON keys are strings, but shell_hashes are integers
-    fold_map = {int(k): v for k, v in fold_map.items()}
-    
     unique_hashes = len(fold_map)
     print(f"Found {unique_hashes} unique shell_hashes in fold_map.")
     if unique_hashes < 1000:
