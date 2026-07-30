@@ -193,39 +193,32 @@ def main():
             board_id, board_str = boards[idx]
             print(f"\nProcesando Tablero {board_id}...")
             
+            sequential_failed = False
+            
             for heuristic in HEURISTICS:
+                # Si neural_sequential falló, saltar las variantes batched para ahorrar tiempo
+                if sequential_failed and heuristic in ['neural_batched', 'neural_batched_massive']:
+                    print(f"  -> Saltando: {heuristic} (salteado por fallo de sequential)")
+                    row = {'board_id': board_id, 'heuristic': heuristic, 'status': 'SKIPPED_DUE_TO_SEQUENTIAL_FAIL', 
+                           'runtime_ms': -1.0, 'pushes': -1, 'expanded_nodes': -1, 'total_children': -1, 
+                           'effective_children': -1, 'deadlocks': -1}
+                    writer.writerow(row)
+                    csvfile.flush()
+                    continue
+                    
                 # Skip si ya está en el CSV (modo resume fino por combinación)
                 if (board_id, heuristic) in completed_pairs:
                     print(f"  -> Saltando: {heuristic} (ya completado)")
                     continue
 
-                print(f"  -> Ejecutando: {heuristic} (3 corridas)...")
+                print(f"  -> Ejecutando: {heuristic} (1 corrida - modo piloto)...")
 
+                metrics = run_solver(board_str, heuristic, board_id)
+                last_metrics = metrics
                 
-                # Ejecutar 3 veces para reducir ruido del sistema (varianza)
-                runtimes = []
-                metrics_list = []
-                last_metrics = None
-                for _ in range(3):
-                    metrics = run_solver(board_str, heuristic, board_id)
-                    metrics_list.append(metrics)
-                    if metrics['runtime_ms'] > 0:
-                        runtimes.append(metrics['runtime_ms'])
-                    last_metrics = metrics
-                
-                # Check determinismo — solo tiene sentido si TODAS las corridas terminaron con SOLVED
-                # (con TIMEOUT el nº de nodos varía levemente por jitter del sistema, no es un bug)
-                if len(metrics_list) == 3 and all(m['status'] == 'SOLVED' for m in metrics_list):
-                    for i in range(1, 3):
-                        if (metrics_list[i]['pushes'] != metrics_list[0]['pushes'] or
-                            metrics_list[i]['expanded_nodes'] != metrics_list[0]['expanded_nodes'] or
-                            metrics_list[i]['deadlocks'] != metrics_list[0]['deadlocks']):
-                            print(f"  [WARNING] Resultados no deterministas detectados en tablero {board_id} con {heuristic}!")
-                            break
-
-                # Promediar tiempos si las corridas fueron exitosas
-                if runtimes and last_metrics['status'] == 'SOLVED':
-                    last_metrics['runtime_ms'] = sum(runtimes) / len(runtimes)
+                # Check si falló sequential
+                if heuristic == 'neural_sequential' and metrics['status'] != 'SOLVED':
+                    sequential_failed = True
                     
                 row = {'board_id': board_id, 'heuristic': heuristic}
                 row.update(last_metrics)

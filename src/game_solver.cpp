@@ -692,8 +692,14 @@ SolverStats game_solver::test_template(
             // batch_k controla el modo de acumulación en solver_template:
             //   1  → per-node batch   (neural_batched: hijos de UN nodo por llamada GPU)
             //   64 → cross-node batch (neural_batched_massive: ~400 hijos de 64 nodos por llamada)
-            int batch_k = (heuristic_type == Heuristic::neural_batched_massive) ? 64 : 1;
-            solution = gsolver0.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal,
+            int batch_k = 1;
+            if (heuristic_type == Heuristic::neural_batched_massive) {
+                batch_k = 64;
+                const char* env_k = std::getenv("BATCH_K");
+                if (env_k) {
+                    batch_k = std::atoi(env_k);
+                }
+            }            solution = gsolver0.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal,
                                       heuristic, heuristic_batch_func, batch_k);
         }
         else if (input == Method::dfs) {
