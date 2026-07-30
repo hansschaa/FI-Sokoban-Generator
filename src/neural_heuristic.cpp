@@ -441,3 +441,12 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
 
     return results;
 }
+
+void NeuralHeuristic::reset_board(int rows, int cols) {
+    this->m = rows;
+    this->n = cols;
+    this->mask_initialized = false;
+    this->dist_initialized = false;
+    this->goal_positions.clear();
+    this->dist_to_goal.clear();
+}
