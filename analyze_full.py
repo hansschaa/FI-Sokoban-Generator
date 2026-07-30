@@ -149,5 +149,47 @@ def main():
             meta_str = f"C: {b} | P: {p} ({bucket})"
             print(f"{bid:<7} | {meta_str:<25} | {h_n:>6} n -> {h_t:>5.0f} ms | {n_n:>6} n -> {n_t:>5.0f} ms | {tipo}")
 
+    print("\n" + "="*105)
+    print("5. OPTIMALIDAD DE LA SOLUCIÓN (Comparación de Pushes en Intersección)")
+    print("="*105)
+    
+    equal_count = 0
+    suboptimal_count = 0
+    superoptimal_count = 0
+    suboptimal_boards = []
+
+    if intersection:
+        for b_id in intersection:
+            p_hungarian = int(data[b_id]['hungarian']['pushes'])
+            p_neural = int(data[b_id]['neural_batched_massive']['pushes'])
+            diff = p_neural - p_hungarian
+            
+            if diff == 0:
+                equal_count += 1
+            elif diff > 0:
+                suboptimal_count += 1
+                # Retrieve box_count from the dataframe
+                try:
+                    box_c = df.loc[df['board_id'] == b_id, box_col].iloc[0]
+                except:
+                    box_c = '?'
+                suboptimal_boards.append({'board_id': b_id, 'diff': diff, 'box_count': box_c, 'p_hung': p_hungarian, 'p_neur': p_neural})
+            else:
+                superoptimal_count += 1
+                
+        print(f"Total de tableros evaluados (Intersección Estricta): {len(intersection)}")
+        print(f" (a) Igual de Óptima (Mismos pushes) : {equal_count} tableros ({(equal_count/len(intersection))*100:.1f}%)")
+        print(f" (b) Subóptima       (Más pushes)    : {suboptimal_count} tableros ({(suboptimal_count/len(intersection))*100:.1f}%)")
+        print(f" (c) Superóptima     (Menos pushes)  : {superoptimal_count} tableros ({(superoptimal_count/len(intersection))*100:.1f}%)")
+        
+        if suboptimal_count > 0:
+            print("\nDesglose de tableros con solución subóptima (Neural > Hungarian):")
+            print(f"{'Board':<7} | {'Cajas':<7} | {'Hungarian Pushes':<18} | {'Neural Pushes':<15} | {'Diferencia (Diff)'}")
+            print("-" * 75)
+            for b in suboptimal_boards:
+                print(f"{b['board_id']:<7} | {b['box_count']:<7} | {b['p_hung']:<18} | {b['p_neur']:<15} | +{b['diff']}")
+    else:
+        print("No hay tableros en la intersección.")
+
 if __name__ == "__main__":
     main()
