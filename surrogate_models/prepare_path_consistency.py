@@ -114,7 +114,9 @@ def simulate_path(board_str, lurd_path):
             bx, by = nx + dx, ny + dy
             # Move box
             box_char = lines[nx][ny]
-            target_char = lines[bx][by]
+            if bx < 0 or by < 0 or bx >= len(lines) or by >= len(lines[bx]):
+            return []
+        target_char = lines[bx][by]
             
             lines[nx][ny] = '-' if box_char == '$' else '.'
             lines[bx][by] = '$' if target_char in [' ', '-'] else '*'
