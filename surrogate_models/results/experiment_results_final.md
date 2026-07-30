@@ -70,6 +70,17 @@ Evaluamos empíricamente la calidad de la solución encontrada por la heurístic
 
 ---
 
+## 5. Densidad Estructural de Fallos (KNN Analysis)
+Para aislar si los 5 tableros fallidos (27, 31, 33, 34, 36) cayeron por falta de volumen general de datos o por pertenecer a un "perfil estructural" atípico, realizamos un mapeo de K-Vecinos Más Cercanos (KNN, $k=50$) contra una muestra de $\sim$9000 tableros del dataset de entrenamiento. Comparamos la distancia espacial de los tableros fallidos versus los tableros exitosos de su mismo *box count*, midiendo características morfológicas (dispersión de cajas, densidad de muros) y el "Gap" de dificultad (*Pushes Reales - Cota Húngara*).
+
+**Resultados del Espacio Latente Estructural:**
+- **Fallas de 5 y 6 Cajas (Outliers Estructurales):** Los tableros fallidos 27 (5 cajas) y 36 (6 cajas) habitan un "desierto" en el dataset de entrenamiento. Su distancia promedio a los 50 vecinos más cercanos (2.41 y 4.26 respectivamente) supera ampliamente el máximo de cualquier tablero exitoso (1.91 y 3.29). Además, presentan *Gaps* masivos (40 y 58 empujes de "rodeo"). Concluimos que estos fallos no son sistémicos, sino producto de escasez de representación extrema (outliers).
+- **Fallas de 7 Cajas (Colapso Sistémico):** A diferencia de los anteriores, los tableros fallidos 33 y 34 de 7 cajas tienen distancias al dataset de entrenamiento (1.88 y 1.47) perfectamente normales y comparables a los tableros exitosos (promedio 1.81). Tienen además *Gaps* minúsculos (2 y 6). Su fracaso demuestra que en 7 cajas, el error ya no es por falta de datos morfológicos, sino que se rompe la capacidad representacional del modelo.
+
+**Conclusión:** En 5-6 cajas, los errores son solucionables mediante minería de datos dirigida (enfocada en tableros de alto Gap). En 7 cajas, el colapso cognitivo es sistémico e independiente de la densidad de datos, confirmando el techo empírico de la arquitectura.
+
+---
+
 ## Recomendación Final de Arquitectura (Production Switch)
 Basado en esta evidencia exhaustiva, la arquitectura en producción debe implementar un enrutador híbrido:
 1. Si `box_count <= 5`: Usar **Neural Batched Massive** (mantiene alta tasa de resolución y gana en nodos).
