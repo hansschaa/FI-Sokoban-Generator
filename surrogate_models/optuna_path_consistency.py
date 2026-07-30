@@ -25,6 +25,7 @@ def evaluate_model_inter_branch(model, device, n_pairs=500):
         
     print(f"Reading TSV: {TSV_FILE}")
     df = pd.read_csv(TSV_FILE, sep='\t')
+    df = df.sample(frac=1.0, random_state=42).reset_index(drop=True)
     print(f"Total rows in TSV: {len(df)}")
     
     board_map = {}
