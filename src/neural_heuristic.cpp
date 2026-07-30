@@ -267,6 +267,7 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
     float pushes_pred_val = std::expm1(z_score * pushes_std + pushes_mean);
     pushes_pred_val = std::max(0.0f, pushes_pred_val);
     
+    /*
     if (dist_initialized && !goal_positions.empty()) {
         int num_boxes = node->box_count;
         int num_goals = (int)goal_positions.size();
@@ -281,6 +282,7 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
         float hungarian_lb = (float)h.solve();
         pushes_pred_val = hungarian_lb + std::clamp(pushes_pred_val - hungarian_lb, 0.0f, 1.0f * hungarian_lb);
     }
+    */
     return pushes_pred_val;
 }
 
