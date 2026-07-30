@@ -9,9 +9,11 @@ git pull
 
 cd surrogate_models
 echo "2. Regenerando datasets para los 5 Folds en paralelo (10 workers)..."
+mkdir -p logs_generation
 for i in {0..9}; do
-    ../venv/bin/python3 prepare_path_consistency.py --part $i --total-parts 10 > /dev/null 2>&1 &
+    ../venv/bin/python3 prepare_path_consistency.py --part $i --total-parts 10 > logs_generation/part_$i.log 2>&1 &
 done
+echo "   (Procesos corriendo en background. Revisa logs_generation/part_X.log para ver progreso)"
 wait
 echo "   -> Generación terminada."
 
