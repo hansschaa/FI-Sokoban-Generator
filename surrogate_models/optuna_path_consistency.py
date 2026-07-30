@@ -7,22 +7,30 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 
 from models.resnet import SokobanSEResNetRegressor
-from prepare_path_consistency import PathConsistencyDataset, encode_board, parse_sok_files, simulate_path
+from prepare_path_consistency import encode_board, simulate_path
+from train_final_path_consistency import PathConsistencyDataset
+import glob
 from evaluate_inter_branch import get_valid_children
 
 def evaluate_model_inter_branch(model, device, n_pairs=500):
     model.eval()
     import pandas as pd
     
-    TSV_FILE = "../scratch/path_consistency_results.tsv"
-    SOK_DIR = "../sokoban_dataset_buckets"
+    TSV_FILE = "scratch/path_consistency_results.tsv"
+    SOK_DIR = "training_data/Solvables"
     
     if not os.path.exists(TSV_FILE):
         print("Warning: TSV file not found for evaluation.")
         return 0.0
         
-    records = parse_sok_files(SOK_DIR, max_total=n_pairs)
-    board_map = {r['name']: r['board_str'] for r in records}
+    board_map = {}
+    files = glob.glob(os.path.join(SOK_DIR, "**/*.sok"), recursive=True)
+    for f in files:
+        with open(f, 'r') as file:
+            board_str = file.read()
+            name = os.path.basename(f).replace('.sok', '')
+            board_map[name] = board_str
+            if len(board_map) >= n_pairs * 2: break
     df = pd.read_csv(TSV_FILE, sep='\t')
     
     total_pairs = 0
@@ -81,14 +89,10 @@ def objective(trial):
     # 2. Configurar modelo y datos
     model = SokobanSEResNetRegressor(dropout_p=dropout_p).to(device)
     
-    train_data = "results/path_consistency/path_fold1_train.pt"
-    if not os.path.exists(train_data):
-        raise FileNotFoundError(f"Missing {train_data}")
-        
-    dataset = PathConsistencyDataset(train_data, augment=True)
+    dataset = PathConsistencyDataset(1, augment=True)
     
-    # Check si podemos usar los workers
-    num_workers = 4 if torch.cuda.is_available() else 0
+    # Dataset ya está en RAM, num_workers>0 causa 'too many fds' con miles de tensores
+    num_workers = 0
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, 
                             num_workers=num_workers, pin_memory=True, drop_last=True)
                             
@@ -103,9 +107,13 @@ def objective(trial):
     
     for epoch in range(epochs):
         for batch in dataloader:
-            x_board = batch['board'].to(device)
-            y_target = batch['target'].to(device)
-            x_sibling = batch['sibling_board'].to(device)
+            x_board = batch['tensor1'].to(device)
+            p1_raw = batch['pushes1'].float().to(device)
+            x_sibling = batch['tensor2'].to(device)
+            
+            p_mean = 2.45
+            p_std = 1.05
+            y_target = (torch.log1p(p1_raw) - p_mean) / p_std
             
             optimizer.zero_grad()
             
