@@ -5,7 +5,6 @@ import time
 import tempfile
 import sys
 import re
-from collections import deque
 
 def extract_boards(sok_file):
     with open(sok_file, 'r') as f:
@@ -22,211 +21,103 @@ def extract_boards(sok_file):
             current_board = []
             board_id += 1
             
-    # Flush the last one if no trailing newline
     if current_board:
         boards.append((board_id, '\n'.join(current_board)))
         
     return boards
 
-def preprocess_board(board_str):
-    lines = board_str.split('\n')
-    if not lines:
-        return board_str
-    
-    max_len = max(len(line) for line in lines)
-    # Rellenar con espacios para que sea rectangular
-    grid = [list(line.ljust(max_len, ' ')) for line in lines]
-    
-    rows = len(grid)
-    cols = max_len
-    
-    # Flood fill exterior spaces con '#'
-    q = deque()
-    
-    for r in range(rows):
-        if grid[r][0] == ' ': q.append((r, 0)); grid[r][0] = '#'
-        if grid[r][cols-1] == ' ': q.append((r, cols-1)); grid[r][cols-1] = '#'
-    for c in range(cols):
-        if grid[0][c] == ' ': q.append((0, c)); grid[0][c] = '#'
-        if grid[rows-1][c] == ' ': q.append((rows-1, c)); grid[rows-1][c] = '#'
-        
-    while q:
-        r, c = q.popleft()
-        for dr, dc in [(-1,0), (1,0), (0,-1), (0,1)]:
-            nr, nc = r+dr, c+dc
-            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == ' ':
-                grid[nr][nc] = '#'
-                q.append((nr, nc))
-                
-    return '\n'.join(''.join(row) for row in grid)
+import argparse
 
-def run_solver(board_str, heuristic, board_id, timeout_sec=180):
-    """
-    Ejecuta el test_solver con la heurística dada en el tablero provisto.
-    Retorna un diccionario con los resultados, o maneja los errores/timeouts.
-    """
-    processed_board = preprocess_board(board_str)
+def main():
+    parser = argparse.ArgumentParser(description='Benchmark Sokoban Solver (Batch Mode)')
+    parser.add_argument('--file', type=str, required=True, help='Ruta al archivo .sok')
+    parser.add_argument('--start', type=int, default=0, help='ID del tablero inicial')
+    parser.add_argument('--end', type=int, default=10, help='ID del tablero final (no inclusivo)')
+    parser.add_argument('--resume', action='store_true', help='Ignorado en modo batch')
+    args = parser.parse_args()
+
+    HEURISTICS = ['manhattan', 'hungarian', 'neural_sequential', 'neural_batched', 'neural_batched_massive']
+    csv_filename = f'benchmark_results_{args.start}_to_{args.end}.csv'
     
-    # 1. Crear un archivo temporal con el tablero
-    fd, temp_filename = tempfile.mkstemp(prefix=f"sokoban_temp_{board_id}_", suffix=".txt")
+    boards = extract_boards(args.file)
+    target_boards = boards[args.start:min(args.end, len(boards))]
+    
+    print(f"Extrayendo {len(target_boards)} tableros de {args.file} (desde {args.start} hasta {args.start+len(target_boards)-1})...")
+    
+    # 1. Crear un archivo temporal con los tableros seleccionados
+    fd, temp_sok_filename = tempfile.mkstemp(prefix="sokoban_batch_temp_", suffix=".sok")
     with os.fdopen(fd, 'w') as f:
-        f.write(processed_board)
-        
-    # 2. Preparar el comando
-    cmd = ['./build/test_solver', temp_filename, heuristic]
-    
-    # Aseguramos que la variable de entorno CUDA esté disponible
+        for board_id, board_str in target_boards:
+            f.write(board_str + "\n\n")
+
     env = os.environ.copy()
     env['OMP_NUM_THREADS'] = '1'
     env['MKL_NUM_THREADS'] = '1'
     env['OPENBLAS_NUM_THREADS'] = '1'
-    # Deshabilitar NVFuser para evitar crash por libnvrtc-builtins faltante
-    # El modelo corre igual de rápido usando cuDNN/cuBLAS como fallback
     env['PYTORCH_JIT_USE_NVFuser'] = '0'
-    
-    try:
-        # 3. Ejecutar y capturar salida
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout_sec, env=env)
-        output = result.stdout
-        
-        metrics = {
-            'status': 'UNKNOWN',
-            'runtime_ms': -1.0,
-            'pushes': -1,
-            'expanded_nodes': -1,
-            'total_children': -1,
-            'effective_children': -1,
-            'deadlocks': -1
-        }
-        
-        for line in output.split('\n'):
-            line = line.strip()
-            if line.startswith('status:'):
-                metrics['status'] = line.split(':')[1].strip()
-            elif line.startswith('runtime_ms:'):
-                metrics['runtime_ms'] = float(line.split(':')[1].strip())
-            elif line.startswith('pushes:'):
-                metrics['pushes'] = int(line.split(':')[1].strip())
-            elif line.startswith('expanded_nodes:'):
-                metrics['expanded_nodes'] = int(line.split(':')[1].strip())
-            elif line.startswith('total_children:'):
-                metrics['total_children'] = int(line.split(':')[1].strip())
-            elif line.startswith('effective_children:'):
-                metrics['effective_children'] = int(line.split(':')[1].strip())
-            elif line.startswith('deadlocks:'):
-                metrics['deadlocks'] = int(line.split(':')[1].strip())
-                
-        return metrics
-    except subprocess.TimeoutExpired:
-        return {
-            'status': 'HARD_TIMEOUT',
-            'runtime_ms': 180000.0,
-            'pushes': -1,
-            'expanded_nodes': -1,
-            'total_children': -1,
-            'effective_children': -1,
-            'deadlocks': -1
-        }
-    finally:
-        if os.path.exists(temp_filename):
-            os.remove(temp_filename)
 
-import argparse
-
-def main():
-    parser = argparse.ArgumentParser(description='Benchmark Sokoban Solver')
-    parser.add_argument('--file', type=str, required=True, help='Ruta al archivo .sok')
-    parser.add_argument('--start', type=int, default=0, help='ID del tablero inicial')
-    parser.add_argument('--end', type=int, default=10, help='ID del tablero final (no inclusivo)')
-    parser.add_argument('--resume', action='store_true', help='Reanudar desde el último progreso en el archivo CSV de salida')
-    args = parser.parse_args()
-
-    HEURISTICS = ['manhattan', 'hungarian', 'neural_sequential', 'neural_batched', 'neural_batched_massive']
-    
-    csv_filename = f'benchmark_results_{args.start}_to_{args.end}.csv'
-    
-    # Manejar modo resume
-    start_idx = args.start
-    file_mode = 'w'
-    # Conjunto de (board_id, heuristic) ya completados para resume fino por combinación
-    completed_pairs = set()
-    if args.resume and os.path.exists(csv_filename):
-        with open(csv_filename, 'r', newline='') as csvfile:
-            reader = csv.DictReader(csvfile)
-            for row in reader:
-                completed_pairs.add((int(row['board_id']), row['heuristic']))
-        file_mode = 'a'
-        if completed_pairs:
-            last_board = max(b for b, _ in completed_pairs)
-            print(f"[{csv_filename} encontrado] {len(completed_pairs)} combinaciones ya completadas. Reanudando...")
-        else:
-            file_mode = 'w'
-
-    sok_path = args.file
-    print(f"Extrayendo tableros de {sok_path}...")
-    boards = extract_boards(sok_path)
-    
-    # ── Dummy Warm-up para Inicializar CUDA ──
-    print("\n[Warming Up] Realizando corridas dummy para inicializar pesos y CUDA si está disponible...")
-    try:
-        # Usa el primer tablero disponible para calentar
-        # Timeout de 20s: la compilación JIT de CUDA puede tardar bastante en el primer run
-        warmup_board = boards[0][1]
-        run_solver(warmup_board, 'neural_sequential', "warmup", timeout_sec=20)
-        run_solver(warmup_board, 'neural_batched', "warmup", timeout_sec=20)
-        print("[Warming Up] Listo.")
-    except Exception as e:
-        print(f"[Warming Up] Advertencia: falló el warmup ({e})")
-    
-    with open(csv_filename, file_mode, newline='') as csvfile:
+    with open(csv_filename, 'w', newline='') as csvfile:
         fieldnames = ['board_id', 'heuristic', 'status', 'runtime_ms', 'pushes', 
                       'expanded_nodes', 'total_children', 'effective_children', 'deadlocks']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
         
-        if file_mode == 'w':
-            writer.writeheader()
-            
-        print("\nINICIANDO BENCHMARK. Los resultados se guardarán en tiempo real en", csv_filename)
+        print("\nINICIANDO BENCHMARK (Batch-Process por Heuristica)")
         print("-" * 60)
         
-        for idx in range(start_idx, min(args.end, len(boards))):
-            board_id, board_str = boards[idx]
-            print(f"\nProcesando Tablero {board_id}...")
+        for heuristic in HEURISTICS:
+            print(f"\n===========================================")
+            print(f"  Ejecutando: {heuristic}")
+            print(f"===========================================")
             
-            sequential_failed = False
+            temp_out_tsv = f"temp_out_{heuristic}.tsv"
+            cmd = ['./build/batch_solver', temp_sok_filename, heuristic, temp_out_tsv]
             
-            for heuristic in HEURISTICS:
-                # Si neural_sequential falló, saltar las variantes batched para ahorrar tiempo
-                if sequential_failed and heuristic in ['neural_batched', 'neural_batched_massive']:
-                    print(f"  -> Saltando: {heuristic} (salteado por fallo de sequential)")
-                    row = {'board_id': board_id, 'heuristic': heuristic, 'status': 'SKIPPED_DUE_TO_SEQUENTIAL_FAIL', 
-                           'runtime_ms': -1.0, 'pushes': -1, 'expanded_nodes': -1, 'total_children': -1, 
-                           'effective_children': -1, 'deadlocks': -1}
-                    writer.writerow(row)
-                    csvfile.flush()
-                    continue
-                    
-                # Skip si ya está en el CSV (modo resume fino por combinación)
-                if (board_id, heuristic) in completed_pairs:
-                    print(f"  -> Saltando: {heuristic} (ya completado)")
-                    continue
+            try:
+                # Damos 10 minutos para que complete todos los tableros de una heurística
+                subprocess.run(cmd, env=env, check=True, timeout=600)
+            except subprocess.TimeoutExpired:
+                print(f"TIMEOUT EXPIRED for {heuristic}!")
+            except subprocess.CalledProcessError as e:
+                print(f"Error ejecutando {heuristic}: {e}")
+                
+            # Parse output TSV
+            if os.path.exists(temp_out_tsv):
+                with open(temp_out_tsv, 'r') as f:
+                    for row_idx, line in enumerate(f):
+                        if row_idx == 0: continue # Skip header
+                        parts = line.strip().split('\t')
+                        if len(parts) < 8: continue
+                        
+                        lvl_name = parts[0]
+                        status = parts[1]
+                        runtime = float(parts[3])
+                        pushes = int(parts[4])
+                        expanded = int(parts[6]) # generated_states en batch_solver corresponde a expanded en run_benchmark
+                        deadlocks = int(parts[7])
+                        
+                        # Map back to original board id
+                        board_id = args.start + row_idx - 1
+                        
+                        row = {
+                            'board_id': board_id, 
+                            'heuristic': heuristic, 
+                            'status': status, 
+                            'runtime_ms': runtime, 
+                            'pushes': pushes, 
+                            'expanded_nodes': expanded, 
+                            'total_children': -1, 
+                            'effective_children': -1, 
+                            'deadlocks': deadlocks
+                        }
+                        writer.writerow(row)
+                        csvfile.flush()
+                        
+                        print(f"  -> Tablero {board_id}: [Status: {status}, Time: {runtime:.2f}ms, Nodes: {expanded}]")
+                os.remove(temp_out_tsv)
 
-                print(f"  -> Ejecutando: {heuristic} (1 corrida - modo piloto)...")
-
-                metrics = run_solver(board_str, heuristic, board_id)
-                last_metrics = metrics
-                
-                # Check si falló sequential
-                if heuristic == 'neural_sequential' and metrics['status'] != 'SOLVED':
-                    sequential_failed = True
-                    
-                row = {'board_id': board_id, 'heuristic': heuristic}
-                row.update(last_metrics)
-                
-                writer.writerow(row)
-                csvfile.flush() # Guardar inmediatamente en disco
-                
-                print(f"     [Status: {last_metrics['status']}, Time: {last_metrics['runtime_ms']:.2f}ms, Nodes: {last_metrics['expanded_nodes']}]")
+    os.remove(temp_sok_filename)
+    print("\nBENCHMARK COMPLETADO.")
 
 if __name__ == "__main__":
     main()
