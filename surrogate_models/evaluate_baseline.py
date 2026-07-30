@@ -10,6 +10,10 @@ def evaluate_baseline():
     
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
     ckpt_path = os.path.join(SCRIPT_DIR, "results", "production_regressor.pt")
+    
+    if not os.path.exists(ckpt_path):
+        ckpt_path = os.path.join(SCRIPT_DIR, "results", "final_regressor_fold1.pt")
+        
     if not os.path.exists(ckpt_path):
         print(f"Error: No se encontro el modelo {ckpt_path}")
         return
