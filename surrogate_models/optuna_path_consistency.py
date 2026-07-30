@@ -16,13 +16,17 @@ def evaluate_model_inter_branch(model, device, n_pairs=500):
     model.eval()
     import pandas as pd
     
-    TSV_FILE = "results/path_consistency_heldout.tsv"
-    SOK_FILE = "../sok_files/benchmark_stratified_heldout.sok"
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+    PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+    
+    TSV_FILE = os.path.join(SCRIPT_DIR, "results", "path_consistency_heldout.tsv")
+    SOK_FILE = os.path.join(PROJECT_ROOT, "sok_files", "benchmark_stratified_heldout.sok")
+    BATCH_SOLVER = os.path.join(PROJECT_ROOT, "build", "batch_solver")
     
     if not os.path.exists(TSV_FILE):
         print(f"Generating TSV for evaluation from {SOK_FILE}...")
         import subprocess
-        cmd = ["../build/batch_solver", SOK_FILE, "hungarian", TSV_FILE]
+        cmd = [BATCH_SOLVER, SOK_FILE, "hungarian", TSV_FILE]
         try:
             subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL)
         except Exception as e:
