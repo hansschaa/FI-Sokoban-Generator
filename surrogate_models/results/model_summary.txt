@@ -1,0 +1,27 @@
+Nombre del Modelo: surrogate_regressor_jit.pt
+
+--- DATOS DE ENTRENAMIENTO ---
+Dataset Principal: Sokoban-Dataset (Sokoban Dataset oficial, tableros resueltos divididos en 5 Folds)
+Tecnica Utilizada: 5-Fold Cross Validation con Path Consistency
+Aumento de Datos: Dihedral D4 (rotaciones/reflexiones) aplicado on-the-fly.
+Muestra: Pares de estados correlacionados (Path Consistency) extraidos de trazas completas de solucion.
+
+--- HIPERPARAMETROS OPTIMIZADOS (Optuna) ---
+Learning Rate (lr): 0.00515
+Dropout (p): 0.0205
+Weight Decay: 2.1e-05
+Batch Size: 128 (Efectivo: 64 pares por batch)
+Alpha (Peso del Margin Ranking Loss): 0.1
+Margin: 0.05
+Max Epochs: 50
+Scheduler: CosineAnnealingLR
+
+--- PERFORMANCE FINAL (Cross-Validation) ---
+MAE Pushes Promedio (5-Fold CV): ~0.77 empujes (Mejora documentada en el reporte de Optuna)
+Spearman Correlation: ~0.96
+
+--- COMPORTAMIENTO EN INFERENCIA A* (Holdout - 40 Tableros Difíciles) ---
+* Nodos Expandidos: 1,608.9 en promedio (31% de reduccion frente a la heuristica pura Hungarian).
+* Speedup GPU (Massive Batching): ~25x mas rapido que la inferencia neuronal secuencial (396 ms vs 9.9 segundos).
+* Fiabilidad (Box Count): 100% de exito (vs Hungarian) hasta tableros de 5 cajas.
+* Limite Cognitivo Demostrado: Colapso de ranking predictivo en tableros de alta densidad (6-7 cajas) y alta dificultad (91+ pushes), resultando en subestimaciones fatales y "explosion de nodos".
