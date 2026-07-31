@@ -37,11 +37,11 @@ def load_models():
         r_params = json.load(f)
 
     # Initialize models
-    c_path = "surrogate_models/results/production_classifier.pt"
+    c_path = "surrogate_models/results/final_contrastive_classifier_fold1.pt"
     print(f"Loading Classifier (dropout={c_params['params']['dropout_p']}) to {device}")
     print(f"Model Path: {c_path}")
     print(f"Model SHA256: {compute_sha256(c_path)}")
-    classifier_model = SokobanSEResNetClassifier(dropout_p=c_params['params']["dropout_p"]).to(device)
+    classifier_model = SokobanSEResNetClassifier(dropout_p=c_params['params']["dropout_p"], in_channels=12).to(device)
     classifier_model.load_state_dict(torch.load(c_path, map_location=device))
     classifier_model.eval()
 
@@ -63,6 +63,8 @@ def load_models():
     print("Surrogate Parallelism: Batched GPU Inference (batch size = dynamic, up to population size)")
     print("Models loaded successfully! Server ready.")
 
+import numpy as np
+
 @app.route('/evaluate', methods=['POST'])
 def evaluate():
     try:
@@ -70,14 +72,34 @@ def evaluate():
         if not data or 'boards' not in data:
             return jsonify({"error": "Missing 'boards' array"}), 400
         
-        boards_str = data['boards']
-        if not boards_str:
+        boards_data = data['boards']
+        if not boards_data:
             return jsonify([])
 
+        in_channels = getattr(classifier_model, 'stem', None)
+        if in_channels is not None:
+            in_channels = classifier_model.stem[0].in_channels
+        else:
+            in_channels = classifier_model.conv1.in_channels
         # 1. Encode boards to tensor
         tensors = []
-        for b_str in boards_str:
-            t_np = encode_board(b_str)
+        for item in boards_data:
+            if isinstance(item, dict):
+                b_str = item["board"]
+                p_str = item["parent_board"]
+                t_b = encode_board(b_str)
+                if in_channels == 12:
+                    t_p = encode_board(p_str)
+                    t_np = np.concatenate([t_p, t_b], axis=0)
+                else:
+                    t_np = t_b
+            else:
+                b_str = item
+                t_b = encode_board(b_str)
+                if in_channels == 12:
+                    t_np = np.concatenate([t_b, t_b], axis=0)
+                else:
+                    t_np = t_b
             tensors.append(torch.from_numpy(t_np))
         
         batch_tensor = torch.stack(tensors).to(device)
@@ -93,7 +115,7 @@ def evaluate():
         # 3. Run Regressor only on solvable boards (for speed)
         solvable_indices = is_solvable.nonzero(as_tuple=True)[0]
         
-        results = [{"is_solvable": False, "pushes": 0.0, "branching": 0.0} for _ in range(len(boards_str))]
+        results = [{"is_solvable": False, "pushes": 0.0, "branching": 0.0} for _ in range(len(boards_data))]
 
         if len(solvable_indices) > 0:
             solvable_tensors = batch_tensor[solvable_indices]
