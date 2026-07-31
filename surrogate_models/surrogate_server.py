@@ -114,8 +114,15 @@ def evaluate():
 
         if len(solvable_indices) > 0:
             solvable_tensors = batch_tensor[solvable_indices]
+            # The regressor was not retrained and still expects 6 channels (only the current board)
+            # Since batch_tensor is [parent, child], the current board is in the last 6 channels
+            if in_channels == 12:
+                solvable_tensors_reg = solvable_tensors[:, 6:, :, :]
+            else:
+                solvable_tensors_reg = solvable_tensors
+                
             with torch.no_grad():
-                p_norm_pred = regressor_model(solvable_tensors)
+                p_norm_pred = regressor_model(solvable_tensors_reg)
             
             # Un-normalize
             p_pred_log = (p_norm_pred * pushes_std) + pushes_mean
