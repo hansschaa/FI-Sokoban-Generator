@@ -166,6 +166,8 @@ int main(int argc, char** argv)
     std::vector<Individual> population;
     Evaluator evaluator;
     evaluator.fitnessType = fitnessType;
+    evaluator.heuristic_type = heuristic_type;
+    evaluator.use_surrogate = (heuristic_type != Heuristic::hungarian);
 
     // 5. Generar población inicial optimizada (Clonando el primer éxito)
     bool found_first = false;
