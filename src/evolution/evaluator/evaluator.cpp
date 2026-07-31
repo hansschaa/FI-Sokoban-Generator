@@ -42,6 +42,12 @@ double Evaluator::evaluate(Individual& individual)
     // Cambia esto en tu Evaluator::evaluate para usar el matching perfecto O(n³) o neuronal
     auto stats = solver.test_template(Method::a_star, this->heuristic_type, solution, needs_path_simulator, nullptr, this->max_seconds);
 
+    if (stats.status == SolveStatus::TIMEOUT)
+    {
+        individual.fitness = -2e9;
+        return individual.fitness;
+    }
+
     if (stats.status != SolveStatus::SOLVED || stats.pushes <= 1)
     {
         individual.fitness = -1e9;

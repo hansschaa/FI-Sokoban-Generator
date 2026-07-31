@@ -283,6 +283,12 @@ Individual EvolutionStrategy::run(
                     astar_eval.max_seconds = 5.0; // Fast verification for circuit breaker!
                     double true_fitness = astar_eval.evaluate(ind);
                     
+                    if (true_fitness == -2e9) {
+                        // TIMEOUT during verification!
+                        // Inconclusive: Discard it, but DO NOT count as a circuit breaker failure
+                        continue;
+                    }
+                    
                     if (true_fitness > -1e8) {
                         ind.fitness = true_fitness;
                         next_population.push_back(ind);
