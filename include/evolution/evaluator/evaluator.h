@@ -17,6 +17,7 @@ public:
     bool use_surrogate = true;
     double max_seconds = 120.0;
     int surrogate_fallbacks = 0;
+    int surrogate_regressor_calls = 0;
 
     double evaluate(
         Individual& individual);

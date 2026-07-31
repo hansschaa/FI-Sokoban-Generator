@@ -160,6 +160,7 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
             if (!is_solvable) {
                 population[i].fitness = -1e9;
             } else {
+                surrogate_regressor_calls++;
                 double pushes = j_res[i]["pushes"];
                 double branching = j_res[i]["branching"];
                 
