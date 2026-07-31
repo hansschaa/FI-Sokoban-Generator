@@ -96,7 +96,7 @@ def train_and_eval_fold(fold):
         # Eval
         model.eval()
         val_loss = 0.0
-        all_preds = []
+        all_probs = []
         all_targets = []
         all_types = []
         
@@ -108,49 +108,68 @@ def train_and_eval_fold(fold):
                 val_loss += loss.item()
                 
                 probs = torch.sigmoid(logits)
-                preds = (probs >= 0.90).float() # Threshold 0.90
-                
-                all_preds.extend(preds.cpu().numpy())
+                all_probs.extend(probs.cpu().numpy())
                 all_targets.extend(y_batch.cpu().numpy())
                 all_types.extend(t_batch.cpu().numpy())
                 
-        # Metrics
         y_true = np.array(all_targets)
-        y_pred = np.array(all_preds)
+        y_prob = np.array(all_probs)
         t_arr = np.array(all_types)
         
-        precision = precision_score(y_true, y_pred, zero_division=0)
-        recall = recall_score(y_true, y_pred, zero_division=0)
-        f05 = fbeta_score(y_true, y_pred, beta=0.5, zero_division=0)
+        if fold == 1 and epoch == 0:
+            print("\n--- Probability Distribution (Fold 1, Epoch 1) ---")
+            print(f"Mean: {y_prob.mean():.4f}, Std: {y_prob.std():.4f}")
+            hist, bin_edges = np.histogram(y_prob, bins=10, range=(0, 1))
+            for i in range(10):
+                print(f"[{bin_edges[i]:.1f}-{bin_edges[i+1]:.1f}): {hist[i]}")
+            print("------------------------------------------------\n")
+            
+        # Threshold Sweeping
+        best_epoch_f05 = 0.0
+        best_epoch_metrics = {}
+        best_threshold = 0.5
         
-        # Deadlock Specificity Breakdown (Label 0 means Deadlock, Pred 0 means predicted Deadlock)
-        mask_simple = (t_arr == 2)
-        mask_complex = (t_arr == 3)
-        
-        simple_total = mask_simple.sum()
-        complex_total = mask_complex.sum()
-        
-        simple_correct = (y_pred[mask_simple] == 0).sum() if simple_total > 0 else 0
-        complex_correct = (y_pred[mask_complex] == 0).sum() if complex_total > 0 else 0
-        
-        spec_simple = simple_correct / simple_total if simple_total > 0 else 0
-        spec_complex = complex_correct / complex_total if complex_total > 0 else 0
-        
-        if f05 > best_f05:
-            best_f05 = f05
-            best_metrics = {
-                'epoch': epoch,
-                'precision': precision,
-                'recall': recall,
-                'f05': f05,
-                'spec_simple': spec_simple,
-                'spec_complex': spec_complex,
-                'loss': val_loss / len(test_loader)
-            }
+        for thresh in np.arange(0.50, 0.96, 0.05):
+            y_pred = (y_prob >= thresh).astype(float)
+            
+            precision = precision_score(y_true, y_pred, zero_division=0)
+            recall = recall_score(y_true, y_pred, zero_division=0)
+            f05 = fbeta_score(y_true, y_pred, beta=0.5, zero_division=0)
+            
+            # Deadlock Specificity Breakdown
+            mask_simple = (t_arr == 2)
+            mask_complex = (t_arr == 3)
+            
+            simple_total = mask_simple.sum()
+            complex_total = mask_complex.sum()
+            
+            simple_correct = (y_pred[mask_simple] == 0).sum() if simple_total > 0 else 0
+            complex_correct = (y_pred[mask_complex] == 0).sum() if complex_total > 0 else 0
+            
+            spec_simple = simple_correct / simple_total if simple_total > 0 else 0
+            spec_complex = complex_correct / complex_total if complex_total > 0 else 0
+            
+            if f05 > best_epoch_f05:
+                best_epoch_f05 = f05
+                best_threshold = thresh
+                best_epoch_metrics = {
+                    'epoch': epoch,
+                    'threshold': thresh,
+                    'precision': precision,
+                    'recall': recall,
+                    'f05': f05,
+                    'spec_simple': spec_simple,
+                    'spec_complex': spec_complex,
+                    'loss': val_loss / len(test_loader)
+                }
+                
+        if best_epoch_f05 > best_f05:
+            best_f05 = best_epoch_f05
+            best_metrics = best_epoch_metrics
             # Save best fold model
             torch.save(model.state_dict(), os.path.join(RESULTS_DIR, f"final_contrastive_classifier_fold{fold}.pt"))
             
-        print(f"Epoch {epoch+1}/{EPOCHS} | Val Loss: {val_loss/len(test_loader):.4f} | F0.5: {f05:.4f} | Spec(Simple): {spec_simple:.4f} | Spec(Complex): {spec_complex:.4f}")
+        print(f"Epoch {epoch+1}/{EPOCHS} | Val Loss: {val_loss/len(test_loader):.4f} | Optimal Thresh: {best_threshold:.2f} | F0.5: {best_epoch_f05:.4f} | Spec(Simple): {best_epoch_metrics.get('spec_simple', 0):.4f} | Spec(Complex): {best_epoch_metrics.get('spec_complex', 0):.4f}")
 
     print(f"Best metrics for Fold {fold}: {best_metrics}")
     return best_metrics

@@ -49,7 +49,8 @@ def parse_contrastive_sok_file(fpath):
                     break
             mutated_board = "\n".join(lines[mutated_idx+1:mutated_end_idx])
             
-            shell_hash = str(hash(source_board))
+            import hashlib
+            shell_hash = hashlib.sha256(source_board.encode()).hexdigest()
             
             records.append({
                 "source_board": source_board,
@@ -80,6 +81,14 @@ def main():
     if len(df) == 0:
         print("No data found!")
         return
+        
+    if len(df) < 100000:
+        print("\n" + "!"*60)
+        print("WARNING: Less than 100,000 pairs loaded!")
+        print("Did you forget to combine the .sok files from all 3 PCs?")
+        print("Expected ~105,000 pairs, but found:", len(df))
+        print("!"*60 + "\n")
+        
     print(df['label'].value_counts())
 
     print("Encoding boards (12-channel tensors)...")
