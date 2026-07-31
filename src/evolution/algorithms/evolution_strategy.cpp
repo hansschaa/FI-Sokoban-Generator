@@ -415,6 +415,7 @@ Individual EvolutionStrategy::run(
     //
     
     std::cout << "\n[ES STATS] Circuit Breaker (MAX_FAILURES) triggers: " << total_circuit_breakers << "\n";
+    std::cout << "[ES STATS] Surrogate Fallbacks: " << evaluator.surrogate_fallbacks << "\n";
     std::cout << "[ES STATS] Clone Fallback triggers: " << total_clone_fallbacks << " (Total Clones Injected: " << total_clones_injected << ")\n";
 
     /*std::cout

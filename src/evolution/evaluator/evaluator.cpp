@@ -117,6 +117,8 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         std::cerr << "Error: Failed to connect to Python Surrogate Server at 127.0.0.1:5000\n";
         std::cerr << "Falling back to A* solver for this batch...\n";
         
+        this->surrogate_fallbacks++;
+
         // Ensure we fallback to Hungarian A* if surrogate server is down
         auto original_heuristic = this->heuristic_type;
         auto original_max_sec = this->max_seconds;
@@ -134,6 +136,8 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         std::cerr << "Error: Python Server returned HTTP " << res->status << "\n";
         std::cerr << "Response: " << res->body << "\n";
         
+        this->surrogate_fallbacks++;
+
         auto original_heuristic = this->heuristic_type;
         auto original_max_sec = this->max_seconds;
         this->heuristic_type = Heuristic::hungarian;
