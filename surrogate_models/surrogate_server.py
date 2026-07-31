@@ -87,8 +87,8 @@ def evaluate():
             logits = classifier_model(batch_tensor)
             probs = torch.sigmoid(logits)
         
-        # Determine solvability (threshold 0.5)
-        is_solvable = (probs >= 0.5)
+        # Determine solvability (threshold 0.90 para ser ultra estrictos con los Falsos Positivos)
+        is_solvable = (probs >= 0.90)
 
         # 3. Run Regressor only on solvable boards (for speed)
         solvable_indices = is_solvable.nonzero(as_tuple=True)[0]
