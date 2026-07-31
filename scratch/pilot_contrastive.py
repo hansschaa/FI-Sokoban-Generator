@@ -27,6 +27,14 @@ def run_pilot():
             server_ready = True
             break
 
+    import threading
+    def drain_logs(process):
+        for _ in iter(process.stdout.readline, ''):
+            pass
+
+    if server_ready:
+        threading.Thread(target=drain_logs, args=(server_process,), daemon=True).start()
+
     if not server_ready:
         print("\n[ERROR] El servidor Surrogate se cerró sin emitir 'Server ready'. Abortando piloto.")
         server_process.kill()
