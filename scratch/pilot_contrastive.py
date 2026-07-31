@@ -29,8 +29,10 @@ def run_pilot():
 
     import threading
     def drain_logs(process):
-        for _ in iter(process.stdout.readline, ''):
-            pass
+        with open("scratch/surrogate_server.log", "w") as f:
+            for line in iter(process.stdout.readline, ''):
+                f.write(line)
+                f.flush()
 
     if server_ready:
         threading.Thread(target=drain_logs, args=(server_process,), daemon=True).start()
@@ -66,6 +68,8 @@ def run_pilot():
                 try:
                     result = subprocess.run(cmd, timeout=310, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
                     out_text = result.stdout
+                    if result.returncode != 0:
+                        print(f"  [ERROR] C++ process CRASHED with returncode {result.returncode}. Full output:\n{out_text}\n{'='*50}")
                 except subprocess.TimeoutExpired as e:
                     # If it times out, the output so far is captured in e.stdout
                     out_text = e.stdout if e.stdout else ""
@@ -83,6 +87,9 @@ def run_pilot():
                                 disyuntor_count = int(parts[-1].strip())
                             except ValueError:
                                 pass
+                                
+                if disyuntor_count == "TIMEOUT" and not isinstance(e, subprocess.TimeoutExpired):
+                    print(f"  [ERROR] C++ process finished but stats not found. Full output:\n{out_text}\n{'='*50}")
                                 
                 print(f"Shell {shell}, Seed {seed} -> Disyuntor triggers: {disyuntor_count}")
                 if isinstance(disyuntor_count, int):
