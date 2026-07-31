@@ -7,7 +7,7 @@ def run_pilot():
     seeds = [str(i) for i in range(42, 52)]
     shells = [f"levels/shell_{i}.sok" for i in range(1, 6)]
     
-    print("Starting Surrogate Server...")
+    print("Starting Surrogate Server... (waiting for logs)")
     server_process = subprocess.Popen(
         ["./venv/bin/python3", "surrogate_models/surrogate_server.py"], 
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
@@ -16,6 +16,7 @@ def run_pilot():
     while True:
         line = server_process.stdout.readline()
         if not line: break
+        print("  [SERVER LOG]", line.strip())
         if "Server ready" in line: break
         if "Running on" in line: break
 
@@ -52,7 +53,7 @@ def run_pilot():
                         out_text = out_text.decode('utf-8', errors='replace')
                     print(f"  [Warning] Seed {seed} timed out by Python after 130s.")
                 
-                disyuntor_count = 0
+                disyuntor_count = "TIMEOUT"
                 for line in out_text.split("\n"):
                     if "[ES STATS] Circuit Breaker (MAX_FAILURES) triggers:" in line:
                         parts = line.split(":")
@@ -63,8 +64,9 @@ def run_pilot():
                                 pass
                                 
                 print(f"Shell {shell}, Seed {seed} -> Disyuntor triggers: {disyuntor_count}")
-                total_disyuntor_triggers += disyuntor_count
-                total_runs += 1
+                if isinstance(disyuntor_count, int):
+                    total_disyuntor_triggers += disyuntor_count
+                    total_runs += 1
                 
     finally:
         print("Killing server...")
