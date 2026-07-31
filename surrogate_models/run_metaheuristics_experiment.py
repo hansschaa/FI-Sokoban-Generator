@@ -33,7 +33,7 @@ while True:
 print("Server is ready. Starting experiment script...")
 # Now run ablation script
 try:
-    subprocess.run(["./venv/bin/python3", "surrogate_models/ablation_metaheuristics.py", "--algo", args.algo], check=True)
+    subprocess.run(["./venv/bin/python3", "-u", "surrogate_models/ablation_metaheuristics.py", "--algo", args.algo], check=True)
 except Exception as e:
     print(f"Experiment failed: {e}")
 finally:
