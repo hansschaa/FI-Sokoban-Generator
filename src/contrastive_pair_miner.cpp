@@ -190,13 +190,14 @@ int main(int argc, char** argv) {
             }
         }
         
-        int valid_generated = label_1_count + label_0_simple_count + label_0_complex_count;
-        if (valid_generated > 0 && valid_generated % 50 == 0) {
-            std::cout << "Generated: " << valid_generated 
+        if (total_processed % 50 == 0) {
+            std::cout << "Generated: " << (label_1_count + label_0_simple_count + label_0_complex_count) 
                       << " | L1: " << label_1_count 
-                      << " | L0(Simp): " << label_0_simple_count 
-                      << " | L0(Comp): " << label_0_complex_count 
+                      << " | L0(Simp): " << label_0_simple_count
+                      << " | L0(Comp): " << label_0_complex_count
                       << " | Timeouts (or OOM): " << timeout_count << std::endl;
+            out_label_0.flush();
+            out_label_1.flush();
         }
     }
 
