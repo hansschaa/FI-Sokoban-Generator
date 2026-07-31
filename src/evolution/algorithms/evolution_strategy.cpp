@@ -79,6 +79,10 @@ Individual EvolutionStrategy::run(
     // MAIN LOOP
     //
 
+    int total_circuit_breakers = 0;
+    int total_clone_fallbacks = 0;
+    int total_clones_injected = 0;
+
     while (true)
     {
         bool improved = false;
@@ -282,6 +286,9 @@ Individual EvolutionStrategy::run(
                         }
                     } else {
                         astar_failures++;
+                        if (astar_failures == MAX_FAILURES) {
+                            total_circuit_breakers++;
+                        }
                         continue; // Discard False Positive
                     }
                 } else {
@@ -295,8 +302,26 @@ Individual EvolutionStrategy::run(
         population = next_population;
         
         // If we rejected too many and couldn't fill mu, fill with clones of best
+        if ((int)population.size() < toSelect) {
+            total_clone_fallbacks++;
+        }
         while ((int)population.size() < toSelect) {
             population.push_back(best);
+            total_clones_injected++;
+        }
+
+        if (generation == 1 || generation == 2) {
+            double mean = 0.0;
+            for (const auto& ind : population) mean += ind.fitness;
+            mean /= population.size();
+            
+            double var = 0.0;
+            for (const auto& ind : population) var += (ind.fitness - mean) * (ind.fitness - mean);
+            var /= population.size();
+            
+            std::cout << "[DIVERSITY] Gen " << generation 
+                      << " POP_STD: " << std::sqrt(var) 
+                      << " (Mean: " << mean << ")" << std::endl;
         }
 
         //
@@ -353,6 +378,9 @@ Individual EvolutionStrategy::run(
     //
     // FINAL REPORT
     //
+    
+    std::cout << "\n[ES STATS] Circuit Breaker (MAX_FAILURES) triggers: " << total_circuit_breakers << "\n";
+    std::cout << "[ES STATS] Clone Fallback triggers: " << total_clone_fallbacks << " (Total Clones Injected: " << total_clones_injected << ")\n";
 
     /*std::cout
         << "\nFINAL BEST FITNESS = "

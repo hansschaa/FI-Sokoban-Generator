@@ -167,9 +167,17 @@ int main(int argc, char** argv)
     Evaluator evaluator;
     evaluator.fitnessType = fitnessType;
 
-    // 5. Generar población inicial optimizada
+    // 5. Generar población inicial optimizada (Clonando el primer éxito)
+    bool found_first = false;
+    Individual first_valid;
+
     for (int i = 0; i < pop_size; i++)
     {
+        if (found_first) {
+            population.push_back(first_valid);
+            continue;
+        }
+
         bool valid = false;
         int attempts = 0;
 
@@ -191,7 +199,9 @@ int main(int argc, char** argv)
                 {
                     ind.fitness = fit;
                     population.push_back(ind);
+                    first_valid = ind;
                     valid = true;
+                    found_first = true;
                 }
             } catch (...) {
                 // Silenciar errores geométricos aleatorios y reintentar

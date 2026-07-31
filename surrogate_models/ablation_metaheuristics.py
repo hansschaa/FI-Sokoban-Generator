@@ -43,7 +43,13 @@ def run_experiment(algorithm, heuristic, time_limit, seed, shell_file, out_csv):
     try:
         # Give a small grace period (10s) over the time limit for graceful shutdown
         # Capture stderr to detect crashes
-        result = subprocess.run(cmd, env=env, timeout=time_limit + 10, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+        # Capture stderr to detect crashes, and stdout to get diversity metrics
+        result = subprocess.run(cmd, env=env, timeout=time_limit + 120, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        
+        for line in result.stdout.split("\n"):
+            if "[DIVERSITY]" in line or "[ES STATS]" in line:
+                print(f"  {line.strip()}")
+                
         if result.returncode != 0:
             print(f"[{algorithm} - {heuristic}] Exit code {result.returncode}. Stderr:\n{result.stderr}")
         else:
@@ -185,7 +191,6 @@ if __name__ == "__main__":
     if args.algo == "ALL" or args.algo == "GA":
         test_determinism()
     
-    # Limit to 120s per run
     TIME_LIMIT = 120
     
     if args.algo == "ALL":
@@ -193,19 +198,23 @@ if __name__ == "__main__":
     else:
         algorithms = [args.algo]
         
+    time_limit = TIME_LIMIT
     heuristics = ["neural", "hungarian"]
-    seeds = [str(i) for i in range(42, 52)]
     shells = [f"levels/shell_{i}.sok" for i in range(1, 6)]
+    seeds = [str(i) for i in range(42, 52)]
     
-    for shell_id, shell_file in enumerate(shells, 1):
+    # 3. Main Experiment Loop
+    print("\nStarting Main Benchmark Loop...")
+    for shell_file in shells:
         for algo in algorithms:
             for heuristic in heuristics:
                 for seed in seeds:
+                    shell_id = shell_file.split("_")[-1].split(".")[0]
                     out_csv = f"optuna_results/{algo}_{heuristic}_shell{shell_id}_seed{seed}_log.csv"
-                    # Check if it was already run
-                    if not os.path.exists(out_csv):
-                        run_experiment(algo, heuristic, TIME_LIMIT, seed, shell_file, out_csv)
-                    else:
-                        print(f"Skipping {algo} {heuristic} shell {shell_id} seed {seed}, CSV exists.")
+                    if os.path.exists(out_csv):
+                        print(f"Skipping {algo} + {heuristic} on {shell_file} (Seed {seed}) - Already done.")
+                        continue
+                        
+                    run_experiment(algo, heuristic, time_limit, seed, shell_file, out_csv)
             
-    plot_results(algorithms, heuristics, seeds, shells, TIME_LIMIT)
+    plot_results(algorithms, heuristics, seeds, shells, time_limit)
