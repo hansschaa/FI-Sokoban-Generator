@@ -123,9 +123,9 @@ public:
     // false: Solo poda básica (Lento, obligatorio para contar FO4 Deadlocks)
     bool enable_advanced_deadlocks = false;
     
-    SolverStats test_template(Method method, Heuristic heuristic, std::vector<game_node>& solution, bool calc_path_branching = false, std::shared_ptr<NeuralHeuristic> external_net = nullptr);
+    SolverStats test_template(Method method, Heuristic heuristic, std::vector<game_node>& solution, bool calc_path_branching = false, std::shared_ptr<NeuralHeuristic> external_net = nullptr, double max_seconds = 120.0, size_t max_nodes = 500000);
 
-    SolverStats test_template(Method method, std::vector<game_node>& solution, bool calc_path_branching = false, std::shared_ptr<NeuralHeuristic> external_net = nullptr) {
-        return test_template(method, Heuristic::simple, solution, calc_path_branching, external_net);
+    SolverStats test_template(Method method, std::vector<game_node>& solution, bool calc_path_branching = false, std::shared_ptr<NeuralHeuristic> external_net = nullptr, double max_seconds = 120.0, size_t max_nodes = 500000) {
+        return test_template(method, Heuristic::simple, solution, calc_path_branching, external_net, max_seconds, max_nodes);
     }
 };

@@ -1,4 +1,8 @@
 #include "../../../include/evolution/algorithms/evolution_strategy.h"
+#include "../../../include/evolution/utils/board_utils.h"
+#include <iostream>
+#include <filesystem>
+#include <fstream>
 
 #include <iostream>
 #include <algorithm>
@@ -121,6 +125,7 @@ Individual EvolutionStrategy::run(
             // RANDOM PARENT SELECTION
             int parentIndex = rand() % population.size();
             Individual child = population[parentIndex];
+            child.parent_board_str = board_to_string(population[parentIndex].board);
             bool needsEvaluation = false;
 
             double r_mut = (double)rand() / RAND_MAX;
@@ -275,6 +280,7 @@ Individual EvolutionStrategy::run(
                     Evaluator astar_eval = evaluator;
                     astar_eval.use_surrogate = false;
                     astar_eval.heuristic_type = Heuristic::hungarian;
+                    astar_eval.max_seconds = 5.0; // Fast verification for circuit breaker!
                     double true_fitness = astar_eval.evaluate(ind);
                     
                     if (true_fitness > -1e8) {
@@ -285,11 +291,34 @@ Individual EvolutionStrategy::run(
                             improved = true;
                         }
                     } else {
-                        astar_failures++;
-                        if (astar_failures == MAX_FAILURES) {
-                            total_circuit_breakers++;
+                        // A* says it's a deadlock (-1e9) but Surrogate accepted it!
+                        if (adversarial_mode) {
+                            // Adversarial Mining: Save the Hard Negative
+                            std::filesystem::create_directories("hard_negatives");
+                            std::string board_str;
+                            for (const auto& row : ind.board) {
+                                for (char c : row) board_str += c;
+                                board_str += "\n";
+                            }
+                            size_t h = std::hash<std::string>{}(board_str);
+                            std::string filepath = "hard_negatives/hard_negative_" + std::to_string(h) + ".sok";
+                            std::ofstream out(filepath);
+                            if (out.is_open()) {
+                                out << "# surrogate_fitness: " << ind.fitness << "\n";
+                                for (const auto& row : ind.board) {
+                                    for (char c : row) out << c;
+                                    out << "\n";
+                                }
+                            }
+                            // Deceive the ES: keep the surrogate's fitness!
+                            next_population.push_back(ind);
+                        } else {
+                            astar_failures++;
+                            if (astar_failures == MAX_FAILURES) {
+                                total_circuit_breakers++;
+                            }
+                            continue; // Discard False Positive
                         }
-                        continue; // Discard False Positive
                     }
                 } else {
                     next_population.push_back(ind);

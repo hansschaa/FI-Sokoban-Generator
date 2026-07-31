@@ -40,7 +40,7 @@ double Evaluator::evaluate(Individual& individual)
     solver.enable_advanced_deadlocks = true;
 
     // Cambia esto en tu Evaluator::evaluate para usar el matching perfecto O(n³) o neuronal
-    auto stats = solver.test_template(Method::a_star, this->heuristic_type, solution, needs_path_simulator);
+    auto stats = solver.test_template(Method::a_star, this->heuristic_type, solution, needs_path_simulator, nullptr, this->max_seconds);
 
     if (stats.status != SolveStatus::SOLVED || stats.pushes <= 1)
     {
@@ -94,7 +94,10 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
     payload["boards"] = json::array();
     
     for (const auto& ind : population) {
-        payload["boards"].push_back(board_to_string(ind.board));
+        json item;
+        item["board"] = board_to_string(ind.board);
+        item["parent_board"] = ind.parent_board_str;
+        payload["boards"].push_back(item);
     }
 
     // 2. Send HTTP POST request

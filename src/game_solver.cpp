@@ -546,7 +546,9 @@ SolverStats game_solver::test_template(
     Heuristic heuristic_type,
     std::vector<game_node>& solution,
     bool calc_path_branching,
-    std::shared_ptr<NeuralHeuristic> external_net
+    std::shared_ptr<NeuralHeuristic> external_net,
+    double max_seconds,
+    size_t max_nodes
 ) {
     // 1. Declarar timers
     std::chrono::high_resolution_clock::time_point t_start;
@@ -703,7 +705,7 @@ SolverStats game_solver::test_template(
                     batch_k = std::atoi(env_k);
                 }
             }            solution = gsolver0.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal,
-                                      heuristic, heuristic_batch_func, batch_k);
+                                      heuristic, heuristic_batch_func, batch_k, max_seconds, max_nodes);
         }
         else if (input == Method::dfs) {
             solution = gsolver1.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal);
