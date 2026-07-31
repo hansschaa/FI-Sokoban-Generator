@@ -54,10 +54,13 @@ def run_pilot():
                 
                 disyuntor_count = 0
                 for line in out_text.split("\n"):
-                    if "Disyuntor" in line or "circuit breaker" in line.lower() or "clones" in line.lower() or "diversity" in line.lower():
-                        if "triggered" in line.lower() or "activated" in line.lower() or "[DIVERSITY]" in line:
-                            if "[DIVERSITY]" in line:
-                                disyuntor_count += 1
+                    if "[ES STATS] Circuit Breaker (MAX_FAILURES) triggers:" in line:
+                        parts = line.split(":")
+                        if len(parts) > 1:
+                            try:
+                                disyuntor_count = int(parts[-1].strip())
+                            except ValueError:
+                                pass
                                 
                 print(f"Shell {shell}, Seed {seed} -> Disyuntor triggers: {disyuntor_count}")
                 total_disyuntor_triggers += disyuntor_count
