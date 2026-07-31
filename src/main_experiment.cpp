@@ -171,7 +171,7 @@ int main(int argc, char** argv)
     Evaluator evaluator;
     evaluator.fitnessType = fitnessType;
     evaluator.heuristic_type = heuristic_type;
-    evaluator.use_surrogate = (heuristic_type != Heuristic::hungarian);
+    evaluator.use_surrogate = false; // MUST use A* for initialization to guarantee solvable seeds and avoid out-of-distribution neural inputs (shell has no player/boxes)
 
     // 5. Generar población inicial optimizada (Clonando el primer éxito)
     bool found_first = false;

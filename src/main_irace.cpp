@@ -139,6 +139,7 @@ int main(int argc, char** argv)
     std::vector<Individual> population;
     Evaluator evaluator;
     evaluator.fitnessType = fitnessType;
+    evaluator.use_surrogate = false; // Disable for initial generation!
 
     // 5. Generar población inicial optimizada
     for (int i = 0; i < pop_size; i++)
