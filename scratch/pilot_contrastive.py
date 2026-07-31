@@ -51,12 +51,12 @@ def run_pilot():
                 cmd = [
                     runner_path, "ES", "FO1", seed, shell,
                     "--heuristic", "neural",
-                    "--timeLimit", "120",
+                    "--timeLimit", "300",
                     "--maxEvals", "1000000",
                     "--out_csv", "scratch/temp_pilot.csv"
                 ]
                 try:
-                    result = subprocess.run(cmd, timeout=130, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+                    result = subprocess.run(cmd, timeout=310, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
                     out_text = result.stdout
                 except subprocess.TimeoutExpired as e:
                     # If it times out, the output so far is captured in e.stdout
