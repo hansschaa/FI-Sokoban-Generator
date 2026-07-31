@@ -1,4 +1,5 @@
 #include "../../../include/evolution/algorithms/genetic_algorithm.h"
+#include "../../../include/evolution/utils/board_utils.h"
 
 #include <algorithm>
 #include <iostream>
@@ -155,11 +156,13 @@ Individual GeneticAlgorithm::run(
             {
                 valid = crossover.apply(p1, p2, child);
                 if (!valid) continue;
+                child.parent_board_str = board_to_string(p1.board); // Fallback to p1
             }
             else
             {
                 child = p1;
                 valid = true;
+                child.parent_board_str = board_to_string(p1.board);
             }
 
             // MUTATION

@@ -8,18 +8,15 @@
 
 using namespace std;
 
-void read_file(int& mm, int& nn, string& temp){
+void read_file(int& mm, int& nn, string& temp, const string& filename){
     mm=0;
     nn=0;
     temp.clear();
     ifstream file_read;
-    file_read.open("box.txt",ios::in);
+    file_read.open(filename, ios::in);
 
     if (!file_read) {
-        printf("box.txt dose not exist!\n");
-#ifdef _WIN32
-        system("pause");
-#endif
+        printf("%s dose not exist!\n", filename.c_str());
         exit(100);
     }
 
@@ -35,22 +32,34 @@ void read_file(int& mm, int& nn, string& temp){
         }
     }
     
+    if (mm == 0) mm = 1;
     nn = temp.size() / mm;
     file_read.close();
 }
 
-int main() {
+int main(int argc, char** argv) {
     int mm;
     int nn;
     string temp;
-    read_file(mm,nn,temp);
+    if (argc >= 2) {
+        read_file(mm, nn, temp, argv[1]);
+    } else {
+        read_file(mm, nn, temp, "box.txt");
+    }
     
-    printf("please select your algorithm(enter 0 or 1 or 2)\n");
-    printf("0: A*;    1: dfs    2: bfs\n");
-    char input;
-    int iinput;
-    std::cin >> input;
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    char input = '0';
+    int memval = 1000;
+    
+    if (argc >= 4) {
+        input = argv[2][0];
+        memval = stoi(argv[3]);
+    } else {
+        printf("please select your algorithm(enter 0 or 1 or 2)\n");
+        printf("0: A*;    1: dfs    2: bfs\n");
+        std::cin >> input;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+    int iinput = 0;
     if (input == '0' || input == '1' || input == '2') {
         iinput = input - '0';
     }
@@ -59,23 +68,22 @@ int main() {
         exit(-1);
     }
 
-    printf("please input the memory you want to use(unit: MB)\n");
-    int memval;
-    std::cin >> memval;
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    if (argc < 4) {
+        printf("please input the memory you want to use(unit: MB)\n");
+        std::cin >> memval;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
 
     game_solver ga(temp, mm, nn, memval);
-
     std::vector<game_node> solution;
 
-    auto stats =
-        ga.test_template(int_to_method(iinput), solution);
+    auto stats = ga.test_template(int_to_method(iinput), solution);
+    printf("Pushes: %d\n", stats.pushes);
 
-    auto ss = solution;
-
-    printf("press Enter to show solves\n");
-
-    cin.get();
-    draw_picture d;
-    d.draw(ss);
+    if (argc < 4) {
+        printf("press Enter to show solves\n");
+        cin.get();
+        draw_picture d;
+        d.draw(solution);
+    }
 }

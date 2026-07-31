@@ -54,6 +54,10 @@ char* getCmdOption(char ** begin, char ** end, const std::string & option) {
     return 0;
 }
 
+bool cmdOptionExists(char** begin, char** end, const std::string& option) {
+    return std::find(begin, end, option) != end;
+}
+
 int main(int argc, char** argv)
 {
     if (argc < 5)
@@ -249,6 +253,7 @@ int main(int argc, char** argv)
             es.evaluator.fitnessType = fitnessType;
             es.evaluator.heuristic_type = heuristic_type;
             es.evaluator.use_surrogate = (heuristic_type != Heuristic::hungarian);
+            es.adversarial_mode = cmdOptionExists(argv, argv + argc, "--adversarial");
             es.on_progress = log_progress;
             
             if (fitnessType == FitnessType::FO1_PUSHES) {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 struct Individual {
 
@@ -10,6 +11,8 @@ struct Individual {
 
     int pushes = 0;
     int explored = 0;
+
+    std::string parent_board_str;
 
     bool solved = false;
 };
