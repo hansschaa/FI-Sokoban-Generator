@@ -96,7 +96,7 @@ NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int co
         
         // Load the TorchScript model
         model = std::make_shared<torch::jit::Module>(torch::jit::load(model_path));
-        use_gpu = torch::cuda::is_available();
+        use_gpu = false;
         if (use_gpu) {
             model->to(torch::kCUDA);
         }

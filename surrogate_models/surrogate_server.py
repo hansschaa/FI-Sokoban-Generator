@@ -16,12 +16,19 @@ regressor_model = None
 # Statistics for un-normalizing
 pushes_mean = 0.0
 pushes_std = 1.0
-branch_mean = 0.0
-branch_std = 1.0
 
 def load_models():
     global classifier_model, regressor_model
-    global pushes_mean, pushes_std, branch_mean, branch_std
+    global pushes_mean, pushes_std
+
+    import hashlib
+    
+    def compute_sha256(filepath):
+        sha256_hash = hashlib.sha256()
+        with open(filepath, "rb") as f:
+            for byte_block in iter(lambda: f.read(4096), b""):
+                sha256_hash.update(byte_block)
+        return sha256_hash.hexdigest()
 
     # Load Hyperparameters
     with open("surrogate_models/results/best_hparams_classifier.json", "r") as f:
@@ -30,22 +37,30 @@ def load_models():
         r_params = json.load(f)
 
     # Initialize models
+    c_path = "surrogate_models/results/production_classifier.pt"
     print(f"Loading Classifier (dropout={c_params['params']['dropout_p']}) to {device}")
+    print(f"Model Path: {c_path}")
+    print(f"Model SHA256: {compute_sha256(c_path)}")
     classifier_model = SokobanSEResNetClassifier(dropout_p=c_params['params']["dropout_p"]).to(device)
-    classifier_model.load_state_dict(torch.load("surrogate_models/results/final_classifier_fold5.pt", map_location=device))
+    classifier_model.load_state_dict(torch.load(c_path, map_location=device))
     classifier_model.eval()
 
+    r_path = "surrogate_models/results/production_regressor.pt"
     print(f"Loading Regressor (dropout={r_params['params']['dropout_p']}) to {device}")
+    print(f"Model Path: {r_path}")
+    print(f"Model SHA256: {compute_sha256(r_path)}")
     regressor_model = SokobanSEResNetRegressor(dropout_p=r_params['params']["dropout_p"]).to(device)
-    regressor_model.load_state_dict(torch.load("surrogate_models/results/final_regressor_fold3.pt", map_location=device))
+    regressor_model.load_state_dict(torch.load(r_path, map_location=device))
     regressor_model.eval()
 
     # Load Regressor stats to un-normalize predictions
-    stats = torch.load("surrogate_models/results/regressor_fold3_stats.pt", map_location="cpu", weights_only=False)
+    stats = torch.load("surrogate_models/results/production_regressor_stats.pt", map_location="cpu", weights_only=False)
     pushes_mean = stats["pushes_mean"]
     pushes_std = stats["pushes_std"]
-    branch_mean = stats["branch_mean"]
-    branch_std = stats["branch_std"]
+    
+    if device.type == "cuda":
+        print(f"GPU Device Name: {torch.cuda.get_device_name(device)}")
+    print("Surrogate Parallelism: Batched GPU Inference (batch size = dynamic, up to population size)")
     print("Models loaded successfully! Server ready.")
 
 @app.route('/evaluate', methods=['POST'])
@@ -70,7 +85,7 @@ def evaluate():
         # 2. Run Classifier
         with torch.no_grad():
             logits = classifier_model(batch_tensor)
-            probs = torch.sigmoid(logits).squeeze(-1)
+            probs = torch.sigmoid(logits)
         
         # Determine solvability (threshold 0.5)
         is_solvable = (probs >= 0.5)
@@ -84,7 +99,6 @@ def evaluate():
             solvable_tensors = batch_tensor[solvable_indices]
             with torch.no_grad():
                 p_norm_pred = regressor_model(solvable_tensors)
-                p_norm_pred = p_norm_pred.squeeze(-1)
             
             # Un-normalize
             p_pred_log = (p_norm_pred * pushes_std) + pushes_mean

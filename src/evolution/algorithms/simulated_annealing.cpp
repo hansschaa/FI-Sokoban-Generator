@@ -151,6 +151,7 @@ Individual SimulatedAnnealing::run(
             // Active verification for improving moves to avoid False Positives
             Evaluator astar_eval = evaluator;
             astar_eval.use_surrogate = false;
+            astar_eval.heuristic_type = Heuristic::hungarian;
             double true_fit = astar_eval.evaluate(neighbor);
             
             if (true_fit <= -1e8) {

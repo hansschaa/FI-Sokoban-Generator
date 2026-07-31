@@ -270,6 +270,7 @@ Individual EvolutionStrategy::run(
                     
                     Evaluator astar_eval = evaluator;
                     astar_eval.use_surrogate = false;
+                    astar_eval.heuristic_type = Heuristic::hungarian;
                     double true_fitness = astar_eval.evaluate(ind);
                     
                     if (true_fitness > -1e8) {

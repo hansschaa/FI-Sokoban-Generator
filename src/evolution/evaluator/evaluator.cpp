@@ -12,35 +12,29 @@ using json = nlohmann::json;
 
 
 void Evaluator::registrar_tablero_critico(const std::vector<std::vector<char>>& board) {
-    // Disabled to avoid race conditions during multithreaded evaluation.
-    /*
-    std::ofstream out("tablero_actual.txt");
-    if (out.is_open()) {
-        for (const auto& row : board) {
-            for (char c : row) {
-                out << c;
-            }
-            out << "\n";
-        }
-        out.close();
-    }
-    */
 }
 
 double Evaluator::evaluate(Individual& individual)
 {
+    if (this->use_surrogate) {
+        std::vector<Individual> pop = { individual };
+        // Disable use_surrogate temporarily to avoid infinite recursion if fallback happens
+        this->use_surrogate = false; 
+        evaluate_surrogate_batch(pop);
+        this->use_surrogate = true;
+        individual.fitness = pop[0].fitness;
+        return individual.fitness;
+    }
+
     std::string level = board_to_string(individual.board);
     unsigned int rows = individual.board.size();
     unsigned int cols = individual.board[0].size();
 
-    // Reducido a 64MB por hilo (antes 512MB) para prevenir Out Of Memory (OOM) en ejecución multihilo masiva.
     game_solver solver(level, rows, cols, 64);
     std::vector<game_node> solution;
 
-    // MAGIA AQUI: Solo activamos el simulador de path si el fitness es FO3
     bool needs_path_simulator = (fitnessType == FitnessType::FO3_SOL_EFF_BF);
 
-    // 1. Guardamos el tablero en el archivo temporal justo antes del peligro
     registrar_tablero_critico(individual.board);
 
     solver.enable_advanced_deadlocks = true;
@@ -113,20 +107,27 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
     if (!res) {
         std::cerr << "Error: Failed to connect to Python Surrogate Server at localhost:5000\n";
         std::cerr << "Falling back to A* solver for this batch...\n";
-        // Fallback
+        
+        // Ensure we fallback to Hungarian A* if surrogate server is down, so we don't try to load the JIT model in C++
+        auto original_heuristic = this->heuristic_type;
+        this->heuristic_type = Heuristic::hungarian;
         for (auto& ind : population) {
             evaluate(ind);
         }
+        this->heuristic_type = original_heuristic;
         return;
     }
 
     if (res->status != 200) {
         std::cerr << "Error: Python Server returned HTTP " << res->status << "\n";
         std::cerr << "Response: " << res->body << "\n";
-        // Fallback
+        
+        auto original_heuristic = this->heuristic_type;
+        this->heuristic_type = Heuristic::hungarian;
         for (auto& ind : population) {
             evaluate(ind);
         }
+        this->heuristic_type = original_heuristic;
         return;
     }
 
@@ -161,8 +162,11 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
     } catch (const std::exception& e) {
         std::cerr << "JSON Parsing Error: " << e.what() << "\n";
         std::cerr << "Falling back to A* solver...\n";
+        auto original_heuristic = this->heuristic_type;
+        this->heuristic_type = Heuristic::hungarian;
         for (auto& ind : population) {
             evaluate(ind);
         }
+        this->heuristic_type = original_heuristic;
     }
 }

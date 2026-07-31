@@ -294,6 +294,7 @@ Individual GeneticAlgorithm::run(
                 
                 Evaluator astar_eval = evaluator;
                 astar_eval.use_surrogate = false;
+                astar_eval.heuristic_type = Heuristic::hungarian;
                 double true_fitness = astar_eval.evaluate(offspring[i]);
                 
                 if (true_fitness > -1e8) {

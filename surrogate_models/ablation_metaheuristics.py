@@ -10,25 +10,18 @@ import seaborn as sns
 sns.set_theme(style="whitegrid")
 plt.rcParams.update({'font.size': 12, 'axes.labelsize': 14, 'axes.titlesize': 16})
 
-def run_experiment(algorithm, heuristic, time_limit, seed, out_csv):
-    print(f"Running {algorithm} with {heuristic} heuristic for {time_limit} seconds (Seed {seed})...")
+def run_experiment(algorithm, heuristic, time_limit, seed, shell_file, out_csv):
+    print(f"Running {algorithm} with {heuristic} heuristic on {shell_file} for {time_limit}s (Seed {seed})...")
     
-    # Base shell for generation
-    shell_file = "levels/eval_0.sok"
-    
-    # Assert that the shell file exists and is not the trivial placeholder
+    # Assert that the shell file exists
     assert os.path.exists(shell_file), f"Shell file {shell_file} not found!"
-    with open(shell_file, 'r') as f:
-        lines = f.readlines()
-        assert len(lines) > 5 and not all(c in '# \n' for l in lines for c in l), \
-            "eval_0.sok appears to be the trivial empty placeholder. Please provide a real Sokoban shell level."
             
     # We will use FO1 (Pushes) to see how difficult they can make it
     fitness_type = "FO1"
     
-    # Ensure the csv is deleted before starting
-    if os.path.exists(out_csv):
-        os.remove(out_csv)
+    tmp_csv = out_csv + ".tmp"
+    if os.path.exists(tmp_csv):
+        os.remove(tmp_csv)
     
     # Avoid PyTorch thread explosion
     env = os.environ.copy()
@@ -43,7 +36,8 @@ def run_experiment(algorithm, heuristic, time_limit, seed, out_csv):
         shell_file,
         "--heuristic", heuristic,
         "--timeLimit", str(time_limit),
-        "--out_csv", out_csv
+        "--maxEvals", "1000000000",
+        "--out_csv", tmp_csv
     ]
     
     try:
@@ -52,124 +46,155 @@ def run_experiment(algorithm, heuristic, time_limit, seed, out_csv):
         result = subprocess.run(cmd, env=env, timeout=time_limit + 10, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
         if result.returncode != 0:
             print(f"[{algorithm} - {heuristic}] Exit code {result.returncode}. Stderr:\n{result.stderr}")
+        else:
+            if os.path.exists(tmp_csv):
+                os.rename(tmp_csv, out_csv)
     except subprocess.TimeoutExpired:
         print(f"[{algorithm} - {heuristic}] Killed due to timeout.")
+        if os.path.exists(tmp_csv):
+            os.rename(tmp_csv, out_csv)
     except Exception as e:
         print(f"[{algorithm} - {heuristic}] Crash/Error: {e}")
 
-def plot_results(algorithms, heuristics, seeds, time_limit):
-    print("Generating plots...")
+def plot_results(algorithms, heuristics, seeds, shells, time_limit):
+    print("Generating plots per shell...")
     
     colors = {"GA": "#1f77b4", "ES": "#ff7f0e", "SA": "#2ca02c"}
     styles = {"neural": "-", "hungarian": "--"}
-    labels = {"neural": "Surrogate (SE-ResNet, GPU)", "hungarian": "A* (Fuerza Bruta, 1-CPU)"}
+    labels = {"neural": "Surrogate (SE-ResNet, GPU)", "hungarian": "A* Exacto (1-CPU)"}
     
     # Create common time grid for interpolation
     time_grid = np.linspace(0, time_limit, 200)
     
-    # Dictionaries to store interpolated histories
-    agg_fitness = {}
-    agg_evals = {}
-    
-    for algo in algorithms:
-        for heuristic in heuristics:
-            key = f"{algo}_{heuristic}"
-            agg_fitness[key] = []
-            agg_evals[key] = []
-            
-            for seed in seeds:
-                csv_file = f"optuna_results/{algo}_{heuristic}_seed{seed}_log.csv"
-                if os.path.exists(csv_file):
-                    try:
-                        # on_bad_lines handles potentially truncated csvs due to timeout
-                        df = pd.read_csv(csv_file, on_bad_lines='skip')
-                        if len(df) < 2:
-                            continue
-                        
-                        df['time_sec'] = df['time_ms'] / 1000.0
-                        
-                        # Interpolate to common time grid
-                        interp_fit = np.interp(time_grid, df['time_sec'], df['fitness'])
-                        interp_eval = np.interp(time_grid, df['time_sec'], df['evaluations'])
-                        
-                        agg_fitness[key].append(interp_fit)
-                        agg_evals[key].append(interp_eval)
-                    except Exception as e:
-                        print(f"Error loading {csv_file}: {e}")
-    
-    # 1st Plot: Fitness vs Time
-    plt.figure(figsize=(12, 6))
-    for algo in algorithms:
-        for heuristic in heuristics:
-            key = f"{algo}_{heuristic}"
-            if len(agg_fitness[key]) > 0:
-                mean_fit = np.mean(agg_fitness[key], axis=0)
-                std_fit = np.std(agg_fitness[key], axis=0)
+    for shell_id, shell in enumerate(shells, 1):
+        agg_fitness = {}
+        agg_evals = {}
+        
+        for algo in algorithms:
+            for heuristic in heuristics:
+                key = f"{algo}_{heuristic}"
+                agg_fitness[key] = []
+                agg_evals[key] = []
                 
-                plt.plot(time_grid, mean_fit, label=f"{algo} + {labels[heuristic]}",
-                         color=colors[algo], linestyle=styles[heuristic], linewidth=2)
-                plt.fill_between(time_grid, mean_fit - std_fit, mean_fit + std_fit,
-                                 color=colors[algo], alpha=0.15)
-                
-    plt.title("Evolución del Fitness vs. Tiempo (Surrogate vs A*)")
-    plt.xlabel("Tiempo de Ejecución (segundos)")
-    plt.ylabel("Dificultad Alcanzada (Fitness: Empujes)")
-    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-    plt.tight_layout()
-    plt.savefig(f"optuna_results/metaheuristics_ablation_time.pdf")
-    plt.savefig(f"optuna_results/metaheuristics_ablation_time.png", dpi=300)
-    plt.close()
-    
-    # 2nd Plot: Evaluations vs Time
-    plt.figure(figsize=(12, 6))
-    for algo in algorithms:
-        for heuristic in heuristics:
-            key = f"{algo}_{heuristic}"
-            if len(agg_evals[key]) > 0:
-                mean_evals = np.mean(agg_evals[key], axis=0)
-                std_evals = np.std(agg_evals[key], axis=0)
-                
-                # Para escala logaritmica, evitar valores <= 0 en limite inferior
-                lower_bound = np.maximum(mean_evals - std_evals, 1)
-                upper_bound = mean_evals + std_evals
-                
-                plt.plot(time_grid, mean_evals, label=f"{algo} + {labels[heuristic]}",
-                         color=colors[algo], linestyle=styles[heuristic], linewidth=2)
-                plt.fill_between(time_grid, lower_bound, upper_bound,
-                                 color=colors[algo], alpha=0.15)
-                 
-    plt.title("Nodos Evaluados vs. Tiempo")
-    plt.xlabel("Tiempo de Ejecución (segundos)")
-    plt.ylabel("Evaluaciones de Fitness (Acumulado)")
-    plt.yscale('log')
-    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-    plt.tight_layout()
-    plt.savefig(f"optuna_results/metaheuristics_evals_time.pdf")
-    plt.savefig(f"optuna_results/metaheuristics_evals_time.png", dpi=300)
-    plt.close()
-    
+                for seed in seeds:
+                    csv_file = f"optuna_results/{algo}_{heuristic}_shell{shell_id}_seed{seed}_log.csv"
+                    if os.path.exists(csv_file):
+                        try:
+                            # on_bad_lines handles potentially truncated csvs due to timeout
+                            df = pd.read_csv(csv_file, on_bad_lines='skip')
+                            if len(df) < 2:
+                                continue
+                            
+                            df['time_sec'] = df['time_ms'] / 1000.0
+                            
+                            # Interpolate to common time grid
+                            interp_fit = np.interp(time_grid, df['time_sec'], df['fitness'])
+                            interp_eval = np.interp(time_grid, df['time_sec'], df['evaluations'])
+                            
+                            agg_fitness[key].append(interp_fit)
+                            agg_evals[key].append(interp_eval)
+                        except Exception as e:
+                            print(f"Error loading {csv_file}: {e}")
+        
+        # 1st Plot: Fitness vs Time for this shell
+        plt.figure(figsize=(12, 6))
+        for algo in algorithms:
+            for heuristic in heuristics:
+                key = f"{algo}_{heuristic}"
+                if len(agg_fitness[key]) > 0:
+                    mean_fit = np.mean(agg_fitness[key], axis=0)
+                    std_fit = np.std(agg_fitness[key], axis=0)
+                    
+                    plt.plot(time_grid, mean_fit, label=f"{algo} + {labels[heuristic]}",
+                             color=colors[algo], linestyle=styles[heuristic], linewidth=2)
+                    plt.fill_between(time_grid, mean_fit - std_fit, mean_fit + std_fit,
+                                     color=colors[algo], alpha=0.15)
+                    
+        plt.title(f"Evolución del Fitness vs. Tiempo (Shell {shell_id})")
+        plt.xlabel("Tiempo de Ejecución (segundos)")
+        plt.ylabel("Dificultad Alcanzada (Fitness: Empujes)")
+        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.tight_layout()
+        plt.savefig(f"optuna_results/metaheuristics_ablation_time_shell{shell_id}.pdf")
+        plt.close()
+        
+        # 2nd Plot: Evaluations vs Time for this shell
+        plt.figure(figsize=(12, 6))
+        for algo in algorithms:
+            for heuristic in heuristics:
+                key = f"{algo}_{heuristic}"
+                if len(agg_evals[key]) > 0:
+                    mean_evals = np.mean(agg_evals[key], axis=0)
+                    std_evals = np.std(agg_evals[key], axis=0)
+                    
+                    # Para escala logaritmica, evitar valores <= 0 en limite inferior
+                    lower_bound = np.maximum(mean_evals - std_evals, 1)
+                    upper_bound = mean_evals + std_evals
+                    
+                    plt.plot(time_grid, mean_evals, label=f"{algo} + {labels[heuristic]}",
+                             color=colors[algo], linestyle=styles[heuristic], linewidth=2)
+                    plt.fill_between(time_grid, lower_bound, upper_bound,
+                                     color=colors[algo], alpha=0.15)
+                     
+        plt.title(f"Nodos Evaluados vs. Tiempo (Shell {shell_id})")
+        plt.xlabel("Tiempo de Ejecución (segundos)")
+        plt.ylabel("Evaluaciones de Fitness (Acumulado)")
+        plt.yscale('log')
+        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.tight_layout()
+        plt.savefig(f"optuna_results/metaheuristics_evals_time_shell{shell_id}.pdf")
+        plt.close()
+        
     print("Plots saved in optuna_results/")
+
+def test_determinism():
+    print("Running determinism test for GA + neural (seed 42)...")
+    shell_file = "levels/shell_1.sok"
+    csv1 = "optuna_results/determinism_1.csv"
+    csv2 = "optuna_results/determinism_2.csv"
+    
+    run_experiment("GA", "neural", 10, "42", shell_file, csv1)
+    run_experiment("GA", "neural", 10, "42", shell_file, csv2)
+    
+    df1 = pd.read_csv(csv1, on_bad_lines='skip')
+    df2 = pd.read_csv(csv2, on_bad_lines='skip')
+    
+    fit1 = df1['fitness'].iloc[-1]
+    fit2 = df2['fitness'].iloc[-1]
+    evals1 = df1['evaluations'].iloc[-1]
+    evals2 = df2['evaluations'].iloc[-1]
+    
+    print(f"Run 1 -> Fitness: {fit1}, Evals: {evals1}")
+    print(f"Run 2 -> Fitness: {fit2}, Evals: {evals2}")
+    
+    if fit1 == fit2 and evals1 == evals2:
+        print("Determinism test PASSED.")
+    else:
+        print("Determinism test FAILED.")
 
 if __name__ == "__main__":
     os.makedirs("optuna_results", exist_ok=True)
     
+    # Test determinism first
+    test_determinism()
+    
     # Limit to 120s per run
     TIME_LIMIT = 120
     
-    os.makedirs("levels", exist_ok=True)
-    
     algorithms = ["ES", "GA", "SA"]
     heuristics = ["neural", "hungarian"]
-    seeds = ["42", "43", "44", "45", "46"]
+    seeds = [str(i) for i in range(42, 52)]
+    shells = [f"levels/shell_{i}.sok" for i in range(1, 6)]
     
-    for algo in algorithms:
-        for heuristic in heuristics:
-            for seed in seeds:
-                out_csv = f"optuna_results/{algo}_{heuristic}_seed{seed}_log.csv"
-                # Check if it was already run (useful for resuming if it crashes)
-                if not os.path.exists(out_csv):
-                    run_experiment(algo, heuristic, TIME_LIMIT, seed, out_csv)
-                else:
-                    print(f"Skipping {algo} {heuristic} seed {seed}, CSV exists.")
+    for shell_id, shell_file in enumerate(shells, 1):
+        for algo in algorithms:
+            for heuristic in heuristics:
+                for seed in seeds:
+                    out_csv = f"optuna_results/{algo}_{heuristic}_shell{shell_id}_seed{seed}_log.csv"
+                    # Check if it was already run
+                    if not os.path.exists(out_csv):
+                        run_experiment(algo, heuristic, TIME_LIMIT, seed, shell_file, out_csv)
+                    else:
+                        print(f"Skipping {algo} {heuristic} shell {shell_id} seed {seed}, CSV exists.")
             
-    plot_results(algorithms, heuristics, seeds, TIME_LIMIT)
+    plot_results(algorithms, heuristics, seeds, shells, TIME_LIMIT)
