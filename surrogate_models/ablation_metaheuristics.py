@@ -203,7 +203,7 @@ if __name__ == "__main__":
     time_limit = TIME_LIMIT
     heuristics = ["neural", "hungarian"]
     shells = [f"levels/shell_{i}.sok" for i in range(1, 6)]
-    seeds = [str(i) for i in range(42, 52)]
+    seeds = ["42"]  # Reducido a 1 sola semilla para prueba ultra rápida
     
     # 3. Main Experiment Loop
     print("\nStarting Main Benchmark Loop...")
