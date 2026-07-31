@@ -48,6 +48,8 @@ def run_pilot():
                 except subprocess.TimeoutExpired as e:
                     # If it times out, the output so far is captured in e.stdout
                     out_text = e.stdout if e.stdout else ""
+                    if isinstance(out_text, bytes):
+                        out_text = out_text.decode('utf-8', errors='replace')
                     print(f"  [Warning] Seed {seed} timed out by Python after 130s.")
                 
                 disyuntor_count = 0
