@@ -157,6 +157,7 @@ int main(int argc, char** argv)
 
                 Individual ind;
                 ind.board = board;
+                ind.parent_board_str = board_to_string(shell);
                 
                 double fit = evaluator.evaluate(ind);
 
