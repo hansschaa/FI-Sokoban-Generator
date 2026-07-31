@@ -28,8 +28,15 @@ def run_pilot():
     try:
         for shell in shells:
             for seed in seeds:
+                runner_path = "./build/experiment_runner"
+                if not os.path.exists(runner_path):
+                    if os.path.exists("./build2/experiment_runner"):
+                        runner_path = "./build2/experiment_runner"
+                    else:
+                        raise FileNotFoundError("No se encontró experiment_runner en ./build/ ni ./build2/. ¡Compila el código C++ primero!")
+                
                 cmd = [
-                    "./build/experiment_runner", "ES", "FO1", seed, shell,
+                    runner_path, "ES", "FO1", seed, shell,
                     "--heuristic", "neural",
                     "--timeLimit", "120",
                     "--maxEvals", "1000000",
