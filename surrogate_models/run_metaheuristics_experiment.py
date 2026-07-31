@@ -2,7 +2,13 @@ import subprocess
 import os
 import time
 import signal
+import sys
+import argparse
 import multiprocessing
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--algo", type=str, default="ALL", help="Algorithm to run (ES, GA, SA, or ALL)")
+args = parser.parse_args()
 
 print("=================================================================")
 print(" EXPERIMENT HARDWARE & PARALLELISM LOGGING")
@@ -27,7 +33,7 @@ while True:
 print("Server is ready. Starting experiment script...")
 # Now run ablation script
 try:
-    subprocess.run(["./venv/bin/python3", "surrogate_models/ablation_metaheuristics.py"], check=True)
+    subprocess.run(["./venv/bin/python3", "surrogate_models/ablation_metaheuristics.py", "--algo", args.algo], check=True)
 except Exception as e:
     print(f"Experiment failed: {e}")
 finally:

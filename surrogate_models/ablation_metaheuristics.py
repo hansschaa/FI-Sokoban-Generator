@@ -172,16 +172,27 @@ def test_determinism():
     else:
         print("Determinism test FAILED.")
 
+import argparse
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--algo", type=str, default="ALL", help="Algorithm to run")
+    args = parser.parse_args()
+
     os.makedirs("optuna_results", exist_ok=True)
     
-    # Test determinism first
-    test_determinism()
+    # Test determinism first (only on PC 1, or if ALL)
+    if args.algo == "ALL" or args.algo == "GA":
+        test_determinism()
     
     # Limit to 120s per run
     TIME_LIMIT = 120
     
-    algorithms = ["ES", "GA", "SA"]
+    if args.algo == "ALL":
+        algorithms = ["ES", "GA", "SA"]
+    else:
+        algorithms = [args.algo]
+        
     heuristics = ["neural", "hungarian"]
     seeds = [str(i) for i in range(42, 52)]
     shells = [f"levels/shell_{i}.sok" for i in range(1, 6)]
