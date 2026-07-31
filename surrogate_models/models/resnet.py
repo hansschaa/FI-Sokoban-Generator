@@ -333,10 +333,10 @@ class SokobanSEResNetClassifier(nn.Module):
     Clasificador avanzado con arquitectura profunda (4 capas) y atención espacial (SE).
     Termina en 1 neurona (logit) para BCEWithLogitsLoss.
     """
-    def __init__(self, dropout_p: float = 0.4):
+    def __init__(self, dropout_p: float = 0.4, in_channels: int = 6):
         super().__init__()
         self.stem   = nn.Sequential(
-            nn.Conv2d(6, 32, 3, padding=1, bias=False),
+            nn.Conv2d(in_channels, 32, 3, padding=1, bias=False),
             nn.BatchNorm2d(32), nn.ReLU(inplace=True),
         )
         self.layer1 = nn.Sequential(SEBasicBlock(32,  64, stride=1),  SEBasicBlock(64,  64))
