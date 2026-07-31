@@ -107,23 +107,26 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
     }
 
     // 2. Send HTTP POST request
-    httplib::Client cli("localhost", 5000);
+    httplib::Client cli("127.0.0.1", 5000);
     cli.set_connection_timeout(5); // 5 seconds timeout
     cli.set_read_timeout(30);
 
     auto res = cli.Post("/evaluate", payload.dump(), "application/json");
 
     if (!res) {
-        std::cerr << "Error: Failed to connect to Python Surrogate Server at localhost:5000\n";
+        std::cerr << "Error: Failed to connect to Python Surrogate Server at 127.0.0.1:5000\n";
         std::cerr << "Falling back to A* solver for this batch...\n";
         
-        // Ensure we fallback to Hungarian A* if surrogate server is down, so we don't try to load the JIT model in C++
+        // Ensure we fallback to Hungarian A* if surrogate server is down
         auto original_heuristic = this->heuristic_type;
+        auto original_max_sec = this->max_seconds;
         this->heuristic_type = Heuristic::hungarian;
+        this->max_seconds = 5.0; // Fast verification for fallback!
         for (auto& ind : population) {
             evaluate(ind);
         }
         this->heuristic_type = original_heuristic;
+        this->max_seconds = original_max_sec;
         return;
     }
 
@@ -132,11 +135,14 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         std::cerr << "Response: " << res->body << "\n";
         
         auto original_heuristic = this->heuristic_type;
+        auto original_max_sec = this->max_seconds;
         this->heuristic_type = Heuristic::hungarian;
+        this->max_seconds = 5.0; // Fast verification for fallback!
         for (auto& ind : population) {
             evaluate(ind);
         }
         this->heuristic_type = original_heuristic;
+        this->max_seconds = original_max_sec;
         return;
     }
 
