@@ -39,8 +39,9 @@ double Evaluator::evaluate(Individual& individual)
 
     solver.enable_advanced_deadlocks = true;
 
-    // Cambia esto en tu Evaluator::evaluate para usar el matching perfecto O(n³) o neuronal
-    auto stats = solver.test_template(Method::a_star, this->heuristic_type, solution, needs_path_simulator, nullptr, this->max_seconds);
+    // We ALWAYS use Hungarian for true ground-truth evaluation, bypassing LibTorch completely.
+    // The neural heuristic is exclusively used via the Python Surrogate Server in evaluate_surrogate_batch.
+    auto stats = solver.test_template(Method::a_star, Heuristic::hungarian, solution, needs_path_simulator, nullptr, this->max_seconds);
 
     if (stats.status == SolveStatus::TIMEOUT)
     {
