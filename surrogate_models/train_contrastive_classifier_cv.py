@@ -13,7 +13,7 @@ RESULTS_DIR = os.path.join(BASE_DIR, "results")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 N_FOLDS = 5
 BATCH_SIZE = 256
-EPOCHS = 1 # Contrastive model should converge fast as it's fine-tuning or training on similar task
+EPOCHS = 15 # Contrastive model should converge fast as it's fine-tuning or training on similar task
 
 import random
 
