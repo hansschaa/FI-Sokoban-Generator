@@ -42,15 +42,18 @@ def run_pilot():
                     "--maxEvals", "1000000",
                     "--out_csv", "scratch/temp_pilot.csv"
                 ]
-                
-                result = subprocess.run(cmd, timeout=130, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+                try:
+                    result = subprocess.run(cmd, timeout=130, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+                    out_text = result.stdout
+                except subprocess.TimeoutExpired as e:
+                    # If it times out, the output so far is captured in e.stdout
+                    out_text = e.stdout if e.stdout else ""
+                    print(f"  [Warning] Seed {seed} timed out by Python after 130s.")
                 
                 disyuntor_count = 0
-                for line in result.stdout.split("\n"):
+                for line in out_text.split("\n"):
                     if "Disyuntor" in line or "circuit breaker" in line.lower() or "clones" in line.lower() or "diversity" in line.lower():
                         if "triggered" in line.lower() or "activated" in line.lower() or "[DIVERSITY]" in line:
-                            # We just need to count how many times it was triggered. Let's see what the exact text is.
-                            # In previous logs, it prints "[DIVERSITY] Circuit breaker triggered! Resetting population..."
                             if "[DIVERSITY]" in line:
                                 disyuntor_count += 1
                                 
