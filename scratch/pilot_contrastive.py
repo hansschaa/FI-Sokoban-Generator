@@ -14,22 +14,25 @@ def run_pilot():
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
     )
     
+    server_ready = False
     while True:
         line = server_process.stdout.readline()
         if not line:
-            # If line is empty and server died, abort
-            if server_process.poll() is not None:
-                print("\n[ERROR] El servidor Surrogate se ha cerrado inesperadamente durante el arranque. Abortando piloto.")
-                sys.exit(1)
             break
         print("  [SERVER LOG]", line.strip())
-        if "Server ready" in line: break
-        if "Running on" in line: break
+        if "Server ready" in line:
+            server_ready = True
+            break
+        if "Running on" in line:
+            server_ready = True
+            break
 
-    time.sleep(2) # Give it an extra second to bind
-    if server_process.poll() is not None:
-        print("\n[ERROR] El servidor Surrogate falló justo después de arrancar. Abortando piloto.")
+    if not server_ready:
+        print("\n[ERROR] El servidor Surrogate se cerró sin emitir 'Server ready'. Abortando piloto.")
+        server_process.kill()
         sys.exit(1)
+        
+    time.sleep(2) # Give it an extra second to bind
     print("Server is up. Running 50 ES Pilot runs...")
     
     total_disyuntor_triggers = 0
