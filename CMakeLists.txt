@@ -87,11 +87,25 @@ list(REMOVE_ITEM MY_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_es_dataset.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_validate_bfs.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_batch.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_solvable_pair_miner.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/contrastive_pair_miner.cpp
 )
 
 #
 # Interactive solver executable
 #
+
+add_executable(
+    solvable_pair_miner
+    src/main_solvable_pair_miner.cpp
+    ${MY_SRC}
+)
+
+add_executable(
+    contrastive_pair_miner
+    src/contrastive_pair_miner.cpp
+    ${MY_SRC}
+)
 
 add_executable(
     sokoban_solver
@@ -211,6 +225,8 @@ foreach(target
     es_dataset_generator
     experiment_runner
     test_tensor_parity
+    solvable_pair_miner
+    contrastive_pair_miner
 )
     target_compile_options(
         ${target}
