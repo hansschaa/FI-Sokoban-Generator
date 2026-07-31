@@ -63,7 +63,8 @@ def run_pilot():
                     out_text = e.stdout if e.stdout else ""
                     if isinstance(out_text, bytes):
                         out_text = out_text.decode('utf-8', errors='replace')
-                    print(f"  [Warning] Seed {seed} timed out by Python after 130s.")
+                    print(f"  [Warning] Seed {seed} timed out by Python after 310s.")
+                    print(f"  [DEBUG] Últimas líneas del log de C++ antes de morir:\n{out_text[-2000:]}\n{'='*50}")
                 
                 disyuntor_count = "TIMEOUT"
                 for line in out_text.split("\n"):
