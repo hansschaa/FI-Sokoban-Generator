@@ -65,12 +65,14 @@ def run_pilot():
                     "--maxEvals", "1000000",
                     "--out_csv", "scratch/temp_pilot.csv"
                 ]
+                is_timeout = False
                 try:
                     result = subprocess.run(cmd, timeout=310, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
                     out_text = result.stdout
                     if result.returncode != 0:
                         print(f"  [ERROR] C++ process CRASHED with returncode {result.returncode}. Full output:\n{out_text}\n{'='*50}")
                 except subprocess.TimeoutExpired as e:
+                    is_timeout = True
                     # If it times out, the output so far is captured in e.stdout
                     out_text = e.stdout if e.stdout else ""
                     if isinstance(out_text, bytes):
@@ -88,7 +90,7 @@ def run_pilot():
                             except ValueError:
                                 pass
                                 
-                if disyuntor_count == "TIMEOUT" and not isinstance(e, subprocess.TimeoutExpired):
+                if disyuntor_count == "TIMEOUT" and not is_timeout:
                     print(f"  [ERROR] C++ process finished but stats not found. Full output:\n{out_text}\n{'='*50}")
                                 
                 print(f"Shell {shell}, Seed {seed} -> Disyuntor triggers: {disyuntor_count}")

@@ -84,22 +84,17 @@ def evaluate():
         # 1. Encode boards to tensor
         tensors = []
         for item in boards_data:
-            if isinstance(item, dict):
-                b_str = item["board"]
-                p_str = item["parent_board"]
-                t_b = encode_board(b_str)
-                if in_channels == 12:
-                    t_p = encode_board(p_str)
-                    t_np = np.concatenate([t_p, t_b], axis=0)
-                else:
-                    t_np = t_b
+            if not isinstance(item, dict):
+                return jsonify({"error": "Items must be dicts with 'board' and 'parent_board'"}), 400
+                
+            b_str = item["board"]
+            p_str = item["parent_board"]
+            t_b = encode_board(b_str)
+            if in_channels == 12:
+                t_p = encode_board(p_str)
+                t_np = np.concatenate([t_p, t_b], axis=0)
             else:
-                b_str = item
-                t_b = encode_board(b_str)
-                if in_channels == 12:
-                    t_np = np.concatenate([t_b, t_b], axis=0)
-                else:
-                    t_np = t_b
+                t_np = t_b
             tensors.append(torch.from_numpy(t_np))
         
         batch_tensor = torch.stack(tensors).to(device)
@@ -109,8 +104,8 @@ def evaluate():
             logits = classifier_model(batch_tensor)
             probs = torch.sigmoid(logits)
         
-        # Determine solvability (threshold 0.90 para ser ultra estrictos con los Falsos Positivos)
-        is_solvable = (probs >= 0.90)
+        # Determine solvability (threshold 0.65 as optimal from CV: F0.5=0.9278, Spec Complex=0.875)
+        is_solvable = (probs >= 0.65)
 
         # 3. Run Regressor only on solvable boards (for speed)
         solvable_indices = is_solvable.nonzero(as_tuple=True)[0]
