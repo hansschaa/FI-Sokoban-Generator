@@ -88,6 +88,8 @@ def plot_results(algorithms, heuristics, seeds, shells, time_limit):
                         try:
                             # on_bad_lines handles potentially truncated csvs due to timeout
                             df = pd.read_csv(csv_file, on_bad_lines='skip')
+                            df['time_ms'] = pd.to_numeric(df['time_ms'], errors='coerce')
+                            df = df.dropna(subset=['time_ms', 'fitness', 'evaluations'])
                             if len(df) < 2:
                                 continue
                             
