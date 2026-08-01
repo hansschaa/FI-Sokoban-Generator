@@ -210,11 +210,15 @@ int main(int argc, char** argv)
                     first_valid = ind;
                     valid = true;
                     found_first = true;
+                    std::cout << "[INIT STATS] Initial seed found in " << attempts + 1 << " attempts (final max_seconds=" << evaluator.max_seconds << ")" << std::endl;
                 }
             } catch (...) {
                 // Silenciar errores geométricos aleatorios y reintentar
             }
             attempts++;
+            if (attempts == 100) evaluator.max_seconds = 5.0;
+            if (attempts == 500) evaluator.max_seconds = 15.0;
+            if (attempts == 1000) evaluator.max_seconds = 30.0;
         }
 
         if (!valid) {
