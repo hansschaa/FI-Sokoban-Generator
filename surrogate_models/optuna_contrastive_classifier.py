@@ -13,12 +13,12 @@ Enfocado en perfeccionar la precisión en el régimen < 6 cajas para reducir dis
 - Evaluación Óptima Sin Reentrenar: El umbral de decisión se determina dinámicamente mediante barrido 
   posterior en cada época ([0.50, 0.95]), permitiendo que cada trial reporte su verdadero óptimo de calibración.
 - Métrica objetivo: Máximo F_0.5 en el barrido de umbral (priorizando precisión y evitando falsos positivos).
-- Poda inteligente y prudente: MedianPruner con n_warmup_steps=6 para evitar podar durante la fase inicial 
-  de convergencia ruidosa. (Puede desactivarse definiendo export OPTUNA_NO_PRUNED="1" para corridas de control).
+- Poda inteligente y muy permisiva: MedianPruner con n_warmup_steps=9 (de 15 épocas) para evitar podar durante
+  la fase inicial de convergencia y dar tiempo a que los modelos converjan y revelen su potencial real.
 
 Ejecutar en el clúster de laboratorio:
     export OPTUNA_DB_URL="mysql+pymysql://USER:PASSWORD@HOST/optuna_db"
-    export OPTUNA_STUDY_NAME="sokoban_contrastive_lab_v2"
+    export OPTUNA_STUDY_NAME="sokoban_contrastive_lab_v3"
     venv/bin/python surrogate_models/optuna_contrastive_classifier.py
 """
 
@@ -55,10 +55,10 @@ FOLD        = 1
 MAX_EPOCHS  = 15
 PATIENCE    = 4
 BETA        = 0.5    # F_0.5 prioriza precisión para minimizar falsos positivos del disyuntor
-WARMUP_EPOCHS = 6    # 6 épocas de gracia para sobrellevar la fase inicial ruidosa antes de podar
+WARMUP_EPOCHS = 9    # 9 épocas de gracia antes de podar para permitir que la arquitectura se asiente
 
 db_url     = os.environ.get("OPTUNA_DB_URL", f"sqlite:///{RESULTS_DIR}/optuna_contrastive_classifier.db")
-study_name = os.environ.get("OPTUNA_STUDY_NAME", "sokoban_contrastive_lab_v2")
+study_name = os.environ.get("OPTUNA_STUDY_NAME", "sokoban_contrastive_lab_v3")
 no_prune   = os.environ.get("OPTUNA_NO_PRUNED", "0") == "1"
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -234,7 +234,7 @@ def objective(trial):
 if __name__ == "__main__":
     optuna.logging.set_verbosity(optuna.logging.INFO)
 
-    pruner_instance = NopPruner() if no_prune else MedianPruner(n_startup_trials=5, n_warmup_steps=WARMUP_EPOCHS)
+    pruner_instance = NopPruner() if no_prune else MedianPruner(n_startup_trials=10, n_warmup_steps=WARMUP_EPOCHS)
 
     study = optuna.create_study(
         direction="maximize",
