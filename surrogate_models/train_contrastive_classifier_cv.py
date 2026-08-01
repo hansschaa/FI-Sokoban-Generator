@@ -8,14 +8,34 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 from models.resnet import SokobanSEResNetClassifier, ClassifierLoss
 
+import json, random
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 RESULTS_DIR = os.path.join(BASE_DIR, "results")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 N_FOLDS = 5
-BATCH_SIZE = 256
 EPOCHS = 15 # Contrastive model should converge fast as it's fine-tuning or training on similar task
 
-import random
+# Cargar hiperparámetros óptimos del enjambre de Optuna (v3)
+hparams_path = os.path.join(RESULTS_DIR, "best_hparams_contrastive_classifier.json")
+if os.path.exists(hparams_path):
+    with open(hparams_path, "r", encoding="utf-8") as f:
+        config_optuna = json.load(f)
+    params = config_optuna.get("best_params", {})
+    BATCH_SIZE   = int(params.get("batch_size", 128))
+    DROPOUT_P    = float(params.get("dropout_p", 0.3))
+    LR           = float(params.get("lr", 1e-3))
+    WEIGHT_DECAY = float(params.get("weight_decay", 1e-4))
+    OPT_THRESH   = float(config_optuna.get("optimal_threshold", 0.70))
+    print(f"✅ Configuración óptima de Optuna cargada desde:\n   -> {hparams_path}")
+    print(f"   BS={BATCH_SIZE} | Dropout={DROPOUT_P:.4f} | LR={LR:.2e} | WD={WEIGHT_DECAY:.2e} | Umbral Calibrado={OPT_THRESH:.2f}\n")
+else:
+    print(f"⚠️ No se encontró {hparams_path}. Usando hiperparámetros por defecto.")
+    BATCH_SIZE   = 256
+    DROPOUT_P    = 0.4
+    LR           = 1e-3
+    WEIGHT_DECAY = 1e-4
+    OPT_THRESH   = 0.70
 
 class ContrastiveDataset(Dataset):
     def __init__(self, X_path, y_path, t_path, is_train=False):
@@ -66,13 +86,13 @@ def train_and_eval_fold(fold):
     train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True, num_workers=4, pin_memory=True)
     test_loader = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False, num_workers=4, pin_memory=True)
     
-    model = SokobanSEResNetClassifier(dropout_p=0.4, in_channels=12).to(device)
+    model = SokobanSEResNetClassifier(dropout_p=DROPOUT_P, in_channels=12).to(device)
     train_y_tensor = train_ds.y
     num_pos = (train_y_tensor == 1).sum().item()
     num_neg = (train_y_tensor == 0).sum().item()
     pos_weight = torch.tensor([num_neg / max(1, num_pos)]).to(device)
     
-    optimizer = optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)
+    optimizer = optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
     criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=EPOCHS)
     
@@ -88,6 +108,7 @@ def train_and_eval_fold(fold):
             logits = model(X_batch)
             loss = criterion(logits, y_batch)
             loss.backward()
+            nn.utils.clip_grad_norm_(model.parameters(), 5.0)
             optimizer.step()
             train_loss += loss.item()
             
@@ -182,14 +203,25 @@ if __name__ == "__main__":
             results.append(res)
             
     if results:
-        avg_f05 = np.mean([r['f05'] for r in results])
+        avg_f05  = np.mean([r['f05'] for r in results])
         avg_prec = np.mean([r['precision'] for r in results])
-        avg_rec = np.mean([r['recall'] for r in results])
+        avg_rec  = np.mean([r['recall'] for r in results])
+        avg_th   = np.mean([r['threshold'] for r in results])
+        avg_s_sp = np.mean([r['spec_simple'] for r in results])
+        avg_c_sp = np.mean([r['spec_complex'] for r in results])
         
-        print("\n" + "="*50)
-        print("  5-FOLD CROSS VALIDATION RESULTS (CONTRASTIVE)")
-        print("="*50)
-        print(f"  F0.5 Score: {avg_f05:.4f}")
-        print(f"  Precision:  {avg_prec:.4f}")
-        print(f"  Recall:     {avg_rec:.4f}")
-        print("="*50)
+        print("\n" + "="*65)
+        print("  5-FOLD CROSS VALIDATION — RESUMEN FINAL PRODUCCIÓN")
+        print("="*65)
+        print(f"  * F_0.5 Score Medio:    {avg_f05:.5f}")
+        print(f"  * Precisión Media:      {avg_prec:.5f}")
+        print(f"  * Recall Medio:         {avg_rec:.5f}")
+        print(f"  * Umbral Óptimo Medio:  {avg_th:.2f}")
+        print(f"  * Especif. (Simple):    {avg_s_sp:.5f}")
+        print(f"  * Especif. (Complejo):  {avg_c_sp:.5f}")
+        print("="*65)
+        
+        out_summary = os.path.join(RESULTS_DIR, "production_5fold_cv_results.json")
+        with open(out_summary, "w", encoding="utf-8") as f:
+            json.dump({"folds": results, "mean_f05": avg_f05, "mean_precision": avg_prec, "mean_recall": avg_rec, "mean_threshold": avg_th, "mean_spec_simple": avg_s_sp, "mean_spec_complex": avg_c_sp}, f, indent=2)
+        print(f"\n✅ Resumen completo guardado en: {out_summary}")
