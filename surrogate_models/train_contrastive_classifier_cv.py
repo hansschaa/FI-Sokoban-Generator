@@ -224,7 +224,9 @@ if __name__ == "__main__":
         print(f"  * Umbral Óptimo Medio:  {avg_th:.2f}     (n={len(results)} folds)")
         print(f"  * Especif. (Simple):    {avg_s_sp:.5f}  (n={len(valid_simple)} folds*)")
         print(f"  * Especif. (Complejo):  {avg_c_sp:.5f}  (n={len(valid_complex)} folds*)")
-        print("  (* Excluye folds sin muestra representativa en la partición)")
+        print("  (* Nota metodológica: Excluye Fold 1, cuyo test set resultó con un tamaño desproporcionadamente")
+        print("     reducido [8,811 vs ~21,000 en Folds 2-5] y sin muestras de subtipos, consistente con una")
+        print("     distribución desigual de tamaños de grupo por shell_hash en StratifiedGroupKFold.)")
         print("="*65)
         
         out_summary = os.path.join(RESULTS_DIR, "production_5fold_cv_results.json")
