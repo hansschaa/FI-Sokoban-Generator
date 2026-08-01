@@ -5,6 +5,8 @@ import sys
 import pandas as pd
 import numpy as np
 import json
+import matplotlib
+matplotlib.use('Agg') # Evita cuelgues en servidores headless sin servidor X11/GUI
 import matplotlib.pyplot as plt
 import seaborn as sns
 
