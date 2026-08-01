@@ -55,7 +55,7 @@ FOLD        = 1
 MAX_EPOCHS  = 15
 PATIENCE    = 4
 BETA        = 0.5    # F_0.5 prioriza precisión para minimizar falsos positivos del disyuntor
-WARMUP_EPOCHS = 9    # 9 épocas de gracia antes de podar para permitir que la arquitectura se asiente
+WARMUP_EPOCHS = 11   # 11 épocas de gracia antes de podar para superar caídas transitorias de ruido hasta la Ep 10
 
 db_url     = os.environ.get("OPTUNA_DB_URL", f"sqlite:///{RESULTS_DIR}/optuna_contrastive_classifier.db")
 study_name = os.environ.get("OPTUNA_STUDY_NAME", "sokoban_contrastive_lab_v3")

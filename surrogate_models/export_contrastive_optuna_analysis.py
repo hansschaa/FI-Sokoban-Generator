@@ -24,7 +24,7 @@ BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
 RESULTS_DIR = os.path.join(BASE_DIR, "results")
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
-study_name = os.environ.get("OPTUNA_STUDY_NAME", "sokoban_contrastive_lab_v2")
+study_name = os.environ.get("OPTUNA_STUDY_NAME", "sokoban_contrastive_lab_v3")
 db_url     = os.environ.get("OPTUNA_DB_URL",     "mysql+pymysql://optuna_user:sokoban123@172.22.32.164:3306/optuna_db")
 
 print(f"{'='*65}")
