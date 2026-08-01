@@ -13,13 +13,14 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 classifier_model = None
 regressor_model = None
 
-# Statistics for un-normalizing
+# Statistics for un-normalizing and classification threshold
 pushes_mean = 0.0
 pushes_std = 1.0
+CLASSIFIER_THRESHOLD = 0.65
 
 def load_models():
     global classifier_model, regressor_model
-    global pushes_mean, pushes_std
+    global pushes_mean, pushes_std, CLASSIFIER_THRESHOLD
 
     import hashlib
     
@@ -30,18 +31,31 @@ def load_models():
                 sha256_hash.update(byte_block)
         return sha256_hash.hexdigest()
 
-    # Load Hyperparameters
-    with open("surrogate_models/results/best_hparams_classifier.json", "r") as f:
-        c_params = json.load(f)
-    with open("surrogate_models/results/best_hparams.json", "r") as f:
+    # Load Hyperparameters & Calibrated Threshold
+    c_hparams_path = "surrogate_models/results/best_hparams_contrastive_classifier.json"
+    if os.path.exists(c_hparams_path):
+        with open(c_hparams_path, "r", encoding="utf-8") as f:
+            c_config = json.load(f)
+        c_params_dict = c_config.get("best_params", c_config.get("params", {}))
+        c_dropout = float(c_params_dict.get("dropout_p", 0.4))
+        CLASSIFIER_THRESHOLD = float(c_config.get("optimal_threshold", 0.70))
+        print(f"✅ Loaded contrastive config from {c_hparams_path} (dropout={c_dropout:.4f}, threshold={CLASSIFIER_THRESHOLD:.2f})")
+    else:
+        with open("surrogate_models/results/best_hparams_classifier.json", "r", encoding="utf-8") as f:
+            c_params = json.load(f)
+        c_dropout = float(c_params["params"]["dropout_p"])
+        CLASSIFIER_THRESHOLD = 0.65
+        print(f"⚠️ {c_hparams_path} not found. Fallback to default threshold {CLASSIFIER_THRESHOLD} and dropout {c_dropout}")
+
+    with open("surrogate_models/results/best_hparams.json", "r", encoding="utf-8") as f:
         r_params = json.load(f)
 
     # Initialize models
     c_path = "surrogate_models/results/final_contrastive_classifier_fold1.pt"
-    print(f"Loading Classifier (dropout={c_params['params']['dropout_p']}) to {device}")
+    print(f"Loading Classifier (dropout={c_dropout}) to {device}")
     print(f"Model Path: {c_path}")
     print(f"Model SHA256: {compute_sha256(c_path)}")
-    classifier_model = SokobanSEResNetClassifier(dropout_p=c_params['params']["dropout_p"], in_channels=12).to(device)
+    classifier_model = SokobanSEResNetClassifier(dropout_p=c_dropout, in_channels=12).to(device)
     classifier_model.load_state_dict(torch.load(c_path, map_location=device))
     classifier_model.eval()
 
@@ -104,8 +118,8 @@ def evaluate():
             logits = classifier_model(batch_tensor)
             probs = torch.sigmoid(logits)
         
-        # Determine solvability (threshold 0.65 as optimal from CV: F0.5=0.9278, Spec Complex=0.875)
-        is_solvable = (probs >= 0.65)
+        # Determine solvability using dynamically loaded calibrated threshold
+        is_solvable = (probs >= CLASSIFIER_THRESHOLD)
         
         # Log to file for verification
         with open("scratch/probs.log", "a") as f:
