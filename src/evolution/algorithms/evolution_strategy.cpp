@@ -404,9 +404,15 @@ Individual EvolutionStrategy::run(
                   << " | Best Fit: " << best.fitness << std::endl;
 
         if (on_progress) {
+            Individual best_of_gen = population.empty() ? best : population[0];
+            for (const auto& ind : population) {
+                if (ind.fitness > best_of_gen.fitness) {
+                    best_of_gen = ind;
+                }
+            }
             auto now = std::chrono::high_resolution_clock::now();
             double elapsed_ms = std::chrono::duration<double, std::milli>(now - circuitStartTime).count();
-            on_progress(evaluations, best.fitness, elapsed_ms, best);
+            on_progress(evaluations, best.fitness, elapsed_ms, best_of_gen);
         }
     }
 
