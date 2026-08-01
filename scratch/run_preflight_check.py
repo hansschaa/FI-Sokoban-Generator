@@ -21,6 +21,8 @@ def verify_server():
     print(" 1️⃣ VERIFICANDO MODELO DE PRODUCCIÓN Y RESPUESTA DEL SERVIDOR FLASK")
     print("="*70)
     prod_path = "surrogate_models/results/production_contrastive_classifier.pt"
+    if not os.path.exists(prod_path):
+        prod_path = "surrogate_models/results/final_contrastive_classifier_fold1.pt"
     sha = compute_sha256(prod_path)
     print(f"   • Modelo de Producción : {prod_path}")
     print(f"   • SHA256 Checksum      : {sha}")
