@@ -172,6 +172,7 @@ int main(int argc, char** argv)
     evaluator.fitnessType = fitnessType;
     evaluator.heuristic_type = heuristic_type;
     evaluator.use_surrogate = false; // MUST use A* for initialization to guarantee solvable seeds and avoid out-of-distribution neural inputs (shell has no player/boxes)
+    evaluator.max_seconds = 2.0; // Búsqueda ultrarrápida de semilla inicial (máx 2s) para evitar bloqueos prolongados en tableros irresoluble antes de comenzar el circuito evolutivo
 
     // 5. Generar población inicial optimizada (Clonando el primer éxito)
     bool found_first = false;
