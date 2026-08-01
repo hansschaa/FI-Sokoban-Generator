@@ -106,13 +106,31 @@ def main():
         df_orig = df_orig.sample(n=len(df_dense), replace=True, random_state=42).reset_index(drop=True)
         
     df = pd.concat([df_orig, df_dense], ignore_index=True)
-    print(f"Total combined balanced pairs: {len(df)}")
+    print(f"Total combined pairs before class balancing: {len(df)}")
     
     if len(df) == 0:
         print("No data found!")
         return
         
+    print("Class distribution BEFORE balancing:")
     print(df['label'].value_counts())
+    
+    # ---------------------------------------------------------
+    # EXPLICIT CLASS BALANCING (Oversampling Minority Class)
+    # ---------------------------------------------------------
+    df_label_0 = df[df['label'] == 0]
+    df_label_1 = df[df['label'] == 1]
+    
+    if len(df_label_0) > len(df_label_1) and len(df_label_1) > 0:
+        print(f"Balancing Classes: Oversampling Label 1 from {len(df_label_1)} to {len(df_label_0)}...")
+        df_label_1 = df_label_1.sample(n=len(df_label_0), replace=True, random_state=42)
+    elif len(df_label_1) > len(df_label_0) and len(df_label_0) > 0:
+        print(f"Balancing Classes: Oversampling Label 0 from {len(df_label_0)} to {len(df_label_1)}...")
+        df_label_0 = df_label_0.sample(n=len(df_label_1), replace=True, random_state=42)
+        
+    df = pd.concat([df_label_0, df_label_1], ignore_index=True).sample(frac=1, random_state=42).reset_index(drop=True)
+    
+    print("Class distribution AFTER balancing:")
 
     print("Encoding boards (12-channel tensors)...")
     tensors = []
@@ -137,6 +155,11 @@ def main():
     y = np.array(df['label'].values, dtype=np.float32)
     t = np.array(df['type'].values, dtype=np.int64)
     groups = df['shell_hash'].values
+    
+    # AGGRESSIVE MEMORY FREE: The dataframe holds ~400k python objects and arrays.
+    import gc
+    del df
+    gc.collect()
     
     print(f"Final dataset shape: X={X.shape}, y={y.shape}, t={t.shape}")
     
@@ -168,6 +191,10 @@ def main():
         torch.save(torch.from_numpy(t_test).long(), os.path.join(RESULTS_DIR, f"contrastive_fold_{fold}_t_test.pt"))
         
         print(f"Fold {fold} saved. Train: {X_train.shape}, Test: {X_test.shape}")
+        
+        # Free fold-specific variables immediately
+        del X_train, y_train, t_train, X_test, y_test, t_test
+        gc.collect()
         
 if __name__ == "__main__":
     main()
