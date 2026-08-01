@@ -76,7 +76,7 @@ Individual EvolutionStrategy::run(
     if (on_progress) {
         auto now = std::chrono::high_resolution_clock::now();
         double elapsed_ms = std::chrono::duration<double, std::milli>(now - circuitStartTime).count();
-        on_progress(evaluations, best.fitness, elapsed_ms);
+        on_progress(evaluations, best.fitness, elapsed_ms, best);
     }
 
     //
@@ -406,7 +406,7 @@ Individual EvolutionStrategy::run(
         if (on_progress) {
             auto now = std::chrono::high_resolution_clock::now();
             double elapsed_ms = std::chrono::duration<double, std::milli>(now - circuitStartTime).count();
-            on_progress(evaluations, best.fitness, elapsed_ms);
+            on_progress(evaluations, best.fitness, elapsed_ms, best);
         }
     }
 

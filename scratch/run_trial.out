@@ -1,0 +1,18 @@
+Starting trial 34...
+  Cargando dataset de Path Consistency: path_fold1_train.pt...
+  Pares cargados: 50000
+  Extrayendo pesos originales de regressor_fold1_train.pt...
+  Epoch 1/10 finalizada en 14.1s
+  Epoch 2/10 finalizada en 12.8s
+  Epoch 3/10 finalizada en 12.6s
+  Epoch 4/10 finalizada en 12.7s
+  Epoch 5/10 finalizada en 12.5s
+  Epoch 6/10 finalizada en 12.8s
+  Epoch 7/10 finalizada en 12.9s
+  Epoch 8/10 finalizada en 12.8s
+  Epoch 9/10 finalizada en 13.0s
+  Epoch 10/10 finalizada en 12.5s
+Reading TSV: scratch/path_consistency_results.tsv
+Total rows in TSV: 1
+Evaluated pairs: 22, Correct pairs: 7
+Trial 34 returned: 0.3181818181818182

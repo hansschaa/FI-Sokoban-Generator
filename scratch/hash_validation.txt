@@ -1,0 +1,62 @@
+=== 1. VERIFICANDO KEYS EN DATASET ORIGINAL ===
+Keys presentes en el primer elemento de Fold 1: ['tensor', 'pushes_raw', 'pushes_norm', 'shell_hash', 'bucket', 'weight']
+
+Extraídos 10 shell_hashes de muestra del Fold 1 para búsqueda cruzada.
+=== 2. BÚSQUEDA CRUZADA EN RAW .SOK ===
+
+[MATCH ENCONTRADO]
+Archivo Origen: ../training_data/Solvables/6/sokoban_dataset_buckets_1/41_to_50.sok
+Hash Calculado: 3cbea643d1ba8fbaa569aaf0f42c2bf9dd3edc8ef0c8c3dabe276850b20f9a4f
+Pertenece a Fold: 1 (confirmado por regressor_fold1_train.pt)
+--- Tablero ---
+#################
+# ##          ..#
+# ##  $ $  #. # #
+#      ### .$ . #
+#  $# #     @. ##
+###    # $ #   ##
+### # ####  $ ###
+##  # ## #   # ##
+## #      ##    #
+##### ## ### # ##
+#################
+
+[MATCH ENCONTRADO]
+Archivo Origen: ../training_data/Solvables/6/sokoban_dataset_buckets_1/41_to_50.sok
+Hash Calculado: 22c8c142108a018e7be6b12069f87eb6bba2440afd39738b4be9f9949ce5f685
+Pertenece a Fold: 1 (confirmado por regressor_fold1_train.pt)
+--- Tablero ---
+###########
+### #### ##
+###  #    #
+#   $  # ##
+# # ###   #
+# # $   # #
+# #$   ####
+#   ##    #
+# # # # # #
+#     #   #
+# .$ ##.  #
+# #  ## # #
+#         #
+## #@   ..#
+#### ## # #
+#    ######
+###########
+
+[MATCH ENCONTRADO]
+Archivo Origen: ../training_data/Solvables/6/sokoban_dataset_buckets_1/41_to_50.sok
+Hash Calculado: ffaa7232c98b0bafa3817501415b5e5443d1db186fcb2573a7395594c5a4ca82
+Pertenece a Fold: 1 (confirmado por regressor_fold1_train.pt)
+--- Tablero ---
+##############
+#  ####   ####
+# .# # @#$#  #
+#  # .  $  $ #
+##  ###$ $ #.#
+##  $   #$ # #
+##   .     # #
+# .#.####### #
+#  # #    ## #
+# ## ##     .#
+##############

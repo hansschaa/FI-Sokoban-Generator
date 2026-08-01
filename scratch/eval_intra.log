@@ -1,0 +1,12 @@
+Cargando test set...
+Cargando modelo SE-ResNet...
+Procesando y prediciendo...
+
+=== Spearman INTRA-SHELL ===
+Media global: 0.980 (sobre 631 shells con >=3 variantes)
+
+Desglose por dificultad promedio del shell:
+  Rango   0 a  19: Sp = 0.985 (n=78 shells)
+  Rango  20 a  39: Sp = 0.980 (n=310 shells)
+  Rango  40 a  59: Sp = 0.979 (n=171 shells)
+  Rango  60 a  79: Sp = 0.973 (n=72 shells)

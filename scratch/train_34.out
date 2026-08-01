@@ -1,0 +1,21 @@
+Initializing model...
+  Cargando dataset de Path Consistency: path_fold1_train.pt...
+  Pares cargados: 50000
+  Extrayendo pesos originales de regressor_fold1_train.pt...
+Starting training...
+Epoch 1/10 done in 14.4s
+Epoch 2/10 done in 13.7s
+Epoch 3/10 done in 13.6s
+Epoch 4/10 done in 13.6s
+Epoch 5/10 done in 13.7s
+Epoch 6/10 done in 13.7s
+Epoch 7/10 done in 13.6s
+Epoch 8/10 done in 13.5s
+Epoch 9/10 done in 13.6s
+Epoch 10/10 done in 13.7s
+Model saved to scratch/trial_34.pt
+Evaluating inter-branch metric...
+Reading TSV: scratch/path_consistency_results.tsv
+Total rows in TSV: 1
+Evaluated pairs: 22, Correct pairs: 11
+Acc: 0.5

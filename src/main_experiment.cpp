@@ -237,13 +237,18 @@ int main(int argc, char** argv)
     if (out_csv_path != "") {
         csv_out = std::make_shared<std::ofstream>(out_csv_path);
         if (csv_out->is_open()) {
-            *csv_out << "time_ms,evaluations,fitness\n";
+            *csv_out << "time_ms,evaluations,fitness,best_board\n";
         }
     }
     
-    auto log_progress = [csv_out](int evals, double best_fitness, double time_ms) {
+    auto log_progress = [csv_out](int evals, double best_fitness, double time_ms, const Individual& best_ind) {
         if (csv_out && csv_out->is_open()) {
-            *csv_out << time_ms << "," << evals << "," << best_fitness << "\n";
+            std::string board_flat = "";
+            for (const auto& r : best_ind.board) {
+                for (char c : r) board_flat += c;
+                board_flat += "|";
+            }
+            *csv_out << time_ms << "," << evals << "," << best_fitness << "," << board_flat << "\n";
             csv_out->flush();
         }
     };

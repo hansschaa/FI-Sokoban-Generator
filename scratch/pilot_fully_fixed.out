@@ -1,0 +1,12 @@
+  Cargando dataset de Path Consistency: path_fold1_train.pt...
+  Filtro max_route_distance=1 aplicado. Pares: 50000 -> 50000
+  Extrayendo pesos originales de regressor_fold1_train.pt...
+
+--- Running Pilot for alpha=0.1, margin=0.05, epochs=15, lr=0.00515 ---
+Epoch 5/15 done.
+Epoch 10/15 done.
+Epoch 15/15 done.
+Results for alpha = 0.1:
+  Optuna Inter-Branch Acc: 0.7727
+  Spearman (Fixed Player, Boxes Vary): 0.217
+  Spearman (Fixed Boxes, Player Vary): -0.276

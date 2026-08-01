@@ -109,13 +109,17 @@ def run_preflight_test(shell_idx, time_limit=60, seed=999):
                 try: best_fit = -float(parts[0].strip())
                 except: pass
 
-    if best_fit == -1e9 and os.path.exists(out_csv):
+    unique_boards = 0
+    if os.path.exists(out_csv):
         try:
             df = pd.read_csv(out_csv, on_bad_lines='skip')
-            if len(df) > 0 and 'fitness' in df.columns:
-                best_fit = float(df['fitness'].iloc[-1])
+            if len(df) > 0:
+                if best_fit == -1e9 and 'fitness' in df.columns:
+                    best_fit = float(df['fitness'].iloc[-1])
                 if evals == 0 and 'evaluations' in df.columns:
                     evals = int(df['evaluations'].iloc[-1])
+                if 'best_board' in df.columns:
+                    unique_boards = len(df['best_board'].dropna().unique())
         except: pass
 
     print(f"   • Tiempo de reloj consumido : {elapsed:.2f}s")
@@ -125,11 +129,14 @@ def run_preflight_test(shell_idx, time_limit=60, seed=999):
     print(f"   • Generaciones Evolutivas   : {gens}")
     print(f"   • Evaluaciones Totales      : {evals:,}")
     print(f"   • Fitness Mejor Individuo   : {best_fit:.1f}")
+    print(f"   • Tableros Únicos Visitados : {unique_boards} (Métrica de Diversidad en CSV)")
 
     # Chequeo de salud metodológico
     healthy = True
     if init_att <= 0:
         print("     ⚠️ ADVERTENCIA: No se detectó telemetría de inicialización en stdout.")
+    if unique_boards <= 0:
+        print("     ⚠️ ADVERTENCIA: No se detectó la columna best_board en el CSV (¿Faltó re-compilar C++?).")
     if shell_idx == 5 and deleg == 0:
         print("     ⚠️ ADVERTENCIA: En Shell 5 no se registraron delegaciones híbridas (sospechoso).")
     if shell_idx == 1 and disyuntor == 0:

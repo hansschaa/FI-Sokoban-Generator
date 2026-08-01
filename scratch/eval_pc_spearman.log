@@ -1,0 +1,6 @@
+Loading model: surrogate_models/results/path_consistency/consistent_regressor.pt
+Loading test data...
+Found 694 valid groups for MOVE.
+Intra-shell MOVE Spearman: 0.5695 (over 694 valid groups)
+Found 759 valid groups for ADD/REMOVE.
+Intra-shell ADD/REMOVE Spearman: 0.8644 (over 759 valid groups)

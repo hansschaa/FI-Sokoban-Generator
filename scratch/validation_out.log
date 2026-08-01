@@ -1,0 +1,64 @@
+=== 1. Entrenando Piloto Fold 1 ===
+
+=================================================================
+  ENTRENAMIENTO FINAL: PATH CONSISTENCY REGRESSOR
+=================================================================
+  Dispositivo  : CUDA (NVIDIA GeForce RTX 4050 Laptop GPU)
+  Hiperparámetros: lr=0.005150, wd=0.000021, drop=0.02, bs=64 (ajustado por pares)
+  Loss Params  : α=0.1 (peso del MarginRanking), margin=0.05
+
+
+[────────────────────────────────────────]
+  INICIANDO FOLD 1/5
+[────────────────────────────────────────]
+  Cargando dataset de Path Consistency: path_fold1_train.pt...
+  Filtro max_route_distance=1 aplicado. Pares: 36112 -> 4732
+  Extrayendo pesos originales de regressor_fold1_train.pt...
+  -> 🔄 Reanudando desde checkpoint: ckpt_regressor_fold1.pt
+Traceback (most recent call last):
+  File "/home/hanss/FI-sokoban-generator/surrogate_models/train_final_path_consistency.py", line 328, in <module>
+    train_path_consistency(folds_to_run, args.epochs, args.alpha, args.margin, args.max_route_distance, restart=args.restart)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hanss/FI-sokoban-generator/surrogate_models/train_final_path_consistency.py", line 200, in train_path_consistency
+    pred_combined = model(combined).squeeze(-1)
+                    ~~~~~^^^^^^^^^^
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/hanss/FI-sokoban-generator/surrogate_models/models/resnet.py", line 165, in forward
+    x = self.stem(x)
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+           ~~~~~~~~~~~~^
+        input,
+        ^^^^^^
+    ...<11 lines>...
+        self.eps,
+        ^^^^^^^^^
+    )
+    ^
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/functional.py", line 2898, in batch_norm
+    return torch.batch_norm(
+           ~~~~~~~~~~~~~~~~^
+        input,
+        ^^^^^^
+    ...<7 lines>...
+        torch.backends.cudnn.enabled,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+KeyboardInterrupt

@@ -28,7 +28,6 @@ def run_single_experiment(algo, heuristic, seed, shell_idx):
         except: pass
             
     if os.path.exists(out_csv) and os.path.getsize(out_csv) > 0:
-        # Ya completado en ejecución anterior
         best_fitness = -1e9
         evals = 0
         try:
@@ -115,79 +114,122 @@ def run_single_experiment(algo, heuristic, seed, shell_idx):
 
     return (heuristic, seed, shell_idx, False, out_text, disyuntor_count, delegations, gens, evals, best_fitness, init_attempts, elapsed)
 
-def analyze_and_plot(seeds, shells):
-    print("\n" + "="*80)
-    print(" 📊 ANÁLISIS DE ABLACIÓN PRE-REGISTRADO Y GENERACIÓN DE GRÁFICOS")
-    print("="*80)
+def get_fitness_at_time(df, target_sec):
+    if len(df) == 0:
+        return 0.0
+    target_ms = target_sec * 1000.0
+    sub_df = df[df['time_ms'] <= target_ms]
+    if len(sub_df) > 0:
+        return float(sub_df['fitness'].iloc[-1])
+    else:
+        # Si ni siquiera había empezado la primera generación al momento target_sec, devolver fitness inicial o 0
+        return float(df['fitness'].iloc[0])
 
-    summary_data = []
-    wins = 0
-    ties = 0
-    losses = 0
+def analyze_and_plot(seeds, shells):
+    print("\n" + "="*85)
+    print(" 📊 ANÁLISIS DE ABLACIÓN PRE-REGISTRADO: CORTES DE TIEMPO Y DIVERSIDAD ESTRUCTURAL")
+    print("="*85)
+
+    budget_cuts = [30, 60, 120, 300]
+    results_by_cut = {c: [] for c in budget_cuts}
+    diversity_stats = []
+    
     total_shells = len(shells)
 
     for shell_idx in shells:
-        shell_fit_hungarian, shell_fit_neural = [], []
-        shell_eval_hungarian, shell_eval_neural = [], []
-        
-        for seed in seeds:
-            for heur in ["hungarian", "neural"]:
+        shell_dfs = {"hungarian": [], "neural": []}
+        for heur in ["hungarian", "neural"]:
+            for seed in seeds:
                 csv_path = os.path.join(OUTPUT_DIR, f"ES_{heur}_shell{shell_idx}_seed{seed}_log.csv")
                 if os.path.exists(csv_path):
                     try:
                         df = pd.read_csv(csv_path, on_bad_lines='skip')
-                        if len(df) > 0:
-                            final_fit = float(df['fitness'].iloc[-1])
-                            final_evals = float(df['evaluations'].iloc[-1])
-                            if heur == "hungarian":
-                                shell_fit_hungarian.append(final_fit)
-                                shell_eval_hungarian.append(final_evals)
-                            else:
-                                shell_fit_neural.append(final_fit)
-                                shell_eval_neural.append(final_evals)
-                    except Exception: pass
-        
-        mean_fit_hung = np.mean(shell_fit_hungarian) if shell_fit_hungarian else 0.0
-        mean_fit_neur = np.mean(shell_fit_neural) if shell_fit_neural else 0.0
-        mean_ev_hung  = np.mean(shell_eval_hungarian) if shell_eval_hungarian else 0.0
-        mean_ev_neur  = np.mean(shell_eval_neural) if shell_eval_neural else 0.0
+                        df['time_ms'] = pd.to_numeric(df['time_ms'], errors='coerce')
+                        df = df.dropna(subset=['time_ms', 'fitness'])
+                        shell_dfs[heur].append(df)
+                    except: pass
 
-        status = "VICTORIA (SURROGATE >= HUNGARIAN)"
-        if mean_fit_neur > mean_fit_hung:
-            wins += 1
-        elif np.isclose(mean_fit_neur, mean_fit_hung, atol=1e-3):
-            ties += 1
-            status = "EMPATE (SURROGATE == HUNGARIAN)"
-        else:
-            losses += 1
-            status = "DERROTA (HUNGARIAN > SURROGATE)"
+        # 1. Análisis de Diversidad Estructual (Número de "Atractores" / Tableros únicos visitados)
+        div_hung, div_neur = [], []
+        for df in shell_dfs["hungarian"]:
+            if 'best_board' in df.columns:
+                div_hung.append(len(df['best_board'].dropna().unique()))
+            else:
+                div_hung.append(1)
+        for df in shell_dfs["neural"]:
+            if 'best_board' in df.columns:
+                div_neur.append(len(df['best_board'].dropna().unique()))
+            else:
+                div_neur.append(1)
 
-        print(f"\n🧩 [Shell {shell_idx}] -> {status}")
-        print(f"   • Baseline (Hungarian)  : Fitness Promedio = {mean_fit_hung:.2f} | Evaluaciones Promedio = {mean_ev_hung:,.0f}")
-        print(f"   • Surrogate (Production): Fitness Promedio = {mean_fit_neur:.2f} | Evaluaciones Promedio = {mean_ev_neur:,.0f}")
-        
-        summary_data.append({
+        mean_div_hung = np.mean(div_hung) if div_hung else 0.0
+        mean_div_neur = np.mean(div_neur) if div_neur else 0.0
+        diversity_stats.append({
             "shell": shell_idx,
-            "hungarian_mean_fitness": mean_fit_hung,
-            "neural_mean_fitness": mean_fit_neur,
-            "hungarian_mean_evals": mean_ev_hung,
-            "neural_mean_evals": mean_ev_neur,
-            "outcome": status
+            "hungarian_unique_boards": mean_div_hung,
+            "neural_unique_boards": mean_div_neur,
+            "diff_percent": ((mean_div_neur - mean_div_hung) / max(mean_div_hung, 1)) * 100.0
         })
 
-    success_rate = ((wins + ties) / total_shells) * 100.0
-    print("\n" + "="*80)
-    print(f"🎯 RESULTADO DEL CRITERIO PRE-REGISTRADO: {success_rate:.1f}% de éxito en combinaciones por Shell (≥70% requerido)")
-    if success_rate >= 70.0:
-        print("✅ EL EXPERIMENTO CONFIRMA ÉXITO PRE-REGISTRADO DEL SURROGATE ARCHITECTURE.")
-    else:
-        print("⚠️ EL EXPERIMENTO NO ALCANZÓ EL UMBRAL DEL 70% PRE-REGISTRADO.")
-    print("="*80)
+        # 2. Análisis a Distintos Presupuestos de Tiempo (30s, 60s, 120s, 300s)
+        for cut in budget_cuts:
+            fits_hung = [get_fitness_at_time(df, cut) for df in shell_dfs["hungarian"]]
+            fits_neur = [get_fitness_at_time(df, cut) for df in shell_dfs["neural"]]
+            
+            mean_fit_h = np.mean(fits_hung) if fits_hung else 0.0
+            mean_fit_n = np.mean(fits_neur) if fits_neur else 0.0
+            
+            if mean_fit_n > mean_fit_h: status = "VICTORIA"
+            elif np.isclose(mean_fit_n, mean_fit_h, atol=1e-3): status = "EMPATE"
+            else: status = "DERROTA"
 
-    df_summary = pd.DataFrame(summary_data)
-    df_summary.to_csv(os.path.join(OUTPUT_DIR, "ablation_summary_table.csv"), index=False)
-    with open(os.path.join(OUTPUT_DIR, "ablation_summary_table.json"), "w", encoding="utf-8") as f:
-        json.dump(summary_data, f, indent=4)
+            results_by_cut[cut].append({
+                "shell": shell_idx,
+                "hungarian_mean_fit": mean_fit_h,
+                "neural_mean_fit": mean_fit_n,
+                "status": status
+            })
+
+    # IMPRIMIR REPORTE POR CORTES DE PRESUPUESTO DE TIEMPO
+    print("\n" + "-"*85)
+    print(" ⏱️ EVALUACIÓN DEL CRITERIO PRE-REGISTRADO (≥70% VICTORIAS/EMPATES) POR PRESUPUESTO")
+    print("-" * 85)
+    
+    cut_summary_export = {}
+    for cut in budget_cuts:
+        wins_cut = sum(1 for r in results_by_cut[cut] if r["status"] == "VICTORIA")
+        ties_cut = sum(1 for r in results_by_cut[cut] if r["status"] == "EMPATE")
+        losses_cut = sum(1 for r in results_by_cut[cut] if r["status"] == "DERROTA")
+        succ_rate = ((wins_cut + ties_cut) / max(total_shells, 1)) * 100.0
+        
+        print(f"\n⌛ PRESUPUESTO = {cut:3d}s | Éxito: {succ_rate:5.1f}% ({wins_cut} Victorias, {ties_cut} Empates, {losses_cut} Derrotas)")
+        for r in results_by_cut[cut]:
+            print(f"   • Shell {r['shell']}: Baseline (A*) = {r['hungarian_mean_fit']:5.2f} | Surrogate (GPU) = {r['neural_mean_fit']:5.2f} -> {r['status']}")
+            
+        if succ_rate >= 70.0:
+            print(f"   🎯 Conclusión a los {cut}s: CUMPLE criterio pre-registrado del 70%.")
+        else:
+            print(f"   ⚠️ Conclusión a los {cut}s: NO ALCANZA umbral del 70% (Resultado científico legítimo para reportar).")
+        
+        cut_summary_export[f"budget_{cut}s"] = {
+            "success_rate_pct": succ_rate,
+            "wins": wins_cut, "ties": ties_cut, "losses": losses_cut,
+            "shell_details": results_by_cut[cut]
+        }
+
+    # IMPRIMIR REPORTE DE DIVERSIDAD ESTRUCTURAL
+    print("\n" + "-"*85)
+    print(" 🎨 EVALUACIÓN DE DIVERSIDAD ESTRUCTURAL (TABLEROS MEJOR-DE-GENERACIÓN ÚNICOS VISITADOS)")
+    print("-" * 85)
+    for d in diversity_stats:
+        print(f"🧩 [Shell {d['shell']}] Promedio de Atractores Explorados por Corrida:")
+        print(f"   • Baseline (Hungarian A*): {d['hungarian_unique_boards']:.1f} tableros únicos")
+        print(f"   • Surrogate Híbrido (GPU): {d['neural_unique_boards']:.1f} tableros únicos ({d['diff_percent']:+.1f}%)")
+
+    # Guardar reportes en JSON y CSV
+    with open(os.path.join(OUTPUT_DIR, "ablation_multibudget_analysis.json"), "w", encoding="utf-8") as f:
+        json.dump({"budget_analysis": cut_summary_export, "diversity_analysis": diversity_stats}, f, indent=4)
+    pd.DataFrame(diversity_stats).to_csv(os.path.join(OUTPUT_DIR, "ablation_diversity_table.csv"), index=False)
 
     print("\nGenerando gráficas de publicación (Fitness vs. Tiempo y Evaluaciones vs. Tiempo)...")
     time_grid = np.linspace(0, TIME_LIMIT_SEC, 200)
@@ -252,7 +294,7 @@ def analyze_and_plot(seeds, shells):
         plt.savefig(os.path.join(OUTPUT_DIR, f"evals_vs_time_shell_{shell_idx}.pdf"))
         plt.close()
 
-    print(f"📈 Gráficos PDF y reportes guardados exitosamente en la carpeta `{OUTPUT_DIR}/`.")
+    print(f"\n📈 Gráficos PDF y reportes multi-presupuesto y de diversidad guardados exitosamente en `{OUTPUT_DIR}/`.")
 
 def main():
     seeds = [str(i) for i in range(42, 52)]  # 10 semillas (42-51)
@@ -263,7 +305,7 @@ def main():
     total_tasks = len(tasks)
     
     print(f"🚀 INICIANDO BATERÍA DE ABLACIÓN DE 100 CORRIDAS ({len(heuristics)} configs × {len(shells)} shells × {len(seeds)} semillas)...")
-    print(f"🔒 Ejecución ESTRICTAMENTE SECUENCIAL (1 corrida a la vez) para eliminar ruido de concurrencia y garantizar métricas de tiempo 100% justas y comparables...")
+    print(f"🔒 Ejecución ESTRICTAMENTE SECUENCIAL (1 corrida a la vez) para eliminar ruido de concurrencia...")
     
     completed = 0
     for (h, s, sh) in tasks:
@@ -278,7 +320,7 @@ def main():
         except Exception as exc:
             print(f"[{completed:03d}/{total_tasks:03d}] [ERROR] shell_{sh}.sok | Config={h:9s} | Seed {s} generó una excepción: {exc}", flush=True)
 
-    # Proceder a análisis y gráficos
+    # Proceder a análisis multi-presupuesto y gráficos
     analyze_and_plot(seeds, shells)
 
 if __name__ == "__main__":

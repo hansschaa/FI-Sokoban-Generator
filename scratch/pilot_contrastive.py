@@ -2,108 +2,90 @@ import os
 import subprocess
 import time
 import sys
-import signal
+import concurrent.futures
+import threading
+
+def run_single(seed, shell):
+    runner_path = "./build/experiment_runner"
+    if not os.path.exists(runner_path):
+        runner_path = "./build2/experiment_runner"
+    
+    cmd = [
+        runner_path, "ES", "FO1", seed, shell,
+        "--heuristic", "neural",
+        "--timeLimit", "300",
+        "--maxEvals", "1000000",
+        "--out_csv", f"scratch/temp_pilot_{seed}_{os.path.basename(shell)}.csv"
+    ]
+    
+    try:
+        result = subprocess.run(cmd, timeout=310, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+        out_text = result.stdout
+    except subprocess.TimeoutExpired as e:
+        out_text = e.stdout if e.stdout else ""
+        if isinstance(out_text, bytes):
+            out_text = out_text.decode('utf-8', errors='replace')
+            
+    disyuntor_count = "TIMEOUT"
+    for line in out_text.split('\n'):
+        if "[ES STATS] Circuit Breaker (MAX_FAILURES) triggers:" in line:
+            parts = line.split(":")
+            if len(parts) >= 2:
+                try:
+                    disyuntor_count = int(parts[1].strip())
+                except:
+                    pass
+    return disyuntor_count
 
 def run_pilot():
     seeds = [str(i) for i in range(42, 52)]
     shells = [f"levels/shell_{i}.sok" for i in range(1, 6)]
     
-    print("Starting Surrogate Server... (waiting for logs)")
+    print("Starting Surrogate Server...")
     server_process = subprocess.Popen(
-        ["./venv/bin/python3", "surrogate_models/surrogate_server.py"], 
+        [sys.executable, "surrogate_models/surrogate_server.py"], 
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
     )
     
-    server_ready = False
-    while True:
-        line = server_process.stdout.readline()
-        if not line:
-            break
-        print("  [SERVER LOG]", line.strip())
-        if "Server ready" in line:
-            server_ready = True
-            break
-        if "Running on" in line:
-            server_ready = True
-            break
-
-    import threading
-    def drain_logs(process):
-        with open("scratch/surrogate_server.log", "w") as f:
-            for line in iter(process.stdout.readline, ''):
-                f.write(line)
-                f.flush()
-
-    if server_ready:
-        threading.Thread(target=drain_logs, args=(server_process,), daemon=True).start()
-
-    if not server_ready:
-        print("\n[ERROR] El servidor Surrogate se cerró sin emitir 'Server ready'. Abortando piloto.")
-        server_process.kill()
-        sys.exit(1)
-        
-    time.sleep(2) # Give it an extra second to bind
-    print("Server is up. Running 50 ES Pilot runs...")
+    def drain():
+        for line in server_process.stdout:
+            pass
+    threading.Thread(target=drain, daemon=True).start()
+    
+    time.sleep(10) # wait for server to start
     
     total_disyuntor_triggers = 0
     total_runs = 0
-
-    try:
-        for shell in shells:
-            for seed in seeds:
-                runner_path = "./build/experiment_runner"
-                if not os.path.exists(runner_path):
-                    if os.path.exists("./build2/experiment_runner"):
-                        runner_path = "./build2/experiment_runner"
-                    else:
-                        raise FileNotFoundError("No se encontró experiment_runner en ./build/ ni ./build2/. ¡Compila el código C++ primero!")
-                
-                cmd = [
-                    runner_path, "ES", "FO1", seed, shell,
-                    "--heuristic", "neural",
-                    "--timeLimit", "300",
-                    "--maxEvals", "1000000",
-                    "--out_csv", "scratch/temp_pilot.csv"
-                ]
-                is_timeout = False
-                try:
-                    result = subprocess.run(cmd, timeout=310, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-                    out_text = result.stdout
-                    if result.returncode != 0:
-                        print(f"  [ERROR] C++ process CRASHED with returncode {result.returncode}. Full output:\n{out_text}\n{'='*50}")
-                except subprocess.TimeoutExpired as e:
-                    is_timeout = True
-                    # If it times out, the output so far is captured in e.stdout
-                    out_text = e.stdout if e.stdout else ""
-                    if isinstance(out_text, bytes):
-                        out_text = out_text.decode('utf-8', errors='replace')
-                    print(f"  [Warning] Seed {seed} timed out by Python after 310s.")
-                    print(f"  [DEBUG] Últimas líneas del log de C++ antes de morir:\n{out_text[-2000:]}\n{'='*50}")
-                
-                disyuntor_count = "TIMEOUT"
-                for line in out_text.split("\n"):
-                    if "[ES STATS] Circuit Breaker (MAX_FAILURES) triggers:" in line:
-                        parts = line.split(":")
-                        if len(parts) > 1:
-                            try:
-                                disyuntor_count = int(parts[-1].strip())
-                            except ValueError:
-                                pass
-                                
-                if disyuntor_count == "TIMEOUT" and not is_timeout:
-                    print(f"  [ERROR] C++ process finished but stats not found. Full output:\n{out_text}\n{'='*50}")
-                                
-                print(f"Shell {shell}, Seed {seed} -> Disyuntor triggers: {disyuntor_count}")
+    
+    tasks = []
+    for shell in shells:
+        for seed in seeds:
+            tasks.append((seed, shell))
+            
+    print(f"Running {len(tasks)} tasks in parallel...")
+    with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
+        futures = {executor.submit(run_single, seed, shell): (seed, shell) for seed, shell in tasks}
+        for future in concurrent.futures.as_completed(futures):
+            seed, shell = futures[future]
+            try:
+                disyuntor_count = future.result()
                 if isinstance(disyuntor_count, int):
                     total_disyuntor_triggers += disyuntor_count
-                    total_runs += 1
-                
-    finally:
-        print("Killing server...")
-        server_process.send_signal(signal.SIGINT)
-        server_process.wait()
-        
-    print(f"\nFINAL RESULT: Avg Disyuntor triggers per run = {total_disyuntor_triggers / total_runs:.2f} (Total: {total_disyuntor_triggers})")
+                print(f"[{shell} | Seed {seed}] Disyuntor triggers: {disyuntor_count}")
+                total_runs += 1
+            except Exception as exc:
+                print(f"[{shell} | Seed {seed}] Generated an exception: {exc}")
 
-if __name__ == "__main__":
+    print("\n================ PILOT RESULTS ================")
+    if total_runs > 0:
+        avg = total_disyuntor_triggers / total_runs
+        print(f"Total runs completed: {total_runs}/50")
+        print(f"Average Disyuntor triggers per run: {avg:.2f}")
+    else:
+        print("No runs completed successfully.")
+        
+    print("Killing server...")
+    server_process.kill()
+
+if __name__ == '__main__':
     run_pilot()

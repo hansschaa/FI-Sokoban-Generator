@@ -1,0 +1,5 @@
+board_id,bucket,box_count,source_file,heuristic,rep,status,runtime_ms,pushes,expanded_nodes,total_children,effective_children,deadlocks
+30,21-30,3,21_to_30.sok,manhattan,1,SOLVED,55.9222,23,3090,37080,9684,4615
+30,21-30,3,21_to_30.sok,hungarian,1,SOLVED,2.90886,23,180,2160,733,286
+30,21-30,3,21_to_30.sok,neural_batched_massive,1,SOLVED,116471.0,23,1271,15252,5016,2223
+31,21-30,4,21_to_30.sok,manhattan,1,SOLVED,51.2954,21,4238,67808,10654,3883

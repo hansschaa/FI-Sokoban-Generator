@@ -1,0 +1,62 @@
+  Cargando dataset de Path Consistency: path_fold1_train.pt...
+  Pares cargados: 50000
+  Extrayendo pesos originales de regressor_fold1_train.pt...
+
+--- Running Pilot for alpha = 0.05 ---
+Traceback (most recent call last):
+  File "/home/hanss/FI-sokoban-generator/scratch/run_pilot.py", line 147, in <module>
+    run_pilot(args.alpha)
+    ~~~~~~~~~^^^^^^^^^^^^
+  File "/home/hanss/FI-sokoban-generator/scratch/run_pilot.py", line 137, in run_pilot
+    rho_boxes, rho_player = diagnose_spearman(model, device)
+                            ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/hanss/FI-sokoban-generator/scratch/run_pilot.py", line 76, in diagnose_spearman
+    pred_pushes = np.exp(model(x).item()) - 1.0
+                         ~~~~~^^^
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/hanss/FI-sokoban-generator/surrogate_models/models/resnet.py", line 168, in forward
+    x = self.layer3(x)
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/hanss/FI-sokoban-generator/surrogate_models/models/resnet.py", line 121, in forward
+    out = self.se(out)
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/hanss/FI-sokoban-generator/surrogate_models/models/resnet.py", line 97, in forward
+    y = self.fc(y).view(b, c, 1, 1)
+        ~~~~~~~^^^
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+           ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hanss/FI-sokoban-generator/venv/lib/python3.14/site-packages/torch/nn/functional.py", line 1769, in relu
+    result = torch.relu_(input)
+KeyboardInterrupt

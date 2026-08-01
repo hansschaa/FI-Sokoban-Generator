@@ -1,0 +1,79 @@
+Starting 50 runs...
+levels/shell_1.sok Seed 43: Triggers=28, Delegations=0, Gens=29, Time=12.5s
+levels/shell_1.sok Seed 42: Triggers=30, Delegations=0, Gens=29, Time=12.6s
+levels/shell_1.sok Seed 46: Triggers=30, Delegations=0, Gens=29, Time=12.6s
+levels/shell_1.sok Seed 47: Triggers=30, Delegations=0, Gens=29, Time=12.7s
+levels/shell_1.sok Seed 45: Triggers=30, Delegations=0, Gens=29, Time=12.7s
+levels/shell_1.sok Seed 44: Triggers=30, Delegations=0, Gens=29, Time=12.8s
+levels/shell_1.sok Seed 48: Triggers=29, Delegations=0, Gens=29, Time=9.4s
+levels/shell_1.sok Seed 49: Triggers=30, Delegations=0, Gens=29, Time=9.9s
+levels/shell_1.sok Seed 51: Triggers=30, Delegations=0, Gens=29, Time=9.9s
+levels/shell_2.sok Seed 42: Triggers=0, Delegations=0, Gens=29, Time=9.8s
+levels/shell_2.sok Seed 43: Triggers=1, Delegations=0, Gens=29, Time=9.8s
+levels/shell_2.sok Seed 44: Triggers=0, Delegations=0, Gens=29, Time=5.5s
+levels/shell_2.sok Seed 45: Triggers=1, Delegations=0, Gens=29, Time=6.0s
+levels/shell_2.sok Seed 47: Triggers=0, Delegations=0, Gens=29, Time=6.0s
+levels/shell_2.sok Seed 46: Triggers=1, Delegations=0, Gens=29, Time=6.1s
+levels/shell_2.sok Seed 48: Triggers=0, Delegations=0, Gens=29, Time=6.0s
+levels/shell_2.sok Seed 49: Triggers=1, Delegations=0, Gens=29, Time=5.1s
+levels/shell_2.sok Seed 50: Triggers=1, Delegations=0, Gens=29, Time=6.0s
+levels/shell_2.sok Seed 51: Triggers=1, Delegations=0, Gens=29, Time=6.1s
+levels/shell_3.sok Seed 42: Triggers=4, Delegations=0, Gens=29, Time=6.2s
+levels/shell_3.sok Seed 43: Triggers=1, Delegations=0, Gens=29, Time=6.3s
+levels/shell_3.sok Seed 44: Triggers=0, Delegations=0, Gens=29, Time=6.6s
+levels/shell_3.sok Seed 45: Triggers=5, Delegations=0, Gens=29, Time=6.9s
+levels/shell_3.sok Seed 47: Triggers=5, Delegations=0, Gens=29, Time=7.0s
+levels/shell_3.sok Seed 49: Triggers=1, Delegations=0, Gens=29, Time=7.9s
+levels/shell_3.sok Seed 46: Triggers=2, Delegations=0, Gens=53, Time=13.1s
+levels/shell_1.sok Seed 50: Triggers=55, Delegations=53, Gens=55, Time=36.8s
+levels/shell_3.sok Seed 48: Triggers=3, Delegations=0, Gens=57, Time=14.7s
+levels/shell_3.sok Seed 50: Triggers=11, Delegations=0, Gens=29, Time=8.4s
+levels/shell_3.sok Seed 51: Triggers=14, Delegations=0, Gens=29, Time=8.3s
+levels/shell_4.sok Seed 43: Triggers=0, Delegations=0, Gens=29, Time=7.8s
+levels/shell_4.sok Seed 42: Triggers=2, Delegations=0, Gens=29, Time=9.1s
+levels/shell_4.sok Seed 46: Triggers=0, Delegations=0, Gens=29, Time=8.3s
+levels/shell_4.sok Seed 47: Triggers=0, Delegations=0, Gens=29, Time=8.1s
+levels/shell_4.sok Seed 45: Triggers=2, Delegations=0, Gens=29, Time=9.2s
+levels/shell_4.sok Seed 44: Triggers=3, Delegations=0, Gens=29, Time=9.7s
+levels/shell_4.sok Seed 48: Triggers=0, Delegations=0, Gens=29, Time=8.2s
+levels/shell_4.sok Seed 49: Triggers=1, Delegations=0, Gens=29, Time=7.8s
+levels/shell_4.sok Seed 50: Triggers=0, Delegations=0, Gens=29, Time=7.7s
+levels/shell_4.sok Seed 51: Triggers=0, Delegations=0, Gens=29, Time=7.5s
+levels/shell_5.sok Seed 43: Triggers=3, Delegations=240, Gens=21, Time=305.2s
+levels/shell_5.sok Seed 44: Triggers=3, Delegations=106, Gens=16, Time=303.2s
+levels/shell_5.sok Seed 45: Triggers=9, Delegations=59, Gens=15, Time=304.8s
+levels/shell_5.sok Seed 42: Triggers=3, Delegations=241, Gens=25, Time=310.0s
+levels/shell_5.sok Seed 47: Triggers=3, Delegations=334, Gens=28, Time=304.6s
+levels/shell_5.sok Seed 46: Triggers=-1, Delegations=-1, Gens=0, Time=310.0s
+levels/shell_5.sok Seed 50: Triggers=5, Delegations=306, Gens=29, Time=288.3s
+levels/shell_5.sok Seed 48: Triggers=4, Delegations=278, Gens=24, Time=305.5s
+levels/shell_5.sok Seed 51: Triggers=4, Delegations=158, Gens=24, Time=303.0s
+levels/shell_5.sok Seed 49: Triggers=0, Delegations=216, Gens=19, Time=306.4s
+
+=== FINAL SUMMARY (across 49 runs) ===
+Global Avg Disyuntor triggers per run: 8.49
+
+levels/shell_1.sok (from 10 runs):
+  Avg Disyuntor triggers: 32.20
+  Avg Hybrid Delegations (box>=6 to Hungarian): 5.30
+  Avg Generations: 31.6 | Avg Evals: 968.6 | Avg Time: 14.18s | Throughput: 68.3 evals/sec
+
+levels/shell_2.sok (from 10 runs):
+  Avg Disyuntor triggers: 0.60
+  Avg Hybrid Delegations (box>=6 to Hungarian): 0.00
+  Avg Generations: 29.0 | Avg Evals: 893.4 | Avg Time: 6.64s | Throughput: 134.5 evals/sec
+
+levels/shell_3.sok (from 10 runs):
+  Avg Disyuntor triggers: 4.60
+  Avg Hybrid Delegations (box>=6 to Hungarian): 0.00
+  Avg Generations: 34.2 | Avg Evals: 1045.6 | Avg Time: 8.54s | Throughput: 122.5 evals/sec
+
+levels/shell_4.sok (from 10 runs):
+  Avg Disyuntor triggers: 0.80
+  Avg Hybrid Delegations (box>=6 to Hungarian): 0.00
+  Avg Generations: 29.0 | Avg Evals: 890.8 | Avg Time: 8.35s | Throughput: 106.7 evals/sec
+
+levels/shell_5.sok (from 9 runs):
+  Avg Disyuntor triggers: 3.78
+  Avg Hybrid Delegations (box>=6 to Hungarian): 215.33
+  Avg Generations: 22.3 | Avg Evals: 695.9 | Avg Time: 303.45s | Throughput: 2.3 evals/sec

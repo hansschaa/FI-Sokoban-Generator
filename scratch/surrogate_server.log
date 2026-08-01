@@ -1,0 +1,15 @@
+Loading Classifier (dropout=0.266752) to cuda
+Model Path: surrogate_models/results/final_contrastive_classifier_fold1.pt
+Model SHA256: 100fc8698a09ee91a548c906676bfc43fb094d12317cf91af57f661404bf90c0
+Loading Regressor (dropout=0.0205) to cuda
+Model Path: surrogate_models/results/production_regressor.pt
+Model SHA256: 26bef55169151fc2ea22696ffc6c4dbc06947cdab83cfe07f194fc559903e064
+GPU Device Name: NVIDIA GeForce RTX 4050 Laptop GPU
+Surrogate Parallelism: Batched GPU Inference (batch size = dynamic, up to population size)
+Models loaded successfully! Server ready.
+ * Serving Flask app 'surrogate_server'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [31/Jul/2026 19:21:43] "POST /evaluate HTTP/1.1" 200 -
