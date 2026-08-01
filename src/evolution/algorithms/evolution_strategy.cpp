@@ -125,7 +125,7 @@ Individual EvolutionStrategy::run(
             // RANDOM PARENT SELECTION
             int parentIndex = rand() % population.size();
             Individual child = population[parentIndex];
-            child.parent_board_str = board_to_string(population[parentIndex].board);
+            child.parent_board_str = board_to_pretty_string(population[parentIndex].board);
             bool needsEvaluation = false;
 
             double r_mut = (double)rand() / RAND_MAX;
@@ -415,9 +415,11 @@ Individual EvolutionStrategy::run(
     //
     
     std::cout << "\n[ES STATS] Circuit Breaker (MAX_FAILURES) triggers: " << total_circuit_breakers << "\n";
-    std::cout << "[ES STATS] Surrogate Fallbacks: " << evaluator.surrogate_fallbacks << "\n";
-    std::cout << "[ES STATS] Surrogate Regressor Calls: " << evaluator.surrogate_regressor_calls << "\n";
+    std::cout << "[ES STATS] Surrogate Fallbacks: " << *(evaluator.surrogate_fallbacks) << "\n";
+    std::cout << "[ES STATS] Surrogate Regressor Calls: " << *(evaluator.surrogate_regressor_calls) << "\n";
+    std::cout << "[ES STATS] Hybrid Hungarian Delegations (box_count >= 6): " << *(evaluator.hybrid_hungarian_delegations) << "\n";
     std::cout << "[ES STATS] Clone Fallback triggers: " << total_clone_fallbacks << " (Total Clones Injected: " << total_clones_injected << ")\n";
+    std::cout << "[ES STATS] Total Generations: " << generation << " | Total Evals: " << evaluations << "\n";
 
     /*std::cout
         << "\nFINAL BEST FITNESS = "

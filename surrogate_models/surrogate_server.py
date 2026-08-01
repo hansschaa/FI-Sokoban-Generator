@@ -106,6 +106,11 @@ def evaluate():
         
         # Determine solvability (threshold 0.65 as optimal from CV: F0.5=0.9278, Spec Complex=0.875)
         is_solvable = (probs >= 0.65)
+        
+        # Log to file for verification
+        with open("scratch/probs.log", "a") as f:
+            for p in probs.tolist():
+                f.write(f"{p:.6f}\n")
 
         # 3. Run Regressor only on solvable boards (for speed)
         solvable_indices = is_solvable.nonzero(as_tuple=True)[0]

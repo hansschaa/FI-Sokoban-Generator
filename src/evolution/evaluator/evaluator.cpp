@@ -96,13 +96,48 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
 {
     if (population.empty()) return;
 
-    // 1. Prepare JSON payload
+    std::vector<size_t> surrogate_indices;
+    std::vector<size_t> hungarian_indices;
+
+    for (size_t i = 0; i < population.size(); ++i) {
+        // Hybrid Switch: Usar Hungarian puro para tableros con 6+ cajas
+        if (count_boxes(population[i].board) >= 6) {
+            hungarian_indices.push_back(i);
+        } else {
+            surrogate_indices.push_back(i);
+        }
+    }
+
+    // Delegación directa a Hungarian puro para box_count >= 6
+    if (!hungarian_indices.empty()) {
+        (*this->hybrid_hungarian_delegations) += hungarian_indices.size();
+        auto original_heuristic = this->heuristic_type;
+        auto original_max_sec = this->max_seconds;
+        bool original_surrogate = this->use_surrogate;
+
+        this->heuristic_type = Heuristic::hungarian;
+        this->use_surrogate = false;
+        this->max_seconds = 5.0; // Verificación rápida en Hungarian
+
+        for (size_t idx : hungarian_indices) {
+            evaluate(population[idx]);
+        }
+
+        this->heuristic_type = original_heuristic;
+        this->use_surrogate = original_surrogate;
+        this->max_seconds = original_max_sec;
+    }
+
+    if (surrogate_indices.empty()) return;
+
+    // 1. Prepare JSON payload para candidatos dentro del régimen neuronal (< 6 cajas)
     json payload;
     payload["boards"] = json::array();
     
-    for (const auto& ind : population) {
+    for (size_t idx : surrogate_indices) {
+        const auto& ind = population[idx];
         json item;
-        item["board"] = board_to_string(ind.board);
+        item["board"] = board_to_pretty_string(ind.board);
         item["parent_board"] = ind.parent_board_str;
         payload["boards"].push_back(item);
     }
@@ -118,17 +153,19 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         std::cerr << "Error: Failed to connect to Python Surrogate Server at 127.0.0.1:5000\n";
         std::cerr << "Falling back to A* solver for this batch...\n";
         
-        this->surrogate_fallbacks++;
+        (*this->surrogate_fallbacks)++;
 
-        // Ensure we fallback to Hungarian A* if surrogate server is down
         auto original_heuristic = this->heuristic_type;
         auto original_max_sec = this->max_seconds;
+        bool original_surrogate = this->use_surrogate;
         this->heuristic_type = Heuristic::hungarian;
-        this->max_seconds = 5.0; // Fast verification for fallback!
-        for (auto& ind : population) {
-            evaluate(ind);
+        this->use_surrogate = false;
+        this->max_seconds = 5.0;
+        for (size_t idx : surrogate_indices) {
+            evaluate(population[idx]);
         }
         this->heuristic_type = original_heuristic;
+        this->use_surrogate = original_surrogate;
         this->max_seconds = original_max_sec;
         return;
     }
@@ -137,16 +174,19 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         std::cerr << "Error: Python Server returned HTTP " << res->status << "\n";
         std::cerr << "Response: " << res->body << "\n";
         
-        this->surrogate_fallbacks++;
+        (*this->surrogate_fallbacks)++;
 
         auto original_heuristic = this->heuristic_type;
         auto original_max_sec = this->max_seconds;
+        bool original_surrogate = this->use_surrogate;
         this->heuristic_type = Heuristic::hungarian;
-        this->max_seconds = 5.0; // Fast verification for fallback!
-        for (auto& ind : population) {
-            evaluate(ind);
+        this->use_surrogate = false;
+        this->max_seconds = 5.0;
+        for (size_t idx : surrogate_indices) {
+            evaluate(population[idx]);
         }
         this->heuristic_type = original_heuristic;
+        this->use_surrogate = original_surrogate;
         this->max_seconds = original_max_sec;
         return;
     }
@@ -155,28 +195,25 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
     try {
         json j_res = json::parse(res->body);
         
-        for (size_t i = 0; i < population.size(); ++i) {
-            bool is_solvable = j_res[i]["is_solvable"];
+        for (size_t k = 0; k < surrogate_indices.size(); ++k) {
+            size_t idx = surrogate_indices[k];
+            bool is_solvable = j_res[k]["is_solvable"];
             
             if (!is_solvable) {
-                population[i].fitness = -1e9;
+                population[idx].fitness = -1e9;
             } else {
-                surrogate_regressor_calls++;
-                double pushes = j_res[i]["pushes"];
-                double branching = j_res[i]["branching"];
+                (*surrogate_regressor_calls)++;
+                double pushes = j_res[k]["pushes"];
+                double branching = j_res[k]["branching"];
                 
-                // Asignamos el fitness dependiendo de lo que el usuario esté buscando
                 if (fitnessType == FitnessType::FO1_PUSHES) {
-                    population[i].fitness = pushes;
+                    population[idx].fitness = pushes;
                 } 
                 else if (fitnessType == FitnessType::FO2_ASTAR_EFF_BF || fitnessType == FitnessType::FO3_SOL_EFF_BF) {
-                    // Queremos ramas pequeñas, por lo que invertimos para que el EA que MAXIMIZA
-                    // empuje el branching_factor hacia valores más bajos.
-                    population[i].fitness = -branching;
+                    population[idx].fitness = -branching;
                 }
                 else {
-                    // Default fallback
-                    population[i].fitness = pushes;
+                    population[idx].fitness = pushes;
                 }
             }
         }
@@ -184,10 +221,13 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         std::cerr << "JSON Parsing Error: " << e.what() << "\n";
         std::cerr << "Falling back to A* solver...\n";
         auto original_heuristic = this->heuristic_type;
+        bool original_surrogate = this->use_surrogate;
         this->heuristic_type = Heuristic::hungarian;
-        for (auto& ind : population) {
-            evaluate(ind);
+        this->use_surrogate = false;
+        for (size_t idx : surrogate_indices) {
+            evaluate(population[idx]);
         }
         this->heuristic_type = original_heuristic;
+        this->use_surrogate = original_surrogate;
     }
 }
