@@ -201,6 +201,12 @@ add_executable(
     ${MY_SRC}
 )
 
+add_executable(
+    dense_dataset_miner
+    src/main_dense_miner.cpp
+    ${MY_SRC}
+)
+
 #
 # Common compiler flags
 #
@@ -223,6 +229,7 @@ foreach(target
     dataset_generator
     playable_dataset_generator
     es_dataset_generator
+    dense_dataset_miner
     experiment_runner
     test_tensor_parity
     solvable_pair_miner

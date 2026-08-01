@@ -231,3 +231,50 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         this->use_surrogate = original_surrogate;
     }
 }
+
+void Evaluator::evaluateDiagnostic(std::vector<Individual>& population, int generation) {
+    std::cout << "[DIAGNOSTIC] Running Regressor Diagnostic for Generation " << generation << "...\n";
+    
+    std::vector<Individual> pop_copy = population;
+    
+    auto original_heuristic = this->heuristic_type;
+    bool original_surrogate = this->use_surrogate;
+    double original_max_sec = this->max_seconds;
+    
+    this->use_surrogate = true;
+    this->evaluate_surrogate_batch(pop_copy);
+    
+    std::vector<double> predicted_fitness(pop_copy.size());
+    for (size_t i = 0; i < pop_copy.size(); i++) {
+        predicted_fitness[i] = pop_copy[i].fitness;
+    }
+    
+    this->use_surrogate = false;
+    this->heuristic_type = Heuristic::hungarian;
+    this->max_seconds = 15.0;
+    
+    for (size_t i = 0; i < pop_copy.size(); i++) {
+        std::cout << "[DIAGNOSTIC] Evaluating individual " << i+1 << "/" << pop_copy.size() << " with A* ground truth..." << std::flush;
+        pop_copy[i].fitness = 0; // reset
+        this->evaluate(pop_copy[i]);
+        std::cout << " Done. Actual Fit: " << pop_copy[i].fitness << ", Predicted: " << predicted_fitness[i] << "\n";
+    }
+    
+    this->heuristic_type = original_heuristic;
+    this->use_surrogate = original_surrogate;
+    this->max_seconds = original_max_sec;
+    
+    std::ofstream out("scratch/regressor_diagnostic.csv", std::ios::app);
+    out.seekp(0, std::ios::end);
+    if (out.tellp() == 0) {
+        out << "generation,candidate_idx,predicted_fitness,actual_fitness,is_solvable_prediction\n";
+    }
+    
+    for (size_t i = 0; i < pop_copy.size(); i++) {
+        bool is_solvable = (predicted_fitness[i] > -1e8);
+        out << generation << "," << i << "," << predicted_fitness[i] << "," << pop_copy[i].fitness << "," << (is_solvable ? "True" : "False") << "\n";
+    }
+    out.close();
+    
+    std::cout << "[DIAGNOSTIC] Finished Diagnostic for Generation " << generation << "\n";
+}

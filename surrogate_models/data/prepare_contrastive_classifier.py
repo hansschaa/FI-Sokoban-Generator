@@ -71,23 +71,46 @@ def main():
     label_0_file = os.path.join(BASE_DIR, "..", "..", "training_data", "ContrastivePairs", "label_0_deadlocks.sok")
     label_1_file = os.path.join(BASE_DIR, "..", "..", "training_data", "ContrastivePairs", "label_1_solvables.sok")
     
-    if os.path.exists(label_0_file):
-        records.extend(parse_contrastive_sok_file(label_0_file))
-    if os.path.exists(label_1_file):
-        records.extend(parse_contrastive_sok_file(label_1_file))
+    dense_label_0_file = os.path.join(BASE_DIR, "..", "..", "training_data", "DenseContrastivePairs", "label_0_deadlocks.sok")
+    dense_label_1_file = os.path.join(BASE_DIR, "..", "..", "training_data", "DenseContrastivePairs", "label_1_solvables.sok")
+    
+    records_orig = []
+    if os.path.exists(label_0_file): records_orig.extend(parse_contrastive_sok_file(label_0_file))
+    if os.path.exists(label_1_file): records_orig.extend(parse_contrastive_sok_file(label_1_file))
         
-    df = pd.DataFrame(records)
-    print(f"Total pairs loaded: {len(df)}")
+    records_dense = []
+    if os.path.exists(dense_label_0_file): records_dense.extend(parse_contrastive_sok_file(dense_label_0_file))
+    if os.path.exists(dense_label_1_file): records_dense.extend(parse_contrastive_sok_file(dense_label_1_file))
+    
+    df_orig = pd.DataFrame(records_orig)
+    df_orig['source_dataset'] = 'original'
+    
+    df_dense = pd.DataFrame(records_dense)
+    if len(df_dense) > 0:
+        df_dense['source_dataset'] = 'dense'
+    else:
+        df_dense = pd.DataFrame(columns=df_orig.columns)
+        df_dense['source_dataset'] = []
+        
+    print(f"Original pairs loaded: {len(df_orig)}")
+    print(f"Dense pairs loaded: {len(df_dense)}")
+    
+    # BALANCE STRATEGY: Proportional mixture / Oversampling
+    # If the dense dataset is significantly smaller, we oversample it to match the original size
+    # This prevents the network from biasing towards open topologies
+    if len(df_dense) > 0 and len(df_dense) < len(df_orig):
+        print(f"Balancing: Oversampling Dense dataset from {len(df_dense)} to {len(df_orig)}...")
+        df_dense = df_dense.sample(n=len(df_orig), replace=True, random_state=42).reset_index(drop=True)
+    elif len(df_orig) > 0 and len(df_orig) < len(df_dense):
+        print(f"Balancing: Oversampling Original dataset from {len(df_orig)} to {len(df_dense)}...")
+        df_orig = df_orig.sample(n=len(df_dense), replace=True, random_state=42).reset_index(drop=True)
+        
+    df = pd.concat([df_orig, df_dense], ignore_index=True)
+    print(f"Total combined balanced pairs: {len(df)}")
+    
     if len(df) == 0:
         print("No data found!")
         return
-        
-    if len(df) < 100000:
-        print("\n" + "!"*60)
-        print("WARNING: Less than 100,000 pairs loaded!")
-        print("Did you forget to combine the .sok files from all 3 PCs?")
-        print("Expected ~105,000 pairs, but found:", len(df))
-        print("!"*60 + "\n")
         
     print(df['label'].value_counts())
 

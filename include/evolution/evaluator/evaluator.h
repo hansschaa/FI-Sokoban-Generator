@@ -27,6 +27,9 @@ public:
     // Evaluate an entire population using the Python Surrogate Server via HTTP
     void evaluate_surrogate_batch(std::vector<Individual>& population);
 
+    // Diagnostics: save surrogate predictions and ground truth A* to CSV
+    void evaluateDiagnostic(std::vector<Individual>& population, int generation);
+
 private:
     // Guarda el estado del tablero justo antes de enviarlo al solver A*
     void registrar_tablero_critico(const std::vector<std::vector<char>>& board);
