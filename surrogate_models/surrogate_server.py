@@ -51,7 +51,12 @@ def load_models():
         r_params = json.load(f)
 
     # Initialize models
-    c_path = "surrogate_models/results/final_contrastive_classifier_fold1.pt"
+    c_path = "surrogate_models/results/production_contrastive_classifier.pt"
+    if not os.path.exists(c_path):
+        fallback_path = "surrogate_models/results/final_contrastive_classifier_fold1.pt"
+        if os.path.exists(fallback_path):
+            print(f"⚠️ Production model not found at {c_path}. Falling back to {fallback_path}")
+            c_path = fallback_path
     print(f"Loading Classifier (dropout={c_dropout}) to {device}")
     print(f"Model Path: {c_path}")
     print(f"Model SHA256: {compute_sha256(c_path)}")
