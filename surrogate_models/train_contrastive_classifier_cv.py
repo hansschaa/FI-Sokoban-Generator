@@ -207,21 +207,37 @@ if __name__ == "__main__":
         avg_prec = np.mean([r['precision'] for r in results])
         avg_rec  = np.mean([r['recall'] for r in results])
         avg_th   = np.mean([r['threshold'] for r in results])
-        avg_s_sp = np.mean([r['spec_simple'] for r in results])
-        avg_c_sp = np.mean([r['spec_complex'] for r in results])
+        
+        # Excluir explícitamente folds sin muestra representativa de los subtipos (ej. Fold 1 donde spec=0)
+        valid_simple = [r['spec_simple'] for r in results if r['spec_simple'] > 0]
+        valid_complex = [r['spec_complex'] for r in results if r['spec_complex'] > 0]
+        
+        avg_s_sp = np.mean(valid_simple) if valid_simple else 0.0
+        avg_c_sp = np.mean(valid_complex) if valid_complex else 0.0
         
         print("\n" + "="*65)
         print("  5-FOLD CROSS VALIDATION — RESUMEN FINAL PRODUCCIÓN")
         print("="*65)
-        print(f"  * F_0.5 Score Medio:    {avg_f05:.5f}")
-        print(f"  * Precisión Media:      {avg_prec:.5f}")
-        print(f"  * Recall Medio:         {avg_rec:.5f}")
-        print(f"  * Umbral Óptimo Medio:  {avg_th:.2f}")
-        print(f"  * Especif. (Simple):    {avg_s_sp:.5f}")
-        print(f"  * Especif. (Complejo):  {avg_c_sp:.5f}")
+        print(f"  * F_0.5 Score Medio:    {avg_f05:.5f}  (n={len(results)} folds)")
+        print(f"  * Precisión Media:      {avg_prec:.5f}  (n={len(results)} folds)")
+        print(f"  * Recall Medio:         {avg_rec:.5f}  (n={len(results)} folds)")
+        print(f"  * Umbral Óptimo Medio:  {avg_th:.2f}     (n={len(results)} folds)")
+        print(f"  * Especif. (Simple):    {avg_s_sp:.5f}  (n={len(valid_simple)} folds*)")
+        print(f"  * Especif. (Complejo):  {avg_c_sp:.5f}  (n={len(valid_complex)} folds*)")
+        print("  (* Excluye folds sin muestra representativa en la partición)")
         print("="*65)
         
         out_summary = os.path.join(RESULTS_DIR, "production_5fold_cv_results.json")
         with open(out_summary, "w", encoding="utf-8") as f:
-            json.dump({"folds": results, "mean_f05": avg_f05, "mean_precision": avg_prec, "mean_recall": avg_rec, "mean_threshold": avg_th, "mean_spec_simple": avg_s_sp, "mean_spec_complex": avg_c_sp}, f, indent=2)
+            json.dump({
+                "folds": results, 
+                "mean_f05": avg_f05, 
+                "mean_precision": avg_prec, 
+                "mean_recall": avg_rec, 
+                "mean_threshold": avg_th, 
+                "mean_spec_simple": avg_s_sp, 
+                "mean_spec_complex": avg_c_sp,
+                "valid_folds_simple": len(valid_simple),
+                "valid_folds_complex": len(valid_complex)
+            }, f, indent=2)
         print(f"\n✅ Resumen completo guardado en: {out_summary}")
