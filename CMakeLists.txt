@@ -89,6 +89,7 @@ list(REMOVE_ITEM MY_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_batch.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main_solvable_pair_miner.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/contrastive_pair_miner.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main_dense_miner.cpp
 )
 
 #
