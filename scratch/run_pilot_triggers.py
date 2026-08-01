@@ -14,7 +14,8 @@ def run_single(seed, shell):
     ]
     start_time = time.time()
     try:
-        result = subprocess.run(cmd, timeout=310, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+        # Aumentamos el timeout de Python a 480s para permitir que C++ termine su última generación al alcanzar 300s e imprima el reporte final
+        result = subprocess.run(cmd, timeout=480, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         out_text = result.stdout
     except subprocess.TimeoutExpired as e:
         out_text = e.stdout if e.stdout else ""
