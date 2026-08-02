@@ -1,5 +1,6 @@
 import os
 import sys
+import glob
 import json
 import hashlib
 import torch
@@ -11,7 +12,7 @@ from tqdm import tqdm
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from board_utils import encode_board
 
-INPUT_SOK = "training_data/SiameseRankNetPilot/ranknet_intra_shell_pairs.sok"
+INPUT_DIR = "training_data/SiameseRankNetPilot"
 FOLD_MAP_PATH = "surrogate_models/results/fold_map.json"
 STATS_PATH = "surrogate_models/results/production_regressor_stats.pt"
 OUTPUT_DIR = "surrogate_models/results"
@@ -24,14 +25,10 @@ def get_bucket(pushes):
     return f"{lower}_to_{upper}"
 
 def main():
-    print("="*80)
-    print(" 🛠️  PREPARACIÓN DE DATOS: SIAMESE RANKNET INTRA-SHELL PAIRS")
+    print("="*85)
+    print(" 🛠️  PREPARACIÓN DE DATOS: SIAMESE RANKNET INTRA-SHELL PAIRS (MULTI-MACHINE COMBINED)")
     print(" Protocolo sin fugas (Leakage-Free) y calibrado al espacio log1p + z-score")
-    print("="*80)
-
-    if not os.path.exists(INPUT_SOK):
-        print(f"❌ Error: No se encontró el archivo de pares en {INPUT_SOK}")
-        return
+    print("="*85)
 
     if not os.path.exists(FOLD_MAP_PATH):
         print(f"❌ Error: No se encontró fold_map.json en {FOLD_MAP_PATH}")
@@ -50,11 +47,21 @@ def main():
     pushes_std = stats["pushes_std"]
     print(f"⚖️  Estadísticas log1p oficiales cargadas: mean={pushes_mean:.4f}, std={pushes_std:.4f}")
 
-    with open(INPUT_SOK, "r", encoding="utf-8") as f:
-        content = f.read()
+    sok_files = sorted(glob.glob(os.path.join(INPUT_DIR, "*.sok")))
+    if not sok_files:
+        print(f"❌ Error: No se encontraron archivos .sok en {INPUT_DIR}")
+        return
 
-    blocks = [b.strip() for b in content.split("\n\n") if b.strip()]
-    print(f"🔍 Procesando {len(blocks):,} bloques de pares...")
+    print(f"\n📂 Archivos de minería detectados (combinando todas las máquinas):")
+    blocks = []
+    for fpath in sok_files:
+        with open(fpath, "r", encoding="utf-8") as f:
+            content = f.read()
+        f_blocks = [b.strip() for b in content.split("\n\n") if b.strip()]
+        print(f"   -> {fpath}: {len(f_blocks):,} pares cargados")
+        blocks.extend(f_blocks)
+
+    print(f"🔍 Procesando dataset combinado: {len(blocks):,} bloques totales...")
 
     MOBILE_CHARS = str.maketrans("$.*@+", "     ")
     
@@ -124,13 +131,41 @@ def main():
     if skipped_parse_error > 0:
         print(f"   -> Errores de parseo: {skipped_parse_error:,}")
 
+    all_pairs = train_val_pairs + test_heldout_pairs
+    if all_pairs:
+        diffs = np.array([p["raw_A"] - p["raw_B"] for p in all_pairs])
+        abs_diffs = np.abs(diffs)
+        
+        n_pos = np.sum(diffs > 0) # y_A > y_B
+        n_neg = np.sum(diffs < 0) # y_A < y_B
+        n_tie = np.sum(diffs == 0) # y_A == y_B
+
+        print("\n" + "="*85)
+        print(" 📈 DIAGNÓSTICO DE DISTRIBUCIÓN DEL DATASET COMBINADO (PARA REPORTE A CLAUDE)")
+        print("="*85)
+        print(f" (1) Distribución de dirección sgn(y_A - y_B):")
+        print(f"     -> y_A > y_B (Mutación disminuye empujes) : {n_pos:,} pares ({n_pos/len(all_pairs)*100:.1f}%)")
+        print(f"     -> y_A < y_B (Mutación aumenta empujes)   : {n_neg:,} pares ({n_neg/len(all_pairs)*100:.1f}%)")
+        if n_tie > 0:
+            print(f"     -> y_A == y_B (Empates)                   : {n_tie:,} pares ({n_tie/len(all_pairs)*100:.1f}%)")
+        
+        print(f"\n (2) Distribución de magnitud |y_A - y_B| (diferencial de empujes reales):")
+        print(f"     -> Media: {np.mean(abs_diffs):.2f} | Mediana: {np.median(abs_diffs):.1f} | Desv. Est: {np.std(abs_diffs):.2f}")
+        print(f"     -> Mínimo: {np.min(abs_diffs):.1f} | Máximo: {np.max(abs_diffs):.1f}")
+        print("     -> Desglose por rango de diferencia:")
+        print(f"        * |Δ| <= 1 empuje : {np.sum(abs_diffs <= 1):,} ({np.sum(abs_diffs <= 1)/len(all_pairs)*100:.1f}%)")
+        print(f"        * 2 <= |Δ| <= 5    : {np.sum((abs_diffs >= 2) & (abs_diffs <= 5)):,} ({np.sum((abs_diffs >= 2) & (abs_diffs <= 5))/len(all_pairs)*100:.1f}%)")
+        print(f"        * 6 <= |Δ| <= 15   : {np.sum((abs_diffs >= 6) & (abs_diffs <= 15)):,} ({np.sum((abs_diffs >= 6) & (abs_diffs <= 15))/len(all_pairs)*100:.1f}%)")
+        print(f"        * |Δ| > 15 empujes : {np.sum(abs_diffs > 15):,} ({np.sum(abs_diffs > 15)/len(all_pairs)*100:.1f}%)")
+        print("="*85)
+
     out_train = os.path.join(OUTPUT_DIR, "siamese_ranknet_train.pt")
     out_test  = os.path.join(OUTPUT_DIR, "siamese_ranknet_test_heldout.pt")
 
     torch.save(train_val_pairs, out_train)
     torch.save(test_heldout_pairs, out_test)
     print(f"\n💾 Archivos guardados en {OUTPUT_DIR}/siamese_ranknet_*.pt")
-    print("="*80 + "\n")
+    print("="*85 + "\n")
 
 if __name__ == "__main__":
     main()
