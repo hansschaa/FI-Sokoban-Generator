@@ -150,12 +150,10 @@ def main():
     df['tensor'] = tensors
     df['label'] = labels
     df = df.dropna(subset=['tensor'])
-    df['source_int'] = df['source_dataset'].apply(lambda x: 0 if x == 'original' else 1)
     
     X = np.stack(df['tensor'].values)
     y = np.array(df['label'].values, dtype=np.float32)
     t = np.array(df['type'].values, dtype=np.int64)
-    s = np.array(df['source_int'].values, dtype=np.int64)
     groups = df['shell_hash'].values
     
     # AGGRESSIVE MEMORY FREE: The dataframe holds ~400k python objects and arrays.
@@ -172,7 +170,6 @@ def main():
         
         X_train, y_train, t_train = X[train_idx], y[train_idx], t[train_idx]
         X_test, y_test, t_test   = X[test_idx], y[test_idx], t[test_idx]
-        s_train, s_test = s[train_idx], s[test_idx]
         
         if do_augmentation:
             X_train_aug = []
@@ -192,13 +189,11 @@ def main():
         torch.save(torch.from_numpy(X_test).float(), os.path.join(RESULTS_DIR, f"contrastive_fold_{fold}_X_test.pt"))
         torch.save(torch.from_numpy(y_test).float(), os.path.join(RESULTS_DIR, f"contrastive_fold_{fold}_y_test.pt"))
         torch.save(torch.from_numpy(t_test).long(), os.path.join(RESULTS_DIR, f"contrastive_fold_{fold}_t_test.pt"))
-        torch.save(torch.from_numpy(s_train).long(), os.path.join(RESULTS_DIR, f"contrastive_fold_{fold}_s_train.pt"))
-        torch.save(torch.from_numpy(s_test).long(), os.path.join(RESULTS_DIR, f"contrastive_fold_{fold}_s_test.pt"))
         
         print(f"Fold {fold} saved. Train: {X_train.shape}, Test: {X_test.shape}")
         
         # Free fold-specific variables immediately
-        del X_train, y_train, t_train, X_test, y_test, t_test, s_train, s_test
+        del X_train, y_train, t_train, X_test, y_test, t_test
         gc.collect()
         
 if __name__ == "__main__":

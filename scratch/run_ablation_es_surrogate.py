@@ -139,62 +139,56 @@ def analyze_and_plot(seeds, shells):
     total_shells = len(shells)
 
     for shell_idx in shells:
-        shell_dfs = {"hungarian": [], "neural": [], "hybrid_regressor": []}
-        for heur in ["hungarian", "neural", "hybrid_regressor"]:
+        shell_dfs = {"hungarian": [], "neural": []}
+        for heur in ["hungarian", "neural"]:
             for seed in seeds:
                 csv_path = os.path.join(OUTPUT_DIR, f"ES_{heur}_shell{shell_idx}_seed{seed}_log.csv")
-                if not os.path.exists(csv_path):
-                    raise FileNotFoundError(f"CRITICAL ERROR: Missing expected log file {csv_path}. Cannot compare fairly.")
-                try:
-                    df = pd.read_csv(csv_path, on_bad_lines='skip')
-                    df['time_ms'] = pd.to_numeric(df['time_ms'], errors='coerce')
-                    df = df.dropna(subset=['time_ms', 'fitness'])
-                    shell_dfs[heur].append(df)
-                except Exception as e:
-                    raise RuntimeError(f"CRITICAL ERROR: Failed to read {csv_path}: {e}")
+                if os.path.exists(csv_path):
+                    try:
+                        df = pd.read_csv(csv_path, on_bad_lines='skip')
+                        df['time_ms'] = pd.to_numeric(df['time_ms'], errors='coerce')
+                        df = df.dropna(subset=['time_ms', 'fitness'])
+                        shell_dfs[heur].append(df)
+                    except: pass
 
         # 1. Análisis de Diversidad Estructual (Número de "Atractores" / Tableros únicos visitados)
-        div_hung, div_neur, div_hyb = [], [], []
+        div_hung, div_neur = [], []
         for df in shell_dfs["hungarian"]:
-            if 'best_board' in df.columns: div_hung.append(len(df['best_board'].dropna().unique()))
-            else: div_hung.append(1)
+            if 'best_board' in df.columns:
+                div_hung.append(len(df['best_board'].dropna().unique()))
+            else:
+                div_hung.append(1)
         for df in shell_dfs["neural"]:
-            if 'best_board' in df.columns: div_neur.append(len(df['best_board'].dropna().unique()))
-            else: div_neur.append(1)
-        for df in shell_dfs["hybrid_regressor"]:
-            if 'best_board' in df.columns: div_hyb.append(len(df['best_board'].dropna().unique()))
-            else: div_hyb.append(1)
+            if 'best_board' in df.columns:
+                div_neur.append(len(df['best_board'].dropna().unique()))
+            else:
+                div_neur.append(1)
 
         mean_div_hung = np.mean(div_hung) if div_hung else 0.0
         mean_div_neur = np.mean(div_neur) if div_neur else 0.0
-        mean_div_hyb = np.mean(div_hyb) if div_hyb else 0.0
         diversity_stats.append({
             "shell": shell_idx,
             "hungarian_unique_boards": mean_div_hung,
             "neural_unique_boards": mean_div_neur,
-            "hybrid_unique_boards": mean_div_hyb,
-            "diff_percent": ((mean_div_hyb - mean_div_hung) / max(mean_div_hung, 1)) * 100.0
+            "diff_percent": ((mean_div_neur - mean_div_hung) / max(mean_div_hung, 1)) * 100.0
         })
 
         # 2. Análisis a Distintos Presupuestos de Tiempo (30s, 60s, 120s, 300s)
         for cut in budget_cuts:
             fits_hung = [get_fitness_at_time(df, cut) for df in shell_dfs["hungarian"]]
             fits_neur = [get_fitness_at_time(df, cut) for df in shell_dfs["neural"]]
-            fits_hyb = [get_fitness_at_time(df, cut) for df in shell_dfs["hybrid_regressor"]]
             
             mean_fit_h = np.mean(fits_hung) if fits_hung else 0.0
             mean_fit_n = np.mean(fits_neur) if fits_neur else 0.0
-            mean_fit_hyb = np.mean(fits_hyb) if fits_hyb else 0.0
             
-            if mean_fit_hyb > mean_fit_h: status = "VICTORIA"
-            elif np.isclose(mean_fit_hyb, mean_fit_h, atol=1e-3): status = "EMPATE"
+            if mean_fit_n > mean_fit_h: status = "VICTORIA"
+            elif np.isclose(mean_fit_n, mean_fit_h, atol=1e-3): status = "EMPATE"
             else: status = "DERROTA"
 
             results_by_cut[cut].append({
                 "shell": shell_idx,
                 "hungarian_mean_fit": mean_fit_h,
                 "neural_mean_fit": mean_fit_n,
-                "hybrid_mean_fit": mean_fit_hyb,
                 "status": status
             })
 
@@ -210,9 +204,9 @@ def analyze_and_plot(seeds, shells):
         losses_cut = sum(1 for r in results_by_cut[cut] if r["status"] == "DERROTA")
         succ_rate = ((wins_cut + ties_cut) / max(total_shells, 1)) * 100.0
         
-        print(f"\n⌛ PRESUPUESTO = {cut:3d}s | Éxito (Híbrido vs Baseline): {succ_rate:5.1f}% ({wins_cut} Victorias, {ties_cut} Empates, {losses_cut} Derrotas)")
+        print(f"\n⌛ PRESUPUESTO = {cut:3d}s | Éxito: {succ_rate:5.1f}% ({wins_cut} Victorias, {ties_cut} Empates, {losses_cut} Derrotas)")
         for r in results_by_cut[cut]:
-            print(f"   • Shell {r['shell']}: Baseline={r['hungarian_mean_fit']:5.2f} | FullSurrogate={r['neural_mean_fit']:5.2f} | Hybrid(RegressorOnly)={r['hybrid_mean_fit']:5.2f} -> {r['status']}")
+            print(f"   • Shell {r['shell']}: Baseline (A*) = {r['hungarian_mean_fit']:5.2f} | Surrogate (GPU) = {r['neural_mean_fit']:5.2f} -> {r['status']}")
             
         if succ_rate >= 70.0:
             print(f"   🎯 Conclusión a los {cut}s: CUMPLE criterio pre-registrado del 70%.")
@@ -232,8 +226,7 @@ def analyze_and_plot(seeds, shells):
     for d in diversity_stats:
         print(f"🧩 [Shell {d['shell']}] Promedio de Atractores Explorados por Corrida:")
         print(f"   • Baseline (Hungarian A*): {d['hungarian_unique_boards']:.1f} tableros únicos")
-        print(f"   • Surrogate Completo:      {d['neural_unique_boards']:.1f} tableros únicos")
-        print(f"   • Híbrido (A* + Regressor):{d['hybrid_unique_boards']:.1f} tableros únicos ({d['diff_percent']:+.1f}% vs Baseline)")
+        print(f"   • Surrogate Híbrido (GPU): {d['neural_unique_boards']:.1f} tableros únicos ({d['diff_percent']:+.1f}%)")
 
     # Guardar reportes en JSON y CSV
     with open(os.path.join(OUTPUT_DIR, "ablation_multibudget_analysis.json"), "w", encoding="utf-8") as f:
@@ -242,15 +235,15 @@ def analyze_and_plot(seeds, shells):
 
     print("\nGenerando gráficas de publicación (Fitness vs. Tiempo y Evaluaciones vs. Tiempo)...")
     time_grid = np.linspace(0, TIME_LIMIT_SEC, 200)
-    colors = {"hungarian": "#1f77b4", "neural": "#2ca02c", "hybrid_regressor": "#d62728"}
-    labels = {"hungarian": "ES + A* Exacto (Baseline)", "neural": "ES + Surrogate (Full)", "hybrid_regressor": "ES + A* Playability + Neural Regressor"}
-    styles = {"hungarian": "--", "neural": "-.", "hybrid_regressor": "-"}
+    colors = {"hungarian": "#1f77b4", "neural": "#2ca02c"}
+    labels = {"hungarian": "ES + A* Exacto (Hungarian, CPU)", "neural": "ES + Surrogate (Producción, GPU + Híbrido)"}
+    styles = {"hungarian": "--", "neural": "-"}
 
     for shell_idx in shells:
-        agg_fitness = {"hungarian": [], "neural": [], "hybrid_regressor": []}
-        agg_evals   = {"hungarian": [], "neural": [], "hybrid_regressor": []}
+        agg_fitness = {"hungarian": [], "neural": []}
+        agg_evals   = {"hungarian": [], "neural": []}
 
-        for heur in ["hungarian", "neural", "hybrid_regressor"]:
+        for heur in ["hungarian", "neural"]:
             for seed in seeds:
                 csv_file = os.path.join(OUTPUT_DIR, f"ES_{heur}_shell{shell_idx}_seed{seed}_log.csv")
                 if os.path.exists(csv_file):
@@ -268,7 +261,7 @@ def analyze_and_plot(seeds, shells):
 
         # 1. Gráfica de Fitness vs. Tiempo
         plt.figure(figsize=(10, 6))
-        for heur in ["hungarian", "neural", "hybrid_regressor"]:
+        for heur in ["hungarian", "neural"]:
             if len(agg_fitness[heur]) > 0:
                 mean_fit = np.mean(agg_fitness[heur], axis=0)
                 std_fit = np.std(agg_fitness[heur], axis=0)
@@ -285,7 +278,7 @@ def analyze_and_plot(seeds, shells):
 
         # 2. Gráfica de Evaluaciones vs. Tiempo
         plt.figure(figsize=(10, 6))
-        for heur in ["hungarian", "neural", "hybrid_regressor"]:
+        for heur in ["hungarian", "neural"]:
             if len(agg_evals[heur]) > 0:
                 mean_ev = np.mean(agg_evals[heur], axis=0)
                 std_ev = np.std(agg_evals[heur], axis=0)
@@ -306,14 +299,14 @@ def analyze_and_plot(seeds, shells):
     print(f"\n📈 Gráficos PDF y reportes multi-presupuesto y de diversidad guardados exitosamente en `{OUTPUT_DIR}/`.")
 
 def main():
-    pilot_seeds = [str(i) for i in range(42, 45)]  # 3 semillas (42-44) para el piloto
-    shells = [1, 2, 3, 4, 5]               
+    seeds = [str(i) for i in range(42, 52)]  # 10 semillas (42-51)
+    shells = [1, 2, 3, 4, 5]               # 5 shells (1-5)
+    heuristics = ["hungarian", "neural"]   # 2 configuraciones (Baseline vs Surrogate)
     
-    # Solo ejecutamos el hybrid_regressor en este piloto, ya tenemos los logs de los otros dos
-    tasks = [("hybrid_regressor", s, sh) for sh in shells for s in pilot_seeds]
+    tasks = [(h, s, sh) for h in heuristics for sh in shells for s in seeds]
     total_tasks = len(tasks)
     
-    print(f"🚀 INICIANDO PILOTO HIBRIDO (1 config × {len(shells)} shells × {len(pilot_seeds)} semillas)...")
+    print(f"🚀 INICIANDO BATERÍA DE ABLACIÓN DE 100 CORRIDAS ({len(heuristics)} configs × {len(shells)} shells × {len(seeds)} semillas)...")
     print(f"🔒 Ejecución ESTRICTAMENTE SECUENCIAL (1 corrida a la vez) para eliminar ruido de concurrencia...")
     
     completed = 0
@@ -330,8 +323,7 @@ def main():
             print(f"[{completed:03d}/{total_tasks:03d}] [ERROR] shell_{sh}.sok | Config={h:9s} | Seed {s} generó una excepción: {exc}", flush=True)
 
     # Proceder a análisis multi-presupuesto y gráficos
-    # Se usa pilot_seeds para que la comparación sea justa solo con las 3 semillas que corrieron
-    analyze_and_plot(pilot_seeds, shells)
+    analyze_and_plot(seeds, shells)
 
 if __name__ == "__main__":
     main()

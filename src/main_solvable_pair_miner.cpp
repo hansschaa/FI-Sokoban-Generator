@@ -118,8 +118,6 @@ int main(int argc, char** argv) {
     evaluator.heuristic_type = Heuristic::hungarian;
     evaluator.use_surrogate = false;
     evaluator.fitnessType = FitnessType::FO1_PUSHES;
-    evaluator.max_seconds = 15.0; // Skip quickly if too hard
-    evaluator.max_nodes = 50000;  // Prevent vector::reserve OOM on lower RAM PCs
 
     srand(time(NULL));
 

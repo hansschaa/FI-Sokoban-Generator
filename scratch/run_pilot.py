@@ -1,327 +1,174 @@
-import os
-import subprocess
-import time
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader
 import sys
-import pandas as pd
-import numpy as np
+import os
+import argparse
 import json
-import matplotlib.pyplot as plt
-import seaborn as sns
+import numpy as np
+from scipy.stats import spearmanr
+from collections import defaultdict
+import pandas as pd
 
-# Configuración visual para publicación
-sns.set_theme(style="whitegrid")
-plt.rcParams.update({'font.size': 12, 'axes.labelsize': 14, 'axes.titlesize': 16})
+sys.path.append('surrogate_models')
+from models.resnet import SokobanSEResNetRegressor
+from train_final_path_consistency import PathConsistencyDataset
+from evaluate_inter_branch import get_valid_children
+from prepare_path_consistency import encode_board, simulate_path
 
-OUTPUT_DIR = "pilot_results"
-os.makedirs(OUTPUT_DIR, exist_ok=True)
-TIME_LIMIT_SEC = 300  # 5 minutos de tiempo de circuito por corrida
-PYTHON_TIMEOUT = 480  # Protección de 8 minutos para permitir cierre elegante del C++
-
-def run_single_experiment(algo, heuristic, seed, shell_idx):
-    shell_file = f"levels/shell_{shell_idx}.sok"
-    out_csv = os.path.join(OUTPUT_DIR, f"{algo}_{heuristic}_shell{shell_idx}_seed{seed}_log.csv")
-    out_txt_file = os.path.join(OUTPUT_DIR, f"{algo}_{heuristic}_shell{shell_idx}_seed{seed}_stdout.txt")
-    tmp_csv = out_csv + ".tmp"
+def evaluate_model_inter_branch(model, device, n_pairs=500):
+    model.eval()
+    TSV_FILE = "scratch/path_consistency_results.tsv"
+    if not os.path.exists(TSV_FILE): return 0.0
     
-    if os.path.exists(tmp_csv):
-        try: os.remove(tmp_csv)
-        except: pass
+    df = pd.read_csv(TSV_FILE, sep='\t')
+    df = df.sample(frac=1.0, random_state=42).reset_index(drop=True)
+    
+    board_map = {}
+    for src in ["scratch/path_consistency_sample.sok", "sok_files/benchmark_stratified_heldout.sok"]:
+        if os.path.exists(src):
+            with open(src, 'r') as f: lines = f.readlines()
+            current_name = None
+            current_board = []
+            for line in lines:
+                line = line.rstrip()
+                if ' - pushes:' in line or ' - moves:' in line:
+                    if current_name and current_board: board_map[current_name] = '\n'.join(current_board)
+                    current_name = line.split(' - ')[0].strip()
+                    current_board = []
+                elif line: current_board.append(line)
+            if current_name and current_board: board_map[current_name] = '\n'.join(current_board)
             
-    if os.path.exists(out_csv) and os.path.getsize(out_csv) > 0:
-        best_fitness = -1e9
-        evals = 0
-        try:
-            df = pd.read_csv(out_csv, on_bad_lines='skip')
-            if len(df) > 0 and 'fitness' in df.columns:
-                best_fitness = float(df['fitness'].iloc[-1])
-                if 'evaluations' in df.columns: evals = int(df['evaluations'].iloc[-1])
-        except: pass
-        return (heuristic, seed, shell_idx, True, "Already executed", 0, 0, 0, evals, best_fitness, 1, 0.0)
-
-    runner_path = "./build/experiment_runner"
-    if not os.path.exists(runner_path):
-        runner_path = "./build2/experiment_runner"
-
-    cmd = [
-        runner_path, algo, "FO1", str(seed), shell_file,
-        "--heuristic", heuristic,
-        "--timeLimit", str(TIME_LIMIT_SEC),
-        "--maxEvals", "1000000",
-        "--out_csv", tmp_csv
-    ]
-    
-    env = os.environ.copy()
-    env['OMP_NUM_THREADS'] = '1'
-
-    start_time = time.time()
-    try:
-        result = subprocess.run(cmd, env=env, timeout=PYTHON_TIMEOUT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        out_text = result.stdout
-    except subprocess.TimeoutExpired as e:
-        out_text = e.stdout if e.stdout else ""
-        if isinstance(out_text, bytes):
-            out_text = out_text.decode('utf-8', errors='replace')
-    elapsed = time.time() - start_time
-
-    if os.path.exists(tmp_csv):
-        os.rename(tmp_csv, out_csv)
-    with open(out_txt_file, "w", encoding="utf-8", errors="replace") as f_out:
-        f_out.write(out_text)
-
-    disyuntor_count = 0
-    delegations = 0
-    gens = 0
-    evals = 0
-    init_attempts = 1
-    best_fitness = -1e9
-
-    for line in out_text.split('\n'):
-        if "[ES STATS] Circuit Breaker (MAX_FAILURES) triggers:" in line:
-            try: disyuntor_count = int(line.split(":")[1].strip())
-            except: pass
-        elif "[ES STATS] Hybrid Hungarian Delegations (box_count >= 6):" in line:
-            try: delegations = int(line.split(":")[1].strip())
-            except: pass
-        elif "[INIT STATS] Initial seed found in" in line:
-            parts = line.split()
-            for i, p in enumerate(parts):
-                if p == "in" and i+1 < len(parts):
-                    try: init_attempts = int(parts[i+1])
-                    except: pass
-        elif "[ES STATS] Total Generations:" in line:
-            parts = line.split("|")
-            for p in parts:
-                if "Generations:" in p:
-                    try: gens = int(p.split(":")[1].strip())
-                    except: pass
-                elif "Evals:" in p:
-                    try: evals = int(p.split(":")[1].strip())
-                    except: pass
-        elif line.strip() and ";" in line.strip():
-            parts = line.strip().split(";")
-            if len(parts) >= 3:
-                try: best_fitness = -float(parts[0].strip())
-                except: pass
-
-    if best_fitness == -1e9 and os.path.exists(out_csv):
-        try:
-            df = pd.read_csv(out_csv, on_bad_lines='skip')
-            if len(df) > 0 and 'fitness' in df.columns:
-                best_fitness = float(df['fitness'].iloc[-1])
-                if evals == 0 and 'evaluations' in df.columns:
-                    evals = int(df['evaluations'].iloc[-1])
-        except: pass
-
-    return (heuristic, seed, shell_idx, False, out_text, disyuntor_count, delegations, gens, evals, best_fitness, init_attempts, elapsed)
-
-def get_fitness_at_time(df, target_sec):
-    if len(df) == 0:
-        return 0.0
-    target_ms = target_sec * 1000.0
-    sub_df = df[df['time_ms'] <= target_ms]
-    if len(sub_df) > 0:
-        return float(sub_df['fitness'].iloc[-1])
-    else:
-        # Si ni siquiera había empezado la primera generación al momento target_sec, devolver fitness inicial o 0
-        return float(df['fitness'].iloc[0])
-
-def analyze_and_plot(seeds, shells):
-    print("\n" + "="*85)
-    print(" 📊 ANÁLISIS DE ABLACIÓN PRE-REGISTRADO: CORTES DE TIEMPO Y DIVERSIDAD ESTRUCTURAL")
-    print("="*85)
-
-    budget_cuts = [30, 60, 120, 300]
-    results_by_cut = {c: [] for c in budget_cuts}
-    diversity_stats = []
-    
-    total_shells = len(shells)
-
-    for shell_idx in shells:
-        shell_dfs = {"hungarian": [], "neural": []}
-        for heur in ["hungarian", "neural"]:
-            for seed in seeds:
-                csv_path = os.path.join(OUTPUT_DIR, f"ES_{heur}_shell{shell_idx}_seed{seed}_log.csv")
-                if os.path.exists(csv_path):
-                    try:
-                        df = pd.read_csv(csv_path, on_bad_lines='skip')
-                        df['time_ms'] = pd.to_numeric(df['time_ms'], errors='coerce')
-                        df = df.dropna(subset=['time_ms', 'fitness'])
-                        shell_dfs[heur].append(df)
-                    except: pass
-
-        # 1. Análisis de Diversidad Estructual (Número de "Atractores" / Tableros únicos visitados)
-        div_hung, div_neur = [], []
-        for df in shell_dfs["hungarian"]:
-            if 'best_board' in df.columns:
-                div_hung.append(len(df['best_board'].dropna().unique()))
-            else:
-                div_hung.append(1)
-        for df in shell_dfs["neural"]:
-            if 'best_board' in df.columns:
-                div_neur.append(len(df['best_board'].dropna().unique()))
-            else:
-                div_neur.append(1)
-
-        mean_div_hung = np.mean(div_hung) if div_hung else 0.0
-        mean_div_neur = np.mean(div_neur) if div_neur else 0.0
-        diversity_stats.append({
-            "shell": shell_idx,
-            "hungarian_unique_boards": mean_div_hung,
-            "neural_unique_boards": mean_div_neur,
-            "diff_percent": ((mean_div_neur - mean_div_hung) / max(mean_div_hung, 1)) * 100.0
-        })
-
-        # 2. Análisis a Distintos Presupuestos de Tiempo (30s, 60s, 120s, 300s)
-        for cut in budget_cuts:
-            fits_hung = [get_fitness_at_time(df, cut) for df in shell_dfs["hungarian"]]
-            fits_neur = [get_fitness_at_time(df, cut) for df in shell_dfs["neural"]]
+    total_pairs, correct_pairs = 0, 0
+    with torch.no_grad():
+        for idx, row in df.iterrows():
+            if total_pairs >= n_pairs: break
+            if row['Status'] != 'SOLVED' or row['LURD_Path'] == 'NONE': continue
+            name = str(row['LevelName']).split(' - ')[0].strip()
+            if name not in board_map: continue
             
-            mean_fit_h = np.mean(fits_hung) if fits_hung else 0.0
-            mean_fit_n = np.mean(fits_neur) if fits_neur else 0.0
-            
-            if mean_fit_n > mean_fit_h: status = "VICTORIA"
-            elif np.isclose(mean_fit_n, mean_fit_h, atol=1e-3): status = "EMPATE"
-            else: status = "DERROTA"
+            states = simulate_path(board_map[name], row['LURD_Path'])
+            for i in range(len(states) - 1):
+                if total_pairs >= n_pairs: break
+                s_curr = states[i][0]
+                s_opt = states[i+1][0]
+                children = get_valid_children(s_curr)
+                sub_children = [c for c in children if c != s_opt]
+                if not sub_children: continue
+                
+                pred_opt = model(torch.tensor(encode_board(s_opt)).unsqueeze(0).to(device)).item()
+                for s_sub in sub_children:
+                    pred_sub = model(torch.tensor(encode_board(s_sub)).unsqueeze(0).to(device)).item()
+                    total_pairs += 1
+                    if pred_opt < pred_sub: correct_pairs += 1
+                    if total_pairs >= n_pairs: break
+    return correct_pairs / total_pairs if total_pairs > 0 else 0.0
 
-            results_by_cut[cut].append({
-                "shell": shell_idx,
-                "hungarian_mean_fit": mean_fit_h,
-                "neural_mean_fit": mean_fit_n,
-                "status": status
-            })
-
-    # IMPRIMIR REPORTE POR CORTES DE PRESUPUESTO DE TIEMPO
-    print("\n" + "-"*85)
-    print(" ⏱️ EVALUACIÓN DEL CRITERIO PRE-REGISTRADO (≥70% VICTORIAS/EMPATES) POR PRESUPUESTO")
-    print("-" * 85)
+def diagnose_spearman(model, device):
+    test_data = torch.load("surrogate_models/results/regressor_fold1_test.pt", weights_only=False)
+    groups_fixed_player = defaultdict(lambda: ([], []))
+    groups_fixed_boxes = defaultdict(lambda: ([], []))
     
-    cut_summary_export = {}
-    for cut in budget_cuts:
-        wins_cut = sum(1 for r in results_by_cut[cut] if r["status"] == "VICTORIA")
-        ties_cut = sum(1 for r in results_by_cut[cut] if r["status"] == "EMPATE")
-        losses_cut = sum(1 for r in results_by_cut[cut] if r["status"] == "DERROTA")
-        succ_rate = ((wins_cut + ties_cut) / max(total_shells, 1)) * 100.0
+    with torch.no_grad():
+        for item in test_data:
+            t = item['tensor']
+            x = t.unsqueeze(0).to(device)
+            pred_pushes = np.exp(model(x).item()) - 1.0
+            
+            real_pushes = item['pushes_raw']
+            sh = item['shell_hash']
+            player_key = tuple(torch.nonzero(t[4]).reshape(-1).tolist())
+            boxes_key = tuple(torch.nonzero(t[2]).reshape(-1).tolist())
+            
+            groups_fixed_player[(sh, player_key)][0].append(real_pushes)
+            groups_fixed_player[(sh, player_key)][1].append(pred_pushes)
+            groups_fixed_boxes[(sh, boxes_key)][0].append(real_pushes)
+            groups_fixed_boxes[(sh, boxes_key)][1].append(pred_pushes)
+
+    rhos_boxes_vary = []
+    for key, (real, pred) in groups_fixed_player.items():
+        if len(real) >= 3 and len(set(real)) > 1:
+            rho, _ = spearmanr(real, pred)
+            if not np.isnan(rho): rhos_boxes_vary.append(rho)
+
+    rhos_player_vary = []
+    for key, (real, pred) in groups_fixed_boxes.items():
+        if len(real) >= 3 and len(set(real)) > 1:
+            rho, _ = spearmanr(real, pred)
+            if not np.isnan(rho): rhos_player_vary.append(rho)
+            
+    return np.mean(rhos_boxes_vary), np.mean(rhos_player_vary)
+
+def run_pilot(alpha, margin, epochs):
+    with open("surrogate_models/results/best_hparams.json", "r") as f:
+        cfg = json.load(f)["params"]
+
+    lr = cfg["lr"]
+    weight_decay = cfg["weight_decay"]
+    dropout_p = cfg["dropout_p"]
+    batch_size = int(cfg["batch_size"]) // 2
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = SokobanSEResNetRegressor(dropout_p=dropout_p).to(device)
+    model.load_state_dict(torch.load('surrogate_models/results/final_regressor_fold1.pt', map_location=device, weights_only=False))
+    
+    dataset = PathConsistencyDataset(1, augment=True, max_route_distance=1)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+    
+    optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
+    
+    margin_loss = nn.MarginRankingLoss(margin=margin, reduction='none')
+    huber_loss = nn.HuberLoss(reduction='none')
+    
+    print(f"\n--- Running Pilot for alpha={alpha}, margin={margin}, epochs={epochs}, lr={lr} ---")
+    for epoch in range(1, epochs + 1):
+        model.train()
+        for batch in dataloader:
+            t1 = batch['tensor1'].to(device)
+            p1 = batch['pushes1'].float().to(device)
+            t2 = batch['tensor2'].to(device)
+            p2 = batch['pushes2'].float().to(device)
+            weights = batch['weight'].to(device)
+            
+            p_mean, p_std = 2.45, 1.05
+            p1_norm = (torch.log1p(p1) - p_mean) / p_std
+            p2_norm = (torch.log1p(p2) - p_mean) / p_std
+            
+            optimizer.zero_grad()
+            combined = torch.cat([t1, t2], dim=0)
+            pred_combined = model(combined).squeeze(-1)
+            pred1, pred2 = pred_combined.split(t1.size(0))
+            
+            loss_huber1 = huber_loss(pred1, p1_norm)
+            loss_huber2 = huber_loss(pred2, p2_norm)
+            loss_huber_batch = ((loss_huber1 + loss_huber2) / 2.0 * weights).mean()
+            
+            y = torch.ones_like(pred1)
+            loss_margin_batch = (margin_loss(pred1, pred2, y) * weights).mean()
+            
+            loss = (1.0 - alpha) * loss_huber_batch + alpha * loss_margin_batch
+            
+            loss.backward()
+            nn.utils.clip_grad_norm_(model.parameters(), 5.0)
+            optimizer.step()
+        scheduler.step()
         
-        print(f"\n⌛ PRESUPUESTO = {cut:3d}s | Éxito: {succ_rate:5.1f}% ({wins_cut} Victorias, {ties_cut} Empates, {losses_cut} Derrotas)")
-        for r in results_by_cut[cut]:
-            print(f"   • Shell {r['shell']}: Baseline (A*) = {r['hungarian_mean_fit']:5.2f} | Surrogate (GPU) = {r['neural_mean_fit']:5.2f} -> {r['status']}")
-            
-        if succ_rate >= 70.0:
-            print(f"   🎯 Conclusión a los {cut}s: CUMPLE criterio pre-registrado del 70%.")
-        else:
-            print(f"   ⚠️ Conclusión a los {cut}s: NO ALCANZA umbral del 70% (Resultado científico legítimo para reportar).")
-        
-        cut_summary_export[f"budget_{cut}s"] = {
-            "success_rate_pct": succ_rate,
-            "wins": wins_cut, "ties": ties_cut, "losses": losses_cut,
-            "shell_details": results_by_cut[cut]
-        }
-
-    # IMPRIMIR REPORTE DE DIVERSIDAD ESTRUCTURAL
-    print("\n" + "-"*85)
-    print(" 🎨 EVALUACIÓN DE DIVERSIDAD ESTRUCTURAL (TABLEROS MEJOR-DE-GENERACIÓN ÚNICOS VISITADOS)")
-    print("-" * 85)
-    for d in diversity_stats:
-        print(f"🧩 [Shell {d['shell']}] Promedio de Atractores Explorados por Corrida:")
-        print(f"   • Baseline (Hungarian A*): {d['hungarian_unique_boards']:.1f} tableros únicos")
-        print(f"   • Surrogate Híbrido (GPU): {d['neural_unique_boards']:.1f} tableros únicos ({d['diff_percent']:+.1f}%)")
-
-    # Guardar reportes en JSON y CSV
-    with open(os.path.join(OUTPUT_DIR, "ablation_multibudget_analysis.json"), "w", encoding="utf-8") as f:
-        json.dump({"budget_analysis": cut_summary_export, "diversity_analysis": diversity_stats}, f, indent=4)
-    pd.DataFrame(diversity_stats).to_csv(os.path.join(OUTPUT_DIR, "ablation_diversity_table.csv"), index=False)
-
-    print("\nGenerando gráficas de publicación (Fitness vs. Tiempo y Evaluaciones vs. Tiempo)...")
-    time_grid = np.linspace(0, TIME_LIMIT_SEC, 200)
-    colors = {"hungarian": "#1f77b4", "neural": "#2ca02c"}
-    labels = {"hungarian": "ES + A* Exacto (Hungarian, CPU)", "neural": "ES + Surrogate (Producción, GPU + Híbrido)"}
-    styles = {"hungarian": "--", "neural": "-"}
-
-    for shell_idx in shells:
-        agg_fitness = {"hungarian": [], "neural": []}
-        agg_evals   = {"hungarian": [], "neural": []}
-
-        for heur in ["hungarian", "neural"]:
-            for seed in seeds:
-                csv_file = os.path.join(OUTPUT_DIR, f"ES_{heur}_shell{shell_idx}_seed{seed}_log.csv")
-                if os.path.exists(csv_file):
-                    try:
-                        df = pd.read_csv(csv_file, on_bad_lines='skip')
-                        df['time_ms'] = pd.to_numeric(df['time_ms'], errors='coerce')
-                        df = df.dropna(subset=['time_ms', 'fitness', 'evaluations'])
-                        if len(df) >= 2:
-                            df['time_sec'] = df['time_ms'] / 1000.0
-                            interp_fit = np.interp(time_grid, df['time_sec'], df['fitness'])
-                            interp_eval = np.interp(time_grid, df['time_sec'], df['evaluations'])
-                            agg_fitness[heur].append(interp_fit)
-                            agg_evals[heur].append(interp_eval)
-                    except: pass
-
-        # 1. Gráfica de Fitness vs. Tiempo
-        plt.figure(figsize=(10, 6))
-        for heur in ["hungarian", "neural"]:
-            if len(agg_fitness[heur]) > 0:
-                mean_fit = np.mean(agg_fitness[heur], axis=0)
-                std_fit = np.std(agg_fitness[heur], axis=0)
-                plt.plot(time_grid, mean_fit, label=labels[heur], color=colors[heur], linestyle=styles[heur], linewidth=2.5)
-                plt.fill_between(time_grid, mean_fit - std_fit, mean_fit + std_fit, color=colors[heur], alpha=0.2)
-
-        plt.title(f"Evolución del Fitness vs. Tiempo — Shell {shell_idx} (n=10 semillas)")
-        plt.xlabel("Tiempo de Ejecución en Circuito (segundos)")
-        plt.ylabel("Dificultad Alcanzada (Fitness FO1: Empujes)")
-        plt.legend(loc="lower right")
-        plt.tight_layout()
-        plt.savefig(os.path.join(OUTPUT_DIR, f"fitness_vs_time_shell_{shell_idx}.pdf"))
-        plt.close()
-
-        # 2. Gráfica de Evaluaciones vs. Tiempo
-        plt.figure(figsize=(10, 6))
-        for heur in ["hungarian", "neural"]:
-            if len(agg_evals[heur]) > 0:
-                mean_ev = np.mean(agg_evals[heur], axis=0)
-                std_ev = np.std(agg_evals[heur], axis=0)
-                lower_bound = np.maximum(mean_ev - std_ev, 1)
-                upper_bound = mean_ev + std_ev
-                plt.plot(time_grid, mean_ev, label=labels[heur], color=colors[heur], linestyle=styles[heur], linewidth=2.5)
-                plt.fill_between(time_grid, lower_bound, upper_bound, color=colors[heur], alpha=0.2)
-
-        plt.title(f"Velocidad de Exploración: Evaluaciones vs. Tiempo — Shell {shell_idx} (n=10 semillas)")
-        plt.xlabel("Tiempo de Ejecución en Circuito (segundos)")
-        plt.ylabel("Nodos Evaluados Acumulados (escala logarítmica)")
-        plt.yscale("log")
-        plt.legend(loc="upper left")
-        plt.tight_layout()
-        plt.savefig(os.path.join(OUTPUT_DIR, f"evals_vs_time_shell_{shell_idx}.pdf"))
-        plt.close()
-
-    print(f"\n📈 Gráficos PDF y reportes multi-presupuesto y de diversidad guardados exitosamente en `{OUTPUT_DIR}/`.")
-
-def main():
-    seeds = ["42"]  # 1 semilla (ultra corto)
-    shells = [1, 2, 3]               # 3 shells (ultra corto)
-    heuristics = ["hungarian", "neural"]   # 2 configuraciones (Baseline vs Surrogate)
+        if epoch % 5 == 0:
+            print(f"Epoch {epoch}/{epochs} done.")
     
-    tasks = [(h, s, sh) for h in heuristics for sh in shells for s in seeds]
-    total_tasks = len(tasks)
-    
-    print(f"🚀 INICIANDO PILOTO ULTRA CORTO DE 6 CORRIDAS ({len(heuristics)} configs × {len(shells)} shells × {len(seeds)} semillas)...")
-    print(f"🔒 Ejecución ESTRICTAMENTE SECUENCIAL (1 corrida a la vez) para eliminar ruido de concurrencia...")
-    
-    completed = 0
-    for (h, s, sh) in tasks:
-        completed += 1
-        try:
-            res = run_single_experiment("ES", h, s, sh)
-            heur_name, seed_val, shell_val, is_cached, out_txt, disyuntor, deleg, gens, evals, best_fit, init_att, elaps = res
-            if is_cached:
-                print(f"[{completed:03d}/{total_tasks:03d}] [CACHED] shell_{shell_val}.sok | Config={heur_name:9s} | Seed {seed_val}")
-            else:
-                print(f"[{completed:03d}/{total_tasks:03d}] [COMPLETE] shell_{shell_val}.sok | Config={heur_name:9s} | Seed {seed_val} | Fit={best_fit:.1f} | Evals={evals:,} | InitAtt={init_att} | Triggers={disyuntor} | Deleg={deleg} | Time={elaps:.1f}s", flush=True)
-        except Exception as exc:
-            print(f"[{completed:03d}/{total_tasks:03d}] [ERROR] shell_{sh}.sok | Config={h:9s} | Seed {s} generó una excepción: {exc}", flush=True)
-
-    # Proceder a análisis multi-presupuesto y gráficos
-    analyze_and_plot(seeds, shells)
+    acc = evaluate_model_inter_branch(model, device)
+    rho_boxes, rho_player = diagnose_spearman(model, device)
+    print(f"Results for alpha = {alpha}:")
+    print(f"  Optuna Inter-Branch Acc: {acc:.4f}")
+    print(f"  Spearman (Fixed Player, Boxes Vary): {rho_boxes:.3f}")
+    print(f"  Spearman (Fixed Boxes, Player Vary): {rho_player:.3f}")
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--alpha", type=float, required=True)
+    parser.add_argument("--margin", type=float, default=0.05)
+    parser.add_argument("--epochs", type=int, default=15)
+    args = parser.parse_args()
+    run_pilot(args.alpha, args.margin, args.epochs)
