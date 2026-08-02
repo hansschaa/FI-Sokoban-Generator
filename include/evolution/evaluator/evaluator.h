@@ -17,6 +17,7 @@ public:
     // Boolean flag to toggle between A* and Surrogate models
     bool use_surrogate = true;
     double max_seconds = 120.0;
+    size_t max_nodes = 500000;
     std::shared_ptr<int> surrogate_fallbacks = std::make_shared<int>(0);
     std::shared_ptr<int> surrogate_regressor_calls = std::make_shared<int>(0);
     std::shared_ptr<int> hybrid_hungarian_delegations = std::make_shared<int>(0);

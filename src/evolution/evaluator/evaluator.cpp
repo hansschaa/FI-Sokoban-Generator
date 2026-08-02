@@ -41,7 +41,7 @@ double Evaluator::evaluate(Individual& individual)
 
     // We ALWAYS use Hungarian for true ground-truth evaluation, bypassing LibTorch completely.
     // The neural heuristic is exclusively used via the Python Surrogate Server in evaluate_surrogate_batch.
-    auto stats = solver.test_template(Method::a_star, Heuristic::hungarian, solution, needs_path_simulator, nullptr, this->max_seconds);
+    auto stats = solver.test_template(Method::a_star, Heuristic::hungarian, solution, needs_path_simulator, nullptr, this->max_seconds, this->max_nodes);
     
     individual.hungarian_lb = stats.initial_optimal_distance;
 
