@@ -272,6 +272,38 @@ def generate_final_analysis():
     summary.to_csv(sum_path, index=False)
     print(f"📁 Tabla resumen guardada en: {sum_path}")
 
+    # Tabla de desglose explícito de auditoría Top-5 (Total de los tableros por Shell/Variante sobre las 10 semillas)
+    if "Top5_Solvable_Count" in df.columns and "Top5_Deadlock_Count" in df.columns:
+        if "Top5_Inconclusive_Count" not in df.columns:
+            df["Top5_Inconclusive_Count"] = 0
+        
+        audit_breakdown = df.groupby(["Shell", "Variant"])[
+            ["Top5_Solvable_Count", "Top5_Inconclusive_Count", "Top5_Deadlock_Count"]
+        ].sum().reset_index()
+        
+        audit_breakdown.rename(columns={
+            "Top5_Solvable_Count": "Sum_SOLVED",
+            "Top5_Inconclusive_Count": "Sum_INCONCLUSIVE",
+            "Top5_Deadlock_Count": "Sum_DEADLOCK_Genuino"
+        }, inplace=True)
+        
+        # Precisión Definitiva (excluyendo Inconclusos de numerador y denominador)
+        def calc_acc(row):
+            def_total = row["Sum_SOLVED"] + row["Sum_DEADLOCK_Genuino"]
+            return round((row["Sum_SOLVED"] / def_total) * 100.0, 1) if def_total > 0 else 0.0
+            
+        audit_breakdown["Definite_Accuracy_Pct (sin Inconclusos)"] = audit_breakdown.apply(calc_acc, axis=1)
+        
+        print("\n" + "="*130)
+        print(" 🔬 DESGLOSE RIGUROSO DE AUDITORÍA TOP-5 POR SHELL Y VARIANTE (TOTAL DE TABLEROS AUDITADOS SOBRE 10 SEMILLAS)")
+        print("    (Los casos INCONCLUSIVE no cuentan ni como éxito ni como fallo en 'Definite_Accuracy_Pct')")
+        print("="*130)
+        print(audit_breakdown.to_string(index=False))
+        
+        breakdown_path = os.path.join(OUTPUT_DIR, "experiment_1_audit_breakdown.csv")
+        audit_breakdown.to_csv(breakdown_path, index=False)
+        print(f"📁 Desglose riguroso guardado en: {breakdown_path}")
+
     # Gráficas
     plt.figure(figsize=(12, 6))
     sns.boxplot(data=df, x="Shell", y="Top5_Best_Real_Astar_Pushes", hue="Variant", palette="Set2")
