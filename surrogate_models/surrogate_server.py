@@ -164,6 +164,60 @@ def evaluate():
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
+@app.route('/evaluate_regressor_only', methods=['POST'])
+def evaluate_regressor_only():
+    try:
+        data = request.get_json()
+        if not data or 'boards' not in data:
+            return jsonify({"error": "Missing 'boards' array"}), 400
+        
+        boards_data = data['boards']
+        if not boards_data:
+            return jsonify([])
+
+        in_channels = getattr(regressor_model, 'stem', None)
+        if in_channels is not None:
+            in_channels = regressor_model.stem[0].in_channels
+        else:
+            in_channels = regressor_model.conv1.in_channels
+            
+        # USER REQUESTED CHECK: ensure the tensor for the regressor is exactly 6 channels
+        if in_channels != 6:
+            return jsonify({"error": f"CRITICAL: Regressor expected 6 channels but model has {in_channels}"}), 500
+
+        tensors = []
+        for item in boards_data:
+            if not isinstance(item, dict):
+                return jsonify({"error": "Items must be dicts with 'board'"}), 400
+                
+            b_str = item["board"]
+            # Regressor only takes the current board (6 channels)
+            t_b = encode_board(b_str)
+            tensors.append(torch.from_numpy(t_b))
+        
+        batch_tensor = torch.stack(tensors).to(device)
+
+        # Run Regressor directly on all provided boards
+        results = [{"is_solvable": True, "pushes": 0.0, "branching": 0.0} for _ in range(len(boards_data))]
+        
+        with torch.no_grad():
+            p_norm_pred = regressor_model(batch_tensor)
+            
+            # Un-normalize
+            p_pred_log = (p_norm_pred * pushes_std) + pushes_mean
+            p_pred = torch.clamp(torch.expm1(p_pred_log), min=0.0)
+
+            # Map back to results
+            for i in range(len(boards_data)):
+                results[i]["pushes"] = p_pred[i].item()
+                results[i]["branching"] = 1.0
+
+        return jsonify(results)
+
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     load_models()
     # Run on port 5000, only local connections

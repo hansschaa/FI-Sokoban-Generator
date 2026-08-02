@@ -11,6 +11,7 @@ struct Individual {
 
     int pushes = 0;
     int explored = 0;
+    double hungarian_lb = 0;
 
     std::string parent_board_str;
 
