@@ -118,7 +118,7 @@ def evaluate_ranking_metrics(model, loader, device, pushes_mean, pushes_std):
 def main():
     parser = argparse.ArgumentParser(description="Siamese RankNet Pilot Training")
     parser.add_argument("--epochs", type=int, default=8, help="Number of pilot epochs")
-    parser.add_argument("--lr", type=float, default=5e-4, help="Learning rate")
+    parser.add_argument("--lr", type=float, default=5e-5, help="Learning rate")
     parser.add_argument("--batch_size", type=int, default=128, help="Batch size")
     parser.add_argument("--alpha", type=float, default=0.5, help="Weight of MarginRankingLoss vs Huber")
     parser.add_argument("--from_scratch", action="store_true", help="Train from scratch without loading production weights")
@@ -147,7 +147,7 @@ def main():
     train_loader = DataLoader(SiameseRankingDataset(train_pairs, augment=True), batch_size=args.batch_size, shuffle=True, num_workers=0, pin_memory=True)
     test_loader  = DataLoader(SiameseRankingDataset(test_pairs),  batch_size=256, shuffle=False, num_workers=0, pin_memory=True)
 
-    model = SokobanSEResNetRegressor(dropout_p=0.4).to(device)
+    model = SokobanSEResNetRegressor(dropout_p=0.0205).to(device)
     if not args.from_scratch and os.path.exists(PROD_MODEL_PATH):
         print(" 💡 Cargando pesos iniciales desde production_regressor.pt (Fine-tuning)...")
         model.load_state_dict(torch.load(PROD_MODEL_PATH, map_location=device, weights_only=True))
