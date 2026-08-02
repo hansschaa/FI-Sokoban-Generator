@@ -164,6 +164,19 @@ def evaluate():
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
+@app.route('/set_threshold', methods=['POST'])
+def set_threshold():
+    global CLASSIFIER_THRESHOLD
+    try:
+        data = request.get_json()
+        if data and 'threshold' in data:
+            CLASSIFIER_THRESHOLD = float(data['threshold'])
+            print(f"🔧 [SERVER] Updated CLASSIFIER_THRESHOLD to {CLASSIFIER_THRESHOLD:.4f}")
+            return jsonify({"status": "ok", "threshold": CLASSIFIER_THRESHOLD})
+        return jsonify({"error": "Missing 'threshold'"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/evaluate_regressor_only', methods=['POST'])
 def evaluate_regressor_only():
     try:
