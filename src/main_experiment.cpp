@@ -383,7 +383,31 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    // 7. SALIDA ESTRICTA PARA EXPERIMENT (fitness;board_hash;board_string)
+    // 7. IMPRIMIR TOP-5 DE LA POBLACIÓN FINAL PARA AUDITORÍA POST-HOC (A* VERIFICATION)
+    std::vector<Individual> final_pop = population;
+    final_pop.push_back(best);
+    std::sort(final_pop.begin(), final_pop.end(), [](const Individual& a, const Individual& b) {
+        return a.fitness > b.fitness;
+    });
+    
+    std::cout << "\n[TOP_FINAL_POPULATION]" << std::endl;
+    int rank = 0;
+    std::vector<std::string> seen_boards;
+    for (const auto& ind : final_pop) {
+        if (rank >= 5) break;
+        std::string flat = "";
+        for (const auto& row : ind.board) {
+            for (char c : row) flat += c;
+            flat += "|";
+        }
+        if (std::find(seen_boards.begin(), seen_boards.end(), flat) == seen_boards.end()) {
+            seen_boards.push_back(flat);
+            rank++;
+            std::cout << "RANK_" << rank << ";" << ind.fitness << ";" << flat << std::endl;
+        }
+    }
+
+    // 8. SALIDA ESTRICTA PARA EXPERIMENT (fitness;board_hash;board_string)
     std::string board_str = "";
     std::string board_str_flat = "";
     for (const auto& row : best.board) {
