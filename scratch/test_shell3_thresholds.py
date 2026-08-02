@@ -97,7 +97,7 @@ def run_es_shell3(threshold_label, heuristic="classifier_filter"):
         elif line.strip() and ";" in line.strip():
             parts = line.strip().split(";")
             if len(parts) >= 3:
-                try: best_fitness = float(parts[0].strip())
+                try: best_fitness = -float(parts[0].strip())
                 except: pass
 
     if best_fitness == 0.0 and os.path.exists(out_csv):
@@ -108,6 +108,9 @@ def run_es_shell3(threshold_label, heuristic="classifier_filter"):
                 if evals == 0 and 'evaluations' in df.columns:
                     evals = int(df['evaluations'].iloc[-1])
         except: pass
+
+    if best_fitness <= -1e8 or best_fitness >= 1e8:
+        best_fitness = 0.0
 
     astar_evals = evals - deadlocks_filtered if heuristic == "classifier_filter" else evals
     return {

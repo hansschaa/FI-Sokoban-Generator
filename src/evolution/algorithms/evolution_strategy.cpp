@@ -42,8 +42,13 @@ Individual EvolutionStrategy::run(
             int i = current_task.fetch_add(1);
             if (i >= (int)population.size()) break;
             
-            Evaluator local_eval = evaluator;
-            local_eval.evaluate(population[i]);
+            if (population[i].fitness <= -1e8 || population[i].fitness == 0) {
+                Evaluator local_eval = evaluator;
+                if (local_eval.heuristic_type == Heuristic::classifier_filter) {
+                    local_eval.use_surrogate = false;
+                }
+                local_eval.evaluate(population[i]);
+            }
         }
     };
 
