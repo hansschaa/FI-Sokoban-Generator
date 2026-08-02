@@ -134,7 +134,7 @@ def evaluate():
         # 3. Run Regressor only on solvable boards (for speed)
         solvable_indices = is_solvable.nonzero(as_tuple=True)[0]
         
-        results = [{"is_solvable": False, "pushes": 0.0, "branching": 0.0} for _ in range(len(boards_data))]
+        results = [{"is_solvable": bool(probs[i] >= CLASSIFIER_THRESHOLD), "prob": round(float(probs[i]), 5), "pushes": 0.0, "branching": 0.0} for i in range(len(boards_data))]
 
         if len(solvable_indices) > 0:
             solvable_tensors = batch_tensor[solvable_indices]
