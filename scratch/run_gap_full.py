@@ -50,7 +50,7 @@ def main():
             with open(temp_board, "w") as f:
                 f.write(generated_board.replace('|', '\n').strip())
                 
-            cmd_astar = [solver_path, temp_board, "astar"]
+            cmd_astar = [solver_path, temp_board, "hungarian"]
             res_astar = subprocess.run(cmd_astar, stdout=subprocess.PIPE, text=True)
             
             true_pushes = -1
