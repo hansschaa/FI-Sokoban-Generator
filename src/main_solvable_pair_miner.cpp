@@ -72,29 +72,34 @@ int main(int argc, char** argv) {
             std::ifstream file(entry.path());
             std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             
-            // Assuming Solvables files just contain lines of boards separated by double newlines or something.
-            // Let's split by double newline.
             size_t pos = 0;
             while (pos < content.length()) {
                 size_t end_pos = content.find("\n\n", pos);
                 if (end_pos == std::string::npos) end_pos = content.length();
                 std::string block = content.substr(pos, end_pos - pos);
                 
-                // Strip lines that start with metadata if any
                 std::string cleaned;
                 size_t bpos = 0;
                 while (bpos < block.length()) {
                     size_t nl = block.find('\n', bpos);
                     if (nl == std::string::npos) nl = block.length();
                     std::string line = block.substr(bpos, nl - bpos);
-                    if (line.find("Test -") == std::string::npos && line.find("type:") == std::string::npos) {
-                        cleaned += line + "\n";
+                    if (line.find("Test -") == std::string::npos && 
+                        line.find("type:") == std::string::npos && 
+                        line.find("pushes:") == std::string::npos && 
+                        line.find("runtime_ms:") == std::string::npos &&
+                        line.find("label:") == std::string::npos &&
+                        line.find("source_board:") == std::string::npos &&
+                        line.find("mutated_board:") == std::string::npos) {
+                        if (!line.empty() && line.find('#') != std::string::npos) {
+                            cleaned += line + "\n";
+                        }
                     }
                     bpos = nl + 1;
                 }
                 while (!cleaned.empty() && cleaned.back() == '\n') cleaned.pop_back();
 
-                if (!cleaned.empty() && cleaned.find('#') != std::string::npos) {
+                if (!cleaned.empty()) {
                     base_boards.push_back(cleaned);
                 }
                 pos = end_pos + 2;
@@ -118,36 +123,46 @@ int main(int argc, char** argv) {
 
     int generated = 0;
     
-    std::ofstream out_file(output_dir + "/solvable_pairs.sok");
+    std::ofstream out_file(output_dir + "/ranknet_intra_shell_pairs.sok");
+    std::cout << "Generating " << num_pairs << " Siamese RankNet distance-1 pairs verified with real A*...\n";
 
     while (generated < num_pairs) {
         int idx = rand() % base_boards.size();
-        Individual ind;
-        ind.board = string_to_board(base_boards[idx]);
-        std::string parent_str = base_boards[idx];
+        Individual ind_parent;
+        ind_parent.board = string_to_board(base_boards[idx]);
+        std::string parent_str = board_to_string_with_newlines(ind_parent.board);
         
+        double parent_pushes = evaluator.evaluate(ind_parent);
+        if (parent_pushes <= 0 || parent_pushes < -100) continue;
+
+        Individual ind_mutated = ind_parent;
         int mutationType = rand() % 3;
         bool success = false;
         
-        if (mutationType == 0) success = moveMutation.apply(ind);
-        else if (mutationType == 1) success = addMutation.apply(ind);
-        else success = removeMutation.apply(ind);
+        if (mutationType == 0) success = moveMutation.apply(ind_mutated);
+        else if (mutationType == 1) success = addMutation.apply(ind_mutated);
+        else success = removeMutation.apply(ind_mutated);
 
         if (!success) continue;
+        std::string mutated_str = board_to_string_with_newlines(ind_mutated.board);
+        if (mutated_str == parent_str) continue;
 
-        double fitness = evaluator.evaluate(ind);
+        double mutated_pushes = evaluator.evaluate(ind_mutated);
         
-        if (fitness > -1e8) {
-            // It's still solvable!
+        if (mutated_pushes > 0 && mutated_pushes > -100) {
             out_file << "source_board:\n" << parent_str << "\n";
-            out_file << "mutated_board:\n" << board_to_string_with_newlines(ind.board) << "\n";
-            out_file << "pushes:" << fitness << "\n\n";
+            out_file << "source_pushes:" << static_cast<int>(parent_pushes) << "\n";
+            out_file << "mutated_board:\n" << mutated_str << "\n";
+            out_file << "mutated_pushes:" << static_cast<int>(mutated_pushes) << "\n\n";
             generated++;
-            if (generated % 1000 == 0) std::cout << "Generated " << generated << " pairs.\n";
+            if (generated % 500 == 0) {
+                std::cout << "Generated " << generated << "/" << num_pairs << " pairs (latest: " 
+                          << static_cast<int>(parent_pushes) << " vs " << static_cast<int>(mutated_pushes) << " pushes).\n";
+            }
         }
     }
 
     out_file.close();
-    std::cout << "Done generating " << num_pairs << " solvable pairs.\n";
+    std::cout << "Done generating " << num_pairs << " RankNet solvable pairs saved to " << output_dir << "/ranknet_intra_shell_pairs.sok\n";
     return 0;
 }
