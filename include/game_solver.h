@@ -79,7 +79,8 @@ enum class Heuristic {
     neural_batched,         // batch de hijos de UN nodo (2-12 por llamada GPU)
     neural_batched_massive, // cross-node batch (BATCH_K=64, ~400 por llamada GPU)
     hybrid_regressor,       // Verificación A* real (Ground Truth) + Fitness Neural
-    classifier_filter       // NUEVO: Filtro pre-solver con clasificador contrastivo + Fitness de A* real
+    classifier_filter,      // Filtro pre-solver con clasificador contrastivo + Fitness de A* real
+    full_surrogate          // NUEVO (Variante 4): Clasificador verifica jugabilidad + Regresor decide fitness
 };
 
 class game_solver {

@@ -114,6 +114,7 @@ int main(int argc, char** argv)
         else if (h_arg == "simple") heuristic_type = Heuristic::simple;
         else if (h_arg == "hybrid_regressor") heuristic_type = Heuristic::hybrid_regressor;
         else if (h_arg == "classifier_filter") heuristic_type = Heuristic::classifier_filter;
+        else if (h_arg == "full_surrogate") heuristic_type = Heuristic::full_surrogate;
     }
 
     std::string out_csv_path = "";

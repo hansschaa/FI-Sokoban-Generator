@@ -306,6 +306,7 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
             
             if (!is_solvable) {
                 population[idx].fitness = -1e9;
+                (*classifier_deadlocks_filtered)++;
             } else {
                 (*surrogate_regressor_calls)++;
                 double pushes = j_res[k]["pushes"];
