@@ -2,8 +2,11 @@ import os
 import subprocess
 import json
 import statistics
+import sys
 
 def main():
+    alg = sys.argv[1] if len(sys.argv) > 1 else "GA"
+    
     shells = [
         "levels/centroid_shell_1.sok",
         "levels/centroid_shell_2.sok",
@@ -16,21 +19,21 @@ def main():
     solver_path = "./build/test_solver"
     
     print("========================================")
-    print(" RUNNING FULL GAP DECOMPOSITION (15 SEEDS)")
+    print(f" RUNNING FULL GAP DECOMPOSITION ({alg} - 15 SEEDS)")
     print("========================================")
     
     # Optional: write to CSV
-    csv_file = "scratch/full_gap_results.csv"
+    csv_file = f"scratch/full_gap_results_{alg}.csv"
     with open(csv_file, "w") as f:
         f.write("Shell,Seed,PredictedPushes,TruePushes,Gap\n")
         
     shell_gaps = {s: [] for s in shells}
     
     for i, shell in enumerate(shells):
-        print(f"\n[{i+1}/5] Running GA on {shell} (15 Seeds)...")
+        print(f"\n[{i+1}/5] Running {alg} on {shell} (15 Seeds)...")
         
         for seed in range(1, 16):
-            cmd_ga = [binary_path, "GA", "FO1", str(seed), shell, "--heuristic", "full_surrogate", "--maxEvals", "100000"]
+            cmd_ga = [binary_path, alg, "FO1", str(seed), shell, "--heuristic", "full_surrogate", "--maxEvals", "100000"]
             res_ga = subprocess.run(cmd_ga, stdout=subprocess.PIPE, text=True)
             
             lines = [line for line in res_ga.stdout.strip().split('\n') if ';' in line]
