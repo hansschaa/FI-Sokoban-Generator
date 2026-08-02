@@ -32,9 +32,17 @@ class ContrastiveMemoryDataset(Dataset):
         return len(self.y)
 
     def __getitem__(self, idx):
-        if self.s is not None:
-            return self.X[idx], self.y[idx], self.t[idx], self.s[idx]
-        return self.X[idx], self.y[idx], self.t[idx]
+        x = self.X[idx]
+        if self.s is None:
+            import random
+            k = random.randint(0, 3)
+            flip = random.choice([True, False])
+            x = torch.rot90(x, k, [1, 2])
+            if flip:
+                x = torch.flip(x, [2])
+            return x, self.y[idx], self.t[idx]
+        else:
+            return x, self.y[idx], self.t[idx], self.s[idx]
 
 def load_data():
     train_X = torch.load(os.path.join(RESULTS_DIR, f"contrastive_fold_{FOLD-1}_X_train.pt"), map_location='cpu')
