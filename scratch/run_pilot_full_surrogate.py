@@ -122,6 +122,7 @@ def run_full_surrogate_pilot(shell_idx, seed=42):
     evals = 0
     deadlocks_filtered = 0
     regressor_calls = 0
+    hybrid_delegations = 0
     neural_fitness = 0.0
     best_board_str_flat = ""
     top_boards = [] # list of (rank_label, neural_fit, board_str)
@@ -133,6 +134,9 @@ def run_full_surrogate_pilot(shell_idx, seed=42):
             except: pass
         elif "[ES STATS] Surrogate Regressor Calls" in line:
             try: regressor_calls = int(line.split(":")[1].strip())
+            except: pass
+        elif "[ES STATS] Hybrid Hungarian Delegations" in line:
+            try: hybrid_delegations = int(line.split(":")[1].strip())
             except: pass
         elif "[ES STATS] Total Generations:" in line:
             parts = line.split("|")
@@ -202,6 +206,7 @@ def run_full_surrogate_pilot(shell_idx, seed=42):
         "Evals Totales": evals,
         "Filtrados (Deadlock)": deadlocks_filtered,
         "Llamadas Regresor": regressor_calls,
+        "Delegaciones A* (≥6 cajas)": hybrid_delegations,
         "Top-1 Neural Fit": round(neural_fitness, 1),
         "Top-5 Mejor A*": best_real_pushes,
         "Tasa Acierto Top-5 (A*)": diag_summary,
