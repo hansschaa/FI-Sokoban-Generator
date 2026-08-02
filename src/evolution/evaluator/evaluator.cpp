@@ -42,6 +42,8 @@ double Evaluator::evaluate(Individual& individual)
     // We ALWAYS use Hungarian for true ground-truth evaluation, bypassing LibTorch completely.
     // The neural heuristic is exclusively used via the Python Surrogate Server in evaluate_surrogate_batch.
     auto stats = solver.test_template(Method::a_star, Heuristic::hungarian, solution, needs_path_simulator, nullptr, this->max_seconds);
+    
+    individual.hungarian_lb = stats.initial_optimal_distance;
 
     if (stats.status == SolveStatus::TIMEOUT)
     {
@@ -129,6 +131,109 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
     }
 
     if (surrogate_indices.empty()) return;
+
+    if (this->heuristic_type == Heuristic::hybrid_regressor) {
+        std::vector<size_t> solvable_for_regressor;
+        
+        auto original_heuristic = this->heuristic_type;
+        auto original_max_sec = this->max_seconds;
+        bool original_surrogate = this->use_surrogate;
+        
+        this->heuristic_type = Heuristic::hungarian;
+        this->use_surrogate = false;
+        this->max_seconds = 5.0; // User specified 5.0s timeout
+
+        for (size_t idx : surrogate_indices) {
+            auto& ind = population[idx];
+            
+            // Fast deadlock check
+            std::string flat_str = board_to_string(ind.board);
+            unsigned int rows = ind.board.size();
+            unsigned int cols = ind.board.empty() ? 0 : ind.board[0].size();
+            game_solver fast_solver(flat_str, rows, cols, 16);
+            fast_solver.enable_advanced_deadlocks = true;
+            
+            bool simple_deadlock = false;
+            for (size_t i = 0; i < ind.board.size(); i++) {
+                for (size_t j = 0; j < ind.board[i].size(); j++) {
+                    if (ind.board[i][j] == '$' || ind.board[i][j] == '*') {
+                        point p(i, j);
+                        if (fast_solver.lk.is_locked(p, ind.board) || fast_solver.lk.is_freeze_deadlock(p, ind.board)) {
+                            simple_deadlock = true;
+                            break;
+                        }
+                    }
+                }
+                if (simple_deadlock) break;
+            }
+            
+            if (simple_deadlock) {
+                ind.fitness = -1e9;
+                continue;
+            }
+            
+            // Full A* check
+            evaluate(ind);
+            
+            // If it timed out, evaluate() sets fitness very low or negative, treat it as discarded
+            // If it's solvable, fitness > 0
+            if (ind.fitness > 0) {
+                solvable_for_regressor.push_back(idx);
+            } else {
+                ind.fitness = -1e9; // Ensure discarded
+            }
+        }
+        
+        this->heuristic_type = original_heuristic;
+        this->use_surrogate = original_surrogate;
+        this->max_seconds = original_max_sec;
+        
+        if (solvable_for_regressor.empty()) return;
+        
+        // Prepare payload for solvable ones
+        json payload;
+        payload["boards"] = json::array();
+        for (size_t idx : solvable_for_regressor) {
+            const auto& ind = population[idx];
+            json item;
+            item["board"] = board_to_pretty_string(ind.board);
+            item["parent_board"] = ind.parent_board_str;
+            payload["boards"].push_back(item);
+        }
+        
+        httplib::Client cli("127.0.0.1", 5000);
+        cli.set_connection_timeout(5); 
+        cli.set_read_timeout(30);
+        
+        // Hit the new endpoint
+        auto res = cli.Post("/evaluate_regressor_only", payload.dump(), "application/json");
+        
+        if (res && res->status == 200) {
+            json j_res = json::parse(res->body);
+            for (size_t k = 0; k < solvable_for_regressor.size(); ++k) {
+                size_t idx = solvable_for_regressor[k];
+                (*surrogate_regressor_calls)++;
+                double pushes = j_res[k]["pushes"];
+                double branching = j_res[k]["branching"];
+                
+                double h_lb = population[idx].hungarian_lb;
+                pushes = h_lb + std::clamp(pushes - h_lb, 0.0, 1.0 * h_lb);
+                
+                if (fitnessType == FitnessType::FO1_PUSHES) {
+                    population[idx].fitness = pushes;
+                } else if (fitnessType == FitnessType::FO2_ASTAR_EFF_BF || fitnessType == FitnessType::FO3_SOL_EFF_BF) {
+                    population[idx].fitness = -branching;
+                } else {
+                    population[idx].fitness = pushes;
+                }
+            }
+        } else {
+            // Keep the A* fitness if server fails
+            std::cerr << "Warning: /evaluate_regressor_only failed, using A* fitness.\n";
+        }
+        
+        return;
+    }
 
     // 1. Prepare JSON payload para candidatos dentro del régimen neuronal (< 6 cajas)
     json payload;
@@ -229,6 +334,46 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         }
         this->heuristic_type = original_heuristic;
         this->use_surrogate = original_surrogate;
+    }
+}
+
+void Evaluator::filter_surrogate_batch(std::vector<Individual>& population)
+{
+    if (population.empty()) return;
+
+    json payload;
+    payload["boards"] = json::array();
+    
+    for (size_t i = 0; i < population.size(); ++i) {
+        const auto& ind = population[i];
+        json item;
+        item["board"] = board_to_pretty_string(ind.board);
+        item["parent_board"] = ind.parent_board_str;
+        payload["boards"].push_back(item);
+    }
+
+    httplib::Client cli("127.0.0.1", 5000);
+    cli.set_connection_timeout(5);
+    cli.set_read_timeout(30);
+
+    auto res = cli.Post("/evaluate", payload.dump(), "application/json");
+
+    if (!res || res->status != 200) {
+        std::cerr << "[Classifier Filter] Warning: Surrogate server unavailable, proceeding with full A* evaluation.\n";
+        return;
+    }
+
+    try {
+        json j_res = json::parse(res->body);
+        for (size_t k = 0; k < population.size(); ++k) {
+            bool is_solvable = j_res[k]["is_solvable"];
+            if (!is_solvable) {
+                population[k].fitness = -1e9;
+                (*this->classifier_deadlocks_filtered)++;
+            }
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "[Classifier Filter] JSON error: " << e.what() << "\n";
     }
 }
 

@@ -112,6 +112,8 @@ int main(int argc, char** argv)
         else if (h_arg == "neural_sequential") heuristic_type = Heuristic::neural;
         else if (h_arg == "hungarian") heuristic_type = Heuristic::hungarian;
         else if (h_arg == "simple") heuristic_type = Heuristic::simple;
+        else if (h_arg == "hybrid_regressor") heuristic_type = Heuristic::hybrid_regressor;
+        else if (h_arg == "classifier_filter") heuristic_type = Heuristic::classifier_filter;
     }
 
     std::string out_csv_path = "";

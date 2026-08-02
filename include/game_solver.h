@@ -41,6 +41,7 @@ struct SolverStats {
 
     int pushes = 0;
     int moves = 0;
+    int initial_heuristic = 0;
 
     size_t generated_states = 0;
 
@@ -76,7 +77,9 @@ enum class Heuristic {
     hungarian,
     neural,
     neural_batched,         // batch de hijos de UN nodo (2-12 por llamada GPU)
-    neural_batched_massive  // cross-node batch (BATCH_K=64, ~400 por llamada GPU)
+    neural_batched_massive, // cross-node batch (BATCH_K=64, ~400 por llamada GPU)
+    hybrid_regressor,       // Verificación A* real (Ground Truth) + Fitness Neural
+    classifier_filter       // NUEVO: Filtro pre-solver con clasificador contrastivo + Fitness de A* real
 };
 
 class game_solver {

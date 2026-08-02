@@ -156,8 +156,35 @@ Individual EvolutionStrategy::run(
 
         // EVALUATION OF BATCH
         if (!batch_to_evaluate.empty()) {
-            if (evaluator.use_surrogate) {
+            if (evaluator.use_surrogate && evaluator.heuristic_type != Heuristic::classifier_filter) {
+                if (generation == 1 || generation == 10 || stagnationCount == stagnationLimit - 1) {
+                    evaluator.evaluateDiagnostic(batch_to_evaluate, generation);
+                }
                 evaluator.evaluate_surrogate_batch(batch_to_evaluate);
+            } else if (evaluator.heuristic_type == Heuristic::classifier_filter) {
+                // 1. Pre-filtrado batch de deadlocks con el clasificador
+                evaluator.filter_surrogate_batch(batch_to_evaluate);
+                
+                // 2. Evaluación en paralelo con solver A* real SOLO para los aprobados (que no se marcaron como -1e9)
+                std::atomic<int> current_child{0};
+                std::vector<std::future<void>> child_futures;
+                for (unsigned int i = 0; i < num_threads; i++) {
+                    child_futures.push_back(std::async(std::launch::async, [&]() {
+                        while (true) {
+                            int idx = current_child++;
+                            if (idx >= (int)batch_to_evaluate.size()) break;
+                            if (batch_to_evaluate[idx].fitness != -1e9 && batch_to_evaluate[idx].fitness != -2e9) {
+                                auto orig_surr = evaluator.use_surrogate;
+                                evaluator.use_surrogate = false;
+                                evaluator.evaluate(batch_to_evaluate[idx]);
+                                evaluator.use_surrogate = orig_surr;
+                            }
+                        }
+                    }));
+                }
+                for (auto& f : child_futures) {
+                    f.get();
+                }
             } else {
                 std::atomic<int> current_child{0};
                 std::vector<std::future<void>> child_futures;
@@ -181,7 +208,7 @@ Individual EvolutionStrategy::run(
 
         // PROCESS RESULTS
         for (auto& child : batch_to_evaluate) {
-            if (!evaluator.use_surrogate) {
+            if (!evaluator.use_surrogate || evaluator.heuristic_type == Heuristic::classifier_filter) {
                 if (child.fitness > best.fitness) {
                     best = child;
                     improved = true;
@@ -261,7 +288,7 @@ Individual EvolutionStrategy::run(
         {
             auto& ind = combined[i];
             
-            if (evaluator.use_surrogate) {
+            if (evaluator.use_surrogate && evaluator.heuristic_type != Heuristic::classifier_filter) {
                 // Check if this individual came from the old population (already verified)
                 bool is_parent = false;
                 for (const auto& parent : population) {
@@ -423,6 +450,7 @@ Individual EvolutionStrategy::run(
     std::cout << "\n[ES STATS] Circuit Breaker (MAX_FAILURES) triggers: " << total_circuit_breakers << "\n";
     std::cout << "[ES STATS] Surrogate Fallbacks: " << *(evaluator.surrogate_fallbacks) << "\n";
     std::cout << "[ES STATS] Surrogate Regressor Calls: " << *(evaluator.surrogate_regressor_calls) << "\n";
+    std::cout << "[ES STATS] Classifier Deadlocks Filtered (Pre-A*): " << *(evaluator.classifier_deadlocks_filtered) << "\n";
     std::cout << "[ES STATS] Hybrid Hungarian Delegations (box_count >= 6): " << *(evaluator.hybrid_hungarian_delegations) << "\n";
     std::cout << "[ES STATS] Clone Fallback triggers: " << total_clone_fallbacks << " (Total Clones Injected: " << total_clones_injected << ")\n";
     std::cout << "[ES STATS] Total Generations: " << generation << " | Total Evals: " << evaluations << "\n";
