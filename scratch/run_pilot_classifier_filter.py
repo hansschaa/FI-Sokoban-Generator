@@ -58,11 +58,15 @@ def run_experiment(config_name, heuristic, seed, shell_idx):
     gens = 0
     evals = 0
     deadlocks_filtered = 0
+    false_positives = 0
     best_fitness = -1e9
 
     for line in out_text.split('\n'):
         if "[ES STATS] Classifier Deadlocks Filtered" in line:
             try: deadlocks_filtered = int(line.split(":")[1].strip())
+            except: pass
+        elif "[ES STATS] Classifier False Positives" in line:
+            try: false_positives = int(line.split(":")[1].strip())
             except: pass
         elif "[ES STATS] Total Generations:" in line:
             parts = line.split("|")
@@ -94,6 +98,7 @@ def run_experiment(config_name, heuristic, seed, shell_idx):
         "config": config_name,
         "total_evals": evals,
         "neural_filtered": deadlocks_filtered,
+        "false_positives": false_positives,
         "astar_evals": astar_evals,
         "generations": gens,
         "best_fitness": best_fitness if best_fitness != -1e9 else 0.0,
@@ -101,10 +106,10 @@ def run_experiment(config_name, heuristic, seed, shell_idx):
     }
 
 def main():
-    print("\n" + "="*85)
+    print("\n" + "="*95)
     print(" 🧪 PILOTO RÁPIDO DE ABLACIÓN: AISLANTE DEL CLASIFICADOR CONTRASTIVO COMO FILTRO PRE-A*")
     print(" Configuración de prueba: 5 Shells x 1 Semilla (Seed 42) x 300s por corrida")
-    print("="*85)
+    print("="*95)
 
     shells = [1, 2, 3, 4, 5]
     seed = 42
@@ -119,11 +124,11 @@ def main():
         for config_name, heuristic in configs:
             res = run_experiment(config_name, heuristic, seed, shell_idx)
             results.append(res)
-            print(f"   👉 Resultado: Fitness={res['best_fitness']} | Gens={res['generations']} | Evals Totales={res['total_evals']} | Filtrados={res['neural_filtered']} | A* Reales={res['astar_evals']} | Tiempo={res['time_s']}s")
+            print(f"   👉 Resultado: Fitness={res['best_fitness']} | Gens={res['generations']} | Evals={res['total_evals']} | Filtrados={res['neural_filtered']} | FalsoPositivos={res['false_positives']} | A* Reales={res['astar_evals']} | Tiempo={res['time_s']}s")
 
-    print("\n" + "="*85)
+    print("\n" + "="*95)
     print(" 📋 TABLA COMPARATIVA DE RESULTADOS DEL PILOTO")
-    print("="*85)
+    print("="*95)
     df = pd.DataFrame(results)
     print(df.to_string(index=False))
 
@@ -136,14 +141,24 @@ def main():
     mean_evals_sin = sin_df['total_evals'].mean()
     mean_evals_con = con_df['total_evals'].mean()
     total_filtered = con_df['neural_filtered'].sum()
-    pct_filtered = (total_filtered / con_df['total_evals'].sum() * 100) if con_df['total_evals'].sum() > 0 else 0
+    total_fp = con_df['false_positives'].sum()
+    total_evals_con = con_df['total_evals'].sum()
+    
+    pct_filtered = (total_filtered / total_evals_con * 100) if total_evals_con > 0 else 0
+    # Specificity / Precisión del filtro: de las que pasaron el filtro y A* evaluó como deadlock (FP)
+    # Tasa de FP sobre el total de evaluaciones o sobre los aprobados
+    pct_fp_total = (total_fp / total_evals_con * 100) if total_evals_con > 0 else 0
+    total_approved = total_evals_con - total_filtered
+    pct_fp_approved = (total_fp / total_approved * 100) if total_approved > 0 else 0
 
-    print("\n" + "-"*85)
+    print("\n" + "-"*95)
     print(" 🏆 DIAGNÓSTICO AGREGADO DEL PILOTO")
-    print(f"  • Fitness Promedio   -> Sin Clasificador: {mean_fit_sin:.2f} | Con Clasificador: {mean_fit_con:.2f} (Delta: {mean_fit_con - mean_fit_sin:+.2f})")
-    print(f"  • Exploración Media  -> Sin Clasificador: {mean_evals_sin:.0f} evals | Con Clasificador: {mean_evals_con:.0f} evals")
-    print(f"  • Eficiencia Neural  -> En las corridas con clasificador, se filtraron {total_filtered:,} deadlocks obvios ({pct_filtered:.1f}% de mutaciones descartadas sin gastar CPU en A*).")
-    print("-" * 85 + "\n")
+    print(f"  • Fitness Promedio       -> Sin Clasificador: {mean_fit_sin:.2f} | Con Clasificador: {mean_fit_con:.2f} (Delta: {mean_fit_con - mean_fit_sin:+.2f})")
+    print(f"  • Exploración Media      -> Sin Clasificador: {mean_evals_sin:.0f} evals | Con Clasificador: {mean_evals_con:.0f} evals")
+    print(f"  • Eficiencia Neural      -> Se filtraron {total_filtered:,} deadlocks obvios ({pct_filtered:.1f}% de mutaciones descartadas sin gastar A*).")
+    print(f"  • Falsos Positivos (FP)  -> {total_fp:,} mutaciones fueron aprobadas por la red pero rechazadas por A* como deadlock.")
+    print(f"                              ({pct_fp_approved:.1f}% de las mutaciones que entraron a A* resultaron ser falsos positivos del modelo).")
+    print("-" * 95 + "\n")
 
 if __name__ == "__main__":
     main()

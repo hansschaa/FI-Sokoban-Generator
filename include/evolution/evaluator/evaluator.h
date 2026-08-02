@@ -21,6 +21,7 @@ public:
     std::shared_ptr<int> surrogate_regressor_calls = std::make_shared<int>(0);
     std::shared_ptr<int> hybrid_hungarian_delegations = std::make_shared<int>(0);
     std::shared_ptr<int> classifier_deadlocks_filtered = std::make_shared<int>(0);
+    std::shared_ptr<int> classifier_false_positives = std::make_shared<int>(0);
 
     double evaluate(
         Individual& individual);

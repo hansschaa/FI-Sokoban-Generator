@@ -176,8 +176,11 @@ Individual EvolutionStrategy::run(
                             if (batch_to_evaluate[idx].fitness != -1e9 && batch_to_evaluate[idx].fitness != -2e9) {
                                 auto orig_surr = evaluator.use_surrogate;
                                 evaluator.use_surrogate = false;
-                                evaluator.evaluate(batch_to_evaluate[idx]);
+                                double real_fit = evaluator.evaluate(batch_to_evaluate[idx]);
                                 evaluator.use_surrogate = orig_surr;
+                                if (real_fit == -1e9) {
+                                    (*evaluator.classifier_false_positives)++;
+                                }
                             }
                         }
                     }));
@@ -451,6 +454,7 @@ Individual EvolutionStrategy::run(
     std::cout << "[ES STATS] Surrogate Fallbacks: " << *(evaluator.surrogate_fallbacks) << "\n";
     std::cout << "[ES STATS] Surrogate Regressor Calls: " << *(evaluator.surrogate_regressor_calls) << "\n";
     std::cout << "[ES STATS] Classifier Deadlocks Filtered (Pre-A*): " << *(evaluator.classifier_deadlocks_filtered) << "\n";
+    std::cout << "[ES STATS] Classifier False Positives (Approved by Neural, Rejected by A*): " << *(evaluator.classifier_false_positives) << "\n";
     std::cout << "[ES STATS] Hybrid Hungarian Delegations (box_count >= 6): " << *(evaluator.hybrid_hungarian_delegations) << "\n";
     std::cout << "[ES STATS] Clone Fallback triggers: " << total_clone_fallbacks << " (Total Clones Injected: " << total_clones_injected << ")\n";
     std::cout << "[ES STATS] Total Generations: " << generation << " | Total Evals: " << evaluations << "\n";
