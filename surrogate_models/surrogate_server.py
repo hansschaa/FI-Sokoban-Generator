@@ -47,17 +47,24 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # Global models
 classifier_model = None
 regressor_model = None
+regressor_calibration = None
 
 # Statistics for un-normalizing and classification threshold
 pushes_mean = 0.0
 pushes_std = 1.0
 CLASSIFIER_THRESHOLD = 0.65
 
+# Counters for calibration diagnostics
+global_oob_count = 0
+global_clip_override_count = 0
+
 def load_models():
-    global classifier_model, regressor_model
+    global classifier_model, regressor_model, regressor_calibration
     global pushes_mean, pushes_std, CLASSIFIER_THRESHOLD
+    global global_oob_count, global_clip_override_count
 
     import hashlib
+    import pickle
     
     def compute_sha256(filepath):
         sha256_hash = hashlib.sha256()
@@ -112,6 +119,14 @@ def load_models():
     pushes_mean = stats["pushes_mean"]
     pushes_std = stats["pushes_std"]
     
+    calib_path = "surrogate_models/results/regressor_calibration.pkl"
+    if os.path.exists(calib_path):
+        with open(calib_path, "rb") as f:
+            regressor_calibration = pickle.load(f)
+        print(f"Loaded continuous calibration model from {calib_path}")
+    else:
+        print(f"⚠️ {calib_path} not found. Predictions will not be calibrated.")
+    
     if device.type == "cuda":
         print(f"GPU Device Name: {torch.cuda.get_device_name(device)}")
     print("Surrogate Parallelism: Batched GPU Inference (batch size = dynamic, up to population size)")
@@ -121,6 +136,7 @@ import numpy as np
 
 @app.route('/evaluate', methods=['POST'])
 def evaluate():
+    global global_oob_count, global_clip_override_count
     try:
         data = request.get_json()
         if not data or 'boards' not in data:
@@ -185,18 +201,44 @@ def evaluate():
             
             # Un-normalize
             p_pred_log = (p_norm_pred * pushes_std) + pushes_mean
-            p_pred = torch.clamp(torch.expm1(p_pred_log), min=0.0)
+            p_pred = torch.clamp(torch.expm1(p_pred_log), min=0.0).cpu().numpy()
+
+            if regressor_calibration is not None:
+                p_calibrated = regressor_calibration.predict(p_pred)
+                
+                # Check for Out of Bounds
+                min_p = regressor_calibration.X_min_
+                max_p = regressor_calibration.X_max_
+                for p in p_pred:
+                    if p < min_p or p > max_p:
+                        global_oob_count += 1
+            else:
+                p_calibrated = p_pred
 
             # Map back to results with Admissibility Clip applied (h = hungarian_lb + clamp(pred - hungarian_lb, 0, k*hungarian_lb))
             for i, idx in enumerate(solvable_indices.tolist()):
-                pred_val = p_pred[i].item()
+                pred_raw = float(p_pred[i])
+                pred_val = float(p_calibrated[i])
+                
                 t_reg = solvable_tensors_reg[i].cpu()
                 lb = get_hungarian_lb(t_reg)
-                clipped_val = lb + max(0.0, min(1.0 * lb, pred_val - lb))
+                # Use the empirically derived 95th percentile K multiplier (1.318)
+                clipped_val = lb + max(0.0, min(1.318 * lb, pred_val - lb))
+                
+                # Did the clip override an upward calibration?
+                if pred_val > pred_raw and clipped_val < pred_val:
+                    global_clip_override_count += 1
                 
                 results[idx]["is_solvable"] = True
                 results[idx]["pushes"] = float(clipped_val)
                 results[idx]["branching"] = 1.0
+
+        # Save stats to file
+        with open("scratch/calibration_stats.json", "w") as f:
+            json.dump({
+                "oob_count": global_oob_count, 
+                "clip_override_count": global_clip_override_count
+            }, f)
 
         return jsonify(results)
 
