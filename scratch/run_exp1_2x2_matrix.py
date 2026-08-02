@@ -197,6 +197,14 @@ def run_experiment_run(label, heuristic, shell_idx, seed):
     tpr_top5_pct = (solvable_top5 / len(top_boards) * 100.0) if top_boards else 0.0
     astar_evals = evals - deadlocks_filtered if heuristic == "classifier_filter" else (evals if heuristic == "hungarian" else hybrid_del)
 
+    unique_boards_count = 0
+    if os.path.exists(out_csv):
+        try:
+            df_traj = pd.read_csv(out_csv, on_bad_lines='skip')
+            if 'best_board' in df_traj.columns:
+                unique_boards_count = int(df_traj['best_board'].nunique())
+        except: pass
+
     meta_record = {
         "Variant": label,
         "Heuristic": heuristic,
@@ -206,6 +214,7 @@ def run_experiment_run(label, heuristic, shell_idx, seed):
         "Threshold": th,
         "Generations": gens,
         "Total_Evals": evals,
+        "Unique_Boards_Explored": unique_boards_count,
         "Deadlocks_Filtered": deadlocks_filtered,
         "False_Positives": fp_count,
         "Hybrid_Delegations_6PlusBoxes": hybrid_del,
@@ -222,7 +231,7 @@ def run_experiment_run(label, heuristic, shell_idx, seed):
     with open(out_meta, "w", encoding="utf-8") as f:
         json.dump(meta_record, f, indent=2)
 
-    print(f"✔️ Done ({elapsed:.1f}s) | A* Real Best: {best_real_astar_pushes} | Top-5 Solubles: {solvable_top5}/{len(top_boards)} ({tpr_top5_pct:.0f}%) | Delegaciones A*: {hybrid_del}")
+    print(f"✔️ Done ({elapsed:.1f}s) | A* Real Best: {best_real_astar_pushes} | Top-5 Soluble: {solvable_top5}/{len(top_boards)} ({tpr_top5_pct:.0f}%) | Tableros Únicos: {unique_boards_count}")
     return False, meta_record
 
 def generate_final_analysis():
@@ -250,12 +259,12 @@ def generate_final_analysis():
 
     # Resumen por Shell y Variante
     summary = df.groupby(["Shell", "Variant"])[
-        ["Top5_Best_Real_Astar_Pushes", "Top5_Accuracy_Pct", "Time_s", "Hybrid_Delegations_6PlusBoxes", "Deadlocks_Filtered", "Generations"]
+        ["Top5_Best_Real_Astar_Pushes", "Top5_Accuracy_Pct", "Time_s", "Unique_Boards_Explored", "Hybrid_Delegations_6PlusBoxes", "Deadlocks_Filtered"]
     ].mean().reset_index().round(1)
 
-    print("\n" + "="*120)
+    print("\n" + "="*130)
     print(" 🏆 EXPERIMENTO 1: MATRIZ 2x2 COMPRENSIVA (MEDIA SOBRE 10 SEMILLAS POR CONFIGURACIÓN | 300s POR CORRIDA)")
-    print("="*120)
+    print("="*130)
     print(summary.to_string(index=False))
 
     sum_path = os.path.join(OUTPUT_DIR, "experiment_1_summary_table.csv")
