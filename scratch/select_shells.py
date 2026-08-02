@@ -137,6 +137,27 @@ def avg_symmetry(grid):
     v_sym = matches_v / total_v if total_v > 0 else 0
     return (h_sym + v_sym) / 2
 
+def calc_connectivity(interior):
+    if not interior:
+        return 0
+    visited = set()
+    max_region = 0
+    for start in interior:
+        if start not in visited:
+            region = set()
+            q = deque([start])
+            visited.add(start)
+            while q:
+                r, c = q.popleft()
+                region.add((r, c))
+                for dr, dc in ((-1,0),(1,0),(0,-1),(0,1)):
+                    nr, nc = r+dr, c+dc
+                    if (nr,nc) in interior and (nr,nc) not in visited:
+                        visited.add((nr,nc))
+                        q.append((nr,nc))
+            max_region = max(max_region, len(region))
+    return max_region
+
 def compute_metrics(grid):
     grid = normalize_grid(grid)
     interior, num_regions = get_interior_cells(grid)
@@ -149,19 +170,19 @@ def compute_metrics(grid):
     
     dead_ends = sum(1 for r,c in interior if sum(1 for dr,dc in ((-1,0),(1,0),(0,-1),(0,1)) if (r+dr,c+dc) in interior) == 1)
     
-    # Nuevas directivas del plan: incluir free_cells explícitamente
     free_cells = len(interior)
     
     return {
         'wall_density': bb_walls / bb_total if bb_total > 0 else 0,
         'open_space_ratio': len(interior) / denom_inner if denom_inner > 0 else 0,
-        'connectivity': len(interior),
+        'connectivity': calc_connectivity(interior),
         'aspect_ratio': (max_c-min_c+1) / (max_r-min_r+1) if (max_r-min_r+1) > 0 else 1,
         'dead_end_ratio': dead_ends / len(interior) if len(interior) > 0 else 0,
         'avg_symmetry': avg_symmetry(grid),
         'num_interior_regions': num_regions,
-        'free_cells': free_cells  # CRÍTICO: Feature explícita
+        'free_cells': free_cells  # CRÍTICO: Feature explícita y separada de connectivity
     }
+
 
 def main():
     # 1. Generar pool

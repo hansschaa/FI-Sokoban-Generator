@@ -31,6 +31,7 @@ def sample_dataset_metrics(dir_path, max_files=15, max_boards_per_file=1000):
         return []
     
     all_files = [os.path.join(root, f) for root, _, files in os.walk(dir_path) for f in files if f.endswith(".sok")]
+    all_files.sort()  # Asegurar orden determinista antes de muestrear
     if not all_files:
         print(f"Advertencia: No se encontraron archivos .sok en {dir_path}.")
         return []
