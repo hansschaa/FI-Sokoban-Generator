@@ -258,9 +258,10 @@ def generate_final_analysis():
     print(f"📁 Todas las corridas exportadas a: {df_csv}")
 
     # Resumen por Shell y Variante
-    summary = df.groupby(["Shell", "Variant"])[
-        ["Top5_Best_Real_Astar_Pushes", "Top5_Accuracy_Pct", "Time_s", "Unique_Boards_Explored", "Hybrid_Delegations_6PlusBoxes", "Deadlocks_Filtered"]
-    ].mean().reset_index().round(1)
+    cols_to_avg = ["Top5_Best_Real_Astar_Pushes", "Top5_Accuracy_Pct", "Time_s", "Unique_Boards_Explored", "Hybrid_Delegations_6PlusBoxes", "Deadlocks_Filtered"]
+    if "Top5_Inconclusive_Count" in df.columns:
+        cols_to_avg.insert(2, "Top5_Inconclusive_Count")
+    summary = df.groupby(["Shell", "Variant"])[cols_to_avg].mean().reset_index().round(1)
 
     print("\n" + "="*130)
     print(" 🏆 EXPERIMENTO 1: MATRIZ 2x2 COMPRENSIVA (MEDIA SOBRE 10 SEMILLAS POR CONFIGURACIÓN | 300s POR CORRIDA)")
