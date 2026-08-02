@@ -21,24 +21,30 @@ TEST_PT = os.path.join(RESULTS_DIR, "siamese_ranknet_test_heldout.pt")
 OUT_MODEL_PATH = os.path.join(RESULTS_DIR, "siamese_ranknet_pilot.pt")
 
 class SiameseRankingDataset(Dataset):
-    def __init__(self, pairs):
+    def __init__(self, pairs, augment=False):
         self.pairs = pairs
+        self.augment = augment
 
     def __len__(self):
         return len(self.pairs)
 
     def __getitem__(self, idx):
         item = self.pairs[idx]
-        return (
-            item["tensor_A"],
-            torch.tensor(item["norm_A"], dtype=torch.float32),
-            torch.tensor(item["raw_A"], dtype=torch.float32),
-            item["bucket_A"],
-            item["tensor_B"],
-            torch.tensor(item["norm_B"], dtype=torch.float32),
-            torch.tensor(item["raw_B"], dtype=torch.float32),
-            item["bucket_B"]
-        )
+        
+        tA = item["tensor_A"]
+        nA = torch.tensor(item["norm_A"], dtype=torch.float32)
+        rA = torch.tensor(item["raw_A"], dtype=torch.float32)
+        bA = item["bucket_A"]
+        
+        tB = item["tensor_B"]
+        nB = torch.tensor(item["norm_B"], dtype=torch.float32)
+        rB = torch.tensor(item["raw_B"], dtype=torch.float32)
+        bB = item["bucket_B"]
+
+        if self.augment and torch.rand(1).item() > 0.5:
+            return tB, nB, rB, bB, tA, nA, rA, bA
+            
+        return tA, nA, rA, bA, tB, nB, rB, bB
 
 def evaluate_ranking_metrics(model, loader, device, pushes_mean, pushes_std):
     model.eval()
@@ -138,7 +144,7 @@ def main():
     print(f" 📊 Datos Train/Val (Folds 2-5): {len(train_pairs):,} pares")
     print(f" 🧪 Datos Held-out (Fold 1)    : {len(test_pairs):,} pares (topologías inéditas)")
 
-    train_loader = DataLoader(SiameseRankingDataset(train_pairs), batch_size=args.batch_size, shuffle=True, num_workers=2, pin_memory=True)
+    train_loader = DataLoader(SiameseRankingDataset(train_pairs, augment=True), batch_size=args.batch_size, shuffle=True, num_workers=2, pin_memory=True)
     test_loader  = DataLoader(SiameseRankingDataset(test_pairs),  batch_size=256, shuffle=False, num_workers=2, pin_memory=True)
 
     model = SokobanSEResNetRegressor(dropout_p=0.4).to(device)
