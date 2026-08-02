@@ -77,7 +77,8 @@ int main(int argc, char** argv) {
     game_solver ga(temp, mm, nn, memval);
     std::vector<game_node> solution;
 
-    auto stats = ga.test_template(int_to_method(iinput), solution);
+    ga.enable_advanced_deadlocks = true;
+    auto stats = ga.test_template(int_to_method(iinput), Heuristic::hungarian, solution);
     printf("Pushes: %d\n", stats.pushes);
 
     if (argc < 4) {
