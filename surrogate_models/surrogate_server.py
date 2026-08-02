@@ -2,9 +2,44 @@ import os
 import json
 import torch
 import traceback
+import numpy as np
+from collections import deque
+from scipy.optimize import linear_sum_assignment
 from flask import Flask, request, jsonify
 from models.resnet import SokobanSEResNetClassifier, SokobanSEResNetRegressor
 from data.prepare_classifier import encode_board
+
+def get_hungarian_lb(tensor_board):
+    arr = tensor_board.cpu().numpy() if hasattr(tensor_board, 'cpu') else tensor_board
+    walls = arr[0] == 1
+    goals = np.argwhere(arr[3] == 1)
+    boxes = np.argwhere(arr[2] == 1)
+    if len(goals) == 0 or len(boxes) == 0 or len(goals) != len(boxes):
+        return 0.0
+    H, W = walls.shape
+    dist_maps = []
+    for gr, gc in goals:
+        dist = np.full((H, W), np.inf)
+        dist[gr, gc] = 0
+        q = deque([(gr, gc)])
+        while q:
+            r, c = q.popleft()
+            d = dist[r, c]
+            for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < H and 0 <= nc < W:
+                    if not walls[nr, nc] and np.isinf(dist[nr, nc]):
+                        dist[nr, nc] = d + 1
+                        q.append((nr, nc))
+        dist_maps.append(dist)
+    n = len(goals)
+    cost_matrix = np.zeros((n, n))
+    for i in range(n):
+        for j, (br, bc) in enumerate(boxes):
+            cost_matrix[i, j] = dist_maps[i][br, bc]
+    row_ind, col_ind = linear_sum_assignment(cost_matrix)
+    return float(cost_matrix[row_ind, col_ind].sum())
+
 
 app = Flask(__name__)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -152,10 +187,15 @@ def evaluate():
             p_pred_log = (p_norm_pred * pushes_std) + pushes_mean
             p_pred = torch.clamp(torch.expm1(p_pred_log), min=0.0)
 
-            # Map back to results
+            # Map back to results with Admissibility Clip applied (h = hungarian_lb + clamp(pred - hungarian_lb, 0, k*hungarian_lb))
             for i, idx in enumerate(solvable_indices.tolist()):
+                pred_val = p_pred[i].item()
+                t_reg = solvable_tensors_reg[i].cpu()
+                lb = get_hungarian_lb(t_reg)
+                clipped_val = lb + max(0.0, min(1.0 * lb, pred_val - lb))
+                
                 results[idx]["is_solvable"] = True
-                results[idx]["pushes"] = p_pred[i].item()
+                results[idx]["pushes"] = float(clipped_val)
                 results[idx]["branching"] = 1.0
 
         return jsonify(results)
