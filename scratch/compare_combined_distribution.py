@@ -2,7 +2,11 @@ import os
 import random
 import numpy as np
 import pandas as pd
-from select_shells import parse_sok_file, compute_metrics
+try:
+    from select_shells import parse_sok_file, compute_metrics
+except ImportError:
+    from scratch.select_shells import parse_sok_file, compute_metrics
+
 
 def parse_sok_file_multi(filepath):
     grids = []
