@@ -92,38 +92,49 @@ def main():
         df_old = pd.read_csv(exp1_table)
         for _, row in df_old.iterrows():
             sh = int(str(row["Shell"]).replace("Shell ", "").strip())
-            var = row["Variant"]
+            var = str(row["Variant"])
             pushes = row["Top5_Best_Real_Astar_Pushes"]
-            if var == "A* Puro": baseline_dict[sh] = pushes
-            elif var == "Full Surrogate": old_full_dict[sh] = pushes
+            if "A* Puro" in var or "hungarian" in var: baseline_dict[sh] = pushes
+            elif "Full Surrogate" in var or "full_surrogate" in var: old_full_dict[sh] = pushes
 
     results_summary = []
 
     for sh in range(1, 6):
-        print(f"\n⏳ Ejecutando Full Surrogate + Clip en Shell {sh} (Semilla 42)...")
         shell_file = f"levels/shell_{sh}.sok"
         out_csv = os.path.join(OUTPUT_DIR, f"full_surrogate_clip_shell{sh}_seed42.csv")
         out_txt = os.path.join(OUTPUT_DIR, f"full_surrogate_clip_shell{sh}_seed42.txt")
 
-        if not set_server_threshold(THRESHOLD_MAP.get(sh, 0.70)):
-            return
+        # Cargar también el resultado específico de la Semilla 42 sin clip (del Experimento 1) si existe
+        old_seed42_val = "N/A"
+        old_meta = f"experiment_1_matrix_results/full_surrogate_shell{sh}_seed42_meta.json"
+        if os.path.exists(old_meta):
+            try:
+                with open(old_meta, "r") as f_meta:
+                    old_seed42_val = json.load(f_meta).get("Top5_Best_Real_Astar_Pushes", "N/A")
+            except: pass
 
-        cmd = [
-            runner_path, "ES", "FO1", "42", shell_file,
-            "--heuristic", "full_surrogate",
-            "--timeLimit", str(TIME_LIMIT_SEC),
-            "--maxEvals", "1000000",
-            "--out_csv", out_csv
-        ]
-        
-        t0 = time.time()
-        try:
-            with open(out_txt, "w", encoding="utf-8") as log_f:
-                proc = subprocess.run(cmd, stdout=log_f, stderr=subprocess.PIPE, timeout=PYTHON_TIMEOUT)
-            dt = round(time.time() - t0, 1)
-        except Exception as e:
-            print(f"   ❌ Fallo o timeout en la ejecución: {e}")
-            continue
+        if not os.path.exists(out_txt) or "--rerun" in sys.argv:
+            print(f"\n⏳ Ejecutando Full Surrogate + Clip en Shell {sh} (Semilla 42)...")
+            if not set_server_threshold(THRESHOLD_MAP.get(sh, 0.70)):
+                return
+            cmd = [
+                runner_path, "ES", "FO1", "42", shell_file,
+                "--heuristic", "full_surrogate",
+                "--timeLimit", str(TIME_LIMIT_SEC),
+                "--maxEvals", "1000000",
+                "--out_csv", out_csv
+            ]
+            t0 = time.time()
+            try:
+                with open(out_txt, "w", encoding="utf-8") as log_f:
+                    proc = subprocess.run(cmd, stdout=log_f, stderr=subprocess.PIPE, timeout=PYTHON_TIMEOUT)
+                dt = round(time.time() - t0, 1)
+            except Exception as e:
+                print(f"   ❌ Fallo o timeout en la ejecución: {e}")
+                continue
+        else:
+            print(f"\n💡 Shell {sh}: Reutilizando simulación previa guardada en {out_txt} (usa --rerun si quieres volver a correr los 300s)...")
+            dt = 0.0
 
         # Leer y auditar Top-5
         top_boards = []
@@ -144,17 +155,18 @@ def main():
                 if real_p > best_real: best_real = real_p
         
         acc = round((solved_cnt / len(top_boards)) * 100.0, 1) if top_boards else 0.0
-        print(f"   ✔️ Shell {sh} finalizado en {dt}s | Precisión Top-5: {solved_cnt}/{len(top_boards)} ({acc}%) | Mejor Pushes Real: {best_real}")
+        print(f"   ✔️ Shell {sh} auditado | Precisión Top-5: {solved_cnt}/{len(top_boards)} ({acc}%) | Mejor Pushes Real con Clip: {best_real}")
 
         old_full = old_full_dict.get(sh, "N/A")
         base_astar = baseline_dict.get(sh, "N/A")
         
         results_summary.append({
             "Shell": f"Shell {sh}",
-            "A* Puro Baseline (Exp 1)": base_astar,
-            "Full Surrogate Sin Clip (Exp 1)": old_full,
+            "A* Puro Baseline (Media Exp 1)": base_astar,
+            "Full Surrogate Sin Clip (Media Exp 1)": old_full,
+            "Full Surrogate Sin Clip (Seed 42)": old_seed42_val,
             "Full Surrogate + Clip (Seed 42)": best_real,
-            "Precisión Top-5 con Clip": f"{acc}% ({solved_cnt}/{len(top_boards)})"
+            "Precisión con Clip": f"{acc}% ({solved_cnt}/{len(top_boards)})"
         })
 
     if results_summary:
