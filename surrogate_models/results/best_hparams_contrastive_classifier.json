@@ -1,0 +1,16 @@
+{
+  "trial": 14,
+  "best_params": {
+    "lr": 0.00468,
+    "weight_decay": 0.000001,
+    "dropout_p": 0.10,
+    "batch_size": 512
+  },
+  "optimal_threshold": 0.70,
+  "metrics_dense_eval": {
+    "dense_f05": 0.9201,
+    "spec_simple": 1.0000,
+    "spec_complex": 0.8711
+  },
+  "selection_rationale": "Selected based on Dense F0.5 as primary metric over global F0.5, with Spec Complex as tie-breaker to ensure strong OOD performance."
+}
