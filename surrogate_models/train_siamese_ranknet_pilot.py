@@ -144,8 +144,8 @@ def main():
     print(f" 📊 Datos Train/Val (Folds 2-5): {len(train_pairs):,} pares")
     print(f" 🧪 Datos Held-out (Fold 1)    : {len(test_pairs):,} pares (topologías inéditas)")
 
-    train_loader = DataLoader(SiameseRankingDataset(train_pairs, augment=True), batch_size=args.batch_size, shuffle=True, num_workers=2, pin_memory=True)
-    test_loader  = DataLoader(SiameseRankingDataset(test_pairs),  batch_size=256, shuffle=False, num_workers=2, pin_memory=True)
+    train_loader = DataLoader(SiameseRankingDataset(train_pairs, augment=True), batch_size=args.batch_size, shuffle=True, num_workers=0, pin_memory=True)
+    test_loader  = DataLoader(SiameseRankingDataset(test_pairs),  batch_size=256, shuffle=False, num_workers=0, pin_memory=True)
 
     model = SokobanSEResNetRegressor(dropout_p=0.4).to(device)
     if not args.from_scratch and os.path.exists(PROD_MODEL_PATH):
