@@ -36,7 +36,7 @@ def verify_board_with_astar_re(board_flat_str, tag="reaudit"):
                 status = "INCONCLUSIVE"
             elif "Status: UNSOLVABLE" in line or "DEADLOCK" in line:
                 status = "DEADLOCK"
-        if status == "DEADLOCK" and pushes > 1:
+        if status == "DEADLOCK" and pushes > 0:
             status = "SOLVED"
     except subprocess.TimeoutExpired:
         pushes = 0

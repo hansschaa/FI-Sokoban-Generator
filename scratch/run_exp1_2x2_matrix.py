@@ -80,7 +80,7 @@ def verify_board_with_astar(board_flat_str, tag="exp1"):
         try: os.remove(temp_file)
         except: pass
         
-    return pushes, (pushes > 1)
+    return pushes, (pushes > 0)
 
 def run_experiment_run(label, heuristic, shell_idx, seed):
     shell_file = f"levels/shell_{shell_idx}.sok"

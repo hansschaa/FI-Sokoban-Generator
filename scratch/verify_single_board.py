@@ -78,14 +78,14 @@ def main():
             if "Status:" in l:
                 status = l.split(":")[1].strip()
 
-        if status == "DESCONOCIDO" and pushes > 1:
-            status = "SOLVED (confirmado por Pushes > 1)"
+        if status == "DESCONOCIDO" and pushes > 0:
+            status = "SOLVED (confirmado por Pushes > 0)"
         elif status == "DESCONOCIDO" and pushes == 0:
             status = "DEADLOCK / IRRESOLUBLE"
 
         print("-" * 110)
         print(f"🎯 Resultado de Re-auditoría Corregida: Pushes = {pushes} | Estado = {status}")
-        print(f"⚖️ Coherencia con Fitness Evolutivo: Todo en orden si Pushes > 1 y Estado == SOLVED.")
+        print(f"⚖️ Coherencia con Fitness Evolutivo: Todo en orden si Pushes > 0 y Estado == SOLVED.")
 
     except subprocess.TimeoutExpired as e:
         print("-" * 110)

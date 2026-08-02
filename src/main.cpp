@@ -78,8 +78,15 @@ int main(int argc, char** argv) {
     std::vector<game_node> solution;
 
     ga.enable_advanced_deadlocks = true;
-    auto stats = ga.test_template(int_to_method(iinput), Heuristic::hungarian, solution);
+    auto stats = ga.test_template(int_to_method(iinput), Heuristic::hungarian, solution, false, nullptr, 60.0, 2000000);
     printf("Pushes: %d\n", stats.pushes);
+    if (stats.status == SolveStatus::SOLVED && stats.pushes > 0) {
+        printf("Status: SOLVED\n");
+    } else if (stats.status == SolveStatus::TIMEOUT) {
+        printf("Status: INCONCLUSIVE (TIMEOUT_OR_NODE_LIMIT)\n");
+    } else {
+        printf("Status: UNSOLVABLE_OR_DEADLOCK\n");
+    }
 
     if (argc < 4) {
         printf("press Enter to show solves\n");
