@@ -111,14 +111,25 @@ def run_experiment_run(label, heuristic, shell_idx, seed):
         try: os.remove(tmp_csv)
         except: pass
 
-    # FIX CRÍTICO: Ignorar metas viejas para no reusar resultados pre-fix
-    # Un meta es válido solo si fue creado DESPUÉS que este script fue modificado por última vez
-    SCRIPT_MTIME = os.path.getmtime(__file__)
+    # FIX CRÍTICO: Ignorar metas viejos para no reusar resultados pre-fix
+    # Un meta es válido solo si fue creado DESPUÉS del componente más reciente del pipeline
+    PIPELINE_FILES = [
+        __file__,                                               # este script
+        "./build/experiment_runner",                           # binario C++ (recompilado con fixes)
+        "./build2/experiment_runner",                          # binario alternativo
+        "surrogate_models/surrogate_server.py",                # server Python
+        "surrogate_models/results/regressor_calibration.pkl",  # calibración isotónica
+        "surrogate_models/results/regressor_calibration.json", # calibración C++
+        "src/neural_heuristic.cpp",                            # fuente C++ con fix log1p
+    ]
+    PIPELINE_MTIME = max(
+        os.path.getmtime(f) for f in PIPELINE_FILES if os.path.exists(f)
+    )
     if os.path.exists(out_meta):
         try:
             meta_mtime = os.path.getmtime(out_meta)
-            if meta_mtime < SCRIPT_MTIME:
-                print(f"⚠️  Meta obsoleto detectado ({out_prefix}_meta.json) — más antiguo que el script. Ignorando y re-corriendo.")
+            if meta_mtime < PIPELINE_MTIME:
+                print(f"⚠️  Meta obsoleto detectado ({out_prefix}_meta.json) — más antiguo que el pipeline. Ignorando y re-corriendo.")
             else:
                 with open(out_meta, "r") as f:
                     data = json.load(f)
