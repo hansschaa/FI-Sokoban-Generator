@@ -2,6 +2,7 @@ import os
 import subprocess
 import time
 import json
+import hashlib
 import urllib.request
 import pandas as pd
 import numpy as np
@@ -32,13 +33,41 @@ THRESHOLD_MAP = {
 SEEDS = [42, 101, 202, 303, 404, 505, 606, 707, 808, 909]
 SHELLS = [1, 2, 3, 4, 5]
 
-# Las 4 Variantes de la Matriz 2x2: (Verificador de Jugabilidad x Decisor de Fitness)
+# Los 4 Variantes de la Matriz 2x2: (Verificador de Jugabilidad x Decisor de Fitness)
 VARIANTS = [
     ("A* Puro", "hungarian"),
     ("Clasificador + A*", "classifier_filter"),
     ("A* verifica + Regresor", "hybrid_regressor"),
     ("Full Surrogate (100% Neural)", "full_surrogate")
 ]
+
+# ─── HASH DE PIPELINE ──────────────────────────────────────────────────────────
+# Embebe un hash del contenido de los componentes críticos del pipeline en cada
+# meta.json. Un meta sólo se reutiliza si su hash coincide con el actual.
+# Esto es robusto a git pull entre máquinas (mtime es NO confiable cross-machine).
+PIPELINE_HASH_FILES = [
+    "./build/experiment_runner",                            # binario C++ recompilado
+    "./build2/experiment_runner",                           # binario alternativo
+    "surrogate_models/surrogate_server.py",                 # server Python
+    "surrogate_models/results/regressor_calibration.json",  # calibración C++
+    "src/neural_heuristic.cpp",                             # fuente C++ con fix log1p
+    "surrogate_models/results/surrogate_stats.txt",         # estadísticos de normalización
+]
+
+def compute_pipeline_hash():
+    h = hashlib.sha256()
+    for path in PIPELINE_HASH_FILES:
+        if os.path.exists(path):
+            try:
+                with open(path, "rb") as f:
+                    h.update(path.encode())
+                    h.update(f.read())
+            except Exception:
+                pass
+    return h.hexdigest()[:16]  # 16 hex chars son más que suficientes
+
+CURRENT_PIPELINE_HASH = compute_pipeline_hash()
+# ───────────────────────────────────────────────────────────────────────────────
 
 def set_server_threshold(threshold, retries=3):
     url = f"{SERVER_URL}/set_threshold"
@@ -111,29 +140,17 @@ def run_experiment_run(label, heuristic, shell_idx, seed):
         try: os.remove(tmp_csv)
         except: pass
 
-    # FIX CRÍTICO: Ignorar metas viejos para no reusar resultados pre-fix
-    # Un meta es válido solo si fue creado DESPUÉS del componente más reciente del pipeline
-    PIPELINE_FILES = [
-        __file__,                                               # este script
-        "./build/experiment_runner",                           # binario C++ (recompilado con fixes)
-        "./build2/experiment_runner",                          # binario alternativo
-        "surrogate_models/surrogate_server.py",                # server Python
-        "surrogate_models/results/regressor_calibration.pkl",  # calibración isotónica
-        "surrogate_models/results/regressor_calibration.json", # calibración C++
-        "src/neural_heuristic.cpp",                            # fuente C++ con fix log1p
-    ]
-    PIPELINE_MTIME = max(
-        os.path.getmtime(f) for f in PIPELINE_FILES if os.path.exists(f)
-    )
+    # VALIDACIÓN DE CACHE: Un meta es válido SOLO si su pipeline_hash coincide con el actual.
+    # Esto es robusto a git pull entre máquinas (mtime cross-machine NO es confiable).
     if os.path.exists(out_meta):
         try:
-            meta_mtime = os.path.getmtime(out_meta)
-            if meta_mtime < PIPELINE_MTIME:
-                print(f"⚠️  Meta obsoleto detectado ({out_prefix}_meta.json) — más antiguo que el pipeline. Ignorando y re-corriendo.")
+            with open(out_meta, "r") as f:
+                data = json.load(f)
+            stored_hash = data.get("pipeline_hash", "MISSING")
+            if stored_hash == CURRENT_PIPELINE_HASH:
+                return True, data  # ✅ Cache válido: mismo pipeline
             else:
-                with open(out_meta, "r") as f:
-                    data = json.load(f)
-                return True, data
+                print(f"⚠️  Meta obsoleto (hash={stored_hash[:8]}… != {CURRENT_PIPELINE_HASH[:8]}…) — pipeline cambió. Re-corriendo.")
         except: pass
 
     runner_path = "./build/experiment_runner"
@@ -270,7 +287,8 @@ def run_experiment_run(label, heuristic, shell_idx, seed):
         "Top5_Deadlock_Count": deadlock_top5,
         "Top5_Size": len(top_boards),
         "Top5_Accuracy_Pct": round(tpr_top5_pct, 1),
-        "Time_s": round(elapsed, 1)
+        "Time_s": round(elapsed, 1),
+        "pipeline_hash": CURRENT_PIPELINE_HASH   # Firmado con hash del pipeline — invalida la cache si el pipeline cambia
     }
 
     with open(out_meta, "w", encoding="utf-8") as f:
@@ -371,6 +389,7 @@ def main():
     print("\n" + "="*120)
     print(" 🧪 EXPERIMENTO 1 DEFINITIVO: MATRIZ 2x2 ESTUDIO DE ABLACIÓN GENERAL (5 SHELLS x 10 SEEDS x 300s)")
     print(f" Política de Umbral por Escasez Estructural: {THRESHOLD_MAP}")
+    print(f" Pipeline Hash: {CURRENT_PIPELINE_HASH}  ← Este valor debe ser idéntico en todas las corridas comparables")
     print("="*120)
 
     total_runs = len(VARIANTS) * len(SHELLS) * len(SEEDS)
