@@ -137,8 +137,8 @@ NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int co
             stats_file.close();
         } else {
             std::cerr << "[NeuralHeuristic] Warning: surrogate_stats.txt not found. Using default raw stats (May cause severe inaccuracies!)\n";
-            pushes_mean = 42.447f;
-            pushes_std = 27.029f;
+            pushes_mean = 3.4583510149067713f;
+            pushes_std = 0.8746270035752796f;
         }
     }
     catch (const c10::Error& e) {
