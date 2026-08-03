@@ -40,20 +40,26 @@ VARIANTS = [
     ("Full Surrogate (100% Neural)", "full_surrogate")
 ]
 
-def set_server_threshold(threshold):
+def set_server_threshold(threshold, retries=3):
     url = f"{SERVER_URL}/set_threshold"
     data = json.dumps({"threshold": threshold}).encode('utf-8')
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
-    try:
-        with urllib.request.urlopen(req, timeout=5) as resp:
-            res = json.loads(resp.read().decode('utf-8'))
-            return True
-    except Exception as e:
-        return False
+    for attempt in range(retries):
+        try:
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                json.loads(resp.read().decode('utf-8'))
+                return True
+        except Exception as e:
+            print(f"\n⚠️  set_server_threshold({threshold}) intento {attempt+1}/{retries} falló: {e}")
+            time.sleep(2)
+    print(f"\n❌ CRÍTICO: No se pudo confirmar umbral={threshold} en el server tras {retries} intentos. Abortando para evitar corrida con umbral incorrecto.")
+    sys.exit(1)
 
+# Retorna (pushes, is_solved, is_inconclusive)
+# is_inconclusive=True significa que A* no terminó a tiempo — NO es un deadlock confirmado
 def verify_board_with_astar(board_flat_str, tag="exp1"):
     if not board_flat_str or len(board_flat_str) < 5:
-        return 0, False
+        return 0, False, False
     rows = [r for r in board_flat_str.split("|") if r.strip() != ""]
     temp_file = os.path.join(OUTPUT_DIR, f"temp_{tag}.sok")
     with open(temp_file, "w", encoding="utf-8") as f:
@@ -61,11 +67,17 @@ def verify_board_with_astar(board_flat_str, tag="exp1"):
         
     solver_bin = "./build/sokoban_solver"
     if not os.path.exists(solver_bin): solver_bin = "./build2/sokoban_solver"
-    if not os.path.exists(solver_bin): return 0, False
+    if not os.path.exists(solver_bin): return 0, False, True  # no solver = inconcluso
 
+    # 60s timeout: distingue "no terminó a tiempo" (INCONCLUSIVE) de "deadlock confirmado" (DEADLOCK)
     cmd = [solver_bin, temp_file, "0", "500"]
+    timed_out = False
     try:
-        out = subprocess.check_output(cmd, stderr=subprocess.STDOUT, timeout=12, text=True)
+        out = subprocess.check_output(cmd, stderr=subprocess.STDOUT, timeout=60, text=True)
+    except subprocess.TimeoutExpired as e:
+        out = e.output if e.output else ""
+        if isinstance(out, bytes): out = out.decode('utf-8', errors='replace')
+        timed_out = True
     except Exception as e:
         out = getattr(e, "output", "")
         if isinstance(out, bytes): out = out.decode('utf-8', errors='replace')
@@ -79,8 +91,13 @@ def verify_board_with_astar(board_flat_str, tag="exp1"):
     if os.path.exists(temp_file):
         try: os.remove(temp_file)
         except: pass
-        
-    return pushes, (pushes > 0)
+
+    if pushes > 0:
+        return pushes, True, False   # SOLVED
+    elif timed_out:
+        return 0, False, True        # INCONCLUSIVE (timeout, no es deadlock confirmado)
+    else:
+        return 0, False, False       # DEADLOCK genuino (A* terminó sin solución)
 
 def run_experiment_run(label, heuristic, shell_idx, seed):
     shell_file = f"levels/shell_{shell_idx}.sok"
@@ -94,11 +111,18 @@ def run_experiment_run(label, heuristic, shell_idx, seed):
         try: os.remove(tmp_csv)
         except: pass
 
+    # FIX CRÍTICO: Ignorar metas viejas para no reusar resultados pre-fix
+    # Un meta es válido solo si fue creado DESPUÉS que este script fue modificado por última vez
+    SCRIPT_MTIME = os.path.getmtime(__file__)
     if os.path.exists(out_meta):
         try:
-            with open(out_meta, "r") as f:
-                data = json.load(f)
-            return True, data
+            meta_mtime = os.path.getmtime(out_meta)
+            if meta_mtime < SCRIPT_MTIME:
+                print(f"⚠️  Meta obsoleto detectado ({out_prefix}_meta.json) — más antiguo que el script. Ignorando y re-corriendo.")
+            else:
+                with open(out_meta, "r") as f:
+                    data = json.load(f)
+                return True, data
         except: pass
 
     runner_path = "./build/experiment_runner"
@@ -184,17 +208,25 @@ def run_experiment_run(label, heuristic, shell_idx, seed):
     if not top_boards and best_board:
         top_boards.append(("RANK_1", neural_fitness, best_board))
 
-    # Auditoría Post-hoc con A* Real
+    # Auditoría Post-hoc con A* Real (con distinción INCONCLUSIVE vs DEADLOCK)
     solvable_top5 = 0
+    inconclusive_top5 = 0
+    deadlock_top5 = 0
     best_real_astar_pushes = 0
     for r_lbl, n_fit, b_str in top_boards:
-        real_p, is_sol = verify_board_with_astar(b_str, tag=f"{heuristic}_sh{shell_idx}_s{seed}")
+        real_p, is_sol, is_inconclusive = verify_board_with_astar(b_str, tag=f"{heuristic}_sh{shell_idx}_s{seed}")
         if is_sol:
             solvable_top5 += 1
             if real_p > best_real_astar_pushes:
                 best_real_astar_pushes = real_p
+        elif is_inconclusive:
+            inconclusive_top5 += 1
+        else:
+            deadlock_top5 += 1
 
-    tpr_top5_pct = (solvable_top5 / len(top_boards) * 100.0) if top_boards else 0.0
+    # Precisión solo sobre casos definitivos (excluye inconclusos de numerador y denominador)
+    definite_total = solvable_top5 + deadlock_top5
+    tpr_top5_pct = (solvable_top5 / definite_total * 100.0) if definite_total > 0 else 0.0
     astar_evals = evals - deadlocks_filtered if heuristic == "classifier_filter" else (evals if heuristic == "hungarian" else hybrid_del)
 
     unique_boards_count = 0
@@ -223,6 +255,8 @@ def run_experiment_run(label, heuristic, shell_idx, seed):
         "Top1_Neural_Fit": round(neural_fitness, 1),
         "Top5_Best_Real_Astar_Pushes": best_real_astar_pushes,
         "Top5_Solvable_Count": solvable_top5,
+        "Top5_Inconclusive_Count": inconclusive_top5,
+        "Top5_Deadlock_Count": deadlock_top5,
         "Top5_Size": len(top_boards),
         "Top5_Accuracy_Pct": round(tpr_top5_pct, 1),
         "Time_s": round(elapsed, 1)
@@ -231,7 +265,7 @@ def run_experiment_run(label, heuristic, shell_idx, seed):
     with open(out_meta, "w", encoding="utf-8") as f:
         json.dump(meta_record, f, indent=2)
 
-    print(f"✔️ Done ({elapsed:.1f}s) | A* Real Best: {best_real_astar_pushes} | Top-5 Soluble: {solvable_top5}/{len(top_boards)} ({tpr_top5_pct:.0f}%) | Tableros Únicos: {unique_boards_count}")
+    print(f"✔️ Done ({elapsed:.1f}s) | A* Real Best: {best_real_astar_pushes} | Top-5: ✅{solvable_top5} ❓{inconclusive_top5} ❌{deadlock_top5}/{len(top_boards)} | Acc Definitiva: {tpr_top5_pct:.0f}% | Tableros Únicos: {unique_boards_count}")
     return False, meta_record
 
 def generate_final_analysis():
