@@ -300,11 +300,23 @@ def evaluate_regressor_only():
             
             # Un-normalize
             p_pred_log = (p_norm_pred * pushes_std) + pushes_mean
-            p_pred = torch.clamp(torch.expm1(p_pred_log), min=0.0)
+            p_pred = torch.clamp(torch.expm1(p_pred_log), min=0.0).cpu().numpy()
 
-            # Map back to results
+            if regressor_calibration is not None:
+                p_calibrated = regressor_calibration.predict(p_pred)
+            else:
+                p_calibrated = p_pred
+
+            # Map back to results with Admissibility Clip applied
             for i in range(len(boards_data)):
-                results[i]["pushes"] = p_pred[i].item()
+                pred_val = float(p_calibrated[i])
+                t_reg = batch_tensor[i].cpu()
+                lb = get_hungarian_lb(t_reg)
+                
+                # Apply 1.318x clip
+                clipped_val = lb + max(0.0, min(1.318 * lb, pred_val - lb))
+                
+                results[i]["pushes"] = clipped_val
                 results[i]["branching"] = 1.0
 
         return jsonify(results)

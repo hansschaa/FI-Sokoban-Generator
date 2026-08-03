@@ -11,6 +11,10 @@
 #include <deque>
 #include <array>
 #include <algorithm>
+#include <fstream>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 namespace {
     static void reverse_push_bfs(
@@ -146,7 +150,9 @@ NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int co
 
 void NeuralHeuristic::compute_deadlock_mask(const std::vector<std::vector<bool>>& end_vec) {
     // Build shell with walls AND goals — goals must never be flagged as deadlocks
-    // (a box pushed onto a goal is a win condition, not a deadlock)
+    // (a box pushed onto a goal is a win condition, not a deadlock)    // Load calibration if available
+    load_calibration();
+
     std::vector<std::vector<char>> shell(m, std::vector<char>(n, ' '));
     for (int r = 0; r < m; ++r) {
         for (int c = 0; c < n; ++c) {
@@ -162,6 +168,49 @@ void NeuralHeuristic::compute_deadlock_mask(const std::vector<std::vector<bool>>
 }
 
 NeuralHeuristic::~NeuralHeuristic() {}
+
+void NeuralHeuristic::load_calibration() {
+    if (has_calibration) return;
+    std::ifstream f("surrogate_models/results/regressor_calibration.json");
+    if (!f.is_open()) {
+        std::cerr << "[NeuralHeuristic] Warning: regressor_calibration.json not found. Running uncalibrated.\n";
+        return;
+    }
+    try {
+        json j;
+        f >> j;
+        calib_X = j["X_thresholds"].get<std::vector<double>>();
+        calib_y = j["y_thresholds"].get<std::vector<double>>();
+        calib_X_min = j["X_min"].get<double>();
+        calib_X_max = j["X_max"].get<double>();
+        has_calibration = true;
+    } catch (const std::exception& e) {
+        std::cerr << "[NeuralHeuristic] Error parsing calibration JSON: " << e.what() << "\n";
+    }
+}
+
+float NeuralHeuristic::apply_calibration(float raw_pred) {
+    if (!has_calibration || calib_X.empty()) return raw_pred;
+    
+    double x = (double)raw_pred;
+    if (x <= calib_X_min) return (float)calib_y.front();
+    if (x >= calib_X_max) return (float)calib_y.back();
+    
+    // Scikit-learn IsotonicRegression step interpolation
+    auto it = std::upper_bound(calib_X.begin(), calib_X.end(), x);
+    if (it == calib_X.end()) return (float)calib_y.back();
+    if (it == calib_X.begin()) return (float)calib_y.front();
+    
+    size_t idx = std::distance(calib_X.begin(), it);
+    // Linear interpolation between the two nearest thresholds
+    double x0 = calib_X[idx - 1];
+    double x1 = calib_X[idx];
+    double y0 = calib_y[idx - 1];
+    double y1 = calib_y[idx];
+    
+    double res = y0 + (x - x0) * (y1 - y0) / (x1 - x0);
+    return (float)res;
+}
 
 float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::vector<bool>>& end_vec) {
     // Lazy-init deadlock mask with goal positions on first call
@@ -294,8 +343,14 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
     // Un-normalize
     // Apply expm1 to reverse the log1p normalization done in training
     float pushes_pred_val = std::expm1(z_score * pushes_std + pushes_mean);
-    pushes_pred_val = std::max(0.0f, pushes_pred_val);
     
+    // Explicit numerical safety guard against NaN/Inf or astronomically exploded values
+    if (!std::isfinite(pushes_pred_val) || pushes_pred_val > 1e6f || pushes_pred_val < 0.0f) {
+        pushes_pred_val = 1e6f; // Fallback large value, will be clamped by calibration/admissibility anyway, or we can just cap it to avoid breaking calibration
+    }
+    
+    // Apply Isotonic Calibration
+    pushes_pred_val = apply_calibration(pushes_pred_val);
     
     if (dist_initialized && !goal_positions.empty()) {
         int num_boxes = node->box_count;
@@ -309,7 +364,8 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
         }
         Hungarian h(cost);
         float hungarian_lb = (float)h.solve();
-        pushes_pred_val = hungarian_lb + std::clamp(pushes_pred_val - hungarian_lb, 0.0f, 1.0f * hungarian_lb);
+        // Use the empirically derived 95th percentile K multiplier (1.318)
+        pushes_pred_val = hungarian_lb + std::clamp(pushes_pred_val - hungarian_lb, 0.0f, 1.318f * hungarian_lb);
     }
     
     return pushes_pred_val;
@@ -467,8 +523,14 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
     for (int i = 0; i < N; ++i) {
         float z_score = accessor[i];  // sin sincronización GPU individual
         float pushes_pred = std::expm1(z_score * pushes_std + pushes_mean);
-        pushes_pred = std::max(0.0f, pushes_pred);
         
+        // Explicit numerical safety guard
+        if (!std::isfinite(pushes_pred) || pushes_pred > 1e6f || pushes_pred < 0.0f) {
+            pushes_pred = 1e6f;
+        }
+        
+        // Apply Isotonic Calibration
+        pushes_pred = apply_calibration(pushes_pred);
         
         if (dist_initialized && !goal_positions.empty()) {
             const game_node* node = nodes[i];
@@ -483,7 +545,9 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
             }
             Hungarian h(cost);
             float hungarian_lb = (float)h.solve();
-            pushes_pred = hungarian_lb + std::clamp(pushes_pred - hungarian_lb, 0.0f, 1.0f * hungarian_lb);
+            float clipped_val = hungarian_lb + std::clamp(pushes_pred - hungarian_lb, 0.0f, 1.318f * hungarian_lb);
+            std::cout << "[DEBUG] C++ batch - raw: " << z_score << " -> expm1: " << (float)std::expm1(z_score * pushes_std + pushes_mean) << " -> calib: " << pushes_pred << " -> clip(1.318x): " << clipped_val << std::endl;
+            pushes_pred = clipped_val;
         }
         
         results.push_back(pushes_pred);

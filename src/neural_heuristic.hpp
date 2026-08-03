@@ -36,8 +36,17 @@ private:
     static constexpr int MAX_BATCH_SIZE = 256;  // max nodos por batch
     
     // Normalization stats
-    float pushes_mean = 42.447f;
-    float pushes_std = 27.029f;
+    float pushes_mean = 3.4583510149067713f;
+    float pushes_std = 0.8746270035752796f;
+
+    // Calibration
+    bool has_calibration = false;
+    std::vector<double> calib_X;
+    std::vector<double> calib_y;
+    double calib_X_min = 0.0;
+    double calib_X_max = 0.0;
+    void load_calibration();
+    float apply_calibration(float raw_pred);
 
 public:
     std::vector<float> get_last_tensor() const { return input_tensor_data; }
