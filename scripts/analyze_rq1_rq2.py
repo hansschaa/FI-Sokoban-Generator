@@ -257,12 +257,27 @@ def analyze_diversity_and_time(df, out_dir):
     mean_div.to_csv(os.path.join(out_dir, "pcg_diversity_mean.csv"))
 
     # 2. Tiempos: Elapsed_ms
-    mean_time = df.groupby(["Algoritmo", "FO"])["Elapsed_ms"].mean().unstack("FO") / 1000.0  # a segundos
-    print("\nTiempo de ejecución promedio (segundos):")
-    print(mean_time.to_string())
-    mean_time.to_csv(os.path.join(out_dir, "pcg_time_mean_seconds.csv"))
+    if "Elapsed_ms" in df.columns:
+        mean_time = df.groupby(["Algoritmo", "FO"])["Elapsed_ms"].mean().unstack("FO") / 1000.0  # a segundos
+        print("\nTiempo de ejecución promedio (segundos):")
+        print(mean_time.to_string())
+        mean_time.to_csv(os.path.join(out_dir, "pcg_time_mean_seconds.csv"))
 
-    # 3. Barplot Diversidad
+    # 3. Evaluaciones (Solver Calls)
+    if "Evaluations" in df.columns:
+        mean_evals = df.groupby(["Algoritmo", "FO"])["Evaluations"].mean().unstack("FO")
+        print("\nPromedio de llamadas al solver (Evaluations):")
+        print(mean_evals.to_string())
+        mean_evals.to_csv(os.path.join(out_dir, "pcg_evals_mean.csv"))
+
+    # 4. Tasa de Censura
+    if "Censored_Rate" in df.columns:
+        mean_censored = df.groupby(["Algoritmo", "FO"])["Censored_Rate"].mean().unstack("FO")
+        print("\nTasa de censura promedio (% de tableros descartados):")
+        print(mean_censored.to_string())
+        mean_censored.to_csv(os.path.join(out_dir, "pcg_censored_rate_mean.csv"))
+
+    # 5. Barplot Diversidad
     fig, ax = plt.subplots(figsize=(7, 4))
     mean_div_agg = mean_div.mean(axis=1).sort_values(ascending=False)
     mean_div_agg.plot(kind="bar", ax=ax, color="#2196F3", edgecolor="black")
@@ -275,20 +290,48 @@ def analyze_diversity_and_time(df, out_dir):
     plt.savefig(path_div, dpi=150)
     plt.close()
 
-    # 4. Barplot Tiempos
-    fig, ax = plt.subplots(figsize=(7, 4))
-    mean_time_agg = mean_time.mean(axis=1).sort_values(ascending=True)
-    mean_time_agg.plot(kind="bar", ax=ax, color="#F44336", edgecolor="black")
-    ax.set_title("Costo Computacional Promedio")
-    ax.set_ylabel("Segundos por Ejecución")
-    ax.set_xlabel("Metaheurística")
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=0)
-    plt.tight_layout()
-    path_time = os.path.join(out_dir, "pcg_time_barplot.png")
-    plt.savefig(path_time, dpi=150)
-    plt.close()
+    # 6. Barplot Tiempos
+    if "Elapsed_ms" in df.columns:
+        fig, ax = plt.subplots(figsize=(7, 4))
+        mean_time_agg = mean_time.mean(axis=1).sort_values(ascending=True)
+        mean_time_agg.plot(kind="bar", ax=ax, color="#F44336", edgecolor="black")
+        ax.set_title("Costo Computacional (Segundos por Ejecución)")
+        ax.set_ylabel("Segundos Promedio")
+        ax.set_xlabel("Metaheurística")
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=0)
+        plt.tight_layout()
+        path_time = os.path.join(out_dir, "pcg_time_barplot.png")
+        plt.savefig(path_time, dpi=150)
+        plt.close()
     
-    print(f"\n[Figuras] {path_div} | {path_time}")
+    # 7. Barplot Evaluaciones
+    if "Evaluations" in df.columns:
+        fig, ax = plt.subplots(figsize=(7, 4))
+        mean_evals_agg = mean_evals.mean(axis=1).sort_values(ascending=True)
+        mean_evals_agg.plot(kind="bar", ax=ax, color="#9C27B0", edgecolor="black")
+        ax.set_title("Costo Computacional (Llamadas al Solver)")
+        ax.set_ylabel("Llamadas Promedio")
+        ax.set_xlabel("Metaheurística")
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=0)
+        plt.tight_layout()
+        path_evals = os.path.join(out_dir, "pcg_evals_barplot.png")
+        plt.savefig(path_evals, dpi=150)
+        plt.close()
+
+    # 8. Heatmap Censura
+    if "Censored_Rate" in df.columns:
+        fig, ax = plt.subplots(figsize=(7, 4))
+        sns.heatmap(mean_censored, annot=True, fmt=".2%", cmap="Reds",
+                    linewidths=0.5, ax=ax)
+        ax.set_title("Tasa de Censura Promedio por Algoritmo × FO")
+        ax.set_ylabel("Algoritmo")
+        ax.set_xlabel("Función Objetivo")
+        plt.tight_layout()
+        path_cens = os.path.join(out_dir, "pcg_censored_heatmap.png")
+        plt.savefig(path_cens, dpi=150)
+        plt.close()
+
+    print(f"\n[Figuras guardadas en {out_dir}]")
 
 
 # ============================================================
