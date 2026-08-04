@@ -57,6 +57,7 @@ public:
     RemoveMutation removeMutation;
 
     bool use_parallel = true;
+    int censored_evaluations = 0;
 
     BoardCrossover crossover;
 

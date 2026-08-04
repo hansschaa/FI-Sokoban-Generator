@@ -138,6 +138,9 @@ Individual SimulatedAnnealing::run(
         //
 
         evaluator.evaluate(neighbor);
+        if (neighbor.censored) {
+            censored_evaluations++;
+        }
 
         evaluations++;
 
@@ -228,7 +231,7 @@ Individual SimulatedAnnealing::run(
     }
     else if (stagnation >= stagnationLimit)
     {
-        std::cout << "\n[SA] Criterio de Parada Alcanzado: STAGNATION (Sin mejoras por " << stagnationLimit << " generaciones)\n";
+        std::cout << "\n[SA] Criterio de Parada Alcanzado: STAGNATION (Sin mejoras por " << stagnationLimit << " evaluaciones)\n";
     }
     else if (temperature <= 0.001)
     {

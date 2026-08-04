@@ -216,6 +216,9 @@ Individual GeneticAlgorithm::run(
 
         // PROCESS RESULTS
         for (auto& child : batch_to_evaluate) {
+            if (child.censored) {
+                censored_evaluations++;
+            }
             if (child.fitness > best.fitness)
             {
                 best = child;
@@ -246,7 +249,7 @@ Individual GeneticAlgorithm::run(
         }
         else
         {
-            stagnation++;
+            stagnation += batch_to_evaluate.size();
         }
 
         //
@@ -383,7 +386,7 @@ Individual GeneticAlgorithm::run(
     if (stagnation >= stagnationLimit)
     {
         std::cout
-            << "\n[GA] Criterio de Parada Alcanzado: STAGNATION (Sin mejoras por " << stagnationLimit << " generaciones)\n";
+            << "\n[GA] Criterio de Parada Alcanzado: STAGNATION (Sin mejoras por " << stagnationLimit << " evaluaciones)\n";
     }
 
     return best;

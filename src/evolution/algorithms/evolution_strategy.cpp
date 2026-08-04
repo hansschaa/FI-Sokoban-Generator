@@ -169,6 +169,9 @@ Individual EvolutionStrategy::run(
 
         // PROCESS RESULTS
         for (auto& child : batch_to_evaluate) {
+            if (child.censored) {
+                censored_evaluations++;
+            }
             if (!std::isnan(child.fitness)) {
                 offspring.push_back(child);
                 if (child.fitness > best.fitness) {
@@ -208,7 +211,7 @@ Individual EvolutionStrategy::run(
         }
         else
         {
-            stagnationCount++;
+            stagnationCount += batch_to_evaluate.size();
         }
 
         //
@@ -273,7 +276,7 @@ Individual EvolutionStrategy::run(
         if (stagnationCount >= stagnationLimit)
         {
             std::cout
-                << "\n[ES] Criterio de Parada Alcanzado: STAGNATION (Sin mejoras por " << stagnationLimit << " generaciones)\n";
+                << "\n[ES] Criterio de Parada Alcanzado: STAGNATION (Sin mejoras por " << stagnationLimit << " evaluaciones)\n";
             break;
         }
 

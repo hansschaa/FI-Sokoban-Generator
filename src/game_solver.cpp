@@ -615,7 +615,7 @@ SolverStats game_solver::test_template(
 
     try {
         if (input == Method::a_star) {
-            solution = gsolver0.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal, heuristic);
+            solution = gsolver0.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal, heuristic, 120.0, 50000);
         }
         else if (input == Method::dfs) {
             solution = gsolver1.solve(&init, nullptr, get_neighbors, is_visited, mark_visited, is_equal);

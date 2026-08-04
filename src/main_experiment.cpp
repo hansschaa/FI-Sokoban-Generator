@@ -90,7 +90,7 @@ int main(int argc, char** argv)
 
     // 3. Variables Fijas y Estrictas para Experimento 1
     int maxEvals = 1000;
-    int stagLimit = 30;
+    int stagLimit = 150;
 
     // 4. Configurar el tablero inicial (Shell) y aplicar Flood Fill
     std::vector<std::vector<char>> shell;
@@ -183,6 +183,9 @@ int main(int argc, char** argv)
     }
 
     Individual best;
+    int total_evals = 0;
+    int total_censored = 0;
+
 
     // 6. Ejecución silenciosa de Metaheurísticas con Parseo Blindado
     try {
@@ -212,6 +215,8 @@ int main(int argc, char** argv)
             if (char* val = getCmdOption(argv, argv + argc, "--mutRate")) es.mutationRate = std::stod(val);
 
             best = es.run(population);
+            total_evals = es.evaluations;
+            total_censored = es.censored_evaluations;
         }
         else if (algorithm == "GA")
         {
@@ -242,6 +247,8 @@ int main(int argc, char** argv)
             if (char* val = getCmdOption(argv, argv + argc, "--mutRate")) ga.mutationRate = std::stod(val);
             if (char* val = getCmdOption(argv, argv + argc, "--crossRate")) ga.crossoverRate = std::stod(val);
             best = ga.run(population);
+            total_evals = ga.evaluations;
+            total_censored = ga.censored_evaluations;
         }
         else if (algorithm == "SA")
         {
@@ -280,6 +287,8 @@ int main(int argc, char** argv)
                     return a.fitness < b.fitness;
                 });
             best = sa.run(initial);
+            total_evals = sa.evaluations;
+            total_censored = sa.censored_evaluations;
         }
     } catch (const std::exception& e) {
         std::cerr << "Error critico parseando parametros (Posible texto en vez de numero): " << e.what() << "\n";
@@ -299,7 +308,7 @@ int main(int argc, char** argv)
     }
     size_t board_hash = std::hash<std::string>{}(board_str);
     
-    std::cout << -best.fitness << ";" << board_hash << ";" << board_str_flat << std::endl;
+    std::cout << -best.fitness << ";" << board_hash << ";" << board_str_flat << ";" << total_evals << ";" << total_censored << std::endl;
 
     return 0;
 }

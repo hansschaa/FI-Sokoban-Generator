@@ -45,6 +45,9 @@ double Evaluator::evaluate(Individual& individual)
 
     if (stats.status != SolveStatus::SOLVED || stats.pushes <= 1)
     {
+        if (stats.status == SolveStatus::TIMEOUT) {
+            individual.censored = true;
+        }
         individual.fitness = -1e9;
         return individual.fitness;
     }

@@ -12,4 +12,5 @@ struct Individual {
     int explored = 0;
 
     bool solved = false;
+    bool censored = false;
 };

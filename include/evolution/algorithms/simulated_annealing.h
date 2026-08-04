@@ -31,6 +31,7 @@ public:
     // TIME LIMIT
     //
 
+    int censored_evaluations = 0;
     std::chrono::time_point<std::chrono::high_resolution_clock> circuitStartTime;
     int maxCircuitTimeSeconds = -1; // -1 means no limit
 

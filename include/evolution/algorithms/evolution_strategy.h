@@ -24,6 +24,7 @@ public:
 
     Evaluator evaluator;
     bool use_parallel = true;
+    int censored_evaluations = 0;
 
     void setDeadlockMask(const std::vector<std::vector<bool>>& mask) {
         moveMutation.deadlock_mask = mask;

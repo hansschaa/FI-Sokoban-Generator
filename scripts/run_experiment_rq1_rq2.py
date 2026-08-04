@@ -171,20 +171,31 @@ def run_one(algo, fo, seed, board_content, params, tmp_dir="./tmp_boards"):
         pass
 
     if result.returncode != 0:
-        return None, elapsed_ms, None
+        return None, elapsed_ms, None, 0, 0
 
     try:
         parts = result.stdout.strip().split(";")
-        if len(parts) == 2:
+        if len(parts) >= 5:
             irace_cost = float(parts[0])
             board_hash = parts[1]
-            return -irace_cost, elapsed_ms, board_hash   # iRace minimiza con -fitness
+            evaluations = int(parts[3])
+            censored = int(parts[4])
+            return -irace_cost, elapsed_ms, board_hash, evaluations, censored
+        elif len(parts) >= 4:
+            irace_cost = float(parts[0])
+            board_hash = parts[1]
+            evaluations = int(parts[3])
+            return -irace_cost, elapsed_ms, board_hash, evaluations, 0
+        elif len(parts) >= 2:
+            irace_cost = float(parts[0])
+            board_hash = parts[1]
+            return -irace_cost, elapsed_ms, board_hash, 0, 0   # iRace minimiza con -fitness
         else:
             # Fallback if binary didn't output hash (e.g. if we reverted)
             irace_cost = float(result.stdout.strip())
-            return -irace_cost, elapsed_ms, "UNKNOWN"
+            return -irace_cost, elapsed_ms, "UNKNOWN", 0, 0
     except ValueError:
-        return None, elapsed_ms, None
+        return None, elapsed_ms, None, 0, 0
 
 
 # ============================================================
@@ -235,7 +246,7 @@ def main():
         writer = csv.writer(csvfile)
         if header_needed:
             writer.writerow(["Algoritmo", "FO", "Shell_ID", "Rep", "Seed",
-                             "Fitness", "Elapsed_ms", "Board_Hash", "Timestamp"])
+                             "Fitness", "Elapsed_ms", "Evaluations", "Censored", "Censored_Rate", "Board_Hash", "Timestamp"])
 
         for algo in ALGORITHMS:
             for fo in OBJECTIVES:
@@ -251,16 +262,20 @@ def main():
                         base_seed = hash((algo, fo, board["id"], rep)) % (2**31)
                         seed = abs(base_seed)
 
-                        fitness, elapsed, board_hash = run_one(algo, fo, seed,
+                        fitness, elapsed, board_hash, evaluations, censored = run_one(algo, fo, seed,
                                                                board["content"], params)
                         if fitness is None:
                             errors += 1
                             fitness = float("nan")
                             board_hash = "ERROR"
+                            evaluations = 0
+                            censored = 0
+                            
+                        censored_rate = (censored / evaluations) if evaluations > 0 else 0.0
 
                         writer.writerow([
                             algo, fo, board["id"], rep, seed,
-                            f"{fitness:.4f}", f"{elapsed:.1f}", board_hash,
+                            f"{fitness:.4f}", f"{elapsed:.1f}", evaluations, censored, f"{censored_rate:.4f}", board_hash,
                             datetime.now().strftime("%H:%M:%S")
                         ])
                         csvfile.flush()
