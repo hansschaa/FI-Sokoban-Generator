@@ -385,7 +385,7 @@ Individual GeneticAlgorithm::run(
 
     if (stagnation >= stagnationLimit)
     {
-        std::cout
+        std::cerr
             << "\n[GA] Criterio de Parada Alcanzado: STAGNATION (Sin mejoras por " << stagnationLimit << " evaluaciones)\n";
     }
 

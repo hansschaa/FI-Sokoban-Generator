@@ -174,7 +174,9 @@ def run_one(algo, fo, seed, board_content, params, tmp_dir="./tmp_boards"):
         return None, elapsed_ms, None, 0, 0
 
     try:
-        parts = result.stdout.strip().split(";")
+        lines = result.stdout.strip().split("\n")
+        last_line = lines[-1] if lines else ""
+        parts = last_line.split(";")
         if len(parts) >= 5:
             irace_cost = float(parts[0])
             board_hash = parts[1]

@@ -275,7 +275,7 @@ Individual EvolutionStrategy::run(
 
         if (stagnationCount >= stagnationLimit)
         {
-            std::cout
+            std::cerr
                 << "\n[ES] Criterio de Parada Alcanzado: STAGNATION (Sin mejoras por " << stagnationLimit << " evaluaciones)\n";
             break;
         }
