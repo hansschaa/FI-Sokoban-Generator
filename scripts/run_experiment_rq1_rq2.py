@@ -45,54 +45,54 @@ OBJECTIVES = ["FO1", "FO4", "FO5"]
 BEST_PARAMS = {
     # ------------ GENETIC ALGORITHM ------------
     ("GA", "FO1"): {
-        "--offspring": "TODO",   # <-- Reemplazar
-        "--maxFailed": "TODO",
-        "--mutRate":   "TODO",
-        "--crossRate": "TODO",
+        "--offspring": "45",
+        "--maxFailed": "41",
+        "--mutRate":   "0.8339",
+        "--crossRate": "0.3729",
     },
     ("GA", "FO4"): {
-        "--offspring": "TODO",   # <-- Reemplazar
-        "--maxFailed": "TODO",
-        "--mutRate":   "TODO",
-        "--crossRate": "TODO",
+        "--offspring": "35",
+        "--maxFailed": "14",
+        "--mutRate":   "0.9462",
+        "--crossRate": "0.9140",
     },
     ("GA", "FO5"): {
-        "--offspring": "TODO",   # <-- Reemplazar
-        "--maxFailed": "TODO",
-        "--mutRate":   "TODO",
-        "--crossRate": "TODO",
+        "--offspring": "33",
+        "--maxFailed": "18",
+        "--mutRate":   "0.7570",
+        "--crossRate": "0.8483",
     },
     # ------------ EVOLUTION STRATEGY ------------
     ("ES", "FO1"): {
-        "--mu":      "TODO",     # <-- Reemplazar
-        "--lambda":  "TODO",
-        "--mutRate": "TODO",
+        "--mu":      "6",
+        "--lambda":  "30",
+        "--mutRate": "0.9878",
     },
     ("ES", "FO4"): {
-        "--mu":      "TODO",     # <-- Reemplazar
-        "--lambda":  "TODO",
-        "--mutRate": "TODO",
+        "--mu":      "15",
+        "--lambda":  "20",
+        "--mutRate": "0.9569",
     },
     ("ES", "FO5"): {
-        "--mu":      "TODO",     # <-- Reemplazar
-        "--lambda":  "TODO",
-        "--mutRate": "TODO",
+        "--mu":      "15",
+        "--lambda":  "20",
+        "--mutRate": "0.7987",
     },
     # ------------ SIMULATED ANNEALING ------------
     ("SA", "FO1"): {
-        "--initTemp":  "TODO",   # <-- Reemplazar
-        "--coolRate":  "TODO",
-        "--maxFailed": "TODO",
+        "--initTemp":  "14.7079",
+        "--coolRate":  "0.0189",
+        "--maxFailed": "42",
     },
     ("SA", "FO4"): {
-        "--initTemp":  "TODO",   # <-- Reemplazar
-        "--coolRate":  "TODO",
-        "--maxFailed": "TODO",
+        "--initTemp":  "28.0942",
+        "--coolRate":  "0.0344",
+        "--maxFailed": "66",
     },
     ("SA", "FO5"): {
-        "--initTemp":  "TODO",   # <-- Reemplazar
-        "--coolRate":  "TODO",
-        "--maxFailed": "TODO",
+        "--initTemp":  "601.5804",
+        "--coolRate":  "0.0368",
+        "--maxFailed": "77",
     },
 }
 
