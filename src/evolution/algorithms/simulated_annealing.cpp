@@ -219,7 +219,7 @@ Individual SimulatedAnnealing::run(
             auto now = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::seconds>(now - circuitStartTime).count();
             if (duration >= maxCircuitTimeSeconds) {
-                std::cout << "\n[SA] Criterio de Parada Alcanzado: TIME LIMIT (" << maxCircuitTimeSeconds << " segundos del circuito transcurridos)\n";
+                std::cerr << "\n[SA] Criterio de Parada Alcanzado: TIME LIMIT (" << maxCircuitTimeSeconds << " segundos del circuito transcurridos)\n";
                 break;
             }
         }
@@ -227,7 +227,7 @@ Individual SimulatedAnnealing::run(
 
     if (evaluations >= maxEvaluations)
     {
-        std::cout << "\n[SA] Criterio de Parada Alcanzado: MAX_EVALUATIONS (" << maxEvaluations << " evaluaciones)\n";
+        std::cerr << "\n[SA] Criterio de Parada Alcanzado: MAX_EVALUATIONS (" << maxEvaluations << " evaluaciones)\n";
     }
     else if (stagnation >= stagnationLimit)
     {
@@ -235,7 +235,7 @@ Individual SimulatedAnnealing::run(
     }
     else if (temperature <= 0.001)
     {
-        std::cout << "\n[SA] Criterio de Parada Alcanzado: MIN_TEMPERATURE (Temperatura llego a " << temperature << ")\n";
+        std::cerr << "\n[SA] Criterio de Parada Alcanzado: MIN_TEMPERATURE (Temperatura llego a " << temperature << ")\n";
     }
 
     return best;
