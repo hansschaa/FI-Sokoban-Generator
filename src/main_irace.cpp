@@ -212,7 +212,7 @@ int main(int argc, char** argv)
         {
             SimulatedAnnealing sa;
             sa.maxEvaluations     = maxEvals;   
-            sa.stagnationLimit    = stagLimit;
+            sa.stagnationLimit    = 600;
             sa.evaluator.fitnessType = fitnessType;  
 
             // Valores por defecto en caso de ejecución manual
