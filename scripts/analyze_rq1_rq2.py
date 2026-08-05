@@ -258,24 +258,29 @@ def analyze_diversity_and_time(df, out_dir):
 
     # 2. Tiempos: Elapsed_ms
     if "Elapsed_ms" in df.columns:
-        mean_time = df.groupby(["Algoritmo", "FO"])["Elapsed_ms"].mean().unstack("FO") / 1000.0  # a segundos
-        print("\nTiempo de ejecución promedio (segundos):")
-        print(mean_time.to_string())
-        mean_time.to_csv(os.path.join(out_dir, "pcg_time_mean_seconds.csv"))
+        time_s = df.copy()
+        time_s["Time_s"] = time_s["Elapsed_ms"] / 1000.0
+        time_stats = time_s.groupby(["Algoritmo", "FO"])["Time_s"].agg(["mean", "std"]).unstack("FO")
+        print("\nTiempo de ejecución (segundos) - Media y Desviación Estándar:")
+        print(time_stats.to_string())
+        time_stats.to_csv(os.path.join(out_dir, "pcg_time_stats_seconds.csv"))
+        mean_time = time_s.groupby(["Algoritmo", "FO"])["Time_s"].mean().unstack("FO")
 
     # 3. Evaluaciones (Solver Calls)
     if "Evaluations" in df.columns:
+        evals_stats = df.groupby(["Algoritmo", "FO"])["Evaluations"].agg(["mean", "std"]).unstack("FO")
+        print("\nLlamadas al solver (Evaluations) - Media y Desviación Estándar:")
+        print(evals_stats.to_string())
+        evals_stats.to_csv(os.path.join(out_dir, "pcg_evals_stats.csv"))
         mean_evals = df.groupby(["Algoritmo", "FO"])["Evaluations"].mean().unstack("FO")
-        print("\nPromedio de llamadas al solver (Evaluations):")
-        print(mean_evals.to_string())
-        mean_evals.to_csv(os.path.join(out_dir, "pcg_evals_mean.csv"))
 
     # 4. Tasa de Censura
     if "Censored_Rate" in df.columns:
+        cens_stats = df.groupby(["Algoritmo", "FO"])["Censored_Rate"].agg(["mean", "std"]).unstack("FO")
+        print("\nTasa de censura (% descartados) - Media y Desviación Estándar:")
+        print(cens_stats.to_string())
+        cens_stats.to_csv(os.path.join(out_dir, "pcg_censored_rate_stats.csv"))
         mean_censored = df.groupby(["Algoritmo", "FO"])["Censored_Rate"].mean().unstack("FO")
-        print("\nTasa de censura promedio (% de tableros descartados):")
-        print(mean_censored.to_string())
-        mean_censored.to_csv(os.path.join(out_dir, "pcg_censored_rate_mean.csv"))
 
     # 5. Barplot Diversidad
     fig, ax = plt.subplots(figsize=(7, 4))
