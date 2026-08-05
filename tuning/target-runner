@@ -16,8 +16,8 @@ LOG_FILE="ejecuciones_vivas.log"
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] 🚀 Probando Config: $CONFIG_ID | Instancia: $INSTANCE | Parámetros: $@" >> $LOG_FILE
 # ------------------------------------------
 
-# Ejecutamos y dejamos que el error se imprima en la terminal (2>&1)
-OUTPUT=$($EXE $ALGO $FO $SEED $INSTANCE "$@" 2>&1)
+# Ejecutamos: stderr (debug) va al log, stdout (fitness) se captura limpio para irace
+OUTPUT=$($EXE $ALGO $FO $SEED $INSTANCE "$@" 2>>$LOG_FILE)
 EXIT_CODE=$?
 
 # --- REGISTRO DEL RESULTADO EN EL LOG ---
