@@ -78,21 +78,21 @@ BEST_PARAMS = {
         "--lambda":  "20",
         "--mutRate": "0.7987",
     },
-    # ------------ SIMULATED ANNEALING ------------
+    # ------------ SIMULATED ANNEALING (Re-tuned with fair stagnation limit = 600) ------------
     ("SA", "FO1"): {
-        "--initTemp":  "14.7079",
-        "--coolRate":  "0.0189",
-        "--maxFailed": "42",
+        "--initTemp":  "899.4335",
+        "--coolRate":  "0.0092",
+        "--maxFailed": "81",
     },
     ("SA", "FO4"): {
-        "--initTemp":  "28.0942",
-        "--coolRate":  "0.0344",
-        "--maxFailed": "66",
+        "--initTemp":  "665.6117",
+        "--coolRate":  "0.0058",
+        "--maxFailed": "51",
     },
     ("SA", "FO5"): {
-        "--initTemp":  "601.5804",
-        "--coolRate":  "0.0368",
-        "--maxFailed": "77",
+        "--initTemp":  "19.3526",
+        "--coolRate":  "0.0069",
+        "--maxFailed": "90",
     },
 }
 

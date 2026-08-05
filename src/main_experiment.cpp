@@ -254,22 +254,22 @@ int main(int argc, char** argv)
         {
             SimulatedAnnealing sa;
             sa.maxEvaluations     = maxEvals;   
-            sa.stagnationLimit    = stagLimit;
+            sa.stagnationLimit    = 600;  // Nivelado: 30 gens * 20 ind = 600 evals
             sa.evaluator.fitnessType = fitnessType;  
 
-            // Valores por defecto en caso de ejecución manual
+            // Valores por defecto (Re-tuned with fair stagnation limit = 600)
             if (fitnessType == FitnessType::FO1_PUSHES) {
-                sa.initialTemperature = 14.7079;
-                sa.coolingRate = 0.0189;
-                sa.maxFailedAttempts = 42;
+                sa.initialTemperature = 899.4335;
+                sa.coolingRate = 0.0092;
+                sa.maxFailedAttempts = 81;
             } else if (fitnessType == FitnessType::FO4_DEADLOCKS) {
-                sa.initialTemperature = 28.0942;
-                sa.coolingRate = 0.0344;
-                sa.maxFailedAttempts = 66;
+                sa.initialTemperature = 665.6117;
+                sa.coolingRate = 0.0058;
+                sa.maxFailedAttempts = 51;
             } else if (fitnessType == FitnessType::FO5_REPEATED_NODES) {
-                sa.initialTemperature = 601.5804;
-                sa.coolingRate = 0.0368;
-                sa.maxFailedAttempts = 77;
+                sa.initialTemperature = 19.3526;
+                sa.coolingRate = 0.0069;
+                sa.maxFailedAttempts = 90;
             } else {
                 sa.initialTemperature = 100.0;
                 sa.coolingRate        = 0.01;
