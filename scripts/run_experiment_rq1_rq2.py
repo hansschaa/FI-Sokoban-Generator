@@ -52,24 +52,24 @@ OBJECTIVES = ["FO1", "FO4", "FO5"]
 # Formato: BEST_PARAMS[(Algoritmo, FO)] = { "--flag": "valor", ... }
 
 BEST_PARAMS = {
-    # ------------ GENETIC ALGORITHM ------------
+    # ------------ GENETIC ALGORITHM (Tuned with maxEvals=1000, stagLimit=200) ------------
     ("GA", "FO1"): {
-        "--offspring": "45",
-        "--maxFailed": "41",
-        "--mutRate":   "0.8339",
-        "--crossRate": "0.3729",
+        "--offspring": "29",
+        "--maxFailed": "32",
+        "--mutRate":   "0.8931",
+        "--crossRate": "0.8913",
     },
     ("GA", "FO4"): {
-        "--offspring": "35",
+        "--offspring": "29",
         "--maxFailed": "14",
-        "--mutRate":   "0.9462",
-        "--crossRate": "0.9140",
+        "--mutRate":   "0.9912",
+        "--crossRate": "0.9491",
     },
     ("GA", "FO5"): {
-        "--offspring": "33",
-        "--maxFailed": "18",
-        "--mutRate":   "0.7570",
-        "--crossRate": "0.8483",
+        "--offspring": "39",
+        "--maxFailed": "44",
+        "--mutRate":   "0.8621",
+        "--crossRate": "0.7030",
     },
     # ------------ EVOLUTION STRATEGY ------------
     ("ES", "FO1"): {
