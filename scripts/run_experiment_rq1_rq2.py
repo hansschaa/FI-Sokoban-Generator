@@ -71,21 +71,21 @@ BEST_PARAMS = {
         "--mutRate":   "0.8621",
         "--crossRate": "0.7030",
     },
-    # ------------ EVOLUTION STRATEGY ------------
+    # ------------ EVOLUTION STRATEGY (Tuned with maxEvals=1000, stagLimit=200) ------------
     ("ES", "FO1"): {
-        "--mu":      "6",
-        "--lambda":  "30",
-        "--mutRate": "0.9878",
+        "--mu":      "9",
+        "--lambda":  "28",
+        "--mutRate": "0.8559",
     },
     ("ES", "FO4"): {
-        "--mu":      "15",
-        "--lambda":  "20",
-        "--mutRate": "0.9569",
+        "--mu":      "10",
+        "--lambda":  "19",
+        "--mutRate": "0.7583",
     },
     ("ES", "FO5"): {
-        "--mu":      "15",
-        "--lambda":  "20",
-        "--mutRate": "0.7987",
+        "--mu":      "10",
+        "--lambda":  "21",
+        "--mutRate": "0.8636",
     },
     # ------------ SIMULATED ANNEALING (Tuned with maxEvals=1000, stagLimit=200) ------------
     ("SA", "FO1"): {
