@@ -185,6 +185,7 @@ int main(int argc, char** argv)
         if (algorithm == "ES")
         {
             EvolutionStrategy es;
+            es.use_parallel = false; // IRace handles parallelism externally
             es.maxEvaluations  = maxEvals;
             es.stagnationLimit = stagLimit;
             es.evaluator.fitnessType = fitnessType;
@@ -198,6 +199,7 @@ int main(int argc, char** argv)
         else if (algorithm == "GA")
         {
             GeneticAlgorithm ga;
+            ga.use_parallel = false; // IRace handles parallelism externally
             ga.maxEvaluations  = maxEvals;
             ga.stagnationLimit = stagLimit;
             ga.evaluator.fitnessType = fitnessType;
