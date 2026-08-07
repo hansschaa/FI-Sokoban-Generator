@@ -60,8 +60,12 @@ for FO in FO1 FO4 FO5; do
     # Limpiar Rdata anterior para evitar contaminación
     rm -f irace.Rdata
 
-    # Lanzar irace
-    irace --parallel 24
+    # Detectar dinámicamente el número de núcleos disponibles en este PC
+    CORES=$(nproc)
+    echo "[INFO] Lanzando irace con parallel=$CORES ..."
+
+    # Lanzar irace con los cores reales detectados
+    irace --parallel "$CORES"
 
     # Guardar resultado
     OUTFILE="../tuning_results/irace_${ALGO}_${FO}_fixed.Rdata"
