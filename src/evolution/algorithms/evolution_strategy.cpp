@@ -295,10 +295,10 @@ Individual EvolutionStrategy::run(
         }
 
         generation++;
-        std::cerr << "[ES] Gen " << generation 
+        /*std::cerr << "[ES] Gen " << generation 
                   << " | Evals: " << evaluations << "/" << maxEvaluations 
                   << " | Stagnation: " << stagnationCount << "/" << stagnationLimit 
-                  << " | Best Fit: " << best.fitness << std::endl;
+                  << " | Best Fit: " << best.fitness << std::endl;*/
 
         if (on_generation) {
             on_generation(generation, best);
