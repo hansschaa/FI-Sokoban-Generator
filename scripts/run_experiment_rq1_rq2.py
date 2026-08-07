@@ -5,12 +5,21 @@ run_experiment_rq1_rq2.py
 Orquestador del experimento para RQ1 y RQ2.
 
 USO:
-    python3 scripts/run_experiment_rq1_rq2.py [--reps N] [--output archivo.csv]
+    # Correr solo un algoritmo (ideal para distribuir en 3 computadoras):
+    python3 scripts/run_experiment_rq1_rq2.py --algo GA
+    python3 scripts/run_experiment_rq1_rq2.py --algo ES
+    python3 scripts/run_experiment_rq1_rq2.py --algo SA
+
+    # Correr los tres algoritmos en una sola máquina:
+    python3 scripts/run_experiment_rq1_rq2.py
 
 ANTES DE CORRER:
     1. Esperar a que iRace termine para cada combinación Algo x FO.
     2. Rellenar el diccionario BEST_PARAMS con los hiperparámetros óptimos.
-    3. Compilar: cd build && make irace_generator -j$(nproc)
+    3. Compilar: cd build && make experiment_runner -j$(nproc)
+
+CRITERIO DE TÉRMINO (por corrida):
+    maxEvals=1000 | stagLimit=200 — Igual para GA, ES y SA.
 """
 
 import subprocess
@@ -208,7 +217,24 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--reps",   type=int, default=REPS,       help="Repeticiones por combinación")
     parser.add_argument("--output", type=str, default=OUTPUT_CSV, help="Archivo CSV de salida")
+    parser.add_argument("--algo",   type=str, default=None,       help="Algoritmo a ejecutar: GA, ES o SA (omitir = todos)")
     args = parser.parse_args()
+
+    # Filtrar algoritmos según --algo y auto-nombrar el output
+    algorithms_to_run = ALGORITHMS
+    if args.algo:
+        algo_upper = args.algo.upper()
+        if algo_upper not in ALGORITHMS:
+            print(f"[ERROR] --algo debe ser uno de: {', '.join(ALGORITHMS)}. Recibido: '{args.algo}'")
+            sys.exit(1)
+        algorithms_to_run = [algo_upper]
+        # Auto-nombrar output si el usuario no especificó uno explícito
+        if args.output == OUTPUT_CSV:
+            args.output = f"exp1_raw_data_{algo_upper}.csv"
+        print(f"[INFO] Modo single-algo: solo se ejecutará {algo_upper}")
+        print(f"[INFO] Output → {args.output}")
+    else:
+        print(f"[INFO] Modo completo: se ejecutarán todos los algoritmos: {', '.join(ALGORITHMS)}")
 
     # Verificar que no queden TODOs en BEST_PARAMS
     pending = [(a, fo) for (a, fo), p in BEST_PARAMS.items()
@@ -230,16 +256,16 @@ def main():
     boards = parse_boards(BOARDS_FILE)
     print(f"[OK] {len(boards)} tableros cargados")
 
-    # Count only runnable combinations (those without TODO)
-    runnable = [(a, fo) for a in ALGORITHMS for fo in OBJECTIVES
+    # Count only runnable combinations (those without TODO) for the selected algo(s)
+    runnable = [(a, fo) for a in algorithms_to_run for fo in OBJECTIVES
                 if not any(v == "TODO" for v in BEST_PARAMS.get((a, fo), {}).values())]
     total   = len(runnable) * len(boards) * args.reps
     current = 0
     errors  = 0
     start   = datetime.now()
 
-    print(f"[OK] Combinaciones listas: {len(runnable)}/9  →  {total} ejecuciones totales")
-    print(f"     {len(ALGORITHMS)} algos × {len(OBJECTIVES)} FOs × {len(boards)} tableros × {args.reps} reps")
+    print(f"[OK] Combinaciones listas: {len(runnable)}/{len(algorithms_to_run)*len(OBJECTIVES)}  →  {total} ejecuciones totales")
+    print(f"     {len(algorithms_to_run)} algo(s) × {len(OBJECTIVES)} FOs × {len(boards)} tableros × {args.reps} reps")
     print(f"[->] Resultados en: {args.output}\n")
 
     header_needed = not os.path.exists(args.output)
@@ -250,7 +276,7 @@ def main():
             writer.writerow(["Algoritmo", "FO", "Shell_ID", "Rep", "Seed",
                              "Fitness", "Elapsed_ms", "Evaluations", "Censored", "Censored_Rate", "Board_Hash", "Timestamp"])
 
-        for algo in ALGORITHMS:
+        for algo in algorithms_to_run:
             for fo in OBJECTIVES:
                 params = BEST_PARAMS.get((algo, fo), {})
                 if any(v == "TODO" for v in params.values()):

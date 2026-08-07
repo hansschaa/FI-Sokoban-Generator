@@ -328,12 +328,6 @@ Individual GeneticAlgorithm::run(
 
                     if (recoveryFailed >= maxFailedAttempts)
                     {
-                        /*std::cout
-                            << "WARNING: RECOVERY GAVE UP AFTER "
-                            << maxFailedAttempts
-                            << " FAILED MUTATIONS"
-                            << std::endl;*/
-
                         break;
                     }
 
@@ -343,8 +337,20 @@ Individual GeneticAlgorithm::run(
                 recoveryFailed = 0;
 
                 evaluator.evaluate(clone);
-
                 evaluations++;
+
+                // FIX: recovery evals deben compararse contra best y
+                // contar para stagnation, igual que el batch principal.
+                if (clone.fitness > best.fitness)
+                {
+                    best = clone;
+                    improved = true;
+                    stagnation = 0;  // resetear: hubo mejora real en recovery
+                }
+                else
+                {
+                    stagnation++;  // eval sin mejora → penalizar estancamiento
+                }
 
                 population.push_back(clone);
             }

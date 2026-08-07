@@ -90,7 +90,7 @@ int main(int argc, char** argv)
 
     // 3. Variables Fijas y Estrictas para Experimento 1
     int maxEvals = 1000;
-    int stagLimit = 150;
+    int stagLimit = 200;  // Unificado: mismo criterio que irace_generator y que GA/ES
 
     // 4. Configurar el tablero inicial (Shell) y aplicar Flood Fill
     std::vector<std::vector<char>> shell;
@@ -253,8 +253,8 @@ int main(int argc, char** argv)
         else if (algorithm == "SA")
         {
             SimulatedAnnealing sa;
-            sa.maxEvaluations     = maxEvals;   
-            sa.stagnationLimit    = 600;  // Nivelado: 30 gens * 20 ind = 600 evals
+            sa.maxEvaluations     = maxEvals;
+            sa.stagnationLimit    = stagLimit;  // Igual que GA y ES: 200 evals sin mejora
             sa.evaluator.fitnessType = fitnessType;  
 
             // Valores por defecto (Re-tuned with fair stagnation limit = 600)

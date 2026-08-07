@@ -88,7 +88,7 @@ int main(int argc, char** argv)
     }
 
     // 3. Variables Fijas y Estrictas para Experimento 1
-    int maxEvals = 2000;
+    int maxEvals = 1000;
     int stagLimit = 200;
 
     // 4. Configurar el tablero inicial (Shell) y aplicar Flood Fill
@@ -212,7 +212,7 @@ int main(int argc, char** argv)
         {
             SimulatedAnnealing sa;
             sa.maxEvaluations     = maxEvals;   
-            sa.stagnationLimit    = 600;
+            sa.stagnationLimit    = stagLimit;  // Igual que GA y ES: 200 evals sin mejora
             sa.evaluator.fitnessType = fitnessType;  
 
             // Valores por defecto en caso de ejecución manual
