@@ -295,7 +295,7 @@ Individual EvolutionStrategy::run(
         }
 
         generation++;
-        std::cout << "[ES] Gen " << generation 
+        std::cerr << "[ES] Gen " << generation 
                   << " | Evals: " << evaluations << "/" << maxEvaluations 
                   << " | Stagnation: " << stagnationCount << "/" << stagnationLimit 
                   << " | Best Fit: " << best.fitness << std::endl;
