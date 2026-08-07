@@ -373,7 +373,7 @@ Individual GeneticAlgorithm::run(
             auto now = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::seconds>(now - circuitStartTime).count();
             if (duration >= maxCircuitTimeSeconds) {
-                std::cout << "\n[GA] Criterio de Parada Alcanzado: TIME LIMIT (" << maxCircuitTimeSeconds << " segundos del circuito transcurridos)\n";
+                std::cerr << "\n[GA] Criterio de Parada Alcanzado: TIME LIMIT (" << maxCircuitTimeSeconds << " segundos del circuito transcurridos)\n";
                 break;
             }
         }
@@ -385,7 +385,7 @@ Individual GeneticAlgorithm::run(
 
     if (evaluations >= maxEvaluations)
     {
-        std::cout
+        std::cerr
             << "\n[GA] Criterio de Parada Alcanzado: MAX_EVALUATIONS (" << maxEvaluations << " evaluaciones)\n";
     }
 

@@ -263,7 +263,7 @@ Individual EvolutionStrategy::run(
 
         if (evaluations >= maxEvaluations)
         {
-            std::cout
+            std::cerr
                 << "\n[ES] Criterio de Parada Alcanzado: MAX_EVALUATIONS (" << maxEvaluations << " evaluaciones)\n";
             break;
         }
@@ -289,7 +289,7 @@ Individual EvolutionStrategy::run(
             auto now = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::seconds>(now - circuitStartTime).count();
             if (duration >= maxCircuitTimeSeconds) {
-                std::cout << "\n[ES] Criterio de Parada Alcanzado: TIME LIMIT (" << maxCircuitTimeSeconds << " segundos del circuito transcurridos)\n";
+                std::cerr << "\n[ES] Criterio de Parada Alcanzado: TIME LIMIT (" << maxCircuitTimeSeconds << " segundos del circuito transcurridos)\n";
                 break;
             }
         }
