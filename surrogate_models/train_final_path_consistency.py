@@ -41,14 +41,16 @@ class PathConsistencyDataset(Dataset):
         else:
             print(f"  Pares cargados: {len(self.pairs)}")
             
-        # Cargar los pesos originales del fold de train
+        # Cargar los pesos originales del fold de train (opcional — weight=1.0 si no existe)
         train_file = os.path.join(RESULTS_DIR, f"regressor_fold{fold_k}_train.pt")
-        print(f"  Extrayendo pesos originales de {os.path.basename(train_file)}...")
-        orig_train = torch.load(train_file, weights_only=False, map_location='cpu')
-        
         self.weight_map = {}
-        for item in orig_train:
-            self.weight_map[item['shell_hash']] = item.get('weight', 1.0)
+        if os.path.exists(train_file):
+            print(f"  Extrayendo pesos originales de {os.path.basename(train_file)}...")
+            orig_train = torch.load(train_file, weights_only=False, map_location='cpu')
+            for item in orig_train:
+                self.weight_map[item['shell_hash']] = item.get('weight', 1.0)
+        else:
+            print(f"  ⚠️  {os.path.basename(train_file)} no encontrado — usando weight=1.0 para todos los pares.")
 
     def __len__(self):
         return len(self.pairs)
