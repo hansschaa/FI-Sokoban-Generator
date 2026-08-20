@@ -30,7 +30,7 @@ THRESHOLD_MAP = {
     5: 0.70
 }
 
-SEEDS = [42, 101, 202, 303, 404, 505, 606, 707, 808, 909]
+SEEDS = [42]
 SHELLS = [1, 2, 3, 4, 5]
 
 # Los 4 Variantes de la Matriz 2x2: (Verificador de Jugabilidad x Decisor de Fitness)
