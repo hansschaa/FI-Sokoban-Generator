@@ -32,6 +32,7 @@ THRESHOLD_MAP = {
 
 SEEDS = [42]
 SHELLS = [1, 2, 3, 4, 5]
+CORES = [24, 1]
 
 # Los 4 Variantes de la Matriz 2x2: (Verificador de Jugabilidad x Decisor de Fitness)
 VARIANTS = [
@@ -128,9 +129,9 @@ def verify_board_with_astar(board_flat_str, tag="exp1"):
     else:
         return 0, False, False       # DEADLOCK genuino (A* terminó sin solución)
 
-def run_experiment_run(label, heuristic, shell_idx, seed):
+def run_experiment_run(label, heuristic, shell_idx, seed, cores):
     shell_file = f"levels/shell_{shell_idx}.sok"
-    out_prefix = os.path.join(OUTPUT_DIR, f"{heuristic}_shell{shell_idx}_seed{seed}")
+    out_prefix = os.path.join(OUTPUT_DIR, f"{heuristic}_shell{shell_idx}_seed{seed}_cores{cores}")
     out_csv = out_prefix + ".csv"
     out_txt = out_prefix + ".txt"
     out_meta = out_prefix + "_meta.json"
@@ -170,8 +171,10 @@ def run_experiment_run(label, heuristic, shell_idx, seed):
         "--maxEvals", "1000000",
         "--out_csv", tmp_csv
     ]
+    if cores == 1:
+        cmd.append("--no-parallel")
 
-    print(f"🚀 [Exp 1] Shell {shell_idx} | Seed {seed:<4} | Var: {label:<24} (Th={th:.2f})...", end=" ", flush=True)
+    print(f"🚀 [Exp 1] Shell {shell_idx} | Seed {seed:<4} | Cores {cores:<2} | Var: {label:<24} (Th={th:.2f})...", end=" ", flush=True)
 
     env = os.environ.copy()
     env['OMP_NUM_THREADS'] = '1'
@@ -271,6 +274,7 @@ def run_experiment_run(label, heuristic, shell_idx, seed):
         "Shell_Idx": shell_idx,
         "Shell": f"Shell {shell_idx}",
         "Seed": seed,
+        "Cores": cores,
         "Threshold": th,
         "Generations": gens,
         "Total_Evals": evals,
@@ -303,13 +307,14 @@ def generate_final_analysis():
     for (lbl, heur) in VARIANTS:
         for sh in SHELLS:
             for s in SEEDS:
-                meta_path = os.path.join(OUTPUT_DIR, f"{heur}_shell{sh}_seed{s}_meta.json")
-                if os.path.exists(meta_path):
-                    try:
-                        with open(meta_path, "r") as f:
-                            data = json.load(f)
-                        records.append(data)
-                    except: pass
+                for c in CORES:
+                    meta_path = os.path.join(OUTPUT_DIR, f"{heur}_shell{sh}_seed{s}_cores{c}_meta.json")
+                    if os.path.exists(meta_path):
+                        try:
+                            with open(meta_path, "r") as f:
+                                data = json.load(f)
+                            records.append(data)
+                        except: pass
 
     if not records:
         print("⚠️ No hay registros terminados.")
@@ -320,11 +325,11 @@ def generate_final_analysis():
     df.to_csv(df_csv, index=False)
     print(f"📁 Todas las corridas exportadas a: {df_csv}")
 
-    # Resumen por Shell y Variante
+    # Resumen por Shell, Variante y Cores
     cols_to_avg = ["Top5_Best_Real_Astar_Pushes", "Top5_Accuracy_Pct", "Time_s", "Unique_Boards_Explored", "Hybrid_Delegations_6PlusBoxes", "Deadlocks_Filtered"]
     if "Top5_Inconclusive_Count" in df.columns:
         cols_to_avg.insert(2, "Top5_Inconclusive_Count")
-    summary = df.groupby(["Shell", "Variant"])[cols_to_avg].mean().reset_index().round(1)
+    summary = df.groupby(["Shell", "Variant", "Cores"])[cols_to_avg].mean().reset_index().round(1)
 
     print("\n" + "="*130)
     print(" 🏆 EXPERIMENTO 1: MATRIZ 2x2 COMPRENSIVA (MEDIA SOBRE 10 SEMILLAS POR CONFIGURACIÓN | 300s POR CORRIDA)")
@@ -335,12 +340,12 @@ def generate_final_analysis():
     summary.to_csv(sum_path, index=False)
     print(f"📁 Tabla resumen guardada en: {sum_path}")
 
-    # Tabla de desglose explícito de auditoría Top-5 (Total de los tableros por Shell/Variante sobre las 10 semillas)
+    # Tabla de desglose explícito de auditoría Top-5 (Total de los tableros por Shell/Variante/Cores sobre las 10 semillas)
     if "Top5_Solvable_Count" in df.columns and "Top5_Deadlock_Count" in df.columns:
         if "Top5_Inconclusive_Count" not in df.columns:
             df["Top5_Inconclusive_Count"] = 0
         
-        audit_breakdown = df.groupby(["Shell", "Variant"])[
+        audit_breakdown = df.groupby(["Shell", "Variant", "Cores"])[
             ["Top5_Solvable_Count", "Top5_Inconclusive_Count", "Top5_Deadlock_Count"]
         ].sum().reset_index()
         
@@ -368,8 +373,9 @@ def generate_final_analysis():
         print(f"📁 Desglose riguroso guardado en: {breakdown_path}")
 
     # Gráficas
+    df["Variant_Cores"] = df["Variant"] + " (" + df["Cores"].astype(str) + " cores)"
     plt.figure(figsize=(12, 6))
-    sns.boxplot(data=df, x="Shell", y="Top5_Best_Real_Astar_Pushes", hue="Variant", palette="Set2")
+    sns.boxplot(data=df, x="Shell", y="Top5_Best_Real_Astar_Pushes", hue="Variant_Cores", palette="Set2")
     plt.title("Experimento 1: Calidad Certificada por A* (Pushes Reales en Top-5 Final)")
     plt.ylabel("Pushes Reales (A* Ground Truth)")
     plt.tight_layout()
@@ -377,7 +383,7 @@ def generate_final_analysis():
     plt.close()
 
     plt.figure(figsize=(12, 6))
-    sns.barplot(data=df, x="Shell", y="Time_s", hue="Variant", palette="mako")
+    sns.barplot(data=df, x="Shell", y="Time_s", hue="Variant_Cores", palette="mako")
     plt.title("Tiempo Computacional hasta Convergencia / Límite en Matriz 2x2")
     plt.ylabel("Tiempo Promedio (segundos)")
     plt.tight_layout()
@@ -392,14 +398,15 @@ def main():
     print(f" Pipeline Hash: {CURRENT_PIPELINE_HASH}  ← Este valor debe ser idéntico en todas las corridas comparables")
     print("="*120)
 
-    total_runs = len(VARIANTS) * len(SHELLS) * len(SEEDS)
+    total_runs = len(VARIANTS) * len(SHELLS) * len(SEEDS) * len(CORES)
     count = 0
     for (lbl, heur) in VARIANTS:
         for sh in SHELLS:
             for s in SEEDS:
-                count += 1
-                print(f"[{count:03d}/{total_runs:03d}] ", end="")
-                run_experiment_run(lbl, heur, sh, s)
+                for c in CORES:
+                    count += 1
+                    print(f"[{count:03d}/{total_runs:03d}] ", end="")
+                    run_experiment_run(lbl, heur, sh, s, c)
 
     set_server_threshold(0.70)
     generate_final_analysis()
