@@ -93,7 +93,7 @@ def load_models():
         r_params = json.load(f)
 
     # Initialize models
-    c_path = "surrogate_models/results/production_contrastive_classifier.pt"
+    c_path = "surrogate_models/results/production_contrastive_classifier_v2_combined.pt"
     if not os.path.exists(c_path):
         fallback_path = "surrogate_models/results/final_contrastive_classifier_fold1.pt"
         if os.path.exists(fallback_path):
