@@ -1,13 +1,16 @@
 import os
+import sys
 import glob
 import numpy as np
 import torch
 import pandas as pd
 from tqdm import tqdm
 from sklearn.model_selection import StratifiedGroupKFold
-from data.board_utils import encode_board, augment_tensor
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(BASE_DIR, ".."))
+from data.board_utils import encode_board, augment_tensor
+
 RESULTS_DIR = os.path.join(BASE_DIR, "..", "results")
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
@@ -114,6 +117,22 @@ def main():
         
     print("Class distribution BEFORE balancing:")
     print(df['label'].value_counts())
+    
+    # ---------------------------------------------------------
+    # SANITY CHECKS (Evitar sesgos de topología)
+    # ---------------------------------------------------------
+    orig_0 = len(df_orig[df_orig['label'] == 0])
+    orig_1 = len(df_orig[df_orig['label'] == 1])
+    dense_0 = len(df_dense[df_dense['label'] == 0]) if len(df_dense) > 0 else 0
+    
+    print(f"Sanity Check - Original Deadlocks (label=0): {orig_0}")
+    print(f"Sanity Check - Original Solvables (label=1): {orig_1}")
+    print(f"Sanity Check - Dense Deadlocks (label=0): {dense_0}")
+    
+    assert orig_0 > 0, "CRÍTICO: No se encontraron Deadlocks Originales. El modelo aprenderá sesgo de topología."
+    assert orig_1 > 0, "CRÍTICO: No se encontraron Solubles Originales."
+    if len(df_dense) > 0:
+        assert dense_0 > 0, "CRÍTICO: Se cargó un dataset denso pero no tiene deadlocks."
     
     # ---------------------------------------------------------
     # EXPLICIT CLASS BALANCING (Oversampling Minority Class)
