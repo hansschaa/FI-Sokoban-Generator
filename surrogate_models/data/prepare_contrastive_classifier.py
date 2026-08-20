@@ -173,6 +173,7 @@ def main():
     X = np.stack(df['tensor'].values)
     y = np.array(df['label'].values, dtype=np.float32)
     t = np.array(df['type'].values, dtype=np.int64)
+    s = np.array([0 if src == 'original' else 1 for src in df['source_dataset'].values], dtype=np.int64)
     groups = df['shell_hash'].values
     
     # AGGRESSIVE MEMORY FREE: The dataframe holds ~400k python objects and arrays.
@@ -180,15 +181,15 @@ def main():
     del df
     gc.collect()
     
-    print(f"Final dataset shape: X={X.shape}, y={y.shape}, t={t.shape}")
+    print(f"Final dataset shape: X={X.shape}, y={y.shape}, t={t.shape}, s={s.shape}")
     
     sgkf = StratifiedGroupKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
     
     for fold, (train_idx, test_idx) in enumerate(sgkf.split(X, y, groups)):
         print(f"--- Processing FOLD {fold+1}/{N_FOLDS} ---")
         
-        X_train, y_train, t_train = X[train_idx], y[train_idx], t[train_idx]
-        X_test, y_test, t_test   = X[test_idx], y[test_idx], t[test_idx]
+        X_train, y_train, t_train, s_train = X[train_idx], y[train_idx], t[train_idx], s[train_idx]
+        X_test, y_test, t_test, s_test   = X[test_idx], y[test_idx], t[test_idx], s[test_idx]
         
         if do_augmentation:
             X_train_aug = []
@@ -205,14 +206,16 @@ def main():
         torch.save(torch.from_numpy(X_train).float(), os.path.join(RESULTS_DIR, f"contrastive_fold_{fold}_X_train.pt"))
         torch.save(torch.from_numpy(y_train).float(), os.path.join(RESULTS_DIR, f"contrastive_fold_{fold}_y_train.pt"))
         torch.save(torch.from_numpy(t_train).long(), os.path.join(RESULTS_DIR, f"contrastive_fold_{fold}_t_train.pt"))
+        torch.save(torch.from_numpy(s_train).long(), os.path.join(RESULTS_DIR, f"contrastive_fold_{fold}_s_train.pt"))
         torch.save(torch.from_numpy(X_test).float(), os.path.join(RESULTS_DIR, f"contrastive_fold_{fold}_X_test.pt"))
         torch.save(torch.from_numpy(y_test).float(), os.path.join(RESULTS_DIR, f"contrastive_fold_{fold}_y_test.pt"))
         torch.save(torch.from_numpy(t_test).long(), os.path.join(RESULTS_DIR, f"contrastive_fold_{fold}_t_test.pt"))
+        torch.save(torch.from_numpy(s_test).long(), os.path.join(RESULTS_DIR, f"contrastive_fold_{fold}_s_test.pt"))
         
         print(f"Fold {fold} saved. Train: {X_train.shape}, Test: {X_test.shape}")
         
         # Free fold-specific variables immediately
-        del X_train, y_train, t_train, X_test, y_test, t_test
+        del X_train, y_train, t_train, s_train, X_test, y_test, t_test, s_test
         gc.collect()
         
 if __name__ == "__main__":
