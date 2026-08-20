@@ -110,9 +110,17 @@ def main():
     X = torch.load(os.path.join(RESULTS_DIR, "contrastive_fold_0_X_test.pt"), map_location="cpu", weights_only=False)
     y = torch.load(os.path.join(RESULTS_DIR, "contrastive_fold_0_y_test.pt"), map_location="cpu", weights_only=False)
     t = torch.load(os.path.join(RESULTS_DIR, "contrastive_fold_0_t_test.pt"), map_location="cpu", weights_only=False)
+    
+    s_path = os.path.join(RESULTS_DIR, "contrastive_fold_0_s_test.pt")
+    if os.path.exists(s_path):
+        s = torch.load(s_path, map_location="cpu", weights_only=False)
+    else:
+        s = None
 
     print(f"  X shape: {X.shape} | y: {len(y):,} | pos={int((y==1).sum()):,} | neg={int((y==0).sum()):,}")
     print(f"  t==1: {int((t==1).sum()):,} | t==2: {int((t==2).sum()):,} | t==3: {int((t==3).sum()):,}")
+    if s is not None:
+        print(f"  s==0 (Original): {int((s==0).sum()):,} | s==1 (Denso): {int((s==1).sum()):,}")
 
     # ── Inferencia ────────────────────────────────────────────────────────────
     print(f"\n🔍 Corriendo inferencia en {device}...")
@@ -128,9 +136,20 @@ def main():
     all_probs = np.array(all_probs)
     targets = y.numpy().flatten()
     types = t.numpy().flatten()
+    sources = s.numpy().flatten() if s is not None else None
 
     # ── Reportes ──────────────────────────────────────────────────────────────
     report(all_probs, targets, "GLOBAL")
+    
+    if sources is not None:
+        m_orig = sources == 0
+        m_dense_src = sources == 1
+        
+        if m_orig.sum() > 0:
+            report(all_probs[m_orig], targets[m_orig], "ORIGINAL CORPUS (s==0)")
+            
+        if m_dense_src.sum() > 0:
+            report(all_probs[m_dense_src], targets[m_dense_src], "DENSE CORPUS (s==1)")
 
     # Por tipo de deadlock
     m_solvable = types == 1
