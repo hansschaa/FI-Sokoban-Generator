@@ -18,10 +18,10 @@ from board_utils import encode_board
 
 K_STEPS = 4
 MAX_SAMPLES = 500
+# Defaults overridden by argparse now
 BUCKET_DIR = "../training_data/Solvables"
 OUTPUT_DIR = "results/path_consistency"
-OUTPUT_SOK = "../scratch/path_consistency_sample.sok"
-OUTPUT_TSV = "../scratch/path_consistency_results.tsv"
+
 
 def get_bucket(pushes):
     if pushes <= 10: return "1_to_10"
@@ -165,17 +165,23 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--part", type=int, default=0, help="Part index (0 to total_parts-1)")
     parser.add_argument("--total-parts", type=int, default=1, help="Total number of parts")
+    parser.add_argument("--dataset", type=str, default="../training_data/Solvables", help="Dataset directory")
+    parser.add_argument("--outdir", type=str, default="results/path_consistency", help="Output directory")
     args = parser.parse_args()
 
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    # Archivos temporales independientes por worker para evitar race conditions
+    worker_sok = f"../scratch/path_consistency_sample_worker{args.part}.sok"
+    worker_tsv = f"../scratch/path_consistency_results_worker{args.part}.tsv"
+
+    os.makedirs(args.outdir, exist_ok=True)
     
     fold_map = build_fold_map()
     if not fold_map:
         print("Fold map is empty. Aborting.")
         return
 
-    print("1. Parsing boards from Solvables...")
-    records = parse_sok_files(BUCKET_DIR, fold_map)
+    print(f"1. Parsing boards from {args.dataset}...")
+    records = parse_sok_files(args.dataset, fold_map)
     print(f"Loaded {len(records)} total boards.")
     
     # Sort deterministically and slice
@@ -193,7 +199,7 @@ def main():
     start_route_id = 0
     has_checkpoints = False
     for k in range(1, 6):
-        out_path = os.path.join(OUTPUT_DIR, f"path_fold{k}_train_part{args.part}.pt")
+        out_path = os.path.join(args.outdir, f"path_fold{k}_train_part{args.part}.pt")
         if os.path.exists(out_path):
             try:
                 fold_datasets[k] = torch.load(out_path, map_location='cpu', weights_only=False)
@@ -209,7 +215,7 @@ def main():
     discard_count = 0
     route_id_counter = 0
     
-    os.makedirs(os.path.dirname(OUTPUT_SOK), exist_ok=True)
+    os.makedirs(os.path.dirname(worker_sok), exist_ok=True)
     
     for record in tqdm(records):
         board_str = record['board_str']
@@ -227,12 +233,12 @@ def main():
         fold_idx = fold_map[shell_hash]
         
         # Write single board to .sok
-        with open(OUTPUT_SOK, "w") as f:
+        with open(worker_sok, "w") as f:
             f.write(f"{record['name']} - pushes:{record['pushes']}\n")
             f.write(f"{board_str}\n\n")
             
         # Run batch_solver for this single board
-        cmd = ["../build/batch_solver", OUTPUT_SOK, "hungarian", OUTPUT_TSV]
+        cmd = ["../build/batch_solver", worker_sok, "hungarian", worker_tsv]
         try:
             # 60 seconds strict timeout per board
             result = subprocess.run(cmd, check=True, timeout=60, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
@@ -247,7 +253,7 @@ def main():
             
         # Parse single-row TSV
         try:
-            df = pd.read_csv(OUTPUT_TSV, sep='\t')
+            df = pd.read_csv(worker_tsv, sep='\t')
             if len(df) == 0: continue
             row = df.iloc[0]
             if row['Status'] != 'SOLVED' or row['LURD_Path'] == 'NONE': continue
@@ -277,7 +283,7 @@ def main():
         if route_id_counter % 1000 == 0:
             print(f"\n[Checkpoint] Guardando progreso intermedio (Tableros resueltos: {route_id_counter})...")
             for k in range(1, 6):
-                out_path = os.path.join(OUTPUT_DIR, f"path_fold{k}_train_part{args.part}.pt")
+                out_path = os.path.join(args.outdir, f"path_fold{k}_train_part{args.part}.pt")
                 if len(fold_datasets[k]) > 0:
                     torch.save(fold_datasets[k], out_path)
             print("Checkpoint guardado exitosamente.")
@@ -285,7 +291,7 @@ def main():
     print(f"Discarded {discard_count} boards due to missing shell_hash in fold_map.")
     
     for k in range(1, 6):
-        out_path = os.path.join(OUTPUT_DIR, f"path_fold{k}_train_part{args.part}.pt")
+        out_path = os.path.join(args.outdir, f"path_fold{k}_train_part{args.part}.pt")
         print(f"Fold {k}: saving {len(fold_datasets[k])} pairs to {out_path}")
         torch.save(fold_datasets[k], out_path)
         
