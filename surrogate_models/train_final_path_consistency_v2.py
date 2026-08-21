@@ -159,11 +159,14 @@ def main():
     if not all_pc_datasets:
         raise FileNotFoundError("No se encontró ningún dataset de path consistency.")
 
-    combined_ds = ConcatDataset(all_pc_datasets)
-    print(f"  Total pares combinados: {len(combined_ds):,}")
-
-    train_loader = DataLoader(combined_ds, batch_size=loader_batch, shuffle=True,
-                              num_workers=0, pin_memory=True, drop_last=True)
+    fold_loaders = []
+    total_pairs = 0
+    for ds in all_pc_datasets:
+        loader = DataLoader(ds, batch_size=loader_batch, shuffle=True,
+                            num_workers=0, pin_memory=True, drop_last=True)
+        fold_loaders.append(loader)
+        total_pairs += len(ds)
+    print(f"  Total pares combinados: {total_pairs:,}")
 
     # Stats de normalización (usados consistentemente desde el fold 1 V1)
     p_mean = 3.4614
