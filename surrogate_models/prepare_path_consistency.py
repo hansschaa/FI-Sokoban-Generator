@@ -147,7 +147,8 @@ def simulate_path(board_str, lurd_path):
 
 def build_fold_map():
     fold_map = {}
-    fpath = "results/fold_map.json"
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    fpath = os.path.join(base_dir, "results", "fold_map.json")
     print(f"Loading fold mapping from {fpath}...")
     if not os.path.exists(fpath):
         print(f"ERROR: {fpath} not found! Cannot build fold_map.")
@@ -239,7 +240,8 @@ def main():
             f.write(f"{board_str}\n\n")
             
         # Run batch_solver for this single board
-        cmd = ["../build/batch_solver", worker_sok, "hungarian", worker_tsv]
+        batch_solver_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "build", "batch_solver")
+        cmd = [batch_solver_path, worker_sok, "hungarian", worker_tsv]
         try:
             # 60 seconds strict timeout per board
             result = subprocess.run(cmd, check=True, timeout=60, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
