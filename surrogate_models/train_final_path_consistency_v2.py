@@ -165,11 +165,9 @@ def main():
     train_loader = DataLoader(combined_ds, batch_size=loader_batch, shuffle=True,
                               num_workers=0, pin_memory=True, drop_last=True)
 
-    # Stats de normalización (usar fold 1 como referencia para log1p)
-    stats  = torch.load(os.path.join(RESULTS_DIR, "regressor_fold1_stats.pt"),
-                        weights_only=False)
-    p_mean = stats["pushes_mean"]
-    p_std  = stats["pushes_std"]
+    # Stats de normalización (usados consistentemente desde el fold 1 V1)
+    p_mean = 3.4614
+    p_std  = 0.8732
     print(f"\n  Stats log1p: mean={p_mean:.4f}, std={p_std:.4f}")
 
     # ── Modelo ───────────────────────────────────────────────────────────────
