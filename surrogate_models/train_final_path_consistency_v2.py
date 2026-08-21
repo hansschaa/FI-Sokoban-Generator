@@ -211,6 +211,11 @@ def main():
         model.train()
         total_loss, total_huber, total_margin = 0.0, 0.0, 0.0
 
+        from tqdm import tqdm
+        
+        # Envolvemos los loaders en tqdm para ver el progreso real
+        pbar = tqdm(total=total_batches_epoch, desc=f"Epoch {epoch:02d}/{args.epochs}", leave=False)
+
         for loader in fold_loaders:
             for batch in loader:
                 x1     = batch['tensor1'].to(device)
@@ -241,6 +246,9 @@ def main():
                 total_loss   += loss.item()
                 total_huber  += loss_huber.item()
                 total_margin += loss_margin.item()
+                pbar.update(1)
+        
+        pbar.close()
 
         # Calculamos los promedios dividiendo por el total real de batches
         total_batches_epoch = sum(len(loader) for loader in fold_loaders)
