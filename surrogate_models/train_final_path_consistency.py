@@ -68,7 +68,6 @@ class PathConsistencyDataset(Dataset):
         return len(self.pairs['pushes1']) if self.is_struct else len(self.pairs)
         
     def __getitem__(self, idx):
-    def __getitem__(self, idx):
         if self.is_struct:
             t1 = self.pairs['tensor1'][idx].float()
             t2 = self.pairs['tensor2'][idx].float()
