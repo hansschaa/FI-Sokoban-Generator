@@ -261,11 +261,15 @@ def run_experiment_run(label, heuristic, shell_idx, seed, cores):
     astar_evals = evals - deadlocks_filtered if heuristic == "classifier_filter" else (evals if heuristic == "hungarian" else hybrid_del)
 
     unique_boards_count = 0
+    is_collapsed = 0
     if os.path.exists(out_csv):
         try:
             df_traj = pd.read_csv(out_csv, on_bad_lines='skip')
             if 'best_board' in df_traj.columns:
                 unique_boards_count = int(df_traj['best_board'].nunique())
+                if len(df_traj) > 0 and len(df_traj) <= 35:
+                    if df_traj.iloc[0]['best_board'] == df_traj.iloc[-1]['best_board']:
+                        is_collapsed = 1
         except: pass
 
     meta_record = {
@@ -292,6 +296,7 @@ def run_experiment_run(label, heuristic, shell_idx, seed, cores):
         "Top5_Size": len(top_boards),
         "Top5_Accuracy_Pct": round(tpr_top5_pct, 1),
         "Time_s": round(elapsed, 1),
+        "Collapsed_Immediate": is_collapsed,
         "pipeline_hash": CURRENT_PIPELINE_HASH   # Firmado con hash del pipeline — invalida la cache si el pipeline cambia
     }
 
@@ -326,10 +331,14 @@ def generate_final_analysis():
     print(f"📁 Todas las corridas exportadas a: {df_csv}")
 
     # Resumen por Shell, Variante y Cores
-    cols_to_avg = ["Top5_Best_Real_Astar_Pushes", "Top5_Accuracy_Pct", "Time_s", "Unique_Boards_Explored", "Hybrid_Delegations_6PlusBoxes", "Deadlocks_Filtered"]
+    cols_to_avg = ["Top5_Best_Real_Astar_Pushes", "Top5_Accuracy_Pct", "Time_s", "Unique_Boards_Explored", "Hybrid_Delegations_6PlusBoxes", "Deadlocks_Filtered", "Collapsed_Immediate"]
     if "Top5_Inconclusive_Count" in df.columns:
         cols_to_avg.insert(2, "Top5_Inconclusive_Count")
     summary = df.groupby(["Shell", "Variant", "Cores"])[cols_to_avg].mean().reset_index().round(1)
+
+    if "Collapsed_Immediate" in summary.columns:
+        summary["Collapse_Rate_Pct"] = (summary["Collapsed_Immediate"] * 100).round(1)
+        summary.drop(columns=["Collapsed_Immediate"], inplace=True)
 
     print("\n" + "="*130)
     print(" 🏆 EXPERIMENTO 1: MATRIZ 2x2 COMPRENSIVA (MEDIA SOBRE 10 SEMILLAS POR CONFIGURACIÓN | 300s POR CORRIDA)")
