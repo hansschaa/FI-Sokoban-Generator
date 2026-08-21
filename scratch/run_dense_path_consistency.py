@@ -3,7 +3,7 @@ import sys
 import os
 
 def run_pipeline(num_cores=2):
-    dataset_dir = "DenseSolvables"
+    dataset_dir = "training_data/DenseSolvables"
     out_dir = "DensePathConsistency"
     
     if not os.path.exists(dataset_dir):
