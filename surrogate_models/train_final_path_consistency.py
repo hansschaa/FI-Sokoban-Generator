@@ -30,16 +30,28 @@ class PathConsistencyDataset(Dataset):
         self.augment = augment
         path_file = os.path.join(RESULTS_DIR, "path_consistency", f"path_fold{fold_k}_train.pt")
         print(f"  Cargando dataset de Path Consistency: {os.path.basename(path_file)}...")
-        self.pairs = torch.load(path_file, weights_only=False, map_location='cpu')
+        data = torch.load(path_file, weights_only=False, map_location='cpu')
+        
+        self.is_struct = isinstance(data, dict)
+        self.pairs = data
         
         # Filtrar por distancia en la ruta (K=4 pushes por paso)
         if max_route_distance > 0:
-            original_len = len(self.pairs)
             max_diff = max_route_distance * 4
-            self.pairs = [p for p in self.pairs if (p['pushes1'] - p['pushes2']) <= max_diff]
-            print(f"  Filtro max_route_distance={max_route_distance} aplicado. Pares: {original_len} -> {len(self.pairs)}")
+            if self.is_struct:
+                original_len = len(self.pairs['pushes1'])
+                diffs = self.pairs['pushes1'] - self.pairs['pushes2']
+                mask = diffs <= max_diff
+                
+                # Apply mask to all tensor fields
+                self.pairs = {k: v[mask] if isinstance(v, torch.Tensor) else [v[i] for i in range(original_len) if mask[i]] for k, v in self.pairs.items()}
+                print(f"  Filtro max_route_distance={max_route_distance} aplicado. Pares: {original_len} -> {len(self.pairs['pushes1'])}")
+            else:
+                original_len = len(self.pairs)
+                self.pairs = [p for p in self.pairs if (p['pushes1'] - p['pushes2']) <= max_diff]
+                print(f"  Filtro max_route_distance={max_route_distance} aplicado. Pares: {original_len} -> {len(self.pairs)}")
         else:
-            print(f"  Pares cargados: {len(self.pairs)}")
+            print(f"  Pares cargados: {len(self.pairs['pushes1']) if self.is_struct else len(self.pairs)}")
             
         # Cargar los pesos originales del fold de train (opcional — weight=1.0 si no existe)
         train_file = os.path.join(RESULTS_DIR, f"regressor_fold{fold_k}_train.pt")
@@ -53,22 +65,28 @@ class PathConsistencyDataset(Dataset):
             print(f"  ⚠️  {os.path.basename(train_file)} no encontrado — usando weight=1.0 para todos los pares.")
 
     def __len__(self):
-        return len(self.pairs)
+        return len(self.pairs['pushes1']) if self.is_struct else len(self.pairs)
         
     def __getitem__(self, idx):
-        item = self.pairs[idx]
-        t1 = item["tensor1"]
-        t2 = item["tensor2"]
-        
-        # Convert numpy arrays to torch tensors if they aren't already
-        if isinstance(t1, np.ndarray):
-            t1 = torch.from_numpy(t1).float()
-        if isinstance(t2, np.ndarray):
-            t2 = torch.from_numpy(t2).float()
+    def __getitem__(self, idx):
+        if self.is_struct:
+            t1 = self.pairs['tensor1'][idx].float()
+            t2 = self.pairs['tensor2'][idx].float()
+            p1 = self.pairs['pushes1'][idx].item()
+            p2 = self.pairs['pushes2'][idx].item()
+            shell_hash = self.pairs['shell_hash'][idx] if 'shell_hash' in self.pairs else ""
+        else:
+            item = self.pairs[idx]
+            t1 = item["tensor1"]
+            t2 = item["tensor2"]
+            if isinstance(t1, np.ndarray):
+                t1 = torch.from_numpy(t1).float()
+            if isinstance(t2, np.ndarray):
+                t2 = torch.from_numpy(t2).float()
+            p1 = item["pushes1"]
+            p2 = item["pushes2"]
+            shell_hash = item.get("shell_hash", "")
             
-        p1 = item["pushes1"]
-        p2 = item["pushes2"]
-        shell_hash = item.get("shell_hash", "")
         weight = self.weight_map.get(shell_hash, 1.0)
         
         if self.augment:

@@ -61,21 +61,48 @@ def main():
     
     for k in range(1, 6):
         print(f"\nFusionando Fold {k}...")
-        merged_data = []
         
+        t1s, t2s, p1s, p2s, hashes = [], [], [], [], []
+        
+        def process_part(fpath):
+            data = torch.load(fpath, map_location='cpu', weights_only=False)
+            for item in data:
+                # Some old data might have numpy arrays, convert to tensor
+                t1 = item['tensor1']
+                t2 = item['tensor2']
+                if not isinstance(t1, torch.Tensor):
+                    t1 = torch.tensor(t1, dtype=torch.float32)
+                if not isinstance(t2, torch.Tensor):
+                    t2 = torch.tensor(t2, dtype=torch.float32)
+                
+                t1s.append(t1)
+                t2s.append(t2)
+                p1s.append(item['pushes1'])
+                p2s.append(item['pushes2'])
+                hashes.append(item.get('shell_hash', ''))
+                
         # Load original parts
         for f in orig_files[k]:
-            merged_data.extend(torch.load(f, map_location='cpu', weights_only=False))
+            process_part(f)
             
         # Load dense parts
         for f in tqdm(dense_files[k], desc=f"Particiones densas Fold {k}"):
-            merged_data.extend(torch.load(f, map_location='cpu', weights_only=False))
+            process_part(f)
             
-        out_path = os.path.join(out_dir, f"path_fold{k}_train.pt")
-        print(f"Guardando Fold {k} unificado en {out_path} ({len(merged_data)} pares)...")
-        torch.save(merged_data, out_path)
+        print(f"Apilando tensores del Fold {k}...")
+        out_dict = {
+            'tensor1': torch.stack(t1s).byte() if t1s[0].dtype == torch.uint8 else torch.stack(t1s),
+            'tensor2': torch.stack(t2s).byte() if t2s[0].dtype == torch.uint8 else torch.stack(t2s),
+            'pushes1': torch.tensor(p1s, dtype=torch.int16),
+            'pushes2': torch.tensor(p2s, dtype=torch.int16),
+            'shell_hash': hashes
+        }
         
-        del merged_data
+        out_path = os.path.join(out_dir, f"path_fold{k}_train.pt")
+        print(f"Guardando Fold {k} unificado estructurado en {out_path} ({len(p1s)} pares)...")
+        torch.save(out_dict, out_path)
+        
+        del t1s, t2s, p1s, p2s, hashes, out_dict
         gc.collect()
         
     print("\n¡Fusión completada!")
