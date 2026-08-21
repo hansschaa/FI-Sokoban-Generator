@@ -274,9 +274,9 @@ int main(int argc, char** argv)
             es.on_progress = log_progress;
             
             if (fitnessType == FitnessType::FO1_PUSHES) {
-                es.mu = 6;
-                es.lambda = 30;
-                es.mutationRate = 0.9878;
+                es.mu = 9;
+                es.lambda = 28;
+                es.mutationRate = 0.8559;
             } else if (fitnessType == FitnessType::FO4_DEADLOCKS) {
                 es.mu = 15;
                 es.lambda = 20;
@@ -310,10 +310,10 @@ int main(int argc, char** argv)
             ga.on_progress = log_progress;
             
             if (fitnessType == FitnessType::FO1_PUSHES) {
-                ga.offspringSize = 45;
-                ga.maxFailedAttempts = 41;
-                ga.mutationRate = 0.8339;
-                ga.crossoverRate = 0.3729;
+                ga.offspringSize = 29;
+                ga.maxFailedAttempts = 32;
+                ga.mutationRate = 0.8931;
+                ga.crossoverRate = 0.8913;
             } else if (fitnessType == FitnessType::FO4_DEADLOCKS) {
                 ga.offspringSize = 35;
                 ga.maxFailedAttempts = 14;
