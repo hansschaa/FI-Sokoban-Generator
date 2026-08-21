@@ -341,24 +341,32 @@ bool generateBaseTemplate(std::vector<std::vector<char>>& board, std::vector<std
 }
 
 int main(int argc, char* argv[]) {
-    srand(time(NULL));
-
+    int seed = time(NULL);
     int runs = 2000;
+    std::string outdir = "training_data/DenseSolvables";
+
     for (int i = 1; i < argc; i++) {
         std::string arg = argv[i];
         if (arg == "--runs" && i + 1 < argc) runs = std::stoi(argv[++i]);
+        if (arg == "--seed" && i + 1 < argc) seed = std::stoi(argv[++i]);
+        if (arg == "--outdir" && i + 1 < argc) outdir = argv[++i];
     }
 
+    srand(seed);
+
     std::cout << "Starting Sokoban Dataset Miner (v7: Elite Seeding + Adaptive)...\n";
-    std::cout << "Target base templates: " << runs << "\n\n";
+    std::cout << "Target base templates: " << runs << "\n";
+    std::cout << "Seed: " << seed << "\n";
+    std::cout << "Output Directory: " << outdir << "\n\n";
 
     unsigned int num_threads = std::thread::hardware_concurrency();
     if (num_threads == 0) num_threads = 4;
     std::cout << "Launching " << num_threads << " parallel miner threads...\n\n";
 
-    SokobanMiner miner("training_data/DenseSolvables");
+    SokobanMiner miner(outdir);
 
     // MEJORA 1: Cargar semillas elite de cubetas 41-70
+    // Siempre leemos las semillas del directorio base general, no del outdir del worker
     EliteSeedPool seed_pool;
     seed_pool.load("training_data/DenseSolvables", 41, 70);
     std::cout << "\n";
