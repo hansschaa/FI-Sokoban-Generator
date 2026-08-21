@@ -18,6 +18,7 @@ from board_utils import encode_board
 
 K_STEPS = 4
 MAX_SAMPLES = 500
+MAX_GENERATED_DISTANCE = 5  # Limitar la combinatoria a distancia 5 (20 pushes de gap máximo)
 # Defaults overridden by argparse now
 BUCKET_DIR = "../training_data/Solvables"
 OUTPUT_DIR = "results/path_consistency"
@@ -265,7 +266,7 @@ def main():
         states = simulate_path(board_str, lurd)
         n = len(states)
         for i in range(n):
-            for j in range(i+1, n):
+            for j in range(i+1, min(i + 1 + MAX_GENERATED_DISTANCE, n)):
                 s1, p1 = states[i]
                 s2, p2 = states[j]
                 t1 = encode_board(s1)
