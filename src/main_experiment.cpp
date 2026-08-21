@@ -122,6 +122,8 @@ int main(int argc, char** argv)
         out_csv_path = val;
     }
 
+    bool no_parallel = cmdOptionExists(argv, argv + argc, "--no-parallel");
+
     // 4. Configurar el tablero inicial (Shell) y aplicar Flood Fill
     std::vector<std::vector<char>> shell;
     try {
@@ -261,6 +263,7 @@ int main(int argc, char** argv)
         if (algorithm == "ES")
         {
             EvolutionStrategy es;
+            es.use_parallel = !no_parallel;
             es.setDeadlockMask(deadlock_mask);
             es.maxEvaluations  = maxEvals;
             es.stagnationLimit = stagLimit;
@@ -296,6 +299,7 @@ int main(int argc, char** argv)
         else if (algorithm == "GA")
         {
             GeneticAlgorithm ga;
+            ga.use_parallel = !no_parallel;
             ga.setDeadlockMask(deadlock_mask);
             ga.deadlock_mask = deadlock_mask; // For crossover
             ga.maxEvaluations  = maxEvals;
