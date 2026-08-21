@@ -44,9 +44,12 @@ def parse_sok_file(fpath, source_label):
         header = lines[0]
         board_lines = lines[1:]
 
-        pushes = None
         m_pushes = re.search(r"pushes:(\d+)", header)
         if m_pushes: pushes = int(m_pushes.group(1))
+        
+        source_pc = "Unknown"
+        m_pc = re.search(r"source_pc:(PC\d+)", header)
+        if m_pc: source_pc = m_pc.group(1)
 
         if pushes is None or pushes <= 0: continue
 
@@ -72,7 +75,8 @@ def parse_sok_file(fpath, source_label):
             "shell_hash": shell_hash,
             "board_hash": board_hash,
             "box_count": box_count,
-            "source": source_label
+            "source": source_label,
+            "source_pc": source_pc
         })
     return records
 
@@ -93,9 +97,29 @@ def main():
 
     df = pd.DataFrame(all_records)
     print(f"\n[1] Total parseado: {len(df)} tableros")
+    
+    # Reporte de volumen pre-deduplicacion por Worker (solo para Densos)
+    if 'source_pc' in df.columns:
+        dense_pre = df[df['source'] == 'Denso']
+        if not dense_pre.empty:
+            print("\n  Volumen Denso en crudo (antes de deduplicar):")
+            print(dense_pre['source_pc'].value_counts().to_string())
 
     df = df.drop_duplicates(subset=["board_hash"]).reset_index(drop=True)
-    print(f"[2] Tras deduplicar: {len(df)} tableros")
+    print(f"\n[2] Tras deduplicar globalmente: {len(df)} tableros")
+
+    # Reporte de duplicados inter-worker
+    if 'source_pc' in df.columns:
+        dense_post = df[df['source'] == 'Denso']
+        if not dense_post.empty:
+            print("\n  Volumen Denso final (después de deduplicar):")
+            post_counts = dense_post['source_pc'].value_counts()
+            pre_counts = dense_pre['source_pc'].value_counts()
+            for pc in pre_counts.index:
+                post = post_counts.get(pc, 0)
+                pre = pre_counts[pc]
+                dups = pre - post
+                print(f"    {pc}: Aportó {pre}, Retuvo {post} -> {dups} duplicados inter-worker eliminados")
 
     print("\n[3] 🛑 CHEQUEO CRÍTICO DE BALANCE (Origen vs Bucket) 🛑")
     balance_df = pd.crosstab(df['bucket'], df['source'], margins=True)
