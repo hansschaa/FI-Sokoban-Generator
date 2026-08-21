@@ -19,7 +19,7 @@ def run_pipeline(num_cores=2):
     for i in range(num_cores):
         # python3 surrogate_models/prepare_path_consistency.py --part i --total-parts N --dataset D --outdir O
         cmd = [
-            "python3", "surrogate_models/prepare_path_consistency.py",
+            "venv/bin/python3", "surrogate_models/prepare_path_consistency.py",
             "--part", str(i),
             "--total-parts", str(num_cores),
             "--dataset", dataset_dir,
