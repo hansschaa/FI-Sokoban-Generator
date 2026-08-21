@@ -2,6 +2,7 @@ import os
 import torch
 from collections import defaultdict
 from tqdm import tqdm
+import gc
 
 def main():
     dense_dir = "DensePathConsistency"
@@ -58,7 +59,7 @@ def main():
     
     # 2. Merge (Commented out to allow user verification first)
     
-    for k in range(1, 6):
+    for k in range(4, 6):
         print(f"\nFusionando Fold {k}...")
         merged_data = []
         
@@ -73,6 +74,9 @@ def main():
         out_path = os.path.join(out_dir, f"path_fold{k}_train.pt")
         print(f"Guardando Fold {k} unificado en {out_path} ({len(merged_data)} pares)...")
         torch.save(merged_data, out_path)
+        
+        del merged_data
+        gc.collect()
         
     print("\n¡Fusión completada!")
     
