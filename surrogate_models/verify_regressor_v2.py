@@ -34,7 +34,7 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
     model = SokobanSEResNetRegressor(dropout_p=0.0).to(device)
-    model.load_state_dict(torch.load(model_path, map_location=device))
+    model.load_state_dict(torch.load(model_path, map_location=device, weights_only=False))
     model.eval()
 
     test_path = os.path.join(RESULTS_DIR, "regressor_v2_fold1_test.pt")
@@ -45,8 +45,8 @@ def main():
         return
 
     print(f"Cargando conjunto de test: {test_path}")
-    test_data = torch.load(test_path, map_location="cpu")
-    stats = torch.load(stats_path, map_location="cpu")
+    test_data = torch.load(test_path, map_location="cpu", weights_only=False)
+    stats = torch.load(stats_path, map_location="cpu", weights_only=False)
     pushes_mean = stats["pushes_mean"]
     pushes_std = stats["pushes_std"]
 
