@@ -148,7 +148,7 @@ def simulate_path(board_str, lurd_path):
 def build_fold_map():
     fold_map = {}
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    fpath = os.path.join(base_dir, "results", "fold_map.json")
+    fpath = os.path.join(base_dir, "results", "fold_map_v2.json")
     print(f"Loading fold mapping from {fpath}...")
     if not os.path.exists(fpath):
         print(f"ERROR: {fpath} not found! Cannot build fold_map.")
