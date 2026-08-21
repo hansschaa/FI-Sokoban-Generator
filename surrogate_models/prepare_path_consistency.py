@@ -244,7 +244,9 @@ def main():
         cmd = [batch_solver_path, worker_sok, "hungarian", worker_tsv]
         try:
             # 60 seconds strict timeout per board
-            result = subprocess.run(cmd, check=True, timeout=60, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+            env = os.environ.copy()
+            env["LD_LIBRARY_PATH"] = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "libtorch", "lib")) + ":" + env.get("LD_LIBRARY_PATH", "")
+            result = subprocess.run(cmd, check=True, timeout=60, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, env=env)
         except subprocess.TimeoutExpired:
             continue
         except subprocess.CalledProcessError as e:
