@@ -211,38 +211,47 @@ def main():
         model.train()
         total_loss, total_huber, total_margin = 0.0, 0.0, 0.0
 
-        for batch in train_loader:
-            x1     = batch['tensor1'].to(device)
-            x2     = batch['tensor2'].to(device)
-            p1_raw = batch['pushes1'].float().to(device)
+        for loader in fold_loaders:
+            for batch in loader:
+                x1     = batch['tensor1'].to(device)
+                x2     = batch['tensor2'].to(device)
+                p1_raw = batch['pushes1'].float().to(device)
+                p2_raw = batch['pushes2'].float().to(device)
+                weight = batch['weight'].to(device)
 
-            y_target = (torch.log1p(p1_raw) - p_mean) / p_std
+                # Normalización del target
+                y_target = (torch.log1p(p1_raw) - p_mean) / p_std
+                
+                optimizer.zero_grad()
+                pred1 = model(x1).squeeze(-1)
+                pred2 = model(x2).squeeze(-1)
 
-            optimizer.zero_grad()
-            combined = torch.cat([x1, x2], dim=0)
-            pred = model(combined).squeeze(-1)
-            p_opt, p_sub = pred.split(x1.size(0))
+                loss_huber = (huber_criterion(pred1, y_target) * weight).mean()
+                
+                # Loss margin: max(0, margin - sign(y1 - y2) * (pred1 - pred2))
+                diff_pred = pred1 - pred2
+                diff_true = p1_raw - p2_raw
+                loss_margin = torch.clamp(args.margin - (diff_pred * torch.sign(diff_true)), min=0.0)
+                loss_margin = (loss_margin * weight).mean()
+                
+                loss = loss_huber + args.alpha * loss_margin
+                loss.backward()
+                optimizer.step()
 
-            lh = huber_fn(p_opt, y_target)
-            lr_ = ranking_fn(p_opt, p_sub, torch.ones_like(p_opt))
-            loss = (1.0 - alpha) * lh + alpha * lr_
+                total_loss   += loss.item()
+                total_huber  += loss_huber.item()
+                total_margin += loss_margin.item()
 
-            loss.backward()
-            nn.utils.clip_grad_norm_(model.parameters(), 5.0)
-            optimizer.step()
-
-            total_loss   += loss.item()
-            total_huber  += lh.item()
-            total_margin += lr_.item()
-
-        total_loss   /= len(train_loader)
-        total_huber  /= len(train_loader)
-        total_margin /= len(train_loader)
+        # Calculamos los promedios dividiendo por el total real de batches
+        total_batches_epoch = sum(len(loader) for loader in fold_loaders)
+        avg_loss   = total_loss / total_batches_epoch
+        avg_huber  = total_huber / total_batches_epoch
+        avg_margin = total_margin / total_batches_epoch
         scheduler.step()
 
         tag = ""
-        if total_loss < best_loss:
-            best_loss    = total_loss
+        if avg_loss < best_loss:
+            best_loss    = avg_loss
             best_weights = copy.deepcopy(model.state_dict())
             patience_ctr = 0
             tag = " ★"
