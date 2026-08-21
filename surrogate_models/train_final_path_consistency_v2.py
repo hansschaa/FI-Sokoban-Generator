@@ -231,10 +231,10 @@ def main():
                 # Loss margin: max(0, margin - sign(y1 - y2) * (pred1 - pred2))
                 diff_pred = pred1 - pred2
                 diff_true = p1_raw - p2_raw
-                loss_margin = torch.clamp(args.margin - (diff_pred * torch.sign(diff_true)), min=0.0)
+                loss_margin = torch.clamp(margin - (diff_pred * torch.sign(diff_true)), min=0.0)
                 loss_margin = (loss_margin * weight).mean()
                 
-                loss = loss_huber + args.alpha * loss_margin
+                loss = loss_huber + alpha * loss_margin
                 loss.backward()
                 optimizer.step()
 
