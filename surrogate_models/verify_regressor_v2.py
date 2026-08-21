@@ -23,8 +23,8 @@ def main():
     print("=" * 70)
     
     # Load model (can be fold1 or the final production one)
-    # Por defecto probamos el de fold 1 para la validacion inicial
-    model_path = os.path.join(RESULTS_DIR, "final_regressor_v2_fold1.pt")
+    # Validando Fold 4 por ser el mejor en MAE TEST
+    model_path = os.path.join(RESULTS_DIR, "final_regressor_v2_fold4.pt")
     if not os.path.exists(model_path):
         print(f"❌ No se encontró el modelo: {model_path}")
         print("Asegurate de haber entrenado al menos el fold 1 primero.")
@@ -37,8 +37,8 @@ def main():
     model.load_state_dict(torch.load(model_path, map_location=device, weights_only=False))
     model.eval()
 
-    test_path = os.path.join(RESULTS_DIR, "regressor_v2_fold1_test.pt")
-    stats_path = os.path.join(RESULTS_DIR, "regressor_v2_fold1_stats.pt")
+    test_path = os.path.join(RESULTS_DIR, "regressor_v2_fold4_test.pt")
+    stats_path = os.path.join(RESULTS_DIR, "regressor_v2_fold4_stats.pt")
     
     if not os.path.exists(test_path):
         print(f"❌ No se encontró el test set: {test_path}")
