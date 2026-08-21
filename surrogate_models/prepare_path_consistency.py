@@ -20,7 +20,7 @@ K_STEPS = 4
 MAX_SAMPLES = 500
 MAX_GENERATED_DISTANCE = 5  # Limitar la combinatoria a distancia 5 (20 pushes de gap máximo)
 # Defaults overridden by argparse now
-args.dataset = "../training_data/Solvables"
+BUCKET_DIR = "../training_data/Solvables"
 OUTPUT_DIR = "results/path_consistency"
 
 
