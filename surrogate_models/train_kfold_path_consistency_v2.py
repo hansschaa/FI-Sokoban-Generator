@@ -172,7 +172,11 @@ def main():
     print(f"\n  Cargando Test Fold {args.test_fold}...")
     test_pc_path = os.path.join(RESULTS_DIR, "path_consistency", f"path_fold{args.test_fold}_train.pt")
     if not os.path.exists(test_pc_path):
-        raise FileNotFoundError(f"No se encontró el test fold: {test_pc_path}")
+        test_pc_path_v2 = os.path.join(RESULTS_DIR, "path_consistency_v2", f"path_fold{args.test_fold}_train.pt")
+        if os.path.exists(test_pc_path_v2):
+            test_pc_path = test_pc_path_v2
+        else:
+            raise FileNotFoundError(f"No se encontró el test fold: {test_pc_path}")
     test_ds = PathConsistencyDataset(args.test_fold, augment=False)
     test_loader = DataLoader(test_ds, batch_size=loader_batch, shuffle=False,
                              num_workers=0, pin_memory=True, drop_last=False)
