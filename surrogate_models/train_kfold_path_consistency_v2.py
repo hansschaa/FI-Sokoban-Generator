@@ -115,7 +115,8 @@ def main():
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    os.makedirs(os.path.dirname(args.output), exist_ok=True)
+    if args.output is not None:
+        os.makedirs(os.path.dirname(args.output), exist_ok=True)
 
     hparams = load_hparams(args)
     lr           = float(hparams["lr"])
