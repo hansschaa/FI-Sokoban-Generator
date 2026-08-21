@@ -226,7 +226,7 @@ def main():
                 pred1 = model(x1).squeeze(-1)
                 pred2 = model(x2).squeeze(-1)
 
-                loss_huber = (huber_criterion(pred1, y_target) * weight).mean()
+                loss_huber = (huber_fn(pred1, y_target) * weight).mean()
                 
                 # Loss margin: max(0, margin - sign(y1 - y2) * (pred1 - pred2))
                 diff_pred = pred1 - pred2
