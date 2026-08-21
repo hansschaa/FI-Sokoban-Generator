@@ -9,6 +9,9 @@ Aplica GroupKFold(5) estratificado por origen+bucket y guarda tensores.
 import os
 import re
 import glob
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import hashlib
 import numpy as np
 import torch
