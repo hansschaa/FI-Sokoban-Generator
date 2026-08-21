@@ -12,7 +12,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import pandas as pd
-from models.resnet import SimpleResNet
+from models.resnet import SokobanSEResNetRegressor
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 RESULTS_DIR = os.path.join(BASE_DIR, "results")
@@ -24,7 +24,7 @@ def main():
     
     # Load model (can be fold1 or the final production one)
     # Por defecto probamos el de fold 1 para la validacion inicial
-    model_path = os.path.join(RESULTS_DIR, "regressor_v2_fold1.pt")
+    model_path = os.path.join(RESULTS_DIR, "final_regressor_v2_fold1.pt")
     if not os.path.exists(model_path):
         print(f"❌ No se encontró el modelo: {model_path}")
         print("Asegurate de haber entrenado al menos el fold 1 primero.")
@@ -33,7 +33,7 @@ def main():
     print(f"Cargando modelo: {model_path}")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    model = SimpleResNet(in_channels=6, num_classes=1).to(device)
+    model = SokobanSEResNetRegressor(dropout_p=0.0).to(device)
     model.load_state_dict(torch.load(model_path, map_location=device))
     model.eval()
 
