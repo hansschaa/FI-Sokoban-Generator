@@ -106,7 +106,15 @@ def load_models():
     classifier_model.load_state_dict(torch.load(c_path, map_location=device))
     classifier_model.eval()
 
-    r_path = "surrogate_models/results/production_regressor.pt"
+    r_path = "surrogate_models/results/path_consistency/final_path_consistency_production.pt"
+    
+    # We might need to ensure dropout_p matches what the model was trained with.
+    # The JSON params will be loaded from best_hparams_path_consistency_v2.json
+    try:
+        with open("surrogate_models/results/best_hparams_path_consistency_v2.json", "r") as f:
+            r_params = json.load(f)
+    except:
+        r_params = {"params": {"dropout_p": 0.0}} # fallback
     print(f"Loading Regressor (dropout={r_params['params']['dropout_p']}) to {device}")
     print(f"Model Path: {r_path}")
     print(f"Model SHA256: {compute_sha256(r_path)}")
