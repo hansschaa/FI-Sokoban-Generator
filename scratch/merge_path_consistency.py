@@ -59,7 +59,7 @@ def main():
     
     # 2. Merge (Commented out to allow user verification first)
     
-    for k in range(4, 6):
+    for k in range(1, 6):
         print(f"\nFusionando Fold {k}...")
         merged_data = []
         
