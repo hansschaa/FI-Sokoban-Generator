@@ -30,7 +30,14 @@ class PathConsistencyDataset(Dataset):
         self.augment = augment
         path_file = os.path.join(RESULTS_DIR, "path_consistency", f"path_fold{fold_k}_train.pt")
         print(f"  Cargando dataset de Path Consistency: {os.path.basename(path_file)}...")
-        data = torch.load(path_file, weights_only=False, map_location='cpu')
+        
+        # Determine if mmap=True is supported
+        import inspect
+        kwargs = {'weights_only': False, 'map_location': 'cpu'}
+        if 'mmap' in inspect.signature(torch.load).parameters:
+            kwargs['mmap'] = True
+            
+        data = torch.load(path_file, **kwargs)
         
         self.is_struct = isinstance(data, dict)
         self.pairs = data
