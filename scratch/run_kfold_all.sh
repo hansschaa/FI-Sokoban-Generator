@@ -18,7 +18,7 @@ for fold in 1 2 3 4 5; do
     LOG_FILE="surrogate_models/results/path_consistency/kfold/train_fold${fold}.log"
     
     # Entrenar (usamos stdbuf para forzar flush al log en tiempo real)
-    stdbuf -oL -eL python surrogate_models/train_kfold_path_consistency_v2.py \
+    stdbuf -oL -eL python3 surrogate_models/train_kfold_path_consistency_v2.py \
         --test-fold $fold \
         --output $OUT_MODEL \
         | tee $LOG_FILE
