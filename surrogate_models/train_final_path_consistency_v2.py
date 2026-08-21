@@ -213,6 +213,9 @@ def main():
 
         from tqdm import tqdm
         
+        # Calculamos el total de batches sumando la longitud de cada loader
+        total_batches_epoch = sum(len(loader) for loader in fold_loaders)
+        
         # Envolvemos los loaders en tqdm para ver el progreso real
         pbar = tqdm(total=total_batches_epoch, desc=f"Epoch {epoch:02d}/{args.epochs}", leave=False)
 
