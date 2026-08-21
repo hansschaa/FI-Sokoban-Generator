@@ -200,16 +200,19 @@ def main():
     # Intentar reanudar desde checkpoints existentes
     start_route_id = 0
     has_checkpoints = False
+    
+    import glob
     for k in range(1, 6):
-        out_path = os.path.join(args.outdir, f"path_fold{k}_train_part{args.part}.pt")
-        if os.path.exists(out_path):
+        # Buscar el archivo final o cualquier checkpoint
+        pattern = os.path.join(args.outdir, f"path_fold{k}_train_part{args.part}*.pt")
+        for ckpt_path in glob.glob(pattern):
             try:
-                fold_datasets[k] = torch.load(out_path, map_location='cpu', weights_only=False)
-                has_checkpoints = True
-                if len(fold_datasets[k]) > 0:
-                    start_route_id = max(start_route_id, fold_datasets[k][-1]['route_id'] + 1)
+                data = torch.load(ckpt_path, map_location='cpu', weights_only=False)
+                if len(data) > 0:
+                    has_checkpoints = True
+                    start_route_id = max(start_route_id, data[-1]['route_id'] + 1)
             except Exception as e:
-                print(f"No se pudo cargar {out_path}: {e}")
+                print(f"No se pudo cargar {ckpt_path}: {e}")
                 
     if has_checkpoints:
         print(f"Checkpoints detectados. Reanudando desde route_id = {start_route_id}")
@@ -284,21 +287,23 @@ def main():
                 })
         route_id_counter += 1
         
-        # Guardar checkpoint cada 1000 tableros procesados
-        if route_id_counter % 1000 == 0:
+        # Guardar checkpoint cada 100 tableros procesados
+        if route_id_counter % 100 == 0:
             print(f"\n[Checkpoint] Guardando progreso intermedio (Tableros resueltos: {route_id_counter})...")
             for k in range(1, 6):
-                out_path = os.path.join(args.outdir, f"path_fold{k}_train_part{args.part}.pt")
                 if len(fold_datasets[k]) > 0:
+                    out_path = os.path.join(args.outdir, f"path_fold{k}_train_part{args.part}_ckpt{route_id_counter}.pt")
                     torch.save(fold_datasets[k], out_path)
+                    fold_datasets[k] = [] # Liberar memoria
             print("Checkpoint guardado exitosamente.")
         
     print(f"Discarded {discard_count} boards due to missing shell_hash in fold_map.")
     
     for k in range(1, 6):
-        out_path = os.path.join(args.outdir, f"path_fold{k}_train_part{args.part}.pt")
-        print(f"Fold {k}: saving {len(fold_datasets[k])} pairs to {out_path}")
-        torch.save(fold_datasets[k], out_path)
+        if len(fold_datasets[k]) > 0:
+            out_path = os.path.join(args.outdir, f"path_fold{k}_train_part{args.part}_final.pt")
+            print(f"Fold {k}: saving {len(fold_datasets[k])} pairs to {out_path}")
+            torch.save(fold_datasets[k], out_path)
         
     print("Done!")
 
