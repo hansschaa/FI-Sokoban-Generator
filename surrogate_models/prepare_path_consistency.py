@@ -20,7 +20,7 @@ K_STEPS = 4
 MAX_SAMPLES = 500
 MAX_GENERATED_DISTANCE = 5  # Limitar la combinatoria a distancia 5 (20 pushes de gap máximo)
 # Defaults overridden by argparse now
-BUCKET_DIR = "../training_data/Solvables"
+args.dataset = "../training_data/Solvables"
 OUTPUT_DIR = "results/path_consistency"
 
 
@@ -191,7 +191,7 @@ def main():
     records = records[args.part::args.total_parts]
     print(f"Assigned {len(records)} boards to Part {args.part} of {args.total_parts}.")
     if len(records) == 0:
-        print(f"Warning: No boards found in {BUCKET_DIR}. Make sure the dataset exists!")
+        print(f"Warning: No boards found in {args.dataset}. Make sure the dataset exists!")
         return
         
     print("2. Simulating paths with strict 60s timeout per board...")
