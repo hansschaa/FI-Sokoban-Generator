@@ -214,7 +214,11 @@ int main(int argc, char* argv[])
     if (heuristic_type == Heuristic::neural ||
         heuristic_type == Heuristic::neural_batched ||
         heuristic_type == Heuristic::neural_batched_massive) {
-        shared_net = std::make_shared<NeuralHeuristic>("surrogate_models/results/surrogate_regressor_jit.pt", 25, 25);
+        std::string model_path = "surrogate_models/results/surrogate_regressor_jit.pt";
+        if (const char* env_p = std::getenv("MODEL_PATH")) {
+            model_path = env_p;
+        }
+        shared_net = std::make_shared<NeuralHeuristic>(model_path, 25, 25);
     }
 
     int idx = 1;
