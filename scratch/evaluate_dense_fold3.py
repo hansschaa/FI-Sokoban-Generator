@@ -46,7 +46,7 @@ def main():
     print(f"Using device: {device}")
 
     # 1. Load fold map
-    fold_map_path = "surrogate_models/data/fold_map_v2.json"
+    fold_map_path = "surrogate_models/results/fold_map_v2.json"
     with open(fold_map_path, "r") as f:
         fold_map = json.load(f)
     
