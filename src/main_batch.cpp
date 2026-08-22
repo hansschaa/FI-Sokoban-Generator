@@ -226,7 +226,7 @@ int main(int argc, char* argv[])
         unsigned int rows = lvl.board.size();
         unsigned int cols = lvl.board.empty() ? 0 : lvl.board[0].size();
 
-        game_solver solver(level_str, rows, cols, 512);
+        game_solver solver(level_str, rows, cols, 4096);
         solver.enable_advanced_deadlocks = enable_advanced;
         std::vector<game_node> solution;
 
