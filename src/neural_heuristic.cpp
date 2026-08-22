@@ -98,9 +98,9 @@ NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int co
     try {
         auto t_start = std::chrono::high_resolution_clock::now();
         
-        // Load the TorchScript model mapping to CPU explicitly since the model might be saved with CUDA tensors
-        model = std::make_shared<torch::jit::Module>(torch::jit::load(model_path, torch::kCPU));
-        use_gpu = false;
+        // Load the TorchScript model
+        model = std::make_shared<torch::jit::Module>(torch::jit::load(model_path));
+        use_gpu = true;
         if (use_gpu) {
             model->to(torch::kCUDA);
         }
