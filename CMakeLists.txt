@@ -254,6 +254,8 @@ foreach(target
         PRIVATE
         -flto
         -pthread
+        "-Wl,-rpath-link,${CMAKE_CURRENT_SOURCE_DIR}/venv/lib/python3.12/site-packages/nvidia/cudart/lib"
+        "-Wl,-rpath,${CMAKE_CURRENT_SOURCE_DIR}/venv/lib/python3.12/site-packages/nvidia/cudart/lib"
     )
 
     target_link_libraries(
