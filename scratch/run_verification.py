@@ -26,7 +26,8 @@ def extract_boards(sok_file):
     return boards
 
 def main():
-    target_boards_ids = [5, 9, 12, 13, 14]
+    # Los 17 tableros de la intersección estricta original (0 al 16)
+    target_boards_ids = list(range(17))
     
     # Intenta encontrar el archivo .sok correcto
     possible_files = ['sok_files/benchmark_stratified_heldout.sok', 'sok_files/benchmark_stratified.sok', 'sok_files/paper.sok']
