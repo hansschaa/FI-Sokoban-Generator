@@ -71,7 +71,10 @@ def main():
             print(f"===========================================")
             
             temp_out_tsv = f"temp_out_{heuristic}.tsv"
-            cmd = ['./build/batch_solver', temp_sok_filename, heuristic, temp_out_tsv]
+            solver_bin = "./build/batch_solver"
+            if not os.path.exists(solver_bin):
+                solver_bin = "./build2/batch_solver"
+            cmd = [solver_bin, temp_sok_filename, heuristic, temp_out_tsv]
             
             try:
                 # Damos 10 minutos para que complete todos los tableros de una heurística
