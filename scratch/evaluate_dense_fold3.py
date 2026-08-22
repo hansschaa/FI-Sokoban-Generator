@@ -29,11 +29,13 @@ def parse_sok_file(fpath):
         if m_pushes: pushes = int(m_pushes.group(1))
         else: continue
         
-        m_hash = re.search(r"shell_hash:([a-fA-F0-9]+)", header)
-        if m_hash: shell_hash = m_hash.group(1)
-        else: continue
-
+        import hashlib
+        
         board_str = "\n".join(board_lines)
+        MOBILE_CHARS = str.maketrans("$.*@+", "     ")
+        shell_str = board_str.translate(MOBILE_CHARS)
+        shell_hash = hashlib.sha256(shell_str.encode()).hexdigest()
+
         records.append({
             "board_str": board_str,
             "pushes": pushes,
