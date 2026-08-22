@@ -51,12 +51,12 @@ def main():
         fold_map = json.load(f)
     
     # We want fold 3 dense boards
-    fold3_dense_hashes = set()
-    for h, info in fold_map.items():
-        if info['fold'] == 3 and info.get('source') == 'dense':
-            fold3_dense_hashes.add(h)
+    fold3_hashes = set()
+    for h, fold in fold_map.items():
+        if fold == 3:
+            fold3_hashes.add(h)
     
-    print(f"Found {len(fold3_dense_hashes)} dense shell_hashes in Fold 3.")
+    print(f"Found {len(fold3_hashes)} dense shell_hashes in Fold 3.")
 
     # 2. Parse DenseSolvables to find the actual boards
     dense_dir = "training_data/DenseSolvables"
@@ -65,7 +65,7 @@ def main():
     for fpath in glob.glob(os.path.join(dense_dir, "*.sok")):
         recs = parse_sok_file(fpath)
         for r in recs:
-            if r["shell_hash"] in fold3_dense_hashes:
+            if r["shell_hash"] in fold3_hashes:
                 dense_records.append(r)
     
     print(f"Found {len(dense_records)} dense boards for Fold 3 test set.")
