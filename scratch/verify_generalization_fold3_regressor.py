@@ -47,8 +47,17 @@ def main():
             break
             
     if not has_s:
-        print("Warning: Field 's' or 'origin' not found in test dataset dictionaries. Will just report overall MAE.")
-        all_s = [0] * len(test_data_raw)
+        print("Warning: Field 's' or 'origin' not found in test dataset dictionaries. Inferring from wall count...")
+        all_s = []
+        for item in test_data_raw:
+            # item['tensor'] shape is [6, 10, 10], channel 0 is walls
+            walls = item['tensor'][0].sum().item()
+            # Dense boards have very few walls (usually < 22), Original have more (around 25-35)
+            if walls < 22:
+                all_s.append(1) # Dense
+            else:
+                all_s.append(0) # Original
+        has_s = True
         
     all_s = np.array(all_s)
 
