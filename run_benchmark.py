@@ -78,7 +78,7 @@ def main():
             
             try:
                 # Damos 10 minutos para que complete todos los tableros de una heurística
-                subprocess.run(cmd, env=env, check=True, timeout=600)
+                subprocess.run(cmd, env=env, check=True, timeout=7200)
             except subprocess.TimeoutExpired:
                 print(f"TIMEOUT EXPIRED for {heuristic}!")
             except subprocess.CalledProcessError as e:
