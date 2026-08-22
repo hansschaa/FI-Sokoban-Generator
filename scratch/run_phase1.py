@@ -32,7 +32,7 @@ def main():
     # 17 tableros de la intersección estricta (0 al 16)
     target_boards_ids = list(range(17))
     
-    possible_files = ['sok_files/benchmark_stratified.sok', 'sok_files/paper.sok']
+    possible_files = ['sok_files/benchmark_stratified_heldout.sok', 'sok_files/benchmark_stratified.sok', 'sok_files/paper.sok']
     boards = None
     for pf in possible_files:
         if os.path.exists(pf):
