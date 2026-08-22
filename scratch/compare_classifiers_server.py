@@ -96,16 +96,21 @@ def load_models():
     c_old_path = "surrogate_models/results/production_contrastive_classifier_v2_combined.pt"
     c_new_path = "surrogate_models/results/production_contrastive_classifier_v2_combined.pt"
     
-    print(f"Loading Old Classifier to {device}")
     global classifier_old, classifier_new
-    classifier_old = SokobanSEResNetClassifier(dropout_p=0.4, in_channels=12).to(device)
-    classifier_old.load_state_dict(torch.load(c_old_path, map_location=device))
-    classifier_old.eval()
-    
-    print(f"Loading New Classifier to {device}")
-    classifier_new = SokobanSEResNetClassifier(dropout_p=0.4, in_channels=12).to(device)
-    classifier_new.load_state_dict(torch.load(c_new_path, map_location=device))
-    classifier_new.eval()
+    classifier_old = None
+    classifier_new = None
+    try:
+        print(f"Loading Old Classifier to {device}")
+        classifier_old = SokobanSEResNetClassifier(dropout_p=0.4, in_channels=12).to(device)
+        classifier_old.load_state_dict(torch.load(c_old_path, map_location=device))
+        classifier_old.eval()
+        
+        print(f"Loading New Classifier to {device}")
+        classifier_new = SokobanSEResNetClassifier(dropout_p=0.4, in_channels=12).to(device)
+        classifier_new.load_state_dict(torch.load(c_new_path, map_location=device))
+        classifier_new.eval()
+    except Exception as e:
+        print(f"⚠️ Could not load classifiers (missing file). Skipping them since A* benchmark only needs the Regressor. Error: {e}")
 
     r_path = "surrogate_models/results/path_consistency/final_path_consistency_production.pt"
     
