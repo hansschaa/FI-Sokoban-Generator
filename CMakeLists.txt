@@ -261,6 +261,8 @@ foreach(target
     target_link_libraries(
         ${target}
         PRIVATE
+        "-Wl,--no-as-needed"
         ${TORCH_LIBRARIES}
+        "-Wl,--as-needed"
     )
 endforeach()

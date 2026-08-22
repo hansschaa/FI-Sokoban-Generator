@@ -118,7 +118,7 @@ game_solver::game_solver(string& game_map, unsigned int mm, unsigned int nn, int
     // INIT MEMORY POOLS
     // so constructing multiple game_solver instances is leak-free.
     //
-    constant::solver_mp.init(sizeof(game_node), memval * 1024 * 1024 / sizeof(game_node));
+    constant::solver_mp.init(sizeof(game_node), (size_t)memval * 1024 * 1024 / sizeof(game_node));
     constant::maze_mp.init(sizeof(point), mm * nn * 4);
     init = game_node(box_point_start.data(), box_point_start.size(), person_start);
     lk.init();
