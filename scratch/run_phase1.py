@@ -79,7 +79,8 @@ def main():
         print(f"  Heurística: {h}")
         print(f"===========================================")
         for rep in range(1, N_REPS + 1):
-            temp_out_tsv = f"temp_out_phase1_{h}_{rep}.tsv"
+            pid = os.getpid()
+            temp_out_tsv = f"temp_out_phase1_{pid}_{h}_{rep}.tsv"
             cmd = [solver_bin, temp_sok_filename, h, temp_out_tsv]
             print(f"  --> Repetición {rep}...")
             
@@ -118,7 +119,7 @@ def main():
     os.remove(temp_sok_filename)
     
     df = pd.DataFrame(results)
-    csv_out = 'benchmark_phase1_results.csv'
+    csv_out = f'benchmark_phase1_results_{os.getpid()}.csv'
     df.to_csv(csv_out, index=False)
     
     print(f"\n\n=== REPORTE MEDIANAS (GUARDADO EN {csv_out}) ===")
