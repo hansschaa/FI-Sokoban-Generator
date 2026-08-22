@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -eo pipefail
 
 echo "=== Iniciando K-Fold Cross Validation (Path Consistency V2) ==="
 

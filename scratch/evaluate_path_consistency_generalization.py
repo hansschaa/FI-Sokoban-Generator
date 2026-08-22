@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader, TensorDataset
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(BASE_DIR, '..', 'surrogate_models'))
-from models.resnet import SokobanResNetRegressor
+from models.resnet import SokobanSEResNetRegressor
 
 def get_bucket(pushes):
     if pushes <= 10: return "1_to_10"
@@ -20,7 +20,7 @@ def main():
     model_path = os.path.join(BASE_DIR, "..", "surrogate_models", "results", "path_consistency", "production_path_consistency.pt")
     
     print(f"Cargando modelo: {model_path}")
-    model = SokobanResNetRegressor(dropout_p=0.4).to(device)
+    model = SokobanSEResNetRegressor(dropout_p=0.4).to(device)
     model.load_state_dict(torch.load(model_path, map_location=device, weights_only=False))
     model.eval()
 
