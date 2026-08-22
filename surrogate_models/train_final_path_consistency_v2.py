@@ -105,6 +105,7 @@ def main():
     parser.add_argument("--alpha",        type=float, default=None)
     parser.add_argument("--margin",       type=float, default=None)
     parser.add_argument("--epochs",       type=int,   default=60)
+    parser.add_argument("--max_route_distance", type=int, default=1)
     parser.add_argument("--folds",        type=str,   default="1,2,3,4,5",
                         help="Folds a combinar para el train (default: todos)")
     parser.add_argument("--output",       type=str,
@@ -152,7 +153,7 @@ def main():
         if not os.path.exists(pc_path):
             print(f"  ⚠️  No existe: {pc_path}. Saltando fold {fold}.")
             continue
-        ds = PathConsistencyDataset(fold, augment=True)
+        ds = PathConsistencyDataset(fold, augment=True, max_route_distance=args.max_route_distance)
         all_pc_datasets.append(ds)
         print(f"    Fold {fold}: {len(ds):,} pares cargados")
 

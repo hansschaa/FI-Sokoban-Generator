@@ -105,6 +105,7 @@ def main():
     parser.add_argument("--alpha",        type=float, default=None)
     parser.add_argument("--margin",       type=float, default=None)
     parser.add_argument("--epochs",       type=int,   default=60)
+    parser.add_argument("--max_route_distance", type=int, default=1)
     parser.add_argument("--test-fold",    type=int,   default=1,
                         help="Fold usado para test (los demás 4 se usan para train)")
     parser.add_argument("--output",       type=str,
@@ -152,7 +153,7 @@ def main():
         if not os.path.exists(pc_path):
             print(f"  ⚠️  No existe: {pc_path}. Saltando fold {fold}.")
             continue
-        ds = PathConsistencyDataset(fold, augment=True)
+        ds = PathConsistencyDataset(fold, augment=True, max_route_distance=args.max_route_distance)
         all_pc_datasets.append(ds)
         print(f"    Fold {fold}: {len(ds):,} pares cargados")
 
@@ -177,7 +178,7 @@ def main():
             test_pc_path = test_pc_path_v2
         else:
             raise FileNotFoundError(f"No se encontró el test fold: {test_pc_path}")
-    test_ds = PathConsistencyDataset(args.test_fold, augment=False)
+    test_ds = PathConsistencyDataset(args.test_fold, augment=False, max_route_distance=args.max_route_distance)
     test_loader = DataLoader(test_ds, batch_size=loader_batch, shuffle=False,
                              num_workers=0, pin_memory=True, drop_last=False)
     print(f"    Test Fold {args.test_fold}: {len(test_ds):,} pares cargados")
