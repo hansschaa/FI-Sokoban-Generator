@@ -93,7 +93,7 @@ def load_models():
         r_params = json.load(f)
 
     # Initialize both models
-    c_old_path = "surrogate_models/results/final_contrastive_classifier_fold1.pt"
+    c_old_path = "surrogate_models/results/production_contrastive_classifier_v2_combined.pt"
     c_new_path = "surrogate_models/results/production_contrastive_classifier_v2_combined.pt"
     
     print(f"Loading Old Classifier to {device}")
