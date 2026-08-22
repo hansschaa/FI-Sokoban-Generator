@@ -337,15 +337,9 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
     
     // Fix 1: mover tensor a CPU UNA sola vez, luego leer con accessor
     auto cpu_tensor = pushes_pred.to(torch::kCPU).contiguous();
-    static std::ofstream dump_file("scratch/classifier_dump.txt", std::ios::app);
-    dump_file << node->board_to_pretty_string() << "===" << "\n";
+
     auto accessor = cpu_tensor.accessor<float, 1>();
-    static std::ofstream dump_file("scratch/classifier_dump.txt", std::ios::app);
-    for (size_t i = 0; i < nodes.size(); i++) {
-        dump_file << nodes[i]->board_to_pretty_string() << "===";
-    }
-    dump_file << "\n";
-    dump_file.flush();
+
     float z_score = accessor[0];
 
     // Un-normalize
@@ -525,12 +519,7 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
     // Fix 1: mover tensor a CPU UNA sola vez, luego leer con accessor (sin sync GPU por cada elemento)
     auto cpu_tensor = pushes_tensor.to(torch::kCPU).contiguous();
     auto accessor = cpu_tensor.accessor<float, 1>();
-    static std::ofstream dump_file("scratch/classifier_dump.txt", std::ios::app);
-    for (size_t i = 0; i < nodes.size(); i++) {
-        dump_file << nodes[i]->board_to_pretty_string() << "===";
-    }
-    dump_file << "\n";
-    dump_file.flush();
+
 
     std::vector<float> results;
     results.reserve(N);
