@@ -5,8 +5,8 @@ import sys
 import pandas as pd
 import numpy as np
 
-# TODO: Rellena esta ruta con el archivo .pt que confirmemos en el lab
-MODEL_PATH = "AQUI_VA_LA_RUTA"
+# Ruta con el archivo JIT exportado para C++
+MODEL_PATH = "surrogate_models/results/final_path_consistency_production_jit.pt"
 
 def extract_boards(sok_file):
     with open(sok_file, 'r') as f:
