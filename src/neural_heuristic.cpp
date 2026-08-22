@@ -549,7 +549,6 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
             Hungarian h(cost);
             float hungarian_lb = (float)h.solve();
             float clipped_val = hungarian_lb + std::clamp(pushes_pred - hungarian_lb, 0.0f, 1.318f * hungarian_lb);
-            std::cout << "[DEBUG] C++ batch - raw: " << z_score << " -> expm1: " << (float)std::expm1(z_score * pushes_std + pushes_mean) << " -> calib: " << pushes_pred << " -> clip(1.318x): " << clipped_val << std::endl;
             pushes_pred = clipped_val;
         }
         
