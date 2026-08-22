@@ -95,8 +95,10 @@ def main():
                         parts = line.strip().split('\t')
                         if len(parts) < 8: continue
                         status = parts[1]
-                        nodes = int(parts[2]) if parts[2].isdigit() else -1
                         runtime = float(parts[3])
+                        # El LURD path está en parts[2], pushes en parts[4]
+                        # Los nodos expandidos están en parts[5]
+                        nodes = int(parts[5]) if len(parts) > 5 and parts[5].isdigit() else -1
                         
                         internal_id = row_idx - 1
                         real_id = actual_board_map.get(internal_id, -1)
