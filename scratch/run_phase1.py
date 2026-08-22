@@ -67,7 +67,7 @@ def main():
     env['MKL_NUM_THREADS'] = '1'
     env['OPENBLAS_NUM_THREADS'] = '1'
     env['PYTORCH_JIT_USE_NVFuser'] = '0'
-    env['BATCH_K'] = '128' # Usando batch 128 por variable de entorno
+    env['BATCH_K'] = os.environ.get('BATCH_K', '64') # Dinámico desde bash, por defecto 64
     env['MODEL_PATH'] = MODEL_PATH # Enviamos el modelo por variable de entorno
     
     solver_bin = "./build/batch_solver"
