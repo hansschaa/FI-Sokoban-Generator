@@ -58,7 +58,8 @@ def main():
                 actual_board_map[idx] = bid
                 idx += 1
                 
-    HEURISTICS = ['manhattan', 'hungarian', 'neural_sequential', 'neural_batched_massive']
+    # Testing ONLY massive batched with batch size 128
+    HEURISTICS = ['neural_batched_massive']
     N_REPS = 5
     
     env = os.environ.copy()
@@ -66,6 +67,7 @@ def main():
     env['MKL_NUM_THREADS'] = '1'
     env['OPENBLAS_NUM_THREADS'] = '1'
     env['PYTORCH_JIT_USE_NVFuser'] = '0'
+    env['BATCH_K'] = '128' # Usando batch 128 por variable de entorno
     env['MODEL_PATH'] = MODEL_PATH # Enviamos el modelo por variable de entorno
     
     solver_bin = "./build/batch_solver"
