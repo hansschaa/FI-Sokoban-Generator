@@ -26,9 +26,8 @@ def main():
     # Agregar las 5 repeticiones calculando la mediana de los tiempos y tomando el status
     df = df_raw.groupby(['board_id', 'heuristic']).agg({
         'status': lambda x: 'SOLVED' if 'SOLVED' in x.values else x.iloc[0],
-        'expanded_nodes': 'median',
-        'runtime_ms': 'median',
-        'pushes': 'first'
+        'nodes': 'median',
+        'runtime_ms': 'median'
     }).reset_index()
     
     # 2. Filter heuristics
@@ -58,7 +57,7 @@ def main():
         
     # Average nodes/time in intersection
     intersect_df = solved_df[solved_df['board_id'].isin(intersection_boards)]
-    stats = intersect_df.groupby('heuristic').agg({'expanded_nodes': 'mean', 'runtime_ms': 'mean', 'pushes': 'mean'}).reindex(core_heuristics)
+    stats = intersect_df.groupby('heuristic').agg({'nodes': 'mean', 'runtime_ms': 'mean'}).reindex(core_heuristics)
     print("\nPromedios en Intersección Estricta:")
     print(stats)
     
@@ -75,8 +74,8 @@ def main():
             print(f"{h1} vs {h2}: No common solved boards.")
             return
             
-        data_h1 = solved_df[(solved_df['heuristic'] == h1) & (solved_df['board_id'].isin(common))].sort_values('board_id')['expanded_nodes'].values
-        data_h2 = solved_df[(solved_df['heuristic'] == h2) & (solved_df['board_id'].isin(common))].sort_values('board_id')['expanded_nodes'].values
+        data_h1 = solved_df[(solved_df['heuristic'] == h1) & (solved_df['board_id'].isin(common))].sort_values('board_id')['nodes'].values
+        data_h2 = solved_df[(solved_df['heuristic'] == h2) & (solved_df['board_id'].isin(common))].sort_values('board_id')['nodes'].values
         
         if len(common) > 0:
             try:
