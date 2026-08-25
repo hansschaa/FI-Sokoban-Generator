@@ -23,6 +23,9 @@ def main():
     print(f"Leyendo archivo: {csv_file}")
     df_raw = pd.read_csv(csv_file)
     
+    if 'expanded_nodes' in df_raw.columns:
+        df_raw = df_raw.rename(columns={'expanded_nodes': 'nodes'})
+    
     # Agregar las 5 repeticiones calculando la mediana de los tiempos y tomando el status
     df = df_raw.groupby(['board_id', 'heuristic']).agg({
         'status': lambda x: 'SOLVED' if 'SOLVED' in x.values else x.iloc[0],
@@ -47,21 +50,14 @@ def main():
     board_solved_counts = solved_df.groupby('board_id').size()
     intersection_boards = board_solved_counts[board_solved_counts == len(core_heuristics)].index.tolist()
     
-    # Restaurar el filtro estricto a los 17 tableros originales para coincidir con la Tabla III
-    intersection_boards = [b for b in intersection_boards if b < 17]
-    
     print(f"\n=== Intersección Estricta (Resueltos por las 4) ===")
     print(f"Total: {len(intersection_boards)} tableros")
     print(f"Tableros: {intersection_boards}")
     
-    if not intersection_boards:
-        print("No hay tableros en la intersección estricta.")
-        return
-        
-    # Average nodes/time in intersection
+    # Median nodes/time in intersection
     intersect_df = solved_df[solved_df['board_id'].isin(intersection_boards)]
-    stats = intersect_df.groupby('heuristic').agg({'nodes': 'mean', 'runtime_ms': 'mean'}).reindex(core_heuristics)
-    print("\nPromedios en Intersección Estricta:")
+    stats = intersect_df.groupby('heuristic').agg({'nodes': 'median', 'runtime_ms': 'median'}).reindex(core_heuristics)
+    print(f"\nMedianas en Intersección Estricta (n={len(intersection_boards)}):")
     print(stats)
     
     # 5. Wilcoxon Paired Test
