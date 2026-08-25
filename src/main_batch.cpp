@@ -239,7 +239,7 @@ int main(int argc, char* argv[])
             max_secs = std::stod(env_timeout);
         }
 
-        auto stats = solver.test_template(Method::a_star, heuristic_type, solution, calc_path_branching, shared_net, max_secs, 5000000);
+        auto stats = solver.test_template(Method::a_star, heuristic_type, solution, calc_path_branching, shared_net, max_secs, 100000000);
         double duration_ms = stats.runtime_ms;
 
         std::string status_str = (stats.status == SolveStatus::SOLVED) ? "SOLVED" :
