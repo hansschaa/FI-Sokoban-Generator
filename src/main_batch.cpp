@@ -233,8 +233,13 @@ int main(int argc, char* argv[])
         game_solver solver(level_str, rows, cols, 4096);
         solver.enable_advanced_deadlocks = enable_advanced;
         std::vector<game_node> solution;
+        
+        double max_secs = 120.0;
+        if (const char* env_timeout = std::getenv("MAX_SECONDS")) {
+            max_secs = std::stod(env_timeout);
+        }
 
-        auto stats = solver.test_template(Method::a_star, heuristic_type, solution, calc_path_branching, shared_net);
+        auto stats = solver.test_template(Method::a_star, heuristic_type, solution, calc_path_branching, shared_net, max_secs, 5000000);
         double duration_ms = stats.runtime_ms;
 
         std::string status_str = (stats.status == SolveStatus::SOLVED) ? "SOLVED" :
