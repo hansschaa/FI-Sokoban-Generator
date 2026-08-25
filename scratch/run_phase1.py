@@ -29,8 +29,8 @@ def extract_boards(sok_file):
     return boards
 
 def main():
-    # 17 tableros de la intersección estricta (0 al 16)
-    target_boards_ids = list(range(17))
+    # Los 40 tableros completos del held-out set
+    target_boards_ids = list(range(40))
     
     possible_files = ['sok_files/benchmark_stratified_heldout.sok', 'sok_files/benchmark_stratified.sok', 'sok_files/paper.sok']
     boards = None
@@ -58,8 +58,8 @@ def main():
                 actual_board_map[idx] = bid
                 idx += 1
                 
-    # Testing ONLY massive batched with batch size 128
-    HEURISTICS = ['neural_batched_massive']
+    # Probar todas las heurísticas para la tabla completa
+    HEURISTICS = ['manhattan', 'hungarian', 'neural_sequential', 'neural_batched_massive']
     N_REPS = 5
     
     env = os.environ.copy()
