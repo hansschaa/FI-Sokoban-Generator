@@ -21,7 +21,15 @@ def main():
             csv_file = 'benchmark_results_0_to_40_new.csv'
             
     print(f"Leyendo archivo: {csv_file}")
-    df = pd.read_csv(csv_file)
+    df_raw = pd.read_csv(csv_file)
+    
+    # Agregar las 5 repeticiones calculando la mediana de los tiempos y tomando el status
+    df = df_raw.groupby(['board_id', 'heuristic']).agg({
+        'status': lambda x: 'SOLVED' if 'SOLVED' in x.values else x.iloc[0],
+        'expanded_nodes': 'median',
+        'runtime_ms': 'median',
+        'pushes': 'first'
+    }).reset_index()
     
     # 2. Filter heuristics
     core_heuristics = ['manhattan', 'hungarian', 'neural_sequential', 'neural_batched_massive']
