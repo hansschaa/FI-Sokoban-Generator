@@ -47,6 +47,9 @@ def main():
     board_solved_counts = solved_df.groupby('board_id').size()
     intersection_boards = board_solved_counts[board_solved_counts == len(core_heuristics)].index.tolist()
     
+    # Restaurar el filtro estricto a los 17 tableros originales para coincidir con la Tabla III
+    intersection_boards = [b for b in intersection_boards if b < 17]
+    
     print(f"\n=== Intersección Estricta (Resueltos por las 4) ===")
     print(f"Total: {len(intersection_boards)} tableros")
     print(f"Tableros: {intersection_boards}")
