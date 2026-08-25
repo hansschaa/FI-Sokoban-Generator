@@ -9,11 +9,11 @@ import glob
 
 def main():
     # 1. Load data
-    csv_file = 'benchmark_phase1_results_320840.csv'
+    csv_file = None
     if len(sys.argv) > 1:
         csv_file = sys.argv[1]
-    elif not os.path.exists(csv_file):
-        # Fallback to the latest benchmark_phase1_results_*.csv
+    else:
+        # Siempre tomar el más reciente por defecto
         files = glob.glob('benchmark_phase1_results_*.csv')
         if files:
             csv_file = max(files, key=os.path.getctime)
