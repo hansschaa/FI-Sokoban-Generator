@@ -28,7 +28,7 @@ def main():
     fd, temp_sok = tempfile.mkstemp(prefix="hard_", suffix=".sok")
     with os.fdopen(fd, 'w') as f:
         for bid, bstr in hard_boards:
-            f.write(bstr + "\n\n")
+            f.write(f"; Board {bid}\n" + bstr + "\n\n")
             
     print(f"Tableros 18 y 35 guardados en {temp_sok}")
     
