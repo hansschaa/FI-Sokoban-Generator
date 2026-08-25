@@ -100,8 +100,8 @@ def main():
                         status = parts[1]
                         runtime = float(parts[3])
                         # El LURD path está en parts[2], pushes en parts[4]
-                        # Los nodos expandidos están en parts[5]
-                        nodes = int(parts[5]) if len(parts) > 5 and parts[5].isdigit() else -1
+                        # Los nodos expandidos están en parts[7] (parts[5] son los movimientos/moves)
+                        nodes = int(parts[7]) if len(parts) > 7 and parts[7].isdigit() else -1
                         
                         internal_id = row_idx - 1
                         real_id = actual_board_map.get(internal_id, -1)
