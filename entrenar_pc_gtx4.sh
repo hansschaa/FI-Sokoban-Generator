@@ -16,7 +16,7 @@ fi
 # 1. Calibración del Pruner
 echo ""
 echo "=== FASE 1: Calibración del MedianPruner ==="
-python3 surrogate_models/run_pruner_calibration.py
+python3 surrogate_models/run_pruner_calibration.py --fold 3
 
 # Extraer el warmup recomendado del JSON generado
 CALIBRATION_FILE="surrogate_models/results/pruner_calibration_results.json"

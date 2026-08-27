@@ -130,8 +130,11 @@ def run_single_trial(trial_id: int, fold: int, rng_seed: int, device):
     loader  = DataLoader(dataset, batch_size=batch_size, shuffle=True,
                          num_workers=0, pin_memory=True, drop_last=True)
 
-    stats  = torch.load(os.path.join(RESULTS_DIR, f"regressor_fold{fold}_stats.pt"),
-                        weights_only=False)
+    stats_path = os.path.join(RESULTS_DIR, f"regressor_fold{fold}_stats.pt")
+    if not os.path.exists(stats_path):
+        stats_path = os.path.join(RESULTS_DIR, "production_regressor_stats.pt")
+        print(f"⚠️  {f'regressor_fold{fold}_stats.pt'} no encontrado — usando production_regressor_stats.pt")
+    stats  = torch.load(stats_path, weights_only=False)
     p_mean = stats["pushes_mean"]
     p_std  = stats["pushes_std"]
 
