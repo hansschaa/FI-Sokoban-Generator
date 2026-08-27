@@ -28,7 +28,7 @@ def apply_d4(t, variant):
 class PathConsistencyDataset(Dataset):
     def __init__(self, fold_k, augment=True, max_route_distance=-1):
         self.augment = augment
-        path_file = os.path.join(RESULTS_DIR, "path_consistency", f"path_fold{fold_k}_train.pt")
+        path_file = os.path.join(RESULTS_DIR, "path_consistency_v2", f"path_fold{fold_k}_train.pt")
         print(f"  Cargando dataset de Path Consistency: {os.path.basename(path_file)}...")
         
         # Determine if mmap=True is supported
