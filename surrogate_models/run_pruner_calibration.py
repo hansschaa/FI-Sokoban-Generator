@@ -126,7 +126,7 @@ def run_single_trial(trial_id: int, fold: int, rng_seed: int, device):
           f"drop={dropout_p:.2f} bs={batch_size} alpha={alpha:.3f} margin={margin:.3f}")
 
     model   = SokobanSEResNetRegressor(dropout_p=dropout_p).to(device)
-    dataset = PathConsistencyDataset(fold, augment=True)
+    dataset = PathConsistencyDataset(fold, augment=True, max_route_distance=1)
     loader  = DataLoader(dataset, batch_size=batch_size, shuffle=True,
                          num_workers=0, pin_memory=True, drop_last=True)
 

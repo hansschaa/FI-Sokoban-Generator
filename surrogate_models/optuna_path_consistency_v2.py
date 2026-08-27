@@ -143,7 +143,7 @@ def make_objective(fold: int, n_eval_pairs: int, use_pruning: bool):
         # ────────────────────────────────────────────────────────────────────
 
         model   = SokobanSEResNetRegressor(dropout_p=dropout_p).to(device)
-        dataset = PathConsistencyDataset(fold, augment=True)
+        dataset = PathConsistencyDataset(fold, augment=True, max_route_distance=1)
         loader  = DataLoader(dataset, batch_size=batch_size, shuffle=True,
                              num_workers=0, pin_memory=True, drop_last=True)
 

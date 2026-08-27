@@ -66,17 +66,17 @@ def load_hparams(args) -> dict:
         "batch_size": None, "alpha": None, "margin": None,
     }
 
-    # Intentar cargar desde JSON v2 primero, luego original
-    for fname in ["best_hparams_path_consistency_v2.json",
-                  "best_hparams_path_consistency.json"]:
-        fpath = os.path.join(RESULTS_DIR, fname)
-        if os.path.exists(fpath):
-            with open(fpath) as f:
-                data = json.load(f)
-            params = data.get("params", data.get("best_params", {}))
-            defaults.update({k: v for k, v in params.items() if k in defaults})
-            print(f"  📂 Hiperparámetros base cargados desde: {fname}")
-            break
+    # Carga estricta desde JSON v2
+    fname = "best_hparams_path_consistency_v2.json"
+    fpath = os.path.join(RESULTS_DIR, fname)
+    if not os.path.exists(fpath):
+        raise FileNotFoundError(f"¡CRÍTICO! No se encontró el archivo {fname}. Ejecuta Optuna primero.")
+        
+    with open(fpath) as f:
+        data = json.load(f)
+    params = data.get("params", data.get("best_params", {}))
+    defaults.update({k: v for k, v in params.items() if k in defaults})
+    print(f"  📂 Hiperparámetros base cargados estrictamente desde: {fname}")
 
     # CLI sobreescribe
     if args.lr           is not None: defaults["lr"]           = args.lr
