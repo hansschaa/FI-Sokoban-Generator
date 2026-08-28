@@ -199,6 +199,9 @@ def main():
         model.load_state_dict(ckpt['model_state_dict'])
         optimizer.load_state_dict(ckpt['optimizer_state_dict'])
         scheduler.load_state_dict(ckpt['scheduler_state_dict'])
+        # Asegurarnos de que el T_max del scheduler se actualice si extendimos las épocas
+        if hasattr(scheduler, 'T_max') and scheduler.T_max != args.epochs:
+            scheduler.T_max = args.epochs
         start_epoch  = ckpt['epoch'] + 1
         best_loss    = ckpt['best_loss']
         best_weights = ckpt['best_weights']
