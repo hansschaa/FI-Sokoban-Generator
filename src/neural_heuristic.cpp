@@ -109,8 +109,17 @@ NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int co
         }
         if (use_gpu) {
             model->to(torch::kCUDA);
+        } else {
+            model->to(torch::kCPU);
         }
         model->eval();
+        
+        if (const char* env_disable_switch = std::getenv("DISABLE_HYBRID_SWITCH")) {
+            if (std::string(env_disable_switch) == "1" || std::string(env_disable_switch) == "true") {
+                disable_hybrid_switch = true;
+                std::cout << "[NeuralHeuristic] DISABLE_HYBRID_SWITCH flag detected. The Neural Network will be used on all boards." << std::endl;
+            }
+        }
         
         // Disable gradients for faster inference
         torch::NoGradGuard no_grad;
@@ -229,7 +238,7 @@ float NeuralHeuristic::evaluate(const game_node* node, const std::vector<std::ve
 
     // Hybrid Switch: Usar Hungarian puro para tableros con 6+ cajas
     // donde la red neuronal tiende a colapsar cognitivamente.
-    if (node->box_count >= 6) {
+    if (!disable_hybrid_switch && node->box_count >= 6) {
         int num_boxes = node->box_count;
         int num_goals = (int)goal_positions.size();
         int sz = std::max(num_boxes, num_goals);
@@ -391,7 +400,7 @@ std::vector<float> NeuralHeuristic::evaluate_batch(const std::vector<const game_
     }
 
     // Hybrid Switch: Usar Hungarian puro para tableros con 6+ cajas
-    if (nodes[0]->box_count >= 6) {
+    if (!disable_hybrid_switch && nodes[0]->box_count >= 6) {
         std::vector<float> results;
         for (size_t i = 0; i < nodes.size(); ++i) {
             const game_node* node = nodes[i];

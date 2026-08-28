@@ -25,6 +25,7 @@ private:
     bool mask_initialized = false;
     bool dist_initialized = false;
     bool use_gpu = false;
+    bool disable_hybrid_switch = false;
     
     std::vector<point> goal_positions;
     std::vector<std::vector<std::vector<int>>> dist_to_goal;

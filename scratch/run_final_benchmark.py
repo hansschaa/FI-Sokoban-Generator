@@ -12,6 +12,8 @@ def main():
     env = os.environ.copy()
     env['OMP_NUM_THREADS'] = '1'
     env['MKL_NUM_THREADS'] = '1'
+    env['MAX_SECONDS'] = '600.0'
+    env['DISABLE_HYBRID_SWITCH'] = '1'
     
     configs = [
         ("manhattan", "CPU", {}),
@@ -25,7 +27,7 @@ def main():
     ]
     
     for h, device, extra_env in configs:
-        print(f"\n--- Evaluando {h} en {device} ---")
+        print(f"\n--- Evaluando {h} en {device} ---", flush=True)
         curr_env = env.copy()
         curr_env.update(extra_env)
         
@@ -53,11 +55,11 @@ def main():
                     f.write(f"{lvl},{h},{device},{status},{runtime},{pushes},{nodes},{children},{eff_children}\n")
             os.remove(temp_out)
         except Exception as e:
-            print(f"Error evaluando {h} en {device}: {e}")
+            print(f"Error evaluando {h} en {device}: {e}", flush=True)
 
     df = pd.read_csv(out_csv)
-    print("\n=== TABLA DE RESULTADOS FINALES ===")
-    print(df.to_string())
+    print("\n=== TABLA DE RESULTADOS FINALES ===", flush=True)
+    print(df.to_string(), flush=True)
 
 if __name__ == '__main__':
     main()
