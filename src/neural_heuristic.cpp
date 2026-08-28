@@ -101,6 +101,12 @@ NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int co
         // Load the TorchScript model
         model = std::make_shared<torch::jit::Module>(torch::jit::load(model_path));
         use_gpu = true;
+        if (const char* env_cpu = std::getenv("USE_CPU")) {
+            if (std::string(env_cpu) == "1" || std::string(env_cpu) == "true") {
+                use_gpu = false;
+                std::cout << "[NeuralHeuristic] USE_CPU flag detected. Running model on CPU." << std::endl;
+            }
+        }
         if (use_gpu) {
             model->to(torch::kCUDA);
         }
