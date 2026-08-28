@@ -98,8 +98,6 @@ NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int co
     try {
         auto t_start = std::chrono::high_resolution_clock::now();
         
-        // Load the TorchScript model
-        model = std::make_shared<torch::jit::Module>(torch::jit::load(model_path));
         use_gpu = true;
         if (const char* env_cpu = std::getenv("USE_CPU")) {
             if (std::string(env_cpu) == "1" || std::string(env_cpu) == "true") {
@@ -107,6 +105,20 @@ NeuralHeuristic::NeuralHeuristic(const std::string& model_path, int rows, int co
                 std::cout << "[NeuralHeuristic] USE_CPU flag detected. Running model on CPU." << std::endl;
             }
         }
+        
+        std::string actual_model_path = model_path;
+        // Adjust the model path to inject _cpu or _cuda before .pt
+        if (model_path.size() >= 3 && model_path.substr(model_path.size() - 3) == ".pt") {
+            if (use_gpu) {
+                actual_model_path = model_path.substr(0, model_path.size() - 3) + "_cuda.pt";
+            } else {
+                actual_model_path = model_path.substr(0, model_path.size() - 3) + "_cpu.pt";
+            }
+        }
+
+        // Load the TorchScript model
+        model = std::make_shared<torch::jit::Module>(torch::jit::load(actual_model_path));
+        
         if (use_gpu) {
             model->to(torch::kCUDA);
         } else {
