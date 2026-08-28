@@ -4,7 +4,7 @@ import pandas as pd
 
 def main():
     sok_file = 'sok_files/benchmark_stratified_heldout.sok'
-    out_csv = "surrogate_models/results/final_benchmark_results.csv"
+    out_csv = "surrogate_models/results/final_benchmark_neural.csv"
     
     with open(out_csv, "w") as f:
         f.write("LevelName,Heuristic,Device,Status,Runtime_ms,Pushes,ExpandedNodes,TotalChildren,EffectiveChildren\n")
@@ -16,8 +16,6 @@ def main():
     env['DISABLE_HYBRID_SWITCH'] = '1'
     
     configs = [
-        ("manhattan", "CPU", {}),
-        ("hungarian", "CPU", {}),
         ("neural_sequential", "GPU", {}),
         ("neural_sequential", "CPU", {"USE_CPU": "1"}),
         ("neural_batched", "GPU", {}),
