@@ -92,6 +92,7 @@ int main(int argc, char** argv) {
         printf("press Enter to show solves\n");
         cin.get();
         draw_picture d;
-        d.draw(solution);
+        std::vector<game_node> solution_for_draw(solution.rbegin(), solution.rend());
+        d.draw(solution_for_draw);
     }
 }

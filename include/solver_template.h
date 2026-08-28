@@ -35,9 +35,10 @@ public:
         std::function<int(const Node*, const Node*)> heuristic = nullptr,
         std::function<std::vector<int>(const std::vector<const Node*>&, const Node*)> heuristic_batch = nullptr,
         int batch_k = 1,           // 1 = per-node batch  |  >1 = cross-node batch (acumula batch_k nodos padres)
-        double max_seconds = 120.0,
-        size_t max_nodes = 500000
+        double max_seconds = 60.0,
+        size_t max_nodes = 2000000
     ) {
+        h_cache.clear();
         if (is_equal(start, goal)) {
             if constexpr (std::is_same_v<Result, bool>) {
                 return true;
@@ -138,6 +139,10 @@ public:
 
             std::vector<const Node*> children;
             get_neighbors(current, [&](const Node* neighbor) {
+                if (is_visited(neighbor)) {
+                    discarded_nodes.push_back(neighbor);
+                    return;
+                }
                 children.push_back(neighbor);
             });
 
@@ -154,12 +159,10 @@ public:
                                 const Node*  parent_ptr;
                             };
                             std::vector<PendingChild> pending;
-                            std::vector<const Node*>  child_ptrs;
+                            pending.reserve(batch_k * 8);
 
-                            // Hijos del nodo `current` (ya expandido)
                             for (auto child : children) {
                                 pending.push_back({child, g_current, current});
-                                child_ptrs.push_back(child);
                             }
 
                             // Expandir hasta batch_k-1 nodos adicionales
@@ -177,13 +180,46 @@ public:
                                 const int g2_local = g2;
                                 const Node* node2_local = node2;
                                 get_neighbors(node2_local, [&](const Node* neighbor) {
+                                    if (is_visited(neighbor)) {
+                                        discarded_nodes.push_back(neighbor);
+                                        return;
+                                    }
                                     pending.push_back({neighbor, g2_local, node2_local});
-                                    child_ptrs.push_back(neighbor);
                                 });
                             }
 
-                            // Una sola llamada GPU con todos los hijos acumulados
-                            auto h_scores = heuristic_batch(child_ptrs, goal);
+                            // Deduplicate `pending` using `h_cache` and `local_pending`
+                            std::vector<int> h_scores(pending.size(), -1);
+                            std::vector<const Node*> to_evaluate;
+                            std::unordered_map<size_t, std::vector<size_t>> local_pending_indices;
+
+                            for (size_t i = 0; i < pending.size(); i++) {
+                                size_t hash = pending[i].child->get_hash();
+                                auto it = h_cache.find(hash);
+                                if (it != h_cache.end()) {
+                                    h_scores[i] = it->second;
+                                } else {
+                                    auto local_it = local_pending_indices.find(hash);
+                                    if (local_it != local_pending_indices.end()) {
+                                        local_pending_indices[hash].push_back(i);
+                                    } else {
+                                        local_pending_indices[hash] = {i};
+                                        to_evaluate.push_back(pending[i].child);
+                                    }
+                                }
+                            }
+
+                            if (!to_evaluate.empty()) {
+                                auto evaluated = heuristic_batch(to_evaluate, goal);
+                                for (size_t i = 0; i < to_evaluate.size(); i++) {
+                                    size_t hash = to_evaluate[i]->get_hash();
+                                    int score = evaluated[i];
+                                    h_cache[hash] = score;
+                                    for (size_t idx : local_pending_indices[hash]) {
+                                        h_scores[idx] = score;
+                                    }
+                                }
+                            }
 
                             for (size_t i = 0; i < pending.size(); i++) {
                                 const auto& [child, g_par, par] = pending[i];
@@ -212,8 +248,37 @@ public:
 
                         } else {
                             // ── PER-NODE BATCHING (batch_k=1) ────────────────────────
-                            // Evalúa solo los hijos del nodo actual (2-12 típico).
-                            auto h_scores = heuristic_batch(children, goal);
+                            std::vector<int> h_scores(children.size(), -1);
+                            std::vector<const Node*> to_evaluate;
+                            std::unordered_map<size_t, std::vector<size_t>> local_pending_indices;
+
+                            for (size_t i = 0; i < children.size(); i++) {
+                                size_t hash = children[i]->get_hash();
+                                auto it = h_cache.find(hash);
+                                if (it != h_cache.end()) {
+                                    h_scores[i] = it->second;
+                                } else {
+                                    auto local_it = local_pending_indices.find(hash);
+                                    if (local_it != local_pending_indices.end()) {
+                                        local_pending_indices[hash].push_back(i);
+                                    } else {
+                                        local_pending_indices[hash] = {i};
+                                        to_evaluate.push_back(children[i]);
+                                    }
+                                }
+                            }
+
+                            if (!to_evaluate.empty()) {
+                                auto evaluated = heuristic_batch(to_evaluate, goal);
+                                for (size_t i = 0; i < to_evaluate.size(); i++) {
+                                    size_t hash = to_evaluate[i]->get_hash();
+                                    int score = evaluated[i];
+                                    h_cache[hash] = score;
+                                    for (size_t idx : local_pending_indices[hash]) {
+                                        h_scores[idx] = score;
+                                    }
+                                }
+                            }
 
                             for (size_t i = 0; i < children.size(); i++) {
                                 const Node* neighbor = children[i];
@@ -241,7 +306,15 @@ public:
                         std::vector<int> h_scores;
                         h_scores.reserve(children.size());
                         for (auto n : children) {
-                            h_scores.push_back(heuristic(n, goal));
+                            size_t hash = n->get_hash();
+                            auto it = h_cache.find(hash);
+                            if (it != h_cache.end()) {
+                                h_scores.push_back(it->second);
+                            } else {
+                                int score = heuristic(n, goal);
+                                h_cache[hash] = score;
+                                h_scores.push_back(score);
+                            }
                         }
 
                         for (size_t i = 0; i < children.size(); i++) {
@@ -314,6 +387,8 @@ public:
 
         return get_default_result();
     }
+
+    std::unordered_map<size_t, int> h_cache;
 
 private:
     std::vector<Node> get_path(const Node* start, const Node* goal,

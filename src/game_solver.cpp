@@ -440,7 +440,7 @@ void game_solver::set_lambda_function(){
 
 // Función auxiliar para reconstruir LURD antes de test_template
 static std::string reconstruct_lurd(const std::vector<game_node>& solution, point initial_player_pos) {
-    if (solution.size() <= 1) return "";
+    if (solution.empty() || solution.size() <= 1) return "";
 
     std::string full_path = "";
 
@@ -451,10 +451,10 @@ static std::string reconstruct_lurd(const std::vector<game_node>& solution, poin
 
     point current_player_pos = initial_player_pos;
 
-    // FIX: Iteramos en reversa porque el solver entrega la ruta [Meta ... Inicio]
-    for (int i = (int)solution.size() - 1; i >= 1; i--) {
+    // FIX: Iteramos en orden normal porque el solver entrega la ruta [Inicio ... Meta]
+    for (size_t i = 0; i < solution.size() - 1; i++) {
         const game_node& a = solution[i];     // Estado antes de empujar
-        const game_node& b = solution[i-1];   // Estado después de empujar
+        const game_node& b = solution[i+1];   // Estado después de empujar
 
         // 1. Identificar qué caja se movió comparando los sets
         point box_from = point(-1, -1);
@@ -585,6 +585,9 @@ SolverStats game_solver::test_template(
     }
 
     auto heuristic = [&](const game_node* a, const game_node*) {
+        static int total_heuristic_calls = 0;
+        total_heuristic_calls++;
+        
         if (heuristic_type == Heuristic::neural) {
             // 1. Deteccion de Deadlocks por reglas matematicas (ahorra 33ms de inferencia por cada tablero trancado)
             int penalty_cost = penalty_solver.calculate_penalty(a->box_list, a->box_count);
@@ -608,11 +611,13 @@ SolverStats game_solver::test_template(
 
             Hungarian h(cost);
             int min_cost = h.solve();
+            std::cout << "[DEBUG] Heuristic calls so far: " << total_heuristic_calls << "\n";
 
             int penalty_cost = penalty_solver.calculate_penalty(a->box_list, a->box_count);
             return min_cost >= 1000 ? min_cost : min_cost + penalty_cost;
         }
         else if (heuristic_type == Heuristic::manhattan) {
+            std::cout << "[DEBUG] Heuristic calls so far: " << total_heuristic_calls << "\n";
             int f = 0;
             for (int i = 0; i < a->box_count; i++) {
                 int min_dist = 100000;
@@ -658,6 +663,11 @@ SolverStats game_solver::test_template(
             }
 
             if (!to_evaluate.empty()) {
+                static int total_tensor_items = 0;
+                total_tensor_items += to_evaluate.size();
+                // We will print it every time so we can see the final count
+                std::cout << "[DEBUG] Total tensor items evaluated so far: " << total_tensor_items << "\n";
+                
                 std::vector<float> predictions = neural_net->evaluate_batch(to_evaluate, end_vec);
                 for (size_t j = 0; j < to_evaluate.size(); j++) {
                     int score = static_cast<int>(std::max(0.0f, predictions[j])) + cached_penalties[j];
@@ -734,6 +744,7 @@ SolverStats game_solver::test_template(
 
     SolverStats stats;
     stats.initial_optimal_distance = initial_opt_dist;
+    std::cout << "[DEBUG] discarded_nodes size: " << gsolver0.discarded_nodes.size() << "\n";
 
     // 4. GUARDAR EN MILISEGUNDOS EXACTOS
     stats.runtime_ms = std::chrono::duration<double, std::milli>(t_end - t_start).count();
