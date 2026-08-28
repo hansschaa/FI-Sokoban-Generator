@@ -15,7 +15,9 @@ def main():
     
     configs = [
         ("neural_sequential", "GPU", {}),
+        ("neural_sequential", "CPU", {"USE_CPU": "1"}),
         ("neural_batched", "GPU", {}),
+        ("neural_batched", "CPU", {"USE_CPU": "1"}),
         ("neural_batched_massive", "GPU", {}),
         ("neural_batched_massive", "CPU", {"USE_CPU": "1"})
     ]
