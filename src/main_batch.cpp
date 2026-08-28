@@ -188,7 +188,7 @@ int main(int argc, char* argv[])
     std::vector<SokobanLevel> collection;
     try {
         collection = load_sok_collection(input_file);
-        std::cout << "🚀 Coleccion cargada. Procesando " << collection.size() << " tableros...\n";
+        std::cout << "🚀 Coleccion cargada. Procesando " << collection.size() << " tableros con heuristica [" << heuristic_arg << "]...\n";
     }
     catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
@@ -245,7 +245,7 @@ int main(int argc, char* argv[])
         std::string status_str = (stats.status == SolveStatus::SOLVED) ? "SOLVED" :
                                  (stats.status == SolveStatus::TIMEOUT) ? "TIMEOUT" : "UNSOLVABLE";
 
-        std::cout << status_str << " (" << std::fixed << std::setprecision(2) << duration_ms << " ms)\n";
+        std::cout << status_str << " | " << std::fixed << std::setprecision(2) << duration_ms << " ms | Nodos Expandidos: " << stats.expanded_nodes << "\n";
 
         // --- EXPORTACIÓN DE TODAS LAS VARIABLES BASE ---
         out << lvl.name << "\t"
