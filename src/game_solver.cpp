@@ -719,7 +719,7 @@ SolverStats game_solver::test_template(
             // Limpieza inmediata y salida temprana
             vars_clear(init);
             SolverStats s;
-            s.status = SolveStatus::TIMEOUT;
+            s.status = SolveStatus::OOM;
             s.expanded_nodes = stat_expanded_nodes;
             s.runtime_ms = std::chrono::duration<double, std::milli>(t_end - t_start).count();
             return s;

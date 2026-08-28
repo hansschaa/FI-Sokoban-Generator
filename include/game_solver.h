@@ -28,7 +28,8 @@ public:
 enum class SolveStatus {
     SOLVED,
     UNSOLVABLE,
-    TIMEOUT
+    TIMEOUT,
+    OOM
 };
 
 struct SolverStats {

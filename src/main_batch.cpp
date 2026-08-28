@@ -243,7 +243,8 @@ int main(int argc, char* argv[])
         double duration_ms = stats.runtime_ms;
 
         std::string status_str = (stats.status == SolveStatus::SOLVED) ? "SOLVED" :
-                                 (stats.status == SolveStatus::TIMEOUT) ? "TIMEOUT" : "UNSOLVABLE";
+                                 (stats.status == SolveStatus::TIMEOUT) ? "TIMEOUT" :
+                                 (stats.status == SolveStatus::OOM) ? "OOM" : "UNSOLVABLE";
 
         std::cout << status_str << " | " << std::fixed << std::setprecision(2) << duration_ms << " ms | Nodos Expandidos: " << stats.expanded_nodes << "\n";
 
