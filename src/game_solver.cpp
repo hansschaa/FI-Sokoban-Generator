@@ -611,13 +611,11 @@ SolverStats game_solver::test_template(
 
             Hungarian h(cost);
             int min_cost = h.solve();
-            std::cout << "[DEBUG] Heuristic calls so far: " << total_heuristic_calls << "\n";
 
             int penalty_cost = penalty_solver.calculate_penalty(a->box_list, a->box_count);
             return min_cost >= 1000 ? min_cost : min_cost + penalty_cost;
         }
         else if (heuristic_type == Heuristic::manhattan) {
-            std::cout << "[DEBUG] Heuristic calls so far: " << total_heuristic_calls << "\n";
             int f = 0;
             for (int i = 0; i < a->box_count; i++) {
                 int min_dist = 100000;
@@ -666,7 +664,6 @@ SolverStats game_solver::test_template(
                 static int total_tensor_items = 0;
                 total_tensor_items += to_evaluate.size();
                 // We will print it every time so we can see the final count
-                std::cout << "[DEBUG] Total tensor items evaluated so far: " << total_tensor_items << "\n";
                 
                 std::vector<float> predictions = neural_net->evaluate_batch(to_evaluate, end_vec);
                 for (size_t j = 0; j < to_evaluate.size(); j++) {
@@ -744,7 +741,6 @@ SolverStats game_solver::test_template(
 
     SolverStats stats;
     stats.initial_optimal_distance = initial_opt_dist;
-    std::cout << "[DEBUG] discarded_nodes size: " << gsolver0.discarded_nodes.size() << "\n";
 
     // 4. GUARDAR EN MILISEGUNDOS EXACTOS
     stats.runtime_ms = std::chrono::duration<double, std::milli>(t_end - t_start).count();
