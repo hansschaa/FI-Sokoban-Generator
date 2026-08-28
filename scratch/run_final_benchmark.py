@@ -14,6 +14,8 @@ def main():
     env['MKL_NUM_THREADS'] = '1'
     
     configs = [
+        ("manhattan", "CPU", {}),
+        ("hungarian", "CPU", {}),
         ("neural_sequential", "GPU", {}),
         ("neural_sequential", "CPU", {"USE_CPU": "1"}),
         ("neural_batched", "GPU", {}),
