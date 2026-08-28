@@ -715,11 +715,13 @@ SolverStats game_solver::test_template(
         }
     } catch (const std::runtime_error& e) {
         if (std::string(e.what()) == "OOM") {
+            t_end = std::chrono::high_resolution_clock::now();
             // Limpieza inmediata y salida temprana
             vars_clear(init);
             SolverStats s;
             s.status = SolveStatus::TIMEOUT;
             s.expanded_nodes = stat_expanded_nodes;
+            s.runtime_ms = std::chrono::duration<double, std::milli>(t_end - t_start).count();
             return s;
         }
         throw; // Otra excepcion
