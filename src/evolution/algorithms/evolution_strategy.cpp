@@ -2,6 +2,7 @@
 #include "../../../include/evolution/utils/board_utils.h"
 #include <iostream>
 #include <filesystem>
+#include <chrono>
 #include <fstream>
 
 #include <iostream>
@@ -97,6 +98,10 @@ Individual EvolutionStrategy::run(
     int total_clone_fallbacks = 0;
     int total_clones_injected = 0;
 
+    auto t_gen_wall_start = std::chrono::high_resolution_clock::now();
+    double cumulative_mutation_ms = 0, cumulative_surrogate_ms = 0, cumulative_verification_ms = 0;
+    int cumulative_verifications = 0;
+
     while (true)
     {
         bool improved = false;
@@ -122,6 +127,7 @@ Individual EvolutionStrategy::run(
         int totalAttempts = 0;
         const int maxAttempts = lambda * 10;
 
+        auto t_mut_start = std::chrono::high_resolution_clock::now();
         std::vector<Individual> batch_to_evaluate;
         std::vector<Individual> batch_no_evaluation;
 
@@ -164,7 +170,12 @@ Individual EvolutionStrategy::run(
             generated++;
         }
 
+        auto t_mut_end = std::chrono::high_resolution_clock::now();
+        double mutation_ms = std::chrono::duration<double, std::milli>(t_mut_end - t_mut_start).count();
+        cumulative_mutation_ms += mutation_ms;
+
         // EVALUATION OF BATCH
+        auto t_surr_start = std::chrono::high_resolution_clock::now();
         if (!batch_to_evaluate.empty()) {
             if (evaluator.use_surrogate && evaluator.heuristic_type != Heuristic::classifier_filter) {
                 if (generation == 1 || generation == 10 || stagnationCount == stagnationLimit - 1) {
@@ -219,6 +230,9 @@ Individual EvolutionStrategy::run(
             evaluations += batch_to_evaluate.size();
             total_rejections += (totalAttempts - generated);
         }
+        auto t_surr_end = std::chrono::high_resolution_clock::now();
+        double surrogate_ms = std::chrono::duration<double, std::milli>(t_surr_end - t_surr_start).count();
+        cumulative_surrogate_ms += surrogate_ms;
 
         // PROCESS RESULTS
         for (auto& child : batch_to_evaluate) {
@@ -298,6 +312,8 @@ Individual EvolutionStrategy::run(
         int astar_failures = 0;
         const int MAX_FAILURES = 3;
 
+        auto t_verify_start = std::chrono::high_resolution_clock::now();
+        int gen_verifications = 0;
         for (int i = 0; i < (int)combined.size() && (int)next_population.size() < toSelect; i++)
         {
             auto& ind = combined[i];
@@ -321,8 +337,13 @@ Individual EvolutionStrategy::run(
                     Evaluator astar_eval = evaluator;
                     astar_eval.use_surrogate = false;
                     astar_eval.heuristic_type = Heuristic::hungarian;
-                    astar_eval.max_seconds = 5.0; // Fast verification for circuit breaker!
+                    astar_eval.max_seconds = 5.0;
+                    auto t_v0 = std::chrono::high_resolution_clock::now();
                     double true_fitness = astar_eval.evaluate(ind);
+                    auto t_v1 = std::chrono::high_resolution_clock::now();
+                    double v_ms = std::chrono::duration<double, std::milli>(t_v1 - t_v0).count();
+                    gen_verifications++;
+                    std::cerr << "[PHASE_D] Verificacion A* #" << gen_verifications << " en Gen " << generation << ": " << v_ms << " ms (fitness=" << true_fitness << ")\n";
                     
                     if (true_fitness == -2e9) {
                         // TIMEOUT during verification!
@@ -375,6 +396,10 @@ Individual EvolutionStrategy::run(
             }
         }
         
+        auto t_verify_end = std::chrono::high_resolution_clock::now();
+        double verify_ms = std::chrono::duration<double, std::milli>(t_verify_end - t_verify_start).count();
+        cumulative_verification_ms += verify_ms;
+        cumulative_verifications += gen_verifications;
         population = next_population;
         
         // If we rejected too many and couldn't fill mu, fill with clones of best
@@ -439,10 +464,17 @@ Individual EvolutionStrategy::run(
         }
 
         generation++;
-        std::cerr << "[ES] Gen " << generation 
-                  << " | Evals: " << evaluations << "/" << maxEvaluations 
-                  << " | Stagnation: " << stagnationCount << "/" << stagnationLimit 
-                  << " | Best Fit: " << best.fitness << std::endl;
+        auto t_gen_now = std::chrono::high_resolution_clock::now();
+        double gen_wall_ms = std::chrono::duration<double, std::milli>(t_gen_now - t_gen_wall_start).count();
+        std::cerr << "[ES_TIMING] Gen " << generation 
+                  << " | WallTime: " << (gen_wall_ms/1000.0) << "s"
+                  << " | Evals: " << evaluations
+                  << " | MutGen: " << cumulative_mutation_ms << "ms"
+                  << " | Surrogate: " << cumulative_surrogate_ms << "ms"
+                  << " | Verif(" << cumulative_verifications << "): " << cumulative_verification_ms << "ms"
+                  << " | Best: " << best.fitness
+                  << " | Stag: " << stagnationCount << "/" << stagnationLimit
+                  << std::endl;
 
         if (on_progress) {
             Individual best_of_gen = population.empty() ? best : population[0];

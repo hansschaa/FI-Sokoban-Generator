@@ -143,8 +143,10 @@ import numpy as np
 
 @app.route('/evaluate', methods=['POST'])
 def evaluate():
+    import time as _time
     global global_oob_count, global_clip_override_count
     try:
+        t_server_start = _time.perf_counter()
         data = request.get_json()
         if not data or 'boards' not in data:
             return jsonify({"error": "Missing 'boards' array"}), 400
@@ -247,6 +249,9 @@ def evaluate():
                 "clip_override_count": global_clip_override_count
             }, f)
 
+        t_server_end = _time.perf_counter()
+        server_ms = (t_server_end - t_server_start) * 1000.0
+        print(f"[FLASK_TIMING] Batch de {len(boards_data)} tableros procesado en {server_ms:.2f} ms ({server_ms/len(boards_data):.2f} ms/tablero)", flush=True)
         return jsonify(results)
 
     except Exception as e:
