@@ -4,6 +4,10 @@ import requests
 import torch
 import subprocess
 import os
+import sys
+
+# Agregar surrogate_models al sys.path para que los imports internos funcionen
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'surrogate_models'))
 
 from surrogate_models.surrogate_server import get_hungarian_lb
 from data.prepare_classifier import encode_board
@@ -46,7 +50,6 @@ print(f"[2] Solo BFS (Python): {(t3-t2)*1000:.2f} ms total -> {((t3-t2)*1000)/ba
 
 # 3. Testear A* Puro (Emulando evaluate(ind) del Evaluator C++)
 sok_path = "scratch/dummy_shell5.sok"
-# Asegurar que el directorio exista
 os.makedirs("scratch", exist_ok=True)
 with open(sok_path, "w") as f:
     for _ in range(10):
