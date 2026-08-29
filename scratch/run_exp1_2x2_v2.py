@@ -38,8 +38,7 @@ VARIANTS = [
     ("A* Puro", "hungarian", "FO1"),
     ("Clasificador + A*", "classifier_filter", "FO1"),
     ("A* verifica + Regresor", "hybrid_regressor", "FO1"),
-    ("Full Surrogate (100% Neural)", "full_surrogate", "FO1"),
-    ("FO6 (Exploración Tiempo)", "full_surrogate", "FO6")
+    ("Full Surrogate (100% Neural)", "full_surrogate", "FO1")
 ]
 
 # ─── HASH DE PIPELINE ──────────────────────────────────────────────────────────
