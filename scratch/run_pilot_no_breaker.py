@@ -51,10 +51,7 @@ def main():
     ]
 
     tests = [
-        ("full_surrogate", "44"),
-        ("full_surrogate", "45"),
-        ("hybrid_regressor", "44"),
-        ("hybrid_regressor", "45")
+        ("full_surrogate", "44")
     ]
 
     for heuristic, seed in tests:
@@ -64,7 +61,7 @@ def main():
         
         print(f"\n▶ Ejecutando {heuristic} (Semilla {seed}, Shell 5)...")
         t_start = time.time()
-        res = subprocess.run(cmd, env=env, capture_output=True, text=True, timeout=400)
+        res = subprocess.run(cmd, env=env, capture_output=True, text=True, timeout=120)
         t_end = time.time()
         
         # Parse final lines
@@ -104,6 +101,16 @@ def main():
             print(f"  ❌ ALERTA: Se imprimieron {phase_d_count} líneas [PHASE_D]. El Circuit Breaker sigue filtrando.")
         else:
             print(f"  ✅ No hay llamadas silenciosas de A* (0 líneas PHASE_D).")
+
+        print("\n\n" + "="*80)
+        print("=== STDOUT CRUDA ===")
+        print("="*80)
+        print(res.stdout)
+        
+        print("\n" + "="*80)
+        print("=== STDERR CRUDA ===")
+        print("="*80)
+        print(res.stderr)
 
 if __name__ == "__main__":
     main()
