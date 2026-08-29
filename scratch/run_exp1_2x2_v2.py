@@ -32,7 +32,7 @@ THRESHOLD_MAP = {
 
 SEEDS = [42, 43, 44, 45, 46, 47, 48, 49, 50, 51]
 SHELLS = [1, 2, 3, 4, 5]
-CORES = [24, 1]
+CORES = [24]  # Solo variante paralela para ahorrar tiempo
 
 VARIANTS = [
     ("A* Puro", "hungarian", "FO1"),
@@ -424,30 +424,14 @@ def main():
         print(f"\n⚙️  Configurando threshold del servidor Flask a {th} para Shell {sh}")
         set_server_threshold(th)
         
-        # 1. Ejecuciones de 24 Cores (Secuencial, max_workers=1)
-        # Esto previene el CPU oversubscription (evita tener 6x24=144 hilos peleando por CPU)
-        # lo que arruinaría las métricas de tiempo (Time_s).
-        print(f"\n[Shell {sh}] Ejecutando tareas pesadas (24 Cores) SECUENCIALMENTE para medicion de tiempo precisa...")
-        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        # Ejecutamos con max_workers=4 para balancear rapidez y evitar una saturación extrema
+        # (4 workers * 24 hilos = 96 hilos, manejable para el SO sin destruir el rendimiento)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
             futures = []
             for (lbl, heur, fo) in VARIANTS:
                 for s in SEEDS:
-                    if 24 in CORES:
-                        futures.append(executor.submit(run_experiment_run, lbl, heur, fo, sh, s, 24))
-                        
-            for f in concurrent.futures.as_completed(futures):
-                count += 1
-                print(f"[{count:03d}/{total_runs:03d}] Run completed.")
-
-        # 2. Ejecuciones de 1 Core (Paralelo, max_workers=6)
-        # Seguras de correr en paralelo porque solo usan 1 hilo C++ por worker
-        print(f"\n[Shell {sh}] Ejecutando tareas ligeras (1 Core) EN PARALELO (6 workers)...")
-        with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
-            futures = []
-            for (lbl, heur, fo) in VARIANTS:
-                for s in SEEDS:
-                    if 1 in CORES:
-                        futures.append(executor.submit(run_experiment_run, lbl, heur, fo, sh, s, 1))
+                    for c in CORES:
+                        futures.append(executor.submit(run_experiment_run, lbl, heur, fo, sh, s, c))
                         
             for f in concurrent.futures.as_completed(futures):
                 count += 1
