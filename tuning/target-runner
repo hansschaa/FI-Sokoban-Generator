@@ -8,7 +8,8 @@ shift 4
 
 EXE="../build/irace_generator"
 ALGO="ES"
-FO="FO5"
+FO="${IRACE_FO:-FO1}"
+LAMBDA_SPEED="${IRACE_LAMBDA_SPEED:-0.0}"
 
 # --- SISTEMA DE RASTREO EN TIEMPO REAL ---
 # Este archivo guardará el historial de lo que irace ejecuta segundo a segundo
@@ -16,8 +17,9 @@ LOG_FILE="ejecuciones_vivas.log"
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] 🚀 Probando Config: $CONFIG_ID | Instancia: $INSTANCE | Parámetros: $@" >> $LOG_FILE
 # ------------------------------------------
 
-# Ejecutamos y dejamos que el error se imprima en la terminal (2>&1)
-OUTPUT=$($EXE $ALGO $FO $SEED $INSTANCE "$@" 2>&1)
+# Ejecutamos redirigiendo stderr a un archivo para no romper el parser de IRace
+STDERR_LOG="stderr_irace.log"
+OUTPUT=$($EXE $ALGO $FO $SEED $INSTANCE "$@" --heuristic full_surrogate --lambda_speed $LAMBDA_SPEED 2>> $STDERR_LOG)
 EXIT_CODE=$?
 
 # --- REGISTRO DEL RESULTADO EN EL LOG ---

@@ -1,4 +1,4 @@
 # Nombre    Flag de consola    Tipo  Rango
 mu          "--mu "            i     (2, 15)
-lambda      "--lambda "        i     (15, 30)
+lambda      "--lambda "        i     (10, 140)
 mutRate     "--mutRate "       r     (0.01, 1.00)
