@@ -30,8 +30,8 @@ THRESHOLD_MAP = {
     5: 0.70
 }
 
-SEEDS = [42]
-SHELLS = [4, 5]
+SEEDS = [42, 43, 44, 45, 46, 47, 48, 49, 50, 51]
+SHELLS = [1, 2, 3, 4, 5]
 CORES = [24]  # Solo variante paralela para ahorrar tiempo
 
 VARIANTS = [
