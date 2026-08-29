@@ -106,12 +106,11 @@ def load_models():
     classifier_model.load_state_dict(torch.load(c_path, map_location=device))
     classifier_model.eval()
 
-    r_path = "surrogate_models/results/path_consistency/final_path_consistency_production.pt"
+    r_path = "surrogate_models/results/production_regressor.pt"
     
-    # We might need to ensure dropout_p matches what the model was trained with.
-    # The JSON params will be loaded from best_hparams_path_consistency_v2.json
+    # Check if we should use GPU
     try:
-        with open("surrogate_models/results/best_hparams_path_consistency_v2.json", "r") as f:
+        with open("surrogate_models/results/best_hparams.json", "r") as f:
             r_params = json.load(f)
     except:
         r_params = {"params": {"dropout_p": 0.0}} # fallback
@@ -336,4 +335,4 @@ def evaluate_regressor_only():
 if __name__ == '__main__':
     load_models()
     # Run on port 5000, only local connections
-    app.run(host='127.0.0.1', port=5000, threaded=False)
+    app.run(host='127.0.0.1', port=5000, threaded=True)
