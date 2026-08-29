@@ -181,7 +181,7 @@ def run_experiment_run(label, heuristic, fo_type, shell_idx, seed, cores):
     if cores == 1:
         cmd.append("--no-parallel")
 
-    print(f"🚀 [Exp 1] Shell {shell_idx} | Seed {seed:<4} | Cores {cores:<2} | Var: {label:<24} (Th={th:.2f})...", end=" ", flush=True)
+    print(f"🚀 [Exp 1] Shell {shell_idx} | Seed {seed:<4} | Cores {cores:<2} | Var: {label:<24} (Th={th:.2f})...", flush=True)
 
     env = os.environ.copy()
     env['OMP_NUM_THREADS'] = '1'
@@ -311,7 +311,7 @@ def run_experiment_run(label, heuristic, fo_type, shell_idx, seed, cores):
     with open(out_meta, "w", encoding="utf-8") as f:
         json.dump(meta_record, f, indent=2)
 
-    print(f"✔️ Done ({elapsed:.1f}s) | A* Real Best: {best_real_astar_pushes} | Top-5: ✅{solvable_top5} ❓{inconclusive_top5} ❌{deadlock_top5}/{len(top_boards)} | Acc Definitiva: {tpr_top5_pct:.0f}% | Tableros Únicos: {unique_boards_count}")
+    print(f"✔️  [Shell {shell_idx} | Seed {seed:<4} | {label:<24}] Done ({elapsed:.1f}s) | A* Real Best: {best_real_astar_pushes} | Top-5: ✅{solvable_top5} ❓{inconclusive_top5} ❌{deadlock_top5}/{len(top_boards)} | Acc Definitiva: {tpr_top5_pct:.0f}% | Tableros Únicos: {unique_boards_count}")
     return False, meta_record
 
 def generate_final_analysis():
