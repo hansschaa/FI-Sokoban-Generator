@@ -266,5 +266,3 @@ foreach(target
         "-Wl,--as-needed"
     )
 endforeach()
-target_compile_options(evaluate_board PRIVATE -Wall -Wextra -pedantic -O3 -march=native -flto -DNDEBUG -pthread)
-target_link_options(evaluate_board PRIVATE -flto -pthread "-Wl,-rpath-link,${CMAKE_CURRENT_SOURCE_DIR}/venv/lib/python3.12/site-packages/nvidia/cudart/lib" "-Wl,-rpath,${CMAKE_CURRENT_SOURCE_DIR}/venv/lib/python3.12/site-packages/nvidia/cudart/lib")
