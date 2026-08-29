@@ -6,6 +6,8 @@
 #include <fstream>
 #include <utility>
 #include <stdexcept>
+#include <chrono>
+#include <map>
 
 #include "../include/evolution/algorithms/evolution_strategy.h"
 #include "../include/evolution/algorithms/genetic_algorithm.h"
@@ -82,14 +84,36 @@ int main(int argc, char** argv)
     else if (fitness_arg == "FO3" || fitness_arg == "sol_bf") fitnessType = FitnessType::FO3_SOL_EFF_BF;
     else if (fitness_arg == "FO4" || fitness_arg == "deadlocks") fitnessType = FitnessType::FO4_DEADLOCKS;
     else if (fitness_arg == "FO5" || fitness_arg == "repeated_nodes") fitnessType = FitnessType::FO5_REPEATED_NODES;
+    else if (fitness_arg == "FO6") fitnessType = FitnessType::FO6_PUSHES_AND_SPEED;
     else {
         std::cerr << "FO Invalida\n";
         return 1;
     }
 
     // 3. Variables Fijas y Estrictas para Experimento 1
-    int maxEvals = 2000;
-    int stagLimit = 200;
+    int maxEvals = 1000000;
+    int stagLimit = 721;
+    int maxCircuitTimeSeconds = 600; // Safe timeout for individual run
+    if (char* val = getCmdOption(argv, argv + argc, "--maxEvals")) maxEvals = std::stoi(val);
+    if (char* val = getCmdOption(argv, argv + argc, "--stagLimit")) stagLimit = std::stoi(val);
+    if (char* val = getCmdOption(argv, argv + argc, "--timeLimit")) maxCircuitTimeSeconds = std::stoi(val);
+
+    Heuristic heuristic_type = Heuristic::hungarian;
+    if (char* val = getCmdOption(argv, argv + argc, "--heuristic")) {
+        std::string h_arg = val;
+        if (h_arg == "neural") heuristic_type = Heuristic::neural_batched;
+        else if (h_arg == "neural_sequential") heuristic_type = Heuristic::neural;
+        else if (h_arg == "hungarian") heuristic_type = Heuristic::hungarian;
+        else if (h_arg == "simple") heuristic_type = Heuristic::simple;
+        else if (h_arg == "hybrid_regressor") heuristic_type = Heuristic::hybrid_regressor;
+        else if (h_arg == "classifier_filter") heuristic_type = Heuristic::classifier_filter;
+        else if (h_arg == "full_surrogate") heuristic_type = Heuristic::full_surrogate;
+    }
+    
+    double lambda_speed = 0.0;
+    if (char* val = getCmdOption(argv, argv + argc, "--lambda_speed")) {
+        lambda_speed = std::stod(val);
+    }
 
     // 4. Configurar el tablero inicial (Shell) y aplicar Flood Fill
     std::vector<std::vector<char>> shell;
@@ -183,41 +207,53 @@ int main(int argc, char** argv)
 
     Individual best;
 
+    auto t_start = std::chrono::steady_clock::now();
+
     // 6. Ejecución silenciosa de Metaheurísticas con Parseo Blindado
     try {
         if (algorithm == "ES")
         {
             EvolutionStrategy es;
-            es.maxEvaluations  = maxEvals;
-            es.stagnationLimit = stagLimit;
-            es.evaluator.fitnessType = fitnessType;
-            
+            es.use_parallel = false; // IRace handles parallelism externally
             if (char* val = getCmdOption(argv, argv + argc, "--mu")) es.mu = std::stoi(val);
             if (char* val = getCmdOption(argv, argv + argc, "--lambda")) es.lambda = std::stoi(val);
             if (char* val = getCmdOption(argv, argv + argc, "--mutRate")) es.mutationRate = std::stod(val);
 
+            es.maxEvaluations  = maxEvals;
+            es.maxCircuitTimeSeconds = maxCircuitTimeSeconds;
+            es.circuitStartTime = std::chrono::high_resolution_clock::now();
+            es.stagnationLimit = (int)(7.14 * es.lambda);
+            es.evaluator.fitnessType = fitnessType;
+            es.evaluator.heuristic_type = heuristic_type;
+            es.evaluator.use_surrogate = (heuristic_type != Heuristic::hungarian);
+            
+            std::cerr << "[IRACE] Effective params: maxEvals=" << es.maxEvaluations << ", stagLimit=" << es.stagnationLimit << ", timeLimit=" << es.maxCircuitTimeSeconds << std::endl;
+            
             best = es.run(population);
         }
         else if (algorithm == "GA")
         {
             GeneticAlgorithm ga;
-            ga.maxEvaluations  = maxEvals;
-            ga.stagnationLimit = stagLimit;
-            ga.evaluator.fitnessType = fitnessType;
-            
+            ga.use_parallel = false; // IRace handles parallelism externally
             if (char* val = getCmdOption(argv, argv + argc, "--offspring")) ga.offspringSize = std::stoi(val);
             if (char* val = getCmdOption(argv, argv + argc, "--maxFailed")) ga.maxFailedAttempts = std::stoi(val);
             if (char* val = getCmdOption(argv, argv + argc, "--mutRate")) ga.mutationRate = std::stod(val);
             if (char* val = getCmdOption(argv, argv + argc, "--crossRate")) ga.crossoverRate = std::stod(val);
+
+            ga.maxEvaluations  = maxEvals;
+            ga.maxCircuitTimeSeconds = maxCircuitTimeSeconds;
+            ga.circuitStartTime = std::chrono::high_resolution_clock::now();
+            ga.stagnationLimit = (int)(7.14 * ga.offspringSize);
+            ga.evaluator.fitnessType = fitnessType;
+            ga.evaluator.heuristic_type = heuristic_type;
+            ga.evaluator.use_surrogate = (heuristic_type != Heuristic::hungarian);
+
             best = ga.run(population);
         }
         else if (algorithm == "SA")
         {
             SimulatedAnnealing sa;
-            sa.maxEvaluations     = maxEvals;   
-            sa.stagnationLimit    = stagLimit;
-            sa.evaluator.fitnessType = fitnessType;  
-
+            
             // Valores por defecto en caso de ejecución manual
             sa.initialTemperature = 100.0;
             sa.coolingRate        = 0.01;
@@ -227,6 +263,12 @@ int main(int argc, char** argv)
             if (char* val = getCmdOption(argv, argv + argc, "--initTemp")) sa.initialTemperature = std::stod(val);
             if (char* val = getCmdOption(argv, argv + argc, "--coolRate")) sa.coolingRate = std::stod(val);
             if (char* val = getCmdOption(argv, argv + argc, "--maxFailed")) sa.maxFailedAttempts = std::stoi(val);
+
+            sa.maxEvaluations     = maxEvals;   
+            sa.stagnationLimit    = 200; // SA processes 1 individual per step, so 200 is fine
+            sa.evaluator.fitnessType = fitnessType;
+            sa.evaluator.heuristic_type = heuristic_type;
+            sa.evaluator.use_surrogate = (heuristic_type != Heuristic::hungarian);
 
             Individual initial = *std::max_element(
                 population.begin(), population.end(),
@@ -239,9 +281,37 @@ int main(int argc, char** argv)
         std::cerr << "Error critico parseando parametros (Posible texto en vez de numero): " << e.what() << "\n";
         return 1;
     }
+    auto t_end = std::chrono::steady_clock::now();
+    double time_s = std::chrono::duration<double>(t_end - t_start).count();
 
     // 7. SALIDA ESTRICTA PARA IRACE (Solo el costo de minimización)
-    std::cout << -best.fitness << std::endl;
+    if (fitnessType == FitnessType::FO6_PUSHES_AND_SPEED) {
+        // Find base time
+        std::string filename = board_file;
+        size_t last_slash = filename.find_last_of("/\\");
+        if (last_slash != std::string::npos) {
+            filename = filename.substr(last_slash + 1);
+        }
+        
+        std::map<std::string, double> base_times = {
+            {"shell_145.txt", 3.94},
+            {"shell_15.txt", 5.30},
+            {"shell_245.txt", 3.07},
+            {"shell_577.txt", 38.87},
+            {"shell_743.txt", 3.27}
+        };
+        
+        if (base_times.find(filename) == base_times.end()) {
+            std::cerr << "ERROR: FO6 requested but instance " << filename << " not found in hardcoded base_times map!\n";
+            return 1;
+        }
+        
+        double base_time = base_times[filename];
+        double score = -best.fitness + lambda_speed * (time_s / base_time);
+        std::cout << score << std::endl;
+    } else {
+        std::cout << -best.fitness << std::endl;
+    }
 
     return 0;
 }

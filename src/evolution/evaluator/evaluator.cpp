@@ -61,6 +61,7 @@ double Evaluator::evaluate(Individual& individual)
     switch (fitnessType)
     {
         case FitnessType::FO1_PUSHES:
+        case FitnessType::FO6_PUSHES_AND_SPEED:
             individual.fitness = stats.pushes;
             break;
             
@@ -219,7 +220,7 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
                 double h_lb = population[idx].hungarian_lb;
                 pushes = h_lb + std::clamp(pushes - h_lb, 0.0, 1.0 * h_lb);
                 
-                if (fitnessType == FitnessType::FO1_PUSHES) {
+                if (fitnessType == FitnessType::FO1_PUSHES || fitnessType == FitnessType::FO6_PUSHES_AND_SPEED) {
                     population[idx].fitness = pushes;
                 } else if (fitnessType == FitnessType::FO2_ASTAR_EFF_BF || fitnessType == FitnessType::FO3_SOL_EFF_BF) {
                     population[idx].fitness = -branching;
@@ -379,7 +380,7 @@ void Evaluator::filter_surrogate_batch(std::vector<Individual>& population)
 }
 
 void Evaluator::evaluateDiagnostic(std::vector<Individual>& population, int generation) {
-    std::cout << "[DIAGNOSTIC] Running Regressor Diagnostic for Generation " << generation << "...\n";
+    std::cerr << "[DIAGNOSTIC] Running Regressor Diagnostic for Generation " << generation << "...\n";
     
     std::vector<Individual> pop_copy = population;
     
@@ -400,10 +401,10 @@ void Evaluator::evaluateDiagnostic(std::vector<Individual>& population, int gene
     this->max_seconds = 15.0;
     
     for (size_t i = 0; i < pop_copy.size(); i++) {
-        std::cout << "[DIAGNOSTIC] Evaluating individual " << i+1 << "/" << pop_copy.size() << " with A* ground truth..." << std::flush;
+        std::cerr << "[DIAGNOSTIC] Evaluating individual " << i+1 << "/" << pop_copy.size() << " with A* ground truth..." << std::flush;
         pop_copy[i].fitness = 0; // reset
         this->evaluate(pop_copy[i]);
-        std::cout << " Done. Actual Fit: " << pop_copy[i].fitness << ", Predicted: " << predicted_fitness[i] << "\n";
+        std::cerr << " Done. Actual Fit: " << pop_copy[i].fitness << ", Predicted: " << predicted_fitness[i] << "\n";
     }
     
     this->heuristic_type = original_heuristic;
@@ -422,5 +423,5 @@ void Evaluator::evaluateDiagnostic(std::vector<Individual>& population, int gene
     }
     out.close();
     
-    std::cout << "[DIAGNOSTIC] Finished Diagnostic for Generation " << generation << "\n";
+    std::cerr << "[DIAGNOSTIC] Finished Diagnostic for Generation " << generation << "\n";
 }

@@ -15,9 +15,14 @@
 Individual EvolutionStrategy::run(
     std::vector<Individual>& population)
 {
+    long long total_rejections = 0;
     //
     // RESET STATE
     //
+    std::cerr << "[ES] Effective params: mu=" << mu 
+              << ", lambda=" << lambda 
+              << ", mutRate=" << mutationRate 
+              << ", stagLimit=" << stagnationLimit << "\n";
 
     evaluations = 0;
 
@@ -29,7 +34,7 @@ Individual EvolutionStrategy::run(
     // INITIAL EVALUATION
     //
 
-    //std::cout << "EVALUATING INITIAL POPULATION\n";
+    //std::cerr << "EVALUATING INITIAL POPULATION\n";
 
     unsigned int num_threads = use_parallel ? std::thread::hardware_concurrency() : 1;
     if (num_threads == 0) num_threads = 4;
@@ -62,7 +67,7 @@ Individual EvolutionStrategy::run(
 
     evaluations += population.size();
 
-    //std::cout << "INITIAL POPULATION EVALUATED\n";
+    //std::cerr << "INITIAL POPULATION EVALUATED\n";
 
     //
     // FIND INITIAL BEST
@@ -96,7 +101,7 @@ Individual EvolutionStrategy::run(
     {
         bool improved = false;
 
-        /*std::cout
+        /*std::cerr
             << "\nGEN " << generation
             << " | BEST " << best.fitness
             << " | STAG " << stagnationCount
@@ -212,6 +217,7 @@ Individual EvolutionStrategy::run(
             }
             
             evaluations += batch_to_evaluate.size();
+            total_rejections += (totalAttempts - generated);
         }
 
         // PROCESS RESULTS
@@ -240,7 +246,7 @@ Individual EvolutionStrategy::run(
 
         if (offspring.empty())
         {
-            /*std::cout
+            /*std::cerr
                 << "WARNING: ALL "
                 << lambda
                 << " CHILDREN FAILED IN GEN "
@@ -255,7 +261,7 @@ Individual EvolutionStrategy::run(
         }
         else
         {
-            stagnationCount++;
+            stagnationCount += batch_to_evaluate.size();
         }
 
         //
@@ -389,7 +395,7 @@ Individual EvolutionStrategy::run(
             for (const auto& ind : population) var += (ind.fitness - mean) * (ind.fitness - mean);
             var /= population.size();
             
-            std::cout << "[DIVERSITY] Gen " << generation 
+            std::cerr << "[DIVERSITY] Gen " << generation 
                       << " POP_STD: " << std::sqrt(var) 
                       << " (Mean: " << mean << ")" << std::endl;
         }
@@ -401,7 +407,7 @@ Individual EvolutionStrategy::run(
 
         if (evaluations >= maxEvaluations)
         {
-            std::cout
+            std::cerr
                 << "\n[ES] Criterio de Parada Alcanzado: MAX_EVALUATIONS (" << maxEvaluations << " evaluaciones)\n";
             break;
         }
@@ -413,8 +419,8 @@ Individual EvolutionStrategy::run(
 
         if (stagnationCount >= stagnationLimit)
         {
-            std::cout
-                << "\n[ES] Criterio de Parada Alcanzado: STAGNATION (Sin mejoras por " << stagnationLimit << " generaciones)\n";
+            std::cerr
+                << "\n[ES] Criterio de Parada Alcanzado: STAGNATION (Sin mejoras por " << stagnationLimit << " evaluaciones)\n";
             break;
         }
 
@@ -427,13 +433,13 @@ Individual EvolutionStrategy::run(
             auto now = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::seconds>(now - circuitStartTime).count();
             if (duration >= maxCircuitTimeSeconds) {
-                std::cout << "\n[ES] Criterio de Parada Alcanzado: TIME LIMIT (" << maxCircuitTimeSeconds << " segundos del circuito transcurridos)\n";
+                std::cerr << "\n[ES] Criterio de Parada Alcanzado: TIME LIMIT (" << maxCircuitTimeSeconds << " segundos del circuito transcurridos)\n";
                 break;
             }
         }
 
         generation++;
-        std::cout << "[ES] Gen " << generation 
+        std::cerr << "[ES] Gen " << generation 
                   << " | Evals: " << evaluations << "/" << maxEvaluations 
                   << " | Stagnation: " << stagnationCount << "/" << stagnationLimit 
                   << " | Best Fit: " << best.fitness << std::endl;
@@ -455,19 +461,22 @@ Individual EvolutionStrategy::run(
     // FINAL REPORT
     //
     
-    std::cout << "\n[ES STATS] Circuit Breaker (MAX_FAILURES) triggers: " << total_circuit_breakers << "\n";
-    std::cout << "[ES STATS] Surrogate Fallbacks: " << *(evaluator.surrogate_fallbacks) << "\n";
-    std::cout << "[ES STATS] Surrogate Regressor Calls: " << *(evaluator.surrogate_regressor_calls) << "\n";
-    std::cout << "[ES STATS] Classifier Deadlocks Filtered (Pre-A*): " << *(evaluator.classifier_deadlocks_filtered) << "\n";
-    std::cout << "[ES STATS] Classifier False Positives (Approved by Neural, Rejected by A*): " << *(evaluator.classifier_false_positives) << "\n";
-    std::cout << "[ES STATS] Hybrid Hungarian Delegations (box_count >= 6): " << *(evaluator.hybrid_hungarian_delegations) << "\n";
-    std::cout << "[ES STATS] Clone Fallback triggers: " << total_clone_fallbacks << " (Total Clones Injected: " << total_clones_injected << ")\n";
-    std::cout << "[ES STATS] Total Generations: " << generation << " | Total Evals: " << evaluations << "\n";
+    std::cerr << "\n[ES STATS] Circuit Breaker (MAX_FAILURES) triggers: " << total_circuit_breakers << "\n";
+    std::cerr << "[ES STATS] Surrogate Fallbacks: " << *(evaluator.surrogate_fallbacks) << "\n";
+    std::cerr << "[ES STATS] Surrogate Regressor Calls: " << *(evaluator.surrogate_regressor_calls) << "\n";
+    std::cerr << "[ES STATS] Classifier Deadlocks Filtered (Pre-A*): " << *(evaluator.classifier_deadlocks_filtered) << "\n";
+    std::cerr << "[ES STATS] Classifier False Positives (Approved by Neural, Rejected by A*): " << *(evaluator.classifier_false_positives) << "\n";
+    std::cerr << "[ES STATS] Hybrid Hungarian Delegations (box_count >= 6): " << *(evaluator.hybrid_hungarian_delegations) << "\n";
+    std::cerr << "[ES STATS] Clone Fallback triggers: " << total_clone_fallbacks << " (Total Clones Injected: " << total_clones_injected << ")\n";
+    std::cerr << "[ES STATS] Total Generations: " << generation << " | Total Evals: " << evaluations << "\n";
 
-    /*std::cout
+    /*std::cerr
         << "\nFINAL BEST FITNESS = "
         << best.fitness
         << std::endl;*/
+
+    // Print circuit breaker stats to stderr for analysis
+    std::cerr << "CB_REJECTIONS=" << total_rejections << std::endl;
 
     return best;
 }
