@@ -12,15 +12,17 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sur
 from surrogate_models.surrogate_server import get_hungarian_lb
 from data.prepare_classifier import encode_board
 
-# Tablero gigante típico de Shell 5 (13x13, 5 cajas)
+# Tablero válido de Shell 5 (5 cajas, 5 metas, coinciden perfectamente)
 board_shell5 = """
-#############
-#           #
-# .$.$.$.$. #
-#.$@$$$$$$$.#
-# .$.$.$.$. #
-#           #
-#############
+#######
+#     #
+# .$. #
+# .$. #
+# .$. #
+# .$. #
+# .@$ #
+#     #
+#######
 """
 
 batch_size = 50
