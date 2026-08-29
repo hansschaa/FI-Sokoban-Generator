@@ -12,6 +12,9 @@ def main():
     print(" VERIFICACION DE PILOTO: Sin Circuit-Breaker ni Diagnóstico")
     print("=" * 80)
     
+    print("\n[PASO 0] Compilando experiment_runner...")
+    subprocess.run(["make", "-C", "build", "-j12", "experiment_runner"], check=True)
+    
     # Arrancar Flask
     print("\n[PASO 1] Levantando servidor Flask...")
     subprocess.run("pkill -f surrogate_server.py", shell=True, capture_output=True)
