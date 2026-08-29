@@ -1,3 +1,4 @@
+#include <chrono>
 #include <iostream>
 #include <vector>
 #include <ctime>
@@ -184,6 +185,7 @@ int main(int argc, char** argv)
 
     // 5. Generar población inicial optimizada (Clonando el primer éxito)
     bool found_first = false;
+    auto t_init_start = std::chrono::high_resolution_clock::now();
     Individual first_valid;
 
     for (int i = 0; i < pop_size; i++)
@@ -235,6 +237,8 @@ int main(int argc, char** argv)
         }
     }
 
+    auto t_init_end = std::chrono::high_resolution_clock::now();
+    std::cout << "[TIMING_INIT] Poblacion inicial completada en: " << std::chrono::duration<double, std::milli>(t_init_end - t_init_start).count() << " ms" << std::endl;
     Individual best;
     
     // Calcular deadlock mask para el cascarón base
