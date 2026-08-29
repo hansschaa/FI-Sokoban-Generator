@@ -11,6 +11,29 @@ def main():
     print("=" * 80)
     print(" VERIFICACION DE PILOTO: Sin Circuit-Breaker ni Diagnóstico")
     print("=" * 80)
+    
+    # Arrancar Flask
+    print("\n[PASO 1] Levantando servidor Flask...")
+    subprocess.run("pkill -f surrogate_server.py", shell=True, capture_output=True)
+    time.sleep(2)
+    flask_log = open("scratch/flask_pilot.log", "w")
+    flask_proc = subprocess.Popen(
+        ["venv/bin/python3", "surrogate_models/surrogate_server.py"],
+        stdout=flask_log, stderr=flask_log
+    )
+    import urllib.request
+    for attempt in range(60):
+        try:
+            req = urllib.request.Request("http://127.0.0.1:5000/set_threshold", data=b'{"threshold": 0.70}')
+            req.add_header('Content-Type', 'application/json')
+            urllib.request.urlopen(req, timeout=3)
+            break
+        except Exception:
+            time.sleep(1)
+    else:
+        print("  ❌ Flask no arrancó. Abortando.")
+        sys.exit(1)
+    print("  ✅ Servidor listo.")
 
     env = os.environ.copy()
     env['OMP_NUM_THREADS'] = '1'
