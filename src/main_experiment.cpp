@@ -87,6 +87,7 @@ int main(int argc, char** argv)
     else if (fitness_arg == "FO3" || fitness_arg == "sol_bf") fitnessType = FitnessType::FO3_SOL_EFF_BF;
     else if (fitness_arg == "FO4" || fitness_arg == "deadlocks") fitnessType = FitnessType::FO4_DEADLOCKS;
     else if (fitness_arg == "FO5" || fitness_arg == "repeated_nodes") fitnessType = FitnessType::FO5_REPEATED_NODES;
+    else if (fitness_arg == "FO6" || fitness_arg == "speed") fitnessType = FitnessType::FO6_PUSHES_AND_SPEED;
     else {
         std::cerr << "FO Invalida\n";
         return 1;
@@ -101,8 +102,10 @@ int main(int argc, char** argv)
     if (char* val = getCmdOption(argv, argv + argc, "--maxEvals")) {
         maxEvals = std::stoi(val);
     }
+    bool customStagLimit = false;
     if (char* val = getCmdOption(argv, argv + argc, "--stagLimit")) {
         stagLimit = std::stoi(val);
+        customStagLimit = true;
     }
 
     Heuristic heuristic_type = Heuristic::hungarian;
@@ -266,7 +269,7 @@ int main(int argc, char** argv)
             es.use_parallel = !no_parallel;
             es.setDeadlockMask(deadlock_mask);
             es.maxEvaluations  = maxEvals;
-            es.stagnationLimit = stagLimit;
+
             es.evaluator.fitnessType = fitnessType;
             es.evaluator.heuristic_type = heuristic_type;
             es.evaluator.use_surrogate = (heuristic_type != Heuristic::hungarian);
@@ -292,6 +295,11 @@ int main(int argc, char** argv)
             if (char* val = getCmdOption(argv, argv + argc, "--mutRate")) es.mutationRate = std::stod(val);
 
             es.maxCircuitTimeSeconds = maxCircuitTimeSeconds;
+            if (customStagLimit) {
+                es.stagnationLimit = stagLimit;
+            } else {
+                es.stagnationLimit = (int)(7.14 * es.lambda);
+            }
             es.circuitStartTime = std::chrono::high_resolution_clock::now();
 
             best = es.run(population);

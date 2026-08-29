@@ -34,12 +34,12 @@ SEEDS = [42, 43, 44, 45, 46, 47, 48, 49, 50, 51]
 SHELLS = [1, 2, 3, 4, 5]
 CORES = [24, 1]
 
-# Los 4 Variantes de la Matriz 2x2: (Verificador de Jugabilidad x Decisor de Fitness)
 VARIANTS = [
-    ("A* Puro", "hungarian"),
-    ("Clasificador + A*", "classifier_filter"),
-    ("A* verifica + Regresor", "hybrid_regressor"),
-    ("Full Surrogate (100% Neural)", "full_surrogate")
+    ("A* Puro", "hungarian", "FO1"),
+    ("Clasificador + A*", "classifier_filter", "FO1"),
+    ("A* verifica + Regresor", "hybrid_regressor", "FO1"),
+    ("Full Surrogate (100% Neural)", "full_surrogate", "FO1"),
+    ("FO6 (Exploración Tiempo)", "full_surrogate", "FO6")
 ]
 
 # ─── HASH DE PIPELINE ──────────────────────────────────────────────────────────
@@ -129,9 +129,9 @@ def verify_board_with_astar(board_flat_str, tag="exp1"):
     else:
         return 0, False, False       # DEADLOCK genuino (A* terminó sin solución)
 
-def run_experiment_run(label, heuristic, shell_idx, seed, cores):
+def run_experiment_run(label, heuristic, fo_type, shell_idx, seed, cores):
     shell_file = f"levels/shell_{shell_idx}.sok"
-    out_prefix = os.path.join(OUTPUT_DIR, f"{heuristic}_shell{shell_idx}_seed{seed}_cores{cores}")
+    out_prefix = os.path.join(OUTPUT_DIR, f"{heuristic}_{fo_type}_shell{shell_idx}_seed{seed}_cores{cores}")
     out_csv = out_prefix + ".csv"
     out_txt = out_prefix + ".txt"
     out_meta = out_prefix + "_meta.json"
@@ -161,19 +161,19 @@ def run_experiment_run(label, heuristic, shell_idx, seed, cores):
         sys.exit(1)
 
     th = THRESHOLD_MAP.get(shell_idx, 0.70)
-    if heuristic != "hungarian":
-        set_server_threshold(th)
 
 
     cmd = [
-        runner_path, "ES", "FO1", str(seed), shell_file,
+        runner_path, "ES", fo_type, str(seed), shell_file,
         "--heuristic", heuristic,
         "--timeLimit", str(TIME_LIMIT_SEC),
         "--maxEvals", "1000000",
         "--out_csv", tmp_csv
     ]
     
-    if heuristic == "full_surrogate":
+    if fo_type == "FO6":
+        cmd.extend(["--mu", "7", "--lambda", "64", "--mutRate", "0.9381", "--stagLimit", "456"])
+    elif heuristic == "full_surrogate":
         cmd.extend(["--mu", "10", "--lambda", "126", "--mutRate", "0.7135", "--stagLimit", "899"])
     else:
         cmd.extend(["--mu", "9", "--lambda", "28", "--mutRate", "0.8559", "--stagLimit", "200"])
@@ -252,7 +252,7 @@ def run_experiment_run(label, heuristic, shell_idx, seed, cores):
     deadlock_top5 = 0
     best_real_astar_pushes = 0
     for r_lbl, n_fit, b_str in top_boards:
-        real_p, is_sol, is_inconclusive = verify_board_with_astar(b_str, tag=f"{heuristic}_sh{shell_idx}_s{seed}")
+        real_p, is_sol, is_inconclusive = verify_board_with_astar(b_str, tag=f"{heuristic}_{fo_type}_sh{shell_idx}_s{seed}_c{cores}")
         if is_sol:
             solvable_top5 += 1
             if real_p > best_real_astar_pushes:
@@ -282,6 +282,7 @@ def run_experiment_run(label, heuristic, shell_idx, seed, cores):
     meta_record = {
         "Variant": label,
         "Heuristic": heuristic,
+        "FO_Type": fo_type,
         "Shell_Idx": shell_idx,
         "Shell": f"Shell {shell_idx}",
         "Seed": seed,
@@ -316,11 +317,11 @@ def run_experiment_run(label, heuristic, shell_idx, seed, cores):
 def generate_final_analysis():
     print("\n📊 Agregando telemetría y generando figuras de publicación...")
     records = []
-    for (lbl, heur) in VARIANTS:
+    for (lbl, heur, fo) in VARIANTS:
         for sh in SHELLS:
             for s in SEEDS:
                 for c in CORES:
-                    meta_path = os.path.join(OUTPUT_DIR, f"{heur}_shell{sh}_seed{s}_cores{c}_meta.json")
+                    meta_path = os.path.join(OUTPUT_DIR, f"{heur}_{fo}_shell{sh}_seed{s}_cores{c}_meta.json")
                     if os.path.exists(meta_path):
                         try:
                             with open(meta_path, "r") as f:
@@ -415,20 +416,24 @@ def main():
     print("="*120)
 
     total_runs = len(VARIANTS) * len(SHELLS) * len(SEEDS) * len(CORES)
+    count = 0
     
     import concurrent.futures
-    with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
-        futures = []
-        for (lbl, heur) in VARIANTS:
-            for sh in SHELLS:
+    for sh in SHELLS:
+        th = THRESHOLD_MAP.get(sh, 0.70)
+        print(f"\n⚙️  Configurando threshold del servidor Flask a {th} para Shell {sh}")
+        set_server_threshold(th)
+        
+        with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
+            futures = []
+            for (lbl, heur, fo) in VARIANTS:
                 for s in SEEDS:
                     for c in CORES:
-                        futures.append(executor.submit(run_experiment_run, lbl, heur, sh, s, c))
+                        futures.append(executor.submit(run_experiment_run, lbl, heur, fo, sh, s, c))
                         
-        count = 0
-        for f in concurrent.futures.as_completed(futures):
-            count += 1
-            print(f"[{count:03d}/{total_runs:03d}] Run completed.")
+            for f in concurrent.futures.as_completed(futures):
+                count += 1
+                print(f"[{count:03d}/{total_runs:03d}] Run completed.")
 
     set_server_threshold(0.70)
     generate_final_analysis()
