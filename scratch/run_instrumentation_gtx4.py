@@ -47,14 +47,14 @@ def main():
     
     flask_log = open("scratch/flask_instrumented.log", "w")
     flask_proc = subprocess.Popen(
-        [sys.executable, "surrogate_models/surrogate_server.py"],
+        ["venv/bin/python3", "surrogate_models/surrogate_server.py"],
         stdout=flask_log, stderr=flask_log
     )
     print(f"  Flask PID: {flask_proc.pid}")
     
     # Esperar a que el servidor arranque
     import urllib.request
-    for attempt in range(30):
+    for attempt in range(60):
         try:
             urllib.request.urlopen("http://127.0.0.1:5000/set_threshold", 
                                    data=b'{"threshold": 0.70}',
@@ -64,8 +64,11 @@ def main():
         except:
             time.sleep(1)
     else:
-        print("  ❌ Flask no arrancó en 30 segundos. Abortando.")
+        print("  ❌ Flask no arrancó en 60 segundos. Abortando.")
         flask_proc.kill()
+        with open("scratch/flask_instrumented.log", "r") as f:
+            print("=== FLASK LOG (CRASH) ===")
+            print(f.read())
         sys.exit(1)
     
     # ─────────────────────────────────────────────────────────────────────
