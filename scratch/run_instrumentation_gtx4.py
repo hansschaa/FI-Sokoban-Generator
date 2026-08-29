@@ -56,12 +56,12 @@ def main():
     import urllib.request
     for attempt in range(60):
         try:
-            urllib.request.urlopen("http://127.0.0.1:5000/set_threshold", 
-                                   data=b'{"threshold": 0.70}',
-                                   timeout=3)
+            req = urllib.request.Request("http://127.0.0.1:5000/set_threshold", data=b'{"threshold": 0.70}')
+            req.add_header('Content-Type', 'application/json')
+            urllib.request.urlopen(req, timeout=3)
             print("  ✅ Flask respondiendo en puerto 5000.")
             break
-        except:
+        except Exception as e:
             time.sleep(1)
     else:
         print("  ❌ Flask no arrancó en 60 segundos. Abortando.")
