@@ -178,8 +178,10 @@ Individual EvolutionStrategy::run(
         auto t_surr_start = std::chrono::high_resolution_clock::now();
         if (!batch_to_evaluate.empty()) {
             if (evaluator.use_surrogate && evaluator.heuristic_type != Heuristic::classifier_filter) {
-                if (generation == 1 || generation == 10 || stagnationCount == stagnationLimit - 1) {
-                    evaluator.evaluateDiagnostic(batch_to_evaluate, generation);
+                if (evaluator.heuristic_type != Heuristic::full_surrogate && evaluator.heuristic_type != Heuristic::hybrid_regressor) {
+                    if (generation == 1 || generation == 10 || stagnationCount == stagnationLimit - 1) {
+                        evaluator.evaluateDiagnostic(batch_to_evaluate, generation);
+                    }
                 }
                 evaluator.evaluate_surrogate_batch(batch_to_evaluate);
             } else if (evaluator.heuristic_type == Heuristic::classifier_filter) {
@@ -318,7 +320,10 @@ Individual EvolutionStrategy::run(
         {
             auto& ind = combined[i];
             
-            if (evaluator.use_surrogate && evaluator.heuristic_type != Heuristic::classifier_filter) {
+            if (evaluator.use_surrogate && 
+                evaluator.heuristic_type != Heuristic::classifier_filter && 
+                evaluator.heuristic_type != Heuristic::full_surrogate && 
+                evaluator.heuristic_type != Heuristic::hybrid_regressor) {
                 // Check if this individual came from the old population (already verified)
                 bool is_parent = false;
                 for (const auto& parent : population) {
