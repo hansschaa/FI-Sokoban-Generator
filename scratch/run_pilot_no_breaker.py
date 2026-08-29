@@ -61,7 +61,7 @@ def main():
         
         print(f"\n▶ Ejecutando {heuristic} (Semilla {seed}, Shell 5)...")
         t_start = time.time()
-        res = subprocess.run(cmd, env=env, capture_output=True, text=True, timeout=120)
+        res = subprocess.run(cmd, env=env, capture_output=True, text=True, timeout=310)
         t_end = time.time()
         
         # Parse final lines
