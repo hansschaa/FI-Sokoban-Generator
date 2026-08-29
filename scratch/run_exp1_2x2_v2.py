@@ -424,9 +424,10 @@ def main():
         print(f"\n⚙️  Configurando threshold del servidor Flask a {th} para Shell {sh}")
         set_server_threshold(th)
         
-        # Ejecutamos con max_workers=4 para balancear rapidez y evitar una saturación extrema
-        # (4 workers * 24 hilos = 96 hilos, manejable para el SO sin destruir el rendimiento)
-        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+        # Ejecutamos de a 1 por vez (max_workers=1)
+        # Esto garantiza CERO interferencia: cada experimento usa el 100% de la CPU (los 24 cores reales)
+        # sin competir con otros, logrando la medición de Tiempo MÁS precisa posible.
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             futures = []
             for (lbl, heur, fo) in VARIANTS:
                 for s in SEEDS:
