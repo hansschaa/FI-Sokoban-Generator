@@ -21,7 +21,7 @@ bool AddMutation::apply(
     //
 
     const int free_cells = count_free_cells(b);
-    const int max_boxes  = std::max(3, std::min(6, free_cells / 15));
+    const int max_boxes  = std::max(3, std::min(5, free_cells / 15));
 
     if (count_boxes(b) >= max_boxes)
         return false;
