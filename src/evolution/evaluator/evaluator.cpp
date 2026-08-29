@@ -3,6 +3,7 @@
 #include "../../../include/evolution/utils/board_utils.h"
 #include <cmath>
 #include <vector>
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include "../../../include/httplib.h"
@@ -173,8 +174,10 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
                 continue;
             }
             
-            // Full A* check
-            evaluate(ind);
+            auto t_del_start = std::chrono::high_resolution_clock::now();
+            evaluate(population[idx]);
+            auto t_del_end = std::chrono::high_resolution_clock::now();
+            std::cerr << "[TIMING_PHASE] (b.4) Delegacion hibrida legal (A*): " << std::chrono::duration<double, std::milli>(t_del_end - t_del_start).count() << " ms\n";
             
             // If it timed out, evaluate() sets fitness very low or negative, treat it as discarded
             // If it's solvable, fitness > 0
@@ -253,12 +256,15 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
     cli.set_connection_timeout(5); // 5 seconds timeout
     cli.set_read_timeout(30);
 
+    auto t_fs_flask_0 = std::chrono::high_resolution_clock::now();
+    std::cerr << "[TIMING_PHASE] (b.2) POST Request a Flask (" << surrogate_indices.size() << " tableros)...\\n";
     auto res = cli.Post("/evaluate", payload.dump(), "application/json");
+    auto t_fs_flask_1 = std::chrono::high_resolution_clock::now();
+    std::cerr << "[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: " << std::chrono::duration<double, std::milli>(t_fs_flask_1 - t_fs_flask_0).count() << " ms\\n";
 
     if (!res) {
         std::cerr << "Error: Failed to connect to Python Surrogate Server at 127.0.0.1:5000\n";
-        std::cerr << "Falling back to A* solver for this batch...\n";
-        
+        std::cerr << "[TIMING_PHASE] (c.1) ALERTA: Fallback Silencioso a A* disparado (Conexion Fallida).\n";
         (*this->surrogate_fallbacks)++;
 
         auto original_heuristic = this->heuristic_type;
@@ -267,9 +273,12 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         this->heuristic_type = Heuristic::hungarian;
         this->use_surrogate = false;
         this->max_seconds = 5.0;
+        auto t_fb_start = std::chrono::high_resolution_clock::now();
         for (size_t idx : surrogate_indices) {
             evaluate(population[idx]);
         }
+        auto t_fb_end = std::chrono::high_resolution_clock::now();
+        std::cerr << "[TIMING_PHASE] (c.2) Ciclo A* de Fallback (batch entero) tardo: " << std::chrono::duration<double, std::milli>(t_fb_end - t_fb_start).count() << " ms\\n";
         this->heuristic_type = original_heuristic;
         this->use_surrogate = original_surrogate;
         this->max_seconds = original_max_sec;
@@ -277,9 +286,7 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
     }
 
     if (res->status != 200) {
-        std::cerr << "Error: Python Server returned HTTP " << res->status << "\n";
-        std::cerr << "Response: " << res->body << "\n";
-        
+        std::cerr << "[TIMING_PHASE] (c.1) ALERTA: Fallback Silencioso a A* disparado (HTTP " << res->status << ").\n";
         (*this->surrogate_fallbacks)++;
 
         auto original_heuristic = this->heuristic_type;

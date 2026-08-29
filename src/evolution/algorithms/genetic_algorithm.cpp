@@ -136,6 +136,7 @@ Individual GeneticAlgorithm::run(
 
         std::vector<Individual> batch_to_evaluate;
 
+        auto t_mut_start = std::chrono::high_resolution_clock::now();
         while (
             generated < offspringSize &&
             (evaluations + batch_to_evaluate.size()) < (size_t)maxEvaluations &&
@@ -176,6 +177,9 @@ Individual GeneticAlgorithm::run(
             batch_to_evaluate.push_back(child);
             generated++;
         }
+
+        auto t_mut_end = std::chrono::high_resolution_clock::now();
+        std::cerr << "[TIMING_PHASE] (b.1) Generacion C++ de " << batch_to_evaluate.size() << " mutaciones: " << std::chrono::duration<double, std::milli>(t_mut_end - t_mut_start).count() << " ms\\n";
 
         // PARALLEL EVALUATION OF BATCH
         if (!batch_to_evaluate.empty()) {
