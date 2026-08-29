@@ -30,8 +30,8 @@ THRESHOLD_MAP = {
     5: 0.70
 }
 
-SEEDS = [42, 43, 44, 45, 46, 47, 48, 49, 50, 51]
-SHELLS = [1, 2, 3, 4, 5]
+SEEDS = [42]
+SHELLS = [4, 5]
 CORES = [24]  # Solo variante paralela para ahorrar tiempo
 
 VARIANTS = [
@@ -185,6 +185,7 @@ def run_experiment_run(label, heuristic, fo_type, shell_idx, seed, cores):
     env = os.environ.copy()
     env['OMP_NUM_THREADS'] = '1'
 
+    termination_reason = "UNKNOWN"
     start_time = time.time()
     try:
         result = subprocess.run(cmd, env=env, timeout=PYTHON_TIMEOUT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
@@ -192,6 +193,7 @@ def run_experiment_run(label, heuristic, fo_type, shell_idx, seed, cores):
     except subprocess.TimeoutExpired as e:
         out_text = e.stdout if e.stdout else ""
         if isinstance(out_text, bytes): out_text = out_text.decode('utf-8', errors='replace')
+        termination_reason = "PYTHON_TIMEOUT"
     elapsed = time.time() - start_time
 
     if os.path.exists(tmp_csv): os.rename(tmp_csv, out_csv)
@@ -203,7 +205,14 @@ def run_experiment_run(label, heuristic, fo_type, shell_idx, seed, cores):
     top_boards = []
 
     for line in out_text.split('\n'):
-        if "[ES STATS] Classifier Deadlocks Filtered" in line:
+        if "[ES] Criterio de Parada Alcanzado:" in line:
+            if "TIME LIMIT" in line:
+                termination_reason = "TIME_LIMIT"
+            elif "STAGNATION" in line:
+                termination_reason = "STAGNATION"
+            elif "MAX_EVALUATIONS" in line:
+                termination_reason = "MAX_EVALUATIONS"
+        elif "[ES STATS] Classifier Deadlocks Filtered" in line:
             try: deadlocks_filtered = int(line.split(":")[1].strip())
             except: pass
         elif "[ES STATS] Classifier False Positives" in line:
@@ -303,6 +312,7 @@ def run_experiment_run(label, heuristic, fo_type, shell_idx, seed, cores):
         "Top5_Size": len(top_boards),
         "Top5_Accuracy_Pct": round(tpr_top5_pct, 1),
         "Time_s": round(elapsed, 1),
+        "Termination_Reason": termination_reason,
         "Collapsed_Immediate": is_collapsed,
         "pipeline_hash": CURRENT_PIPELINE_HASH   # Firmado con hash del pipeline — invalida la cache si el pipeline cambia
     }
@@ -310,7 +320,7 @@ def run_experiment_run(label, heuristic, fo_type, shell_idx, seed, cores):
     with open(out_meta, "w", encoding="utf-8") as f:
         json.dump(meta_record, f, indent=2)
 
-    print(f"✔️  [Shell {shell_idx} | Seed {seed:<4} | {label:<24}] Done ({elapsed:.1f}s) | A* Real Best: {best_real_astar_pushes} | Top-5: ✅{solvable_top5} ❓{inconclusive_top5} ❌{deadlock_top5}/{len(top_boards)} | Acc Definitiva: {tpr_top5_pct:.0f}% | Tableros Únicos: {unique_boards_count}")
+    print(f"✔️  [Shell {shell_idx} | Seed {seed:<4} | {label:<24}] Done ({elapsed:.1f}s, {termination_reason}) | A* Real Best: {best_real_astar_pushes} | Top-5: ✅{solvable_top5} ❓{inconclusive_top5} ❌{deadlock_top5}/{len(top_boards)} | Acc Definitiva: {tpr_top5_pct:.0f}% | Tableros Únicos: {unique_boards_count}")
     return False, meta_record
 
 def generate_final_analysis():
