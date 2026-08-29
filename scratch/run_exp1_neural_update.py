@@ -49,6 +49,7 @@ PIPELINE_HASH_FILES = [
     "surrogate_models/results/regressor_calibration.json",  # calibración C++
     "src/neural_heuristic.cpp",                             # fuente C++ con fix log1p
     "surrogate_models/results/surrogate_stats.txt",         # estadísticos de normalización
+    "scratch/run_exp1_neural_update.py",                    # para invalidar cache si el script cambia (ej. umbral)
 ]
 
 def compute_pipeline_hash():
