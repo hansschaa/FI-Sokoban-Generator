@@ -62,11 +62,11 @@ def main():
         print(f"\n▶ Ejecutando {heuristic} (Semilla {seed}, Shell 5)...")
         t_start = time.time()
         try:
-            res = subprocess.run(cmd, env=env, capture_output=True, text=True, timeout=120)
+            res = subprocess.run(cmd, env=env, capture_output=True, text=True, timeout=600)
             res_stdout = res.stdout
             res_stderr = res.stderr
         except subprocess.TimeoutExpired as e:
-            print("  ⏱️ Tiempo límite de Python superado (120s). Capturando logs parciales...")
+            print("  ⏱️ Tiempo límite de Python superado (600s). Capturando logs parciales...")
             res_stdout = e.stdout if isinstance(e.stdout, str) else (e.stdout.decode() if e.stdout else "")
             res_stderr = e.stderr if isinstance(e.stderr, str) else (e.stderr.decode() if e.stderr else "")
         t_end = time.time()
