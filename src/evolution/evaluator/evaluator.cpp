@@ -239,6 +239,7 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         return;
     }
 
+    auto t_micro_0 = std::chrono::high_resolution_clock::now();
     // 1. Prepare JSON payload para candidatos dentro del régimen neuronal (< 6 cajas)
     json payload;
     payload["boards"] = json::array();
@@ -250,6 +251,8 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         item["parent_board"] = ind.parent_board_str;
         payload["boards"].push_back(item);
     }
+    auto t_micro_1 = std::chrono::high_resolution_clock::now();
+    std::cerr << "[MICRO_TIMING] JSON Payload prep: " << std::chrono::duration<double, std::milli>(t_micro_1 - t_micro_0).count() << " ms\n";
 
     // 2. Send HTTP POST request
     httplib::Client cli("127.0.0.1", 5000);
@@ -304,10 +307,14 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         return;
     }
 
+    auto t_micro_2 = std::chrono::high_resolution_clock::now();
     // 3. Parse JSON response
     try {
         json j_res = json::parse(res->body);
         
+        auto t_micro_3 = std::chrono::high_resolution_clock::now();
+        std::cerr << "[MICRO_TIMING] JSON Parse: " << std::chrono::duration<double, std::milli>(t_micro_3 - t_micro_2).count() << " ms\n";
+
         for (size_t k = 0; k < surrogate_indices.size(); ++k) {
             size_t idx = surrogate_indices[k];
             bool is_solvable = j_res[k]["is_solvable"];
@@ -331,6 +338,8 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
                 }
             }
         }
+        auto t_micro_4 = std::chrono::high_resolution_clock::now();
+        std::cerr << "[MICRO_TIMING] Assign Fitness: " << std::chrono::duration<double, std::milli>(t_micro_4 - t_micro_3).count() << " ms\n";
     } catch (const std::exception& e) {
         std::cerr << "JSON Parsing Error: " << e.what() << "\n";
         std::cerr << "Falling back to A* solver...\n";
@@ -344,6 +353,9 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         this->heuristic_type = original_heuristic;
         this->use_surrogate = original_surrogate;
     }
+    
+    auto t_micro_5 = std::chrono::high_resolution_clock::now();
+    std::cerr << "[MICRO_TIMING] Total post-HTTP time: " << std::chrono::duration<double, std::milli>(t_micro_5 - t_micro_2).count() << " ms\n";
 }
 
 void Evaluator::filter_surrogate_batch(std::vector<Individual>& population)
