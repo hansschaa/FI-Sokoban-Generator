@@ -25,7 +25,6 @@ SHELLS = [1, 2, 3, 4, 5]
 CORES = [24]
 
 VARIANTS = [
-    ("A* Puro (Baseline)", "hungarian"),
     ("Hybrid Surrogate (Reg)", "hybrid_regressor")
 ]
 
@@ -159,12 +158,5 @@ agg = df.groupby(["shell", "heuristic"]).agg({
 
 print(agg.to_string())
 
-print("\n" + "="*80)
-print(" ⚡ RATIO DE SPEEDUP (A* Puro / Híbrido)")
-print("="*80)
-for sh in SHELLS:
-    h_time = agg[(agg['shell'] == sh) & (agg['heuristic'] == 'hungarian')]['time_s'].values[0]
-    m_time = agg[(agg['shell'] == sh) & (agg['heuristic'] == 'hybrid_regressor')]['time_s'].values[0]
-    speedup = h_time / m_time
-    print(f"Shell {sh}: {speedup:.2f}x")
+# Removed automated speedup ratio computation as baseline is not run.
 
