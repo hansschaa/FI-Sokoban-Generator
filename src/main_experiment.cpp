@@ -110,6 +110,7 @@ int main(int argc, char** argv)
     }
 
     Heuristic heuristic_type = Heuristic::hungarian;
+    bool disable_structural_audit = cmdOptionExists(argv, argv + argc, "--disableStructuralAudit");
     if (char* val = getCmdOption(argv, argv + argc, "--heuristic")) {
         std::string h_arg = val;
         if (h_arg == "neural") heuristic_type = Heuristic::neural_batched;
@@ -119,6 +120,10 @@ int main(int argc, char** argv)
         else if (h_arg == "hybrid_regressor") heuristic_type = Heuristic::hybrid_regressor;
         else if (h_arg == "classifier_filter") heuristic_type = Heuristic::classifier_filter;
         else if (h_arg == "full_surrogate") heuristic_type = Heuristic::full_surrogate;
+        else if (h_arg == "full_surrogate_no_audit") {
+            heuristic_type = Heuristic::full_surrogate;
+            disable_structural_audit = true;
+        }
     }
 
     std::string out_csv_path = "";
@@ -127,7 +132,6 @@ int main(int argc, char** argv)
     }
 
     bool no_parallel = cmdOptionExists(argv, argv + argc, "--no-parallel");
-    bool disable_structural_audit = cmdOptionExists(argv, argv + argc, "--disableStructuralAudit");
 
     // 4. Configurar el tablero inicial (Shell) y aplicar Flood Fill
     std::vector<std::vector<char>> shell;
