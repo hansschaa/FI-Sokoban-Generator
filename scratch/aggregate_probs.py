@@ -19,7 +19,7 @@ def run():
     
     for shell in SHELLS:
         for seed in SEEDS:
-            cmd = f"./build/experiment_runner config/shell_{shell}.sok {seed} {CORES} {TIMEOUT}"
+            cmd = f"./build/experiment_runner ES FO1 {seed} config/shell_{shell}.sok {CORES} {TIMEOUT}"
             env = os.environ.copy()
             env["USE_SURROGATE"] = "true"
             env["USE_CLASSIFIER_FILTER"] = "false"
