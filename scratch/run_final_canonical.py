@@ -217,12 +217,22 @@ def main():
                 if row:
                     results.append(row)
                     
-    df = pd.DataFrame(results)
-    final_csv = "final_canonical_campaign_consolidated.csv"
-    df.to_csv(final_csv, index=False)
+    df_new = pd.DataFrame(results)
+    
+    final_csv = "final_canonical_campaign_paralelized.csv"
+    try:
+        df_old = pd.read_csv("final_canonical_campaign_consolidated.csv")
+        # Keep only the variants that we DID NOT run this time (to merge baseline with new data)
+        df_old_filtered = df_old[~df_old["Variant"].isin(VARIANTS)]
+        df_final = pd.concat([df_old_filtered, df_new], ignore_index=True)
+        df_final.to_csv(final_csv, index=False)
+        print(f"\n[MERGE] Añadidas {len(df_old_filtered)} filas del baseline histórico.")
+    except Exception as e:
+        print(f"\n[WARNING] No se pudo leer el archivo consolidated original: {e}")
+        df_new.to_csv(final_csv, index=False)
     
     print("\n" + "="*80)
-    print(f" 🎉 CAMPAÑA COMPLETADA. CSV Consolidado guardado en {final_csv}")
+    print(f" 🎉 CAMPAÑA COMPLETADA Y FUSIONADA. CSV guardado en {final_csv}")
     print("="*80)
 
 if __name__ == '__main__':
