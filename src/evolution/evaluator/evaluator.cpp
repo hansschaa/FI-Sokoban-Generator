@@ -101,10 +101,38 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
     if (population.empty()) return;
 
     std::vector<size_t> surrogate_indices;
+    std::vector<size_t> hungarian_indices;
 
     for (size_t i = 0; i < population.size(); ++i) {
-        // Enviar TODOS los tableros al surrogate sin importar si tienen 6+ cajas
-        surrogate_indices.push_back(i);
+        // Hybrid Switch: Usar Hungarian puro para tableros con 6+ cajas
+        int boxes = 0;
+        for (const auto& row : population[i].board) {
+            for (char c : row) {
+                if (c == '$' || c == '*') boxes++;
+            }
+        }
+        if (boxes >= 6) {
+            hungarian_indices.push_back(i);
+        } else {
+            surrogate_indices.push_back(i);
+        }
+    }
+
+    // Delegación directa a Hungarian puro para box_count >= 6
+    if (!hungarian_indices.empty()) {
+        (*this->hybrid_hungarian_delegations) += hungarian_indices.size();
+        auto original_heuristic = this->heuristic_type;
+        auto original_surrogate = this->use_surrogate;
+        auto original_max_sec = this->max_seconds;
+        this->heuristic_type = Heuristic::hungarian;
+        this->use_surrogate = false;
+        // Preserve current max_seconds
+        for (size_t idx : hungarian_indices) {
+            evaluate(population[idx]);
+        }
+        this->heuristic_type = original_heuristic;
+        this->use_surrogate = original_surrogate;
+        this->max_seconds = original_max_sec;
     }
 
     if (surrogate_indices.empty()) return;
