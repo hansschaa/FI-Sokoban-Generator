@@ -78,12 +78,36 @@ Individual EvolutionStrategy::run(
 
     Individual best = population[0];
 
+    auto try_update_best = [&](Individual& candidate, bool already_audited, bool* improved_flag) {
+        if (candidate.fitness > best.fitness) {
+            if (evaluator.use_surrogate && evaluator.heuristic_type == Heuristic::full_surrogate) {
+                if (!already_audited && !this->disable_structural_audit) {
+                    Evaluator astar_eval = evaluator;
+                    astar_eval.use_surrogate = false;
+                    astar_eval.heuristic_type = Heuristic::hungarian;
+                    astar_eval.max_seconds = 5.0;
+                    double true_fitness = astar_eval.evaluate(candidate);
+                    
+                    if (true_fitness == -2e9 || true_fitness == -1e9 || true_fitness < -1e8) {
+                        return; // Rechazado por A*, se descarta como récord
+                    }
+                    // Aceptado
+                    candidate.fitness = true_fitness;
+                    candidate.needs_structural_audit = false;
+                }
+            }
+            
+            // Check again in case the real A* fitness is lower than the neural fitness
+            if (candidate.fitness > best.fitness) {
+                best = candidate;
+                if (improved_flag) *improved_flag = true;
+            }
+        }
+    };
+
     for (auto& ind : population)
     {
-        if (ind.fitness > best.fitness)
-        {
-            best = ind;
-        }
+        try_update_best(ind, false, nullptr);
     }
 
     if (on_progress) {
@@ -243,21 +267,13 @@ Individual EvolutionStrategy::run(
 
         // PROCESS RESULTS
         for (auto& child : batch_to_evaluate) {
-            if (!evaluator.use_surrogate || evaluator.heuristic_type == Heuristic::classifier_filter) {
-                if (child.fitness > best.fitness) {
-                    best = child;
-                    improved = true;
-                }
-            }
+            try_update_best(child, false, &improved);
             offspring.push_back(child);
         }
         for (auto& child : batch_no_evaluation) {
             if (!std::isnan(child.fitness)) {
                 offspring.push_back(child);
-                if (child.fitness > best.fitness) {
-                    best = child;
-                    improved = true;
-                }
+                try_update_best(child, false, &improved);
             }
         }
 
@@ -385,10 +401,7 @@ Individual EvolutionStrategy::run(
                         ind.fitness = true_fitness;
                         ind.needs_structural_audit = false; // Validado permanentemente
                         next_population.push_back(ind);
-                        if (true_fitness > best.fitness) {
-                            best = ind;
-                            improved = true;
-                        }
+                        try_update_best(ind, true, &improved);
                     } else {
                         // Falso positivo estructural (Deadlock descubierto)
                         total_circuit_breakers++; // Reusamos este contador para tracking
@@ -438,10 +451,7 @@ Individual EvolutionStrategy::run(
                     if (true_fitness > -1e8) {
                         ind.fitness = true_fitness;
                         next_population.push_back(ind);
-                        if (true_fitness > best.fitness) {
-                            best = ind;
-                            improved = true;
-                        }
+                        try_update_best(ind, true, &improved);
                     } else {
                         // A* says it's a deadlock (-1e9) but Surrogate accepted it!
                         if (adversarial_mode) {
