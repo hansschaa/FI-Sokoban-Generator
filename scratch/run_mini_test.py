@@ -38,8 +38,8 @@ THRESHOLD_MAP = {
     5: 0.70
 }
 
-SEEDS = [42, 43, 44, 45, 46, 47, 48, 49, 50, 51]
-SHELLS = [1, 2, 3, 4, 5]
+SEEDS = [42, 43]
+SHELLS = [1, 5]
 CORES = [24]  # Solo variante paralela para ahorrar tiempo
 
 VARIANTS = [
@@ -241,12 +241,13 @@ def run_experiment_run(label, heuristic, fo_type, shell_idx, seed, cores):
                     except: pass
         elif line.startswith("RANK_"):
             parts = line.split(";")
-            if len(parts) >= 3:
+            if len(parts) >= 4:
                 try:
                     r_lbl = parts[0].strip()
                     n_fit = float(parts[1].strip())
-                    b_str = parts[2].strip()
-                    if n_fit > -1e8: top_boards.append((r_lbl, n_fit, b_str))
+                    s_prob = float(parts[2].strip())
+                    b_str = parts[3].strip()
+                    if n_fit > -1e8: top_boards.append((r_lbl, n_fit, s_prob, b_str))
                 except: pass
         elif line.strip() and ";" in line.strip() and not line.startswith("RANK_") and not line.startswith("["):
             parts = line.strip().split(";")
@@ -258,15 +259,16 @@ def run_experiment_run(label, heuristic, fo_type, shell_idx, seed, cores):
 
     if neural_fitness <= -1e8 or neural_fitness >= 1e8: neural_fitness = 0.0
     if not top_boards and best_board:
-        top_boards.append(("RANK_1", neural_fitness, best_board))
+        top_boards.append(("RANK_1", neural_fitness, 0.0, best_board))
 
     # Auditoría Post-hoc con A* Real (con distinción INCONCLUSIVE vs DEADLOCK)
     solvable_top5 = 0
     inconclusive_top5 = 0
     deadlock_top5 = 0
     best_real_astar_pushes = 0
-    for r_lbl, n_fit, b_str in top_boards:
+    for r_lbl, n_fit, s_prob, b_str in top_boards:
         real_p, is_sol, is_inconclusive = verify_board_with_astar(b_str, tag=f"{heuristic}_{fo_type}_sh{shell_idx}_s{seed}_c{cores}")
+        print(f"  --> {r_lbl}: Neural Prob = {s_prob:.4f} | A* Result = {'SOLVED' if is_sol else ('INCONCLUSIVE' if is_inconclusive else 'DEADLOCK_Genuino')}")
         if is_sol:
             solvable_top5 += 1
             if real_p > best_real_astar_pushes:

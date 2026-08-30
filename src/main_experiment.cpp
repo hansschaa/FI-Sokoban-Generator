@@ -419,7 +419,7 @@ int main(int argc, char** argv)
         if (std::find(seen_boards.begin(), seen_boards.end(), flat) == seen_boards.end()) {
             seen_boards.push_back(flat);
             rank++;
-            std::cout << "RANK_" << rank << ";" << ind.fitness << ";" << flat << std::endl;
+            std::cout << "RANK_" << rank << ";" << ind.fitness << ";" << ind.surrogate_prob << ";" << flat << std::endl;
         }
     }
 

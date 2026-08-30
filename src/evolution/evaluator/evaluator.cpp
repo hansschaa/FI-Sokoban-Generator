@@ -327,6 +327,7 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         for (size_t k = 0; k < sent_indices.size(); ++k) {
             size_t idx = sent_indices[k];
             bool is_solvable = j_res[k]["is_solvable"];
+            population[idx].surrogate_prob = j_res[k]["prob"];
             
             if (!is_solvable) {
                 population[idx].fitness = -1e9;
@@ -431,6 +432,7 @@ void Evaluator::filter_surrogate_batch(std::vector<Individual>& population)
         json j_res = json::parse(res->body);
         for (size_t k = 0; k < sent_indices.size(); ++k) {
             bool is_solvable = j_res[k]["is_solvable"];
+            population[sent_indices[k]].surrogate_prob = j_res[k]["prob"];
             if (!is_solvable) {
                 population[sent_indices[k]].fitness = -1e9;
                 (*this->classifier_deadlocks_filtered)++;

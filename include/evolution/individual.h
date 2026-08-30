@@ -17,4 +17,5 @@ struct Individual {
 
     bool solved = false;
     bool needs_structural_audit = false;
+    double surrogate_prob = 0.0;
 };
