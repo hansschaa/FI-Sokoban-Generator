@@ -202,6 +202,11 @@ def main():
     print(f" 🔑 Pipeline Hash: {CURRENT_PIPELINE_HASH}")
     print("="*80)
     
+    # SANITY CHECK DEL SERVIDOR ANTES DE COMENZAR (Para no fallar 1 hora después)
+    print("🔍 [Sanity Check] Verificando conexión con el servidor Flask...")
+    set_server_threshold(0.70)
+    print("✅ [Sanity Check] ¡Servidor Flask respondiendo correctamente!\n")
+    
     results = []
     for heur in VARIANTS:
         for sh in SHELLS:
