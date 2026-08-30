@@ -13,9 +13,9 @@ TIME_LIMIT_SEC = 300
 PYTHON_TIMEOUT = 380
 SERVER_URL = "http://127.0.0.1:5000"
 
-SEEDS = [42]
-SHELLS = [1]
-VARIANTS = ["full_surrogate"]
+SEEDS = [42, 43, 44, 45, 46, 47, 48, 49, 50, 51]
+SHELLS = [1, 2, 3, 4, 5]
+VARIANTS = ["classifier_filter", "full_surrogate"]
 CORES = [24] # Solo 24 cores (sin duplicados)
 
 THRESHOLD_MAP = {
