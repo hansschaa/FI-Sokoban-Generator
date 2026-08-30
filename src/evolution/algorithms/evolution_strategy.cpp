@@ -50,8 +50,10 @@ Individual EvolutionStrategy::run(
             
             if (population[i].fitness <= -1e8 || population[i].fitness == 0) {
                 Evaluator local_eval = evaluator;
-                if (local_eval.heuristic_type == Heuristic::classifier_filter) {
+                if (local_eval.heuristic_type == Heuristic::classifier_filter || 
+                    local_eval.heuristic_type == Heuristic::full_surrogate) {
                     local_eval.use_surrogate = false;
+                    local_eval.max_seconds = 5.0;
                 }
                 local_eval.evaluate(population[i]);
             }

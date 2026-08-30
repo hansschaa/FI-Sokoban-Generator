@@ -23,19 +23,23 @@ SERVER_URL = "http://127.0.0.1:5000"
 
 # Política de Umbral por Shell (0.60 para Shell 3 por escasez estructural, 0.70 para el resto)
 SHELL_LEVELS = {
+    1: "levels/shell_1.sok",
     2: "levels/shell_2.sok",
     3: "levels/shell_3.sok",
-    4: "levels/shell_4.sok"
+    4: "levels/shell_4.sok",
+    5: "levels/shell_5.sok"
 }
 
 THRESHOLD_MAP = {
+    1: 0.70,
     2: 0.70,
     3: 0.60,
-    4: 0.70
+    4: 0.70,
+    5: 0.70
 }
 
-SEEDS = [42, 43, 44]
-SHELLS = [2, 3, 4]
+SEEDS = [42, 43, 44, 45, 46, 47, 48, 49, 50, 51]
+SHELLS = [1, 2, 3, 4, 5]
 CORES = [24]  # Solo variante paralela para ahorrar tiempo
 
 VARIANTS = [

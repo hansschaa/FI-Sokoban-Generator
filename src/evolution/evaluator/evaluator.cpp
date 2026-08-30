@@ -219,12 +219,44 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
     json payload;
     payload["boards"] = json::array();
     
+    std::vector<size_t> sent_indices; // Trackeamos los que pasan el filtro estático
+    
     for (size_t idx : surrogate_indices) {
-        const auto& ind = population[idx];
+        auto& ind = population[idx];
+        
+        // --- Fix 2: Chequeo estático previo (Freeze/Corner Deadlocks) ---
+        std::string flat_str = board_to_string(ind.board);
+        unsigned int rows = ind.board.size();
+        unsigned int cols = ind.board.empty() ? 0 : ind.board[0].size();
+        game_solver fast_solver(flat_str, rows, cols, 16);
+        fast_solver.enable_advanced_deadlocks = true;
+        
+        bool simple_deadlock = false;
+        for (size_t r = 0; r < ind.board.size(); r++) {
+            for (size_t c = 0; c < ind.board[r].size(); c++) {
+                if (ind.board[r][c] == '$' || ind.board[r][c] == '*') {
+                    point p(r, c);
+                    if (fast_solver.lk.is_locked(p, ind.board) || fast_solver.lk.is_freeze_deadlock(p, ind.board)) {
+                        simple_deadlock = true;
+                        break;
+                    }
+                }
+            }
+            if (simple_deadlock) break;
+        }
+        
+        if (simple_deadlock) {
+            ind.fitness = -1e9;
+            (*this->classifier_deadlocks_filtered)++; // Lo contabilizamos como filtrado (estático)
+            continue; // Se descarta y NO se manda al payload JSON
+        }
+        // ---------------------------------------------------------
+        
         json item;
         item["board"] = board_to_pretty_string(ind.board);
         item["parent_board"] = ind.parent_board_str;
         payload["boards"].push_back(item);
+        sent_indices.push_back(idx);
     }
     auto t_micro_1 = std::chrono::high_resolution_clock::now();
     std::cerr << "[MICRO_TIMING] JSON Payload prep: " << std::chrono::duration<double, std::milli>(t_micro_1 - t_micro_0).count() << " ms\n";
@@ -235,10 +267,12 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
     cli.set_read_timeout(30);
 
     auto t_fs_flask_0 = std::chrono::high_resolution_clock::now();
-    std::cerr << "[TIMING_PHASE] (b.2) POST Request a Flask (" << surrogate_indices.size() << " tableros)...\\n";
+    std::cerr << "[TIMING_PHASE] (b.2) POST Request a Flask (" << sent_indices.size() << " tableros)...\\n";
     auto res = cli.Post("/evaluate", payload.dump(), "application/json");
     auto t_fs_flask_1 = std::chrono::high_resolution_clock::now();
     std::cerr << "[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: " << std::chrono::duration<double, std::milli>(t_fs_flask_1 - t_fs_flask_0).count() << " ms\\n";
+
+    if (payload["boards"].empty()) return;
 
     if (!res) {
         std::cerr << "Error: Failed to connect to Python Surrogate Server at 127.0.0.1:5000\n";
@@ -252,7 +286,7 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         this->use_surrogate = false;
         this->max_seconds = 5.0;
         auto t_fb_start = std::chrono::high_resolution_clock::now();
-        for (size_t idx : surrogate_indices) {
+        for (size_t idx : sent_indices) {
             evaluate(population[idx]);
         }
         auto t_fb_end = std::chrono::high_resolution_clock::now();
@@ -273,7 +307,7 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         this->heuristic_type = Heuristic::hungarian;
         this->use_surrogate = false;
         this->max_seconds = 5.0;
-        for (size_t idx : surrogate_indices) {
+        for (size_t idx : sent_indices) {
             evaluate(population[idx]);
         }
         this->heuristic_type = original_heuristic;
@@ -290,8 +324,8 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         auto t_micro_3 = std::chrono::high_resolution_clock::now();
         std::cerr << "[MICRO_TIMING] JSON Parse: " << std::chrono::duration<double, std::milli>(t_micro_3 - t_micro_2).count() << " ms\n";
 
-        for (size_t k = 0; k < surrogate_indices.size(); ++k) {
-            size_t idx = surrogate_indices[k];
+        for (size_t k = 0; k < sent_indices.size(); ++k) {
+            size_t idx = sent_indices[k];
             bool is_solvable = j_res[k]["is_solvable"];
             
             if (!is_solvable) {
@@ -322,7 +356,7 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
         bool original_surrogate = this->use_surrogate;
         this->heuristic_type = Heuristic::hungarian;
         this->use_surrogate = false;
-        for (size_t idx : surrogate_indices) {
+        for (size_t idx : sent_indices) {
             evaluate(population[idx]);
         }
         this->heuristic_type = original_heuristic;
@@ -340,13 +374,47 @@ void Evaluator::filter_surrogate_batch(std::vector<Individual>& population)
     json payload;
     payload["boards"] = json::array();
     
+    std::vector<int> sent_indices; // Trackeamos los que pasan el filtro estático
+
     for (size_t i = 0; i < population.size(); ++i) {
-        const auto& ind = population[i];
+        auto& ind = population[i];
+        
+        // --- Fix 2: Chequeo estático previo (Freeze/Corner Deadlocks) ---
+        std::string flat_str = board_to_string(ind.board);
+        unsigned int rows = ind.board.size();
+        unsigned int cols = ind.board.empty() ? 0 : ind.board[0].size();
+        game_solver fast_solver(flat_str, rows, cols, 16);
+        fast_solver.enable_advanced_deadlocks = true;
+        
+        bool simple_deadlock = false;
+        for (size_t r = 0; r < ind.board.size(); r++) {
+            for (size_t c = 0; c < ind.board[r].size(); c++) {
+                if (ind.board[r][c] == '$' || ind.board[r][c] == '*') {
+                    point p(r, c);
+                    if (fast_solver.lk.is_locked(p, ind.board) || fast_solver.lk.is_freeze_deadlock(p, ind.board)) {
+                        simple_deadlock = true;
+                        break;
+                    }
+                }
+            }
+            if (simple_deadlock) break;
+        }
+        
+        if (simple_deadlock) {
+            ind.fitness = -1e9;
+            (*this->classifier_deadlocks_filtered)++; // Lo contabilizamos como filtrado (estático)
+            continue; // Se descarta y NO se manda al payload JSON
+        }
+        // ---------------------------------------------------------
+        
         json item;
         item["board"] = board_to_pretty_string(ind.board);
         item["parent_board"] = ind.parent_board_str;
         payload["boards"].push_back(item);
+        sent_indices.push_back(i);
     }
+    
+    if (payload["boards"].empty()) return;
 
     httplib::Client cli("127.0.0.1", 5000);
     cli.set_connection_timeout(5);
@@ -361,10 +429,10 @@ void Evaluator::filter_surrogate_batch(std::vector<Individual>& population)
 
     try {
         json j_res = json::parse(res->body);
-        for (size_t k = 0; k < population.size(); ++k) {
+        for (size_t k = 0; k < sent_indices.size(); ++k) {
             bool is_solvable = j_res[k]["is_solvable"];
             if (!is_solvable) {
-                population[k].fitness = -1e9;
+                population[sent_indices[k]].fitness = -1e9;
                 (*this->classifier_deadlocks_filtered)++;
             }
         }
