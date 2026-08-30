@@ -320,7 +320,55 @@ Individual EvolutionStrategy::run(
         {
             auto& ind = combined[i];
             
-            if (evaluator.use_surrogate && 
+            if (evaluator.use_surrogate && evaluator.heuristic_type == Heuristic::full_surrogate) {
+                // Lógica Top-K para full_surrogate
+                int K = 5; // Parametro K para verificacion elitista
+                
+                bool is_parent = false;
+                for (const auto& parent : population) {
+                    if (parent.board == ind.board) {
+                        is_parent = true;
+                        break;
+                    }
+                }
+                
+                // Si no es padre, tiene fitness positivo (NN lo aprobo) y aun no hemos verificado K individuos, lo verificamos
+                if (!is_parent && ind.fitness > 0 && gen_verifications < K) {
+                    Evaluator astar_eval = evaluator;
+                    astar_eval.use_surrogate = false;
+                    astar_eval.heuristic_type = Heuristic::hungarian;
+                    astar_eval.max_seconds = 5.0;
+                    auto t_v0 = std::chrono::high_resolution_clock::now();
+                    double true_fitness = astar_eval.evaluate(ind);
+                    auto t_v1 = std::chrono::high_resolution_clock::now();
+                    double v_ms = std::chrono::duration<double, std::milli>(t_v1 - t_v0).count();
+                    gen_verifications++;
+                    
+                    std::cerr << "[PHASE_D] Verificacion Elitista Top-K #" << gen_verifications << " en Gen " << generation << ": " << v_ms << " ms (fitness=" << true_fitness << " vs neural=" << ind.fitness << ")\n";
+                    
+                    if (true_fitness == -2e9) {
+                        continue; // Timeout
+                    }
+                    
+                    if (true_fitness > -1e8) {
+                        // Confirmado como resolvible
+                        ind.fitness = true_fitness;
+                        next_population.push_back(ind);
+                        if (true_fitness > best.fitness) {
+                            best = ind;
+                            improved = true;
+                        }
+                    } else {
+                        // Falso positivo (Deadlock descubierto)
+                        total_circuit_breakers++; // Reusamos este contador para tracking
+                        continue;
+                    }
+                } else {
+                    // O es padre, o ya pasamos el limite K. Se acepta con su fitness neuronal.
+                    next_population.push_back(ind);
+                }
+            }
+            else if (evaluator.use_surrogate && 
                 evaluator.heuristic_type != Heuristic::classifier_filter && 
                 evaluator.heuristic_type != Heuristic::full_surrogate && 
                 evaluator.heuristic_type != Heuristic::hybrid_regressor) {
