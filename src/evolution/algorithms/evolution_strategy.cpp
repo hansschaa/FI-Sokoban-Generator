@@ -201,12 +201,13 @@ Individual EvolutionStrategy::run(
                             int idx = current_child++;
                             if (idx >= (int)batch_to_evaluate.size()) break;
                             if (batch_to_evaluate[idx].fitness != -1e9 && batch_to_evaluate[idx].fitness != -2e9) {
-                                auto orig_surr = evaluator.use_surrogate;
-                                evaluator.use_surrogate = false;
-                                double real_fit = evaluator.evaluate(batch_to_evaluate[idx]);
-                                evaluator.use_surrogate = orig_surr;
+                                Evaluator local_eval = evaluator;
+                                local_eval.use_surrogate = false;
+                                double real_fit = local_eval.evaluate(batch_to_evaluate[idx]);
                                 if (real_fit == -1e9) {
-                                    (*evaluator.classifier_false_positives)++;
+                                    // Note: classifier_false_positives is an int, not atomic, so this might drop counts in parallel,
+                                    // but it's just a stat counter so we leave it as is per instructions.
+                                    (*local_eval.classifier_false_positives)++;
                                 }
                             }
                         }
