@@ -36,11 +36,11 @@ def analyze_logs():
             
             # Buscar el verdadero motivo de término reportado por C++
             termination_reason = "NO_REPORTADO"
-            if "Termination reason: STAGNATION" in content:
+            if "Criterio de Parada Alcanzado: STAGNATION" in content:
                 termination_reason = "STAGNATION"
-            elif "Termination reason: MAX_EVALUATIONS" in content:
-                termination_reason = "MAX_EVALUATIONS"
-            elif "Termination reason: TIME_LIMIT" in content:
+            elif "Criterio de Parada Alcanzado: MAX_EVALUATIONS" in content:
+                termination_reason = "MAX_EVALS"
+            elif "Criterio de Parada Alcanzado: TIME LIMIT" in content:
                 termination_reason = "TIME_LIMIT_CPP"
             
             # Si el C++ no reportó término, investigar por qué (Timeout de Python, Segfault, etc)
