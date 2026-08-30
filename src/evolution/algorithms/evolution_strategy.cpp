@@ -336,7 +336,7 @@ Individual EvolutionStrategy::run(
                 }
                 
                 // Si es un hijo estructuralmente riesgoso (Add/Remove) y el clasificador lo aprobó, auditamos.
-                if (!is_parent && ind.needs_structural_audit) {
+                if (!is_parent && ind.needs_structural_audit && !this->disable_structural_audit) {
                     Evaluator astar_eval = evaluator;
                     astar_eval.use_surrogate = false;
                     astar_eval.heuristic_type = Heuristic::hungarian;

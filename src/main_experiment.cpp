@@ -127,6 +127,7 @@ int main(int argc, char** argv)
     }
 
     bool no_parallel = cmdOptionExists(argv, argv + argc, "--no-parallel");
+    bool disable_structural_audit = cmdOptionExists(argv, argv + argc, "--disableStructuralAudit");
 
     // 4. Configurar el tablero inicial (Shell) y aplicar Flood Fill
     std::vector<std::vector<char>> shell;
@@ -271,6 +272,7 @@ int main(int argc, char** argv)
         {
             EvolutionStrategy es;
             es.use_parallel = !no_parallel;
+            es.disable_structural_audit = disable_structural_audit;
             es.setDeadlockMask(deadlock_mask);
             es.maxEvaluations  = maxEvals;
 

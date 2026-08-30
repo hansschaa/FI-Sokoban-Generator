@@ -25,6 +25,7 @@ public:
     Evaluator evaluator;
     bool use_parallel = true;
     bool adversarial_mode = false;
+    bool disable_structural_audit = false;
 
     void setDeadlockMask(const std::vector<std::vector<bool>>& mask) {
         moveMutation.deadlock_mask = mask;
