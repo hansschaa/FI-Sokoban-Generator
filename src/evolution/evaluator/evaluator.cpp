@@ -6,6 +6,9 @@
 #include <chrono>
 #include <fstream>
 #include <iostream>
+#include <future>
+#include <thread>
+#include <atomic>
 #include "../../../include/httplib.h"
 #include "../../../include/nlohmann/json.hpp"
 
@@ -121,18 +124,26 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
     // Delegación directa a Hungarian puro para box_count >= 6
     if (!hungarian_indices.empty()) {
         (*this->hybrid_hungarian_delegations) += hungarian_indices.size();
-        auto original_heuristic = this->heuristic_type;
-        auto original_surrogate = this->use_surrogate;
-        auto original_max_sec = this->max_seconds;
-        this->heuristic_type = Heuristic::hungarian;
-        this->use_surrogate = false;
-        // Preserve current max_seconds
-        for (size_t idx : hungarian_indices) {
-            evaluate(population[idx]);
+        unsigned int num_threads = std::thread::hardware_concurrency();
+        std::atomic<int> current_idx{0};
+        std::vector<std::future<void>> futures;
+        
+        for (unsigned int i = 0; i < num_threads; ++i) {
+            futures.push_back(std::async(std::launch::async, [&]() {
+                while (true) {
+                    int idx = current_idx++;
+                    if (idx >= (int)hungarian_indices.size()) break;
+                    
+                    Evaluator thread_eval = *this;
+                    thread_eval.heuristic_type = Heuristic::hungarian;
+                    thread_eval.use_surrogate = false;
+                    thread_eval.evaluate(population[hungarian_indices[idx]]);
+                }
+            }));
         }
-        this->heuristic_type = original_heuristic;
-        this->use_surrogate = original_surrogate;
-        this->max_seconds = original_max_sec;
+        for (auto& f : futures) {
+            f.get();
+        }
     }
 
     if (surrogate_indices.empty()) return;

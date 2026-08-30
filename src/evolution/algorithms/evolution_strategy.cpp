@@ -302,14 +302,50 @@ Individual EvolutionStrategy::run(
         // SORT BY FITNESS DESC
         //
 
-        std::sort(
-            combined.begin(),
-            combined.end(),
-            [](const Individual& a,
-               const Individual& b)
-        {
+        std::sort(combined.begin(), combined.end(), [](const Individual& a, const Individual& b) {
             return a.fitness > b.fitness;
         });
+        
+        auto t_verify_start = std::chrono::high_resolution_clock::now();
+        
+        // Pasada 1 (Paralela): Auditoría Estructural (solo para full_surrogate)
+        std::vector<double> audit_results(combined.size(), 1e9); // 1e9 indica que no se auditó
+        if (evaluator.use_surrogate && evaluator.heuristic_type == Heuristic::full_surrogate) {
+            std::atomic<int> current_idx{0};
+            std::vector<std::future<void>> futures;
+            unsigned int num_threads = std::thread::hardware_concurrency();
+            
+            for (unsigned int i = 0; i < num_threads; ++i) {
+                futures.push_back(std::async(std::launch::async, [&]() {
+                    while (true) {
+                        int idx = current_idx++;
+                        if (idx >= (int)combined.size()) break;
+                        auto& ind = combined[idx];
+                        
+                        bool is_parent = false;
+                        for (const auto& parent : population) {
+                            if (parent.board == ind.board) {
+                                is_parent = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!is_parent && ind.needs_structural_audit && !this->disable_structural_audit) {
+                            Evaluator astar_eval = evaluator;
+                            astar_eval.use_surrogate = false;
+                            astar_eval.heuristic_type = Heuristic::hungarian;
+                            astar_eval.max_seconds = 5.0;
+                            
+                            double true_fitness = astar_eval.evaluate(ind);
+                            audit_results[idx] = true_fitness;
+                        }
+                    }
+                }));
+            }
+            for (auto& f : futures) {
+                f.get();
+            }
+        }
 
         // SELECT BEST μ
         // Guard against combined being smaller than mu
@@ -319,7 +355,6 @@ Individual EvolutionStrategy::run(
         int astar_failures = 0;
         const int MAX_FAILURES = 3;
 
-        auto t_verify_start = std::chrono::high_resolution_clock::now();
         int gen_verifications = 0;
         for (int i = 0; i < (int)combined.size() && (int)next_population.size() < toSelect; i++)
         {
@@ -338,14 +373,7 @@ Individual EvolutionStrategy::run(
                 
                 // Si es un hijo estructuralmente riesgoso (Add/Remove) y el clasificador lo aprobó, auditamos.
                 if (!is_parent && ind.needs_structural_audit && !this->disable_structural_audit) {
-                    Evaluator astar_eval = evaluator;
-                    astar_eval.use_surrogate = false;
-                    astar_eval.heuristic_type = Heuristic::hungarian;
-                    astar_eval.max_seconds = 5.0;
-                    auto t_v0 = std::chrono::high_resolution_clock::now();
-                    double true_fitness = astar_eval.evaluate(ind);
-                    auto t_v1 = std::chrono::high_resolution_clock::now();
-                    double v_ms = std::chrono::duration<double, std::milli>(t_v1 - t_v0).count();
+                    double true_fitness = audit_results[i];
                     gen_verifications++;
                     
                     if (true_fitness == -2e9) {
