@@ -13,17 +13,9 @@ def analyze_logs():
 
     log_files = glob.glob(os.path.join(LOG_DIR, "*.txt"))
     results = []
-    
-    # Extraeremos el log específico que pidió Claude
-    target_log = "full_surrogate_shell5_seed43_cores24.txt"
-    target_log_content = None
 
     for log_path in log_files:
         filename = os.path.basename(log_path)
-        if filename == target_log:
-            with open(log_path, "r", encoding="utf-8", errors="ignore") as f:
-                target_log_content = f.read()
-
         parts = filename.replace(".txt", "").split("_shell")
         heuristic = parts[0]
         rest = parts[1].split("_seed")
@@ -41,56 +33,57 @@ def analyze_logs():
             elif "Criterio de Parada Alcanzado: MAX_EVALUATIONS" in content:
                 termination_reason = "MAX_EVALS"
             elif "Criterio de Parada Alcanzado: TIME LIMIT" in content:
-                termination_reason = "TIME_LIMIT_CPP"
+                termination_reason = "TIME_LIMIT"
             
-            # Si el C++ no reportó término, investigar por qué (Timeout de Python, Segfault, etc)
-            if termination_reason == "NO_REPORTADO":
-                if "Fallback Silencioso a A*" in content:
-                    termination_reason = "ABORTED_DURING_FALLBACK?"
-                else:
-                    termination_reason = "PYTHON_TIMEOUT_OR_SEGFAULT"
-
-            # Buscar pushes
-            pushes = "UNKNOWN"
-            # Buscamos la mejor aptitud histórica guardada en el log si no llegó al final
-            best_fitness_match = re.findall(r"BEST ([\d\.]+)", content)
-            if best_fitness_match:
-                pushes = best_fitness_match[-1] # el último reportado
+            # 1. VERIFICACIÓN ESTRUCTURAL ESTRICTA
+            # Confirmar que la corrida realmente terminó y no fue matada a la fuerza
+            has_stats_block = "[ES STATS]" in content
+            has_final_pop = "[TOP_FINAL_POPULATION]" in content
+            has_exception = "terminate called after throwing an instance" in content or "Segmentation fault" in content
             
-            # Buscar tiempo (si no está al final, asume timeout de Python)
-            time_s = "380.0 (Timeout)"
-            time_match = re.search(r"Total time: ([\d\.]+)s", content)
-            if time_match:
-                time_s = time_match.group(1)
+            structural_integrity = "CLEAN"
+            if has_exception:
+                structural_integrity = "EXCEPTION/SEGFAULT"
+                termination_reason = "CRASH_REAL"
+            elif not has_stats_block or not has_final_pop:
+                structural_integrity = "TRUNCATED (Timeout/OOM?)"
+                termination_reason = "CRASH_TRUNCATED"
 
-        results.append({
-            "Variant": heuristic,
-            "Shell": shell,
-            "Seed": seed,
-            "Time_s": time_s,
-            "Pushes": pushes,
-            "Termination": termination_reason
-        })
+            results.append({
+                "Variant": heuristic,
+                "Shell": int(shell),
+                "Seed": int(seed),
+                "Termination": termination_reason,
+                "Integrity": structural_integrity
+            })
 
     df = pd.DataFrame(results)
-    df = df.sort_values(by=["Variant", "Shell", "Seed"])
     
-    print("=== AUDITORÍA CORREGIDA ===")
-    anomalous = df[df["Termination"].isin(["NO_REPORTADO", "PYTHON_TIMEOUT_OR_SEGFAULT", "ABORTED_DURING_FALLBACK?"])]
-    print(f"\nCorridas sin terminación limpia de C++: {len(anomalous)}")
+    print("=== VERIFICACIÓN ESTRUCTURAL ===")
+    anomalous = df[df["Integrity"] != "CLEAN"]
+    print(f"Corridas truncadas o con excepciones: {len(anomalous)}")
     if len(anomalous) > 0:
         print(anomalous.to_string(index=False))
         
-    print("\nResumen Total:")
-    print(df["Termination"].value_counts())
+    print("\n=== MATRIZ DE TERMINACIONES (Shell 1 vs Shell 5) ===")
     
-    print("\n=== LOG SOLICITADO POR CLAUDE (ÚLTIMAS 25 LÍNEAS) ===")
-    print(f"Archivo: {target_log}")
-    if target_log_content:
-        lines = target_log_content.split('\n')
-        print("\n".join(lines[-25:]))
-    else:
-        print("No se encontró el archivo.")
+    # Filtrar solo Shell 1 y 5 para la matriz
+    df_matrix = df[df["Shell"].isin([1, 5])]
+    
+    # Crear tabla pivote: Variant -> [Shell 1 TIME_LIMIT] [Shell 5 TIME_LIMIT]
+    pivot = df_matrix.pivot_table(
+        index="Variant",
+        columns=["Shell"],
+        values="Termination",
+        aggfunc=lambda x: f"{(x == 'TIME_LIMIT').sum()}/{len(x)}"
+    )
+    
+    # Renombrar columnas
+    pivot.columns = [f"Shell {c} (TIME_LIMIT)" for c in pivot.columns]
+    print(pivot)
+    
+    print("\n=== RESUMEN GLOBAL (250 CORRIDAS) ===")
+    print(df["Termination"].value_counts())
 
 if __name__ == "__main__":
     analyze_logs()
