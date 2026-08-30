@@ -22,16 +22,20 @@ PYTHON_TIMEOUT = 380
 SERVER_URL = "http://127.0.0.1:5000"
 
 # Política de Umbral por Shell (0.60 para Shell 3 por escasez estructural, 0.70 para el resto)
+SHELL_LEVELS = {
+    2: "levels/shell_2.sok",
+    3: "levels/shell_3.sok",
+    4: "levels/shell_4.sok"
+}
+
 THRESHOLD_MAP = {
-    1: 0.70,
     2: 0.70,
     3: 0.60,
-    4: 0.70,
-    5: 0.70
+    4: 0.70
 }
 
 SEEDS = [42, 43, 44]
-SHELLS = [1, 5]
+SHELLS = [2, 3, 4]
 CORES = [24]  # Solo variante paralela para ahorrar tiempo
 
 VARIANTS = [
