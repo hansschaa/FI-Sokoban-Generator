@@ -23,11 +23,11 @@ for shell_idx, seeds in shells_and_seeds:
         cmd = [
             "./build/experiment_runner", "ES", "FO1", str(seed), shell_file,
             "--heuristic", "full_surrogate",
-            "--timeLimit", "60",
+            "--timeLimit", "300",
             "--maxEvals", "1000000",
-            "--mu", "9",
-            "--lambda", "28",
-            "--mutRate", "0.8559",
+            "--mu", "10",
+            "--lambda", "126",
+            "--mutRate", "0.7135",
             "--stagLimit", "199"
         ]
         
