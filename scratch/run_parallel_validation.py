@@ -11,7 +11,7 @@ shells_and_seeds = [
 ]
 
 # Read the sequential results for comparison
-seq_csv_path = "/home/hanss/.gemini/antigravity-ide/brain/48078324-5737-4092-9d7b-01c1a411e1f9/final_canonical_results.csv"
+seq_csv_path = "scratch/final_canonical_results.csv"
 seq_df = pd.read_csv(seq_csv_path)
 
 results = []
