@@ -37,35 +37,16 @@ Individual EvolutionStrategy::run(
 
     //std::cerr << "EVALUATING INITIAL POPULATION\n";
 
-    unsigned int num_threads = use_parallel ? std::thread::hardware_concurrency() : 1;
-    if (num_threads == 0) num_threads = 4;
-    
-    std::atomic<int> current_task{0};
-    std::vector<std::future<void>> futures;
-
-    auto eval_task = [&]() {
-        while (true) {
-            int i = current_task.fetch_add(1);
-            if (i >= (int)population.size()) break;
-            
-            if (population[i].fitness <= -1e8 || population[i].fitness == 0) {
-                Evaluator local_eval = evaluator;
-                if (local_eval.heuristic_type == Heuristic::classifier_filter || 
-                    local_eval.heuristic_type == Heuristic::full_surrogate) {
-                    local_eval.use_surrogate = false;
-                    local_eval.max_seconds = 5.0;
-                }
-                local_eval.evaluate(population[i]);
+    for (size_t i = 0; i < population.size(); i++) {
+        if (population[i].fitness <= -1e8 || population[i].fitness == 0) {
+            Evaluator local_eval = evaluator;
+            if (local_eval.heuristic_type == Heuristic::classifier_filter || 
+                local_eval.heuristic_type == Heuristic::full_surrogate) {
+                local_eval.use_surrogate = false;
+                local_eval.max_seconds = 5.0;
             }
+            local_eval.evaluate(population[i]);
         }
-    };
-
-    unsigned int threads_to_launch = std::min((unsigned int)population.size(), num_threads);
-    for (unsigned int t = 0; t < threads_to_launch; t++) {
-        futures.push_back(std::async(std::launch::async, eval_task));
-    }
-    for (auto& f : futures) {
-        f.get();
     }
 
     evaluations += population.size();
@@ -216,45 +197,20 @@ Individual EvolutionStrategy::run(
                 // 1. Pre-filtrado batch de deadlocks con el clasificador
                 evaluator.filter_surrogate_batch(batch_to_evaluate);
                 
-                // 2. Evaluación en paralelo con solver A* real SOLO para los aprobados (que no se marcaron como -1e9)
-                std::atomic<int> current_child{0};
-                std::vector<std::future<void>> child_futures;
-                for (unsigned int i = 0; i < num_threads; i++) {
-                    child_futures.push_back(std::async(std::launch::async, [&]() {
-                        while (true) {
-                            int idx = current_child++;
-                            if (idx >= (int)batch_to_evaluate.size()) break;
-                            if (batch_to_evaluate[idx].fitness != -1e9 && batch_to_evaluate[idx].fitness != -2e9) {
-                                Evaluator local_eval = evaluator;
-                                local_eval.use_surrogate = false;
-                                double real_fit = local_eval.evaluate(batch_to_evaluate[idx]);
-                                if (real_fit == -1e9) {
-                                    // Note: classifier_false_positives is an int, not atomic, so this might drop counts in parallel,
-                                    // but it's just a stat counter so we leave it as is per instructions.
-                                    (*local_eval.classifier_false_positives)++;
-                                }
-                            }
+                // 2. Evaluación con solver A* real SOLO para los aprobados
+                for (size_t idx = 0; idx < batch_to_evaluate.size(); idx++) {
+                    if (batch_to_evaluate[idx].fitness != -1e9 && batch_to_evaluate[idx].fitness != -2e9) {
+                        Evaluator local_eval = evaluator;
+                        local_eval.use_surrogate = false;
+                        double real_fit = local_eval.evaluate(batch_to_evaluate[idx]);
+                        if (real_fit == -1e9) {
+                            (*local_eval.classifier_false_positives)++;
                         }
-                    }));
-                }
-                for (auto& f : child_futures) {
-                    f.get();
+                    }
                 }
             } else {
-                std::atomic<int> current_child{0};
-                std::vector<std::future<void>> child_futures;
-                
-                for (unsigned int i = 0; i < num_threads; i++) {
-                    child_futures.push_back(std::async(std::launch::async, [&]() {
-                        while (true) {
-                            int idx = current_child++;
-                            if (idx >= (int)batch_to_evaluate.size()) break;
-                            evaluator.evaluate(batch_to_evaluate[idx]);
-                        }
-                    }));
-                }
-                for (auto& f : child_futures) {
-                    f.get();
+                for (size_t idx = 0; idx < batch_to_evaluate.size(); idx++) {
+                    evaluator.evaluate(batch_to_evaluate[idx]);
                 }
             }
             
@@ -324,42 +280,29 @@ Individual EvolutionStrategy::run(
         
         auto t_verify_start = std::chrono::high_resolution_clock::now();
         
-        // Pasada 1 (Paralela): Auditoría Estructural (solo para full_surrogate)
+        // Pasada 1 (Secuencial): Auditoría Estructural (solo para full_surrogate)
         std::vector<double> audit_results(combined.size(), 1e9); // 1e9 indica que no se auditó
         if (evaluator.use_surrogate && evaluator.heuristic_type == Heuristic::full_surrogate) {
-            std::atomic<int> current_idx{0};
-            std::vector<std::future<void>> futures;
-            unsigned int num_threads = std::thread::hardware_concurrency();
-            
-            for (unsigned int i = 0; i < num_threads; ++i) {
-                futures.push_back(std::async(std::launch::async, [&]() {
-                    while (true) {
-                        int idx = current_idx++;
-                        if (idx >= (int)combined.size()) break;
-                        auto& ind = combined[idx];
-                        
-                        bool is_parent = false;
-                        for (const auto& parent : population) {
-                            if (parent.board == ind.board) {
-                                is_parent = true;
-                                break;
-                            }
-                        }
-                        
-                        if (!is_parent && ind.needs_structural_audit && !this->disable_structural_audit) {
-                            Evaluator astar_eval = evaluator;
-                            astar_eval.use_surrogate = false;
-                            astar_eval.heuristic_type = Heuristic::hungarian;
-                            astar_eval.max_seconds = 5.0;
-                            
-                            double true_fitness = astar_eval.evaluate(ind);
-                            audit_results[idx] = true_fitness;
-                        }
+            for (size_t idx = 0; idx < combined.size(); ++idx) {
+                auto& ind = combined[idx];
+                
+                bool is_parent = false;
+                for (const auto& parent : population) {
+                    if (parent.board == ind.board) {
+                        is_parent = true;
+                        break;
                     }
-                }));
-            }
-            for (auto& f : futures) {
-                f.get();
+                }
+                
+                if (!is_parent && ind.needs_structural_audit && !this->disable_structural_audit) {
+                    Evaluator astar_eval = evaluator;
+                    astar_eval.use_surrogate = false;
+                    astar_eval.heuristic_type = Heuristic::hungarian;
+                    astar_eval.max_seconds = 5.0;
+                    
+                    double true_fitness = astar_eval.evaluate(ind);
+                    audit_results[idx] = true_fitness;
+                }
             }
         }
 

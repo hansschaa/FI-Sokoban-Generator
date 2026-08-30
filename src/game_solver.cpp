@@ -6,6 +6,7 @@
 #include <string>     // Añadido para std::string
 #include <iostream>
 #include <mutex>
+#include <atomic>
 #include "game_solver.h"
 #include "constant.h"
 #include "locked.h"
@@ -585,7 +586,7 @@ SolverStats game_solver::test_template(
     }
 
     auto heuristic = [&](const game_node* a, const game_node*) {
-        static int total_heuristic_calls = 0;
+        static std::atomic<int> total_heuristic_calls = 0;
         total_heuristic_calls++;
         
         if (heuristic_type == Heuristic::neural) {
@@ -661,7 +662,7 @@ SolverStats game_solver::test_template(
             }
 
             if (!to_evaluate.empty()) {
-                static int total_tensor_items = 0;
+                static std::atomic<int> total_tensor_items = 0;
                 total_tensor_items += to_evaluate.size();
                 // We will print it every time so we can see the final count
                 

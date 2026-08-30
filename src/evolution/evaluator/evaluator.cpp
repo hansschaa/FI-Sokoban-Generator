@@ -124,25 +124,11 @@ void Evaluator::evaluate_surrogate_batch(std::vector<Individual>& population)
     // Delegación directa a Hungarian puro para box_count >= 6
     if (!hungarian_indices.empty()) {
         (*this->hybrid_hungarian_delegations) += hungarian_indices.size();
-        unsigned int num_threads = std::thread::hardware_concurrency();
-        std::atomic<int> current_idx{0};
-        std::vector<std::future<void>> futures;
-        
-        for (unsigned int i = 0; i < num_threads; ++i) {
-            futures.push_back(std::async(std::launch::async, [&]() {
-                while (true) {
-                    int idx = current_idx++;
-                    if (idx >= (int)hungarian_indices.size()) break;
-                    
-                    Evaluator thread_eval = *this;
-                    thread_eval.heuristic_type = Heuristic::hungarian;
-                    thread_eval.use_surrogate = false;
-                    thread_eval.evaluate(population[hungarian_indices[idx]]);
-                }
-            }));
-        }
-        for (auto& f : futures) {
-            f.get();
+        for (size_t idx : hungarian_indices) {
+            Evaluator local_eval = *this;
+            local_eval.heuristic_type = Heuristic::hungarian;
+            local_eval.use_surrogate = false;
+            local_eval.evaluate(population[idx]);
         }
     }
 
