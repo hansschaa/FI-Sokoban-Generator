@@ -37,14 +37,28 @@ Individual EvolutionStrategy::run(
 
     //std::cerr << "EVALUATING INITIAL POPULATION\n";
 
-    for (size_t i = 0; i < population.size(); i++) {
-        Evaluator local_eval = evaluator;
-        if (local_eval.heuristic_type == Heuristic::classifier_filter || 
-            local_eval.heuristic_type == Heuristic::full_surrogate) {
-            local_eval.use_surrogate = false;
-            local_eval.max_seconds = 5.0;
-        }
-        local_eval.evaluate(population[i]);
+    std::atomic<int> init_current_idx{0};
+    std::vector<std::future<void>> init_futures;
+    unsigned int init_num_threads = std::min(16u, std::thread::hardware_concurrency());
+    
+    for (unsigned int t = 0; t < init_num_threads; ++t) {
+        init_futures.push_back(std::async(std::launch::async, [&]() {
+            while (true) {
+                int i = init_current_idx++;
+                if (i >= (int)population.size()) break;
+                
+                Evaluator local_eval = evaluator;
+                if (local_eval.heuristic_type == Heuristic::classifier_filter || 
+                    local_eval.heuristic_type == Heuristic::full_surrogate) {
+                    local_eval.use_surrogate = false;
+                    local_eval.max_seconds = 5.0;
+                }
+                local_eval.evaluate(population[i]);
+            }
+        }));
+    }
+    for (auto& f : init_futures) {
+        f.get();
     }
 
     evaluations += population.size();
@@ -278,29 +292,42 @@ Individual EvolutionStrategy::run(
         
         auto t_verify_start = std::chrono::high_resolution_clock::now();
         
-        // Pasada 1 (Secuencial): Auditoría Estructural (solo para full_surrogate)
+        // Pasada 1 (Paralela): Auditoría Estructural (solo para full_surrogate)
         std::vector<double> audit_results(combined.size(), 1e9); // 1e9 indica que no se auditó
         if (evaluator.use_surrogate && evaluator.heuristic_type == Heuristic::full_surrogate) {
-            for (size_t idx = 0; idx < combined.size(); ++idx) {
-                auto& ind = combined[idx];
-                
-                bool is_parent = false;
-                for (const auto& parent : population) {
-                    if (parent.board == ind.board) {
-                        is_parent = true;
-                        break;
+            std::atomic<int> current_idx{0};
+            std::vector<std::future<void>> futures;
+            unsigned int num_threads = std::min(16u, std::thread::hardware_concurrency());
+            
+            for (unsigned int t = 0; t < num_threads; ++t) {
+                futures.push_back(std::async(std::launch::async, [&]() {
+                    while (true) {
+                        int idx = current_idx++;
+                        if (idx >= (int)combined.size()) break;
+                        auto& ind = combined[idx];
+                        
+                        bool is_parent = false;
+                        for (const auto& parent : population) {
+                            if (parent.board == ind.board) {
+                                is_parent = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!is_parent && ind.needs_structural_audit && !this->disable_structural_audit) {
+                            Evaluator astar_eval = evaluator;
+                            astar_eval.use_surrogate = false;
+                            astar_eval.heuristic_type = Heuristic::hungarian;
+                            astar_eval.max_seconds = 5.0; // Se mantiene en 5.0s
+                            
+                            double true_fitness = astar_eval.evaluate(ind);
+                            audit_results[idx] = true_fitness;
+                        }
                     }
-                }
-                
-                if (!is_parent && ind.needs_structural_audit && !this->disable_structural_audit) {
-                    Evaluator astar_eval = evaluator;
-                    astar_eval.use_surrogate = false;
-                    astar_eval.heuristic_type = Heuristic::hungarian;
-                    astar_eval.max_seconds = 5.0;
-                    
-                    double true_fitness = astar_eval.evaluate(ind);
-                    audit_results[idx] = true_fitness;
-                }
+                }));
+            }
+            for (auto& f : futures) {
+                f.get();
             }
         }
 
