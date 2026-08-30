@@ -16,4 +16,5 @@ struct Individual {
     std::string parent_board_str;
 
     bool solved = false;
+    bool needs_structural_audit = false;
 };

@@ -154,8 +154,10 @@ Individual EvolutionStrategy::run(
                     success = moveMutation.apply(child);
                 } else if (mutationType == 1) {
                     success = addMutation.apply(child);
+                    if (success) child.needs_structural_audit = true;
                 } else {
                     success = removeMutation.apply(child);
+                    if (success) child.needs_structural_audit = true;
                 }
 
                 if (!success) continue;
@@ -321,8 +323,7 @@ Individual EvolutionStrategy::run(
             auto& ind = combined[i];
             
             if (evaluator.use_surrogate && evaluator.heuristic_type == Heuristic::full_surrogate) {
-                // Lógica Top-K para full_surrogate
-                int K = 5; // Parametro K para verificacion elitista
+                // Lógica de Auditoría por Riesgo Estructural para full_surrogate
                 
                 bool is_parent = false;
                 for (const auto& parent : population) {
@@ -332,8 +333,8 @@ Individual EvolutionStrategy::run(
                     }
                 }
                 
-                // Si no es padre, tiene fitness positivo (NN lo aprobo) y aun no hemos verificado K individuos, lo verificamos
-                if (!is_parent && ind.fitness > 0 && gen_verifications < K) {
+                // Si es un hijo estructuralmente riesgoso (Add/Remove) y el clasificador lo aprobó, auditamos.
+                if (!is_parent && ind.needs_structural_audit && ind.fitness > 0) {
                     Evaluator astar_eval = evaluator;
                     astar_eval.use_surrogate = false;
                     astar_eval.heuristic_type = Heuristic::hungarian;
@@ -344,8 +345,6 @@ Individual EvolutionStrategy::run(
                     double v_ms = std::chrono::duration<double, std::milli>(t_v1 - t_v0).count();
                     gen_verifications++;
                     
-                    std::cerr << "[PHASE_D] Verificacion Elitista Top-K #" << gen_verifications << " en Gen " << generation << ": " << v_ms << " ms (fitness=" << true_fitness << " vs neural=" << ind.fitness << ")\n";
-                    
                     if (true_fitness == -2e9) {
                         continue; // Timeout
                     }
@@ -353,18 +352,19 @@ Individual EvolutionStrategy::run(
                     if (true_fitness > -1e8) {
                         // Confirmado como resolvible
                         ind.fitness = true_fitness;
+                        ind.needs_structural_audit = false; // Validado permanentemente
                         next_population.push_back(ind);
                         if (true_fitness > best.fitness) {
                             best = ind;
                             improved = true;
                         }
                     } else {
-                        // Falso positivo (Deadlock descubierto)
+                        // Falso positivo estructural (Deadlock descubierto)
                         total_circuit_breakers++; // Reusamos este contador para tracking
                         continue;
                     }
                 } else {
-                    // O es padre, o ya pasamos el limite K. Se acepta con su fitness neuronal.
+                    // O es padre, o fue RandomWalk (confiamos en el fitness neuronal), o fue rechazado por el clasificador.
                     next_population.push_back(ind);
                 }
             }
