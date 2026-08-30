@@ -23,11 +23,11 @@ SERVER_URL = "http://127.0.0.1:5000"
 
 # Política de Umbral por Shell (0.60 para Shell 3 por escasez estructural, 0.70 para el resto)
 THRESHOLD_MAP = {
-    1: 0.90,
-    2: 0.90,
-    3: 0.85,
-    4: 0.90,
-    5: 0.90
+    1: 0.70,
+    2: 0.70,
+    3: 0.60,
+    4: 0.70,
+    5: 0.70
 }
 
 SEEDS = [42, 43, 44, 45, 46, 47, 48, 49, 50, 51]
