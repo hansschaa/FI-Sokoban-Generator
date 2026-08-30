@@ -25,9 +25,10 @@ for shell_idx, seeds in shells_and_seeds:
             "--heuristic", "full_surrogate",
             "--timeLimit", "300",
             "--maxEvals", "1000000",
-            "--mu", "10",
-            "--lambda", "126",
-            "--mutRate", "0.7135"
+            "--mu", "9",
+            "--lambda", "28",
+            "--mutRate", "0.8559",
+            "--stagLimit", "199"
         ]
         
         start_time = time.time()
