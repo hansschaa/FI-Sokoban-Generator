@@ -1,26 +1,312 @@
-[ES] Gen 1 | Evals: 36/500 | Stagnation: 1/30 | Best Fit: 4.37471
-[DIVERSITY] Gen 1 POP_STD: 0 (Mean: 4.37471)
-[ES] Gen 2 | Evals: 66/500 | Stagnation: 2/30 | Best Fit: 4.37471
-[DIVERSITY] Gen 2 POP_STD: 0 (Mean: 4.37471)
-[ES] Gen 3 | Evals: 96/500 | Stagnation: 3/30 | Best Fit: 4.37471
-[ES] Gen 4 | Evals: 126/500 | Stagnation: 4/30 | Best Fit: 4.37471
-[ES] Gen 5 | Evals: 155/500 | Stagnation: 5/30 | Best Fit: 4.37471
-[ES] Gen 6 | Evals: 185/500 | Stagnation: 6/30 | Best Fit: 4.37471
-[ES] Gen 7 | Evals: 215/500 | Stagnation: 7/30 | Best Fit: 4.37471
-[ES] Gen 8 | Evals: 245/500 | Stagnation: 8/30 | Best Fit: 4.37471
-[ES] Gen 9 | Evals: 274/500 | Stagnation: 9/30 | Best Fit: 4.37471
-[ES] Gen 10 | Evals: 304/500 | Stagnation: 10/30 | Best Fit: 4.37471
-[ES] Gen 11 | Evals: 333/500 | Stagnation: 11/30 | Best Fit: 4.37471
-[ES] Gen 12 | Evals: 363/500 | Stagnation: 12/30 | Best Fit: 4.37471
-[ES] Gen 13 | Evals: 392/500 | Stagnation: 13/30 | Best Fit: 4.37471
-[ES] Gen 14 | Evals: 422/500 | Stagnation: 14/30 | Best Fit: 4.37471
-[ES] Gen 15 | Evals: 452/500 | Stagnation: 15/30 | Best Fit: 4.37471
-[ES] Gen 16 | Evals: 482/500 | Stagnation: 16/30 | Best Fit: 4.37471
+[INIT STATS] Initial seed found in 4 attempts (final max_seconds=2)
+[TIMING_INIT] Poblacion inicial completada en: 73.3113 ms
+[ES] Effective params: mu=10, lambda=126, mutRate=0.7135, stagLimit=899
+[MICRO_TIMING] JSON Payload prep: 0.122703 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (74 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 783.392 ms\n[MICRO_TIMING] JSON Parse: 0.120599 ms
+[MICRO_TIMING] Assign Fitness: 0.061857 ms
+[MICRO_TIMING] Total post-HTTP time: 0.226901 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 0: 2.36088 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 0: 2.01423 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 0: 2.19465 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 0: 2.0311 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 0: 2.09694 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 1 | WallTime: 0.795726s | Evals: 84 | MutGen: 0.296003ms | Surrogate: 783.918ms | Verif(5): 11.0689ms | Best: 4 | Stag: 74/899
+[MICRO_TIMING] JSON Payload prep: 0.062899 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (81 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 245.16 ms\n[MICRO_TIMING] JSON Parse: 0.079982 ms
+[MICRO_TIMING] Assign Fitness: 0.058611 ms
+[MICRO_TIMING] Total post-HTTP time: 0.15785 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 1: 3.10228 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 1: 2.19655 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 1: 2.06741 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 1: 2.15228 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 1: 2.33083 ms (fitness=-1e+09 vs neural=-1e+09)
+[DIVERSITY] Gen 1 POP_STD: 1.09381 (Mean: 27.642)
+[ES_TIMING] Gen 2 | WallTime: 1.05418s | Evals: 165 | MutGen: 0.487838ms | Surrogate: 1029.43ms | Verif(10): 23.3892ms | Best: 18.8813 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.076355 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (95 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 274.33 ms\n[MICRO_TIMING] JSON Parse: 0.16326 ms
+[MICRO_TIMING] Assign Fitness: 0.070635 ms
+[MICRO_TIMING] Total post-HTTP time: 0.275995 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 2: 2.70508 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 2: 2.0554 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 2: 2.06257 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 2: 2.05144 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 2: 1.97264 ms (fitness=-1e+09 vs neural=-1e+09)
+[DIVERSITY] Gen 2 POP_STD: 1.17963 (Mean: 33.0741)
+[ES_TIMING] Gen 3 | WallTime: 1.34093s | Evals: 260 | MutGen: 0.675404ms | Surrogate: 1304.3ms | Verif(15): 34.5673ms | Best: 29 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.064292 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (88 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 268.564 ms\n[MICRO_TIMING] JSON Parse: 0.070694 ms
+[MICRO_TIMING] Assign Fitness: 0.014828 ms
+[MICRO_TIMING] Total post-HTTP time: 0.10543 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 3: 2.863 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 3: 2.09771 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 3: 2.21795 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 3: 2.04436 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 3: 2.02707 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 4 | WallTime: 1.62196s | Evals: 348 | MutGen: 0.853292ms | Surrogate: 1573.15ms | Verif(20): 46.2202ms | Best: 35.098 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.069281 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (94 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 304.309 ms\n[MICRO_TIMING] JSON Parse: 0.145417 ms
+[MICRO_TIMING] Assign Fitness: 0.087165 ms
+[MICRO_TIMING] Total post-HTTP time: 0.282447 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 4: 2.2285 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 4: 2.08334 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 4: 1.99814 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 4: 2.06741 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 4: 2.04202 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 5 | WallTime: 1.93824s | Evals: 442 | MutGen: 1.12596ms | Surrogate: 1878.05ms | Verif(25): 56.9656ms | Best: 46.1865 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.065224 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (87 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 297.673 ms\n[MICRO_TIMING] JSON Parse: 0.070845 ms
+[MICRO_TIMING] Assign Fitness: 0.036339 ms
+[MICRO_TIMING] Total post-HTTP time: 0.128404 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 5: 2.13082 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 5: 1.99322 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 5: 2.00501 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 5: 1.98857 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 5: 2.42477 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 6 | WallTime: 2.24786s | Evals: 529 | MutGen: 1.34867ms | Surrogate: 2176.04ms | Verif(30): 68.0327ms | Best: 56.9348 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.062569 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (85 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 301.797 ms\n[MICRO_TIMING] JSON Parse: 0.071115 ms
+[MICRO_TIMING] Assign Fitness: 0.014638 ms
+[MICRO_TIMING] Total post-HTTP time: 0.107124 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 6: 2.08472 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 6: 2.39715 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 6: 2.25085 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 6: 2.01342 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 6: 2.06945 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 7 | WallTime: 2.56172s | Evals: 614 | MutGen: 1.55103ms | Surrogate: 2478.15ms | Verif(35): 79.2127ms | Best: 64.0874 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.057589 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (79 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 309.916 ms\n[MICRO_TIMING] JSON Parse: 0.119177 ms
+[MICRO_TIMING] Assign Fitness: 0.032161 ms
+[MICRO_TIMING] Total post-HTTP time: 0.191565 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 7: 2.58227 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 7: 2.03423 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 7: 2.0178 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 7: 2.06281 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 7: 2.02391 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 8 | WallTime: 2.88388s | Evals: 693 | MutGen: 1.75242ms | Surrogate: 2788.51ms | Verif(40): 90.3804ms | Best: 66.3187 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.058 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (79 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 304.824 ms\n[MICRO_TIMING] JSON Parse: 0.123604 ms
+[MICRO_TIMING] Assign Fitness: 0.074823 ms
+[MICRO_TIMING] Total post-HTTP time: 0.371025 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 8: 2.0893 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 8: 2.08821 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 8: 2.00602 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 8: 2.03353 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 8: 2.03773 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 9 | WallTime: 3.20069s | Evals: 772 | MutGen: 1.96571ms | Surrogate: 3093.97ms | Verif(45): 101.121ms | Best: 67.3692 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.066436 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (89 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 314.449 ms\n[MICRO_TIMING] JSON Parse: 0.166025 ms
+[MICRO_TIMING] Assign Fitness: 0.076796 ms
+[MICRO_TIMING] Total post-HTTP time: 0.283148 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 9: 2.26099 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 9: 2.04612 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 9: 2.01574 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 9: 2.00311 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 9: 2.15574 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 10 | WallTime: 3.52716s | Evals: 861 | MutGen: 2.17508ms | Surrogate: 3408.94ms | Verif(50): 111.977ms | Best: 68.5511 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.076104 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (85 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 319.897 ms\n[MICRO_TIMING] JSON Parse: 0.13172 ms
+[MICRO_TIMING] Assign Fitness: 0.064583 ms
+[MICRO_TIMING] Total post-HTTP time: 0.239014 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 10: 2.57865 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 10: 2.13582 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 10: 2.04646 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 10: 2.00366 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 10: 2.03629 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 11 | WallTime: 3.85934s | Evals: 946 | MutGen: 2.38422ms | Surrogate: 3729.33ms | Verif(55): 123.134ms | Best: 68.5511 | Stag: 85/899
+[MICRO_TIMING] JSON Payload prep: 0.059123 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (81 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 309.342 ms\n[MICRO_TIMING] JSON Parse: 0.067218 ms
+[MICRO_TIMING] Assign Fitness: 0.014668 ms
+[MICRO_TIMING] Total post-HTTP time: 0.151939 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 11: 2.09551 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 11: 2.02899 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 11: 2.07518 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 11: 2.07481 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 11: 1.98811 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 12 | WallTime: 4.18022s | Evals: 1027 | MutGen: 2.59095ms | Surrogate: 4039.02ms | Verif(60): 133.721ms | Best: 69.4653 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.060194 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (81 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 302.876 ms\n[MICRO_TIMING] JSON Parse: 0.068471 ms
+[MICRO_TIMING] Assign Fitness: 0.014818 ms
+[MICRO_TIMING] Total post-HTTP time: 0.102235 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 12: 2.20281 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 12: 1.98124 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 12: 2.10503 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 12: 2.0174 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 12: 2.06543 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 13 | WallTime: 4.4947s | Evals: 1108 | MutGen: 2.7935ms | Surrogate: 4342.18ms | Verif(65): 144.433ms | Best: 70.1302 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.055265 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (75 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 279.061 ms\n[MICRO_TIMING] JSON Parse: 0.062278 ms
+[MICRO_TIMING] Assign Fitness: 0.014748 ms
+[MICRO_TIMING] Total post-HTTP time: 0.095552 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 13: 2.08074 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 13: 2.15324 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 13: 2.00077 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 13: 2.00159 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 14 | WallTime: 4.78312s | Evals: 1183 | MutGen: 2.99455ms | Surrogate: 4621.52ms | Verif(69): 152.935ms | Best: 72.3169 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.062389 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (85 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 323.677 ms\n[MICRO_TIMING] JSON Parse: 0.072738 ms
+[MICRO_TIMING] Assign Fitness: 0.015199 ms
+[MICRO_TIMING] Total post-HTTP time: 0.107834 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 14: 2.10817 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 14: 1.99811 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 14: 2.00075 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 14: 2.00246 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 14: 2.30826 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 15 | WallTime: 5.11848s | Evals: 1268 | MutGen: 3.1993ms | Surrogate: 4945.5ms | Verif(74): 163.726ms | Best: 72.3169 | Stag: 85/899
+[MICRO_TIMING] JSON Payload prep: 0.060505 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (79 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 292.782 ms\n[MICRO_TIMING] JSON Parse: 0.069252 ms
+[MICRO_TIMING] Assign Fitness: 0.014928 ms
+[MICRO_TIMING] Total post-HTTP time: 0.102816 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 15: 2.08696 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 15: 2.00297 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 15: 2.06565 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 15: 1.99113 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 16 | WallTime: 5.42061s | Evals: 1347 | MutGen: 3.40212ms | Surrogate: 5238.59ms | Verif(78): 172.138ms | Best: 73.2687 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.056618 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (75 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 287.369 ms\n[MICRO_TIMING] JSON Parse: 0.108426 ms
+[MICRO_TIMING] Assign Fitness: 0.02642 ms
+[MICRO_TIMING] Total post-HTTP time: 0.159273 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 16: 2.21722 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 16: 1.97986 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 16: 2.01054 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 16: 2.55349 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 16: 2.29735 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 17 | WallTime: 5.72044s | Evals: 1422 | MutGen: 3.62433ms | Surrogate: 5526.33ms | Verif(83): 183.598ms | Best: 73.2687 | Stag: 75/899
+[MICRO_TIMING] JSON Payload prep: 0.061146 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (80 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 318.672 ms\n[MICRO_TIMING] JSON Parse: 0.154343 ms
+[MICRO_TIMING] Assign Fitness: 0.069062 ms
+[MICRO_TIMING] Total post-HTTP time: 0.25273 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 17: 2.1553 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 17: 1.98279 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 17: 1.97119 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 17: 1.99304 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 17: 2.15417 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 18 | WallTime: 6.05082s | Evals: 1502 | MutGen: 3.83839ms | Surrogate: 5845.48ms | Verif(88): 194.21ms | Best: 73.3724 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.05819 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (78 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 288.709 ms\n[MICRO_TIMING] JSON Parse: 0.064873 ms
+[MICRO_TIMING] Assign Fitness: 0.014257 ms
+[MICRO_TIMING] Total post-HTTP time: 0.098056 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 18: 2.153 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 18: 2.01758 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 18: 1.96336 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 18: 2.0069 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 18: 2.54666 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 19 | WallTime: 6.35142s | Evals: 1580 | MutGen: 4.04578ms | Surrogate: 6134.47ms | Verif(93): 205.226ms | Best: 73.3724 | Stag: 78/899
+[MICRO_TIMING] JSON Payload prep: 0.059353 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (81 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 337.912 ms\n[MICRO_TIMING] JSON Parse: 0.070444 ms
+[MICRO_TIMING] Assign Fitness: 0.014858 ms
+[MICRO_TIMING] Total post-HTTP time: 0.104328 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 19: 2.05757 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 19: 2.04363 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 19: 1.98609 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 19: 2.0594 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 19: 1.95298 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 20 | WallTime: 6.7006s | Evals: 1661 | MutGen: 4.24371ms | Surrogate: 6472.68ms | Verif(98): 215.643ms | Best: 75.7059 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.061727 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (83 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 354.529 ms\n[MICRO_TIMING] JSON Parse: 0.143783 ms
+[MICRO_TIMING] Assign Fitness: 0.132231 ms
+[MICRO_TIMING] Total post-HTTP time: 0.332331 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 20: 3.00126 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 20: 2.43791 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 20: 2.29765 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 20: 2.23648 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 21 | WallTime: 7.06673s | Evals: 1744 | MutGen: 4.46836ms | Surrogate: 6827.82ms | Verif(102): 225.94ms | Best: 77.1462 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.065063 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (86 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 369.879 ms\n[MICRO_TIMING] JSON Parse: 0.073009 ms
+[MICRO_TIMING] Assign Fitness: 0.015479 ms
+[MICRO_TIMING] Total post-HTTP time: 0.108246 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 21: 2.50616 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 21: 2.75447 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 21: 2.55757 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 21: 2.47774 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 21: 2.39975 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 22 | WallTime: 7.45077s | Evals: 1830 | MutGen: 4.68484ms | Surrogate: 7198.01ms | Verif(107): 239.161ms | Best: 77.1462 | Stag: 86/899
+[MICRO_TIMING] JSON Payload prep: 0.058992 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (76 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 320.451 ms\n[MICRO_TIMING] JSON Parse: 0.123164 ms
+[MICRO_TIMING] Assign Fitness: 0.093287 ms
+[MICRO_TIMING] Total post-HTTP time: 0.240927 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 22: 2.13601 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 22: 1.97639 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 22: 1.96251 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 22: 2.08088 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 22: 2.03305 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 23 | WallTime: 7.78283s | Evals: 1906 | MutGen: 4.90177ms | Surrogate: 7518.94ms | Verif(112): 249.674ms | Best: 78.7892 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.05764 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (77 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 371.544 ms\n[MICRO_TIMING] JSON Parse: 0.069392 ms
+[MICRO_TIMING] Assign Fitness: 0.014387 ms
+[MICRO_TIMING] Total post-HTTP time: 0.102545 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 23: 2.13584 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 23: 2.04289 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 23: 2.18257 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 23: 1.97602 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 23: 2.04219 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 24 | WallTime: 8.16598s | Evals: 1983 | MutGen: 5.09446ms | Surrogate: 7890.8ms | Verif(117): 260.385ms | Best: 78.7892 | Stag: 77/899
+[MICRO_TIMING] JSON Payload prep: 0.060425 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (78 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 373.129 ms\n[MICRO_TIMING] JSON Parse: 0.066086 ms
+[MICRO_TIMING] Assign Fitness: 0.014397 ms
+[MICRO_TIMING] Total post-HTTP time: 0.09994 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 24: 2.37292 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 24: 2.08327 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 24: 2.07924 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 24: 2.00278 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 24: 2.05188 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 25 | WallTime: 8.55096s | Evals: 2061 | MutGen: 5.2952ms | Surrogate: 8264.22ms | Verif(122): 271.353ms | Best: 78.7892 | Stag: 155/899
+[MICRO_TIMING] JSON Payload prep: 0.059022 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (80 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 402.679 ms\n[MICRO_TIMING] JSON Parse: 0.066176 ms
+[MICRO_TIMING] Assign Fitness: 0.013806 ms
+[MICRO_TIMING] Total post-HTTP time: 0.099128 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 25: 2.15206 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 25: 2.01966 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 25: 1.98437 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 25: 2.00449 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 25: 1.9573 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 26 | WallTime: 8.96495s | Evals: 2141 | MutGen: 5.5026ms | Surrogate: 8667.19ms | Verif(127): 281.789ms | Best: 78.7892 | Stag: 235/899
+[MICRO_TIMING] JSON Payload prep: 0.05794 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (76 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 385.119 ms\n[MICRO_TIMING] JSON Parse: 0.123094 ms
+[MICRO_TIMING] Assign Fitness: 0.027291 ms
+[MICRO_TIMING] Total post-HTTP time: 0.186494 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 26: 2.83467 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 26: 2.01466 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 26: 1.98937 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 26: 1.96917 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 26: 2.0346 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 27 | WallTime: 9.36244s | Evals: 2217 | MutGen: 5.77839ms | Surrogate: 9052.74ms | Verif(132): 293.007ms | Best: 79.1655 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.057289 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (76 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 375.232 ms\n[MICRO_TIMING] JSON Parse: 0.116111 ms
+[MICRO_TIMING] Assign Fitness: 0.029907 ms
+[MICRO_TIMING] Total post-HTTP time: 0.180213 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 27: 2.80515 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 27: 2.00357 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 27: 2.07845 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 27: 2.07604 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 27: 2.01857 ms (fitness=-1e+09 vs neural=-1e+09)
+[ES_TIMING] Gen 28 | WallTime: 9.75017s | Evals: 2293 | MutGen: 5.97864ms | Surrogate: 9428.41ms | Verif(137): 304.424ms | Best: 81.3056 | Stag: 0/899
+[MICRO_TIMING] JSON Payload prep: 0.061226 ms
+[TIMING_PHASE] (b.2) POST Request a Flask (81 tableros)...\n[TIMING_PHASE] (b.3) Respuesta Flask HTTP en: 400.966 ms\n[MICRO_TIMING] JSON Parse: 0.129887 ms
+[MICRO_TIMING] Assign Fitness: 0.036419 ms
+[MICRO_TIMING] Total post-HTTP time: 0.203547 ms
+[PHASE_D] Verificacion Elitista Top-K #1 en Gen 28: 2.38215 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #2 en Gen 28: 2.03295 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #3 en Gen 28: 1.9742 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #4 en Gen 28: 1.97866 ms (fitness=-1e+09 vs neural=-1e+09)
+[PHASE_D] Verificacion Elitista Top-K #5 en Gen 28: 2.13113 ms (fitness=-1e+09 vs neural=-1e+09)
 
-[ES] Criterio de Parada Alcanzado: MAX_EVALUATIONS (500 evaluaciones)
+[ES] Criterio de Parada Alcanzado: TIME LIMIT (10 segundos del circuito transcurridos)
 
-[ES STATS] Circuit Breaker (MAX_FAILURES) triggers: 17
+[ES STATS] Circuit Breaker (MAX_FAILURES) triggers: 142
 [ES STATS] Surrogate Fallbacks: 0
-[ES STATS] Surrogate Regressor Calls: 500
+[ES STATS] Surrogate Regressor Calls: 2275
+[ES STATS] Classifier Deadlocks Filtered (Pre-A*): 89
+[ES STATS] Classifier False Positives (Approved by Neural, Rejected by A*): 0
+[ES STATS] Hybrid Hungarian Delegations (box_count >= 6): 0
 [ES STATS] Clone Fallback triggers: 0 (Total Clones Injected: 0)
--4.37471;73400851470623721;##############|#     ## # ###|#### ##    ###|#     ## #   #|# ## #### # ##|#  # ###     #|#  #      # ##|##### ####   #|#          ###|#   # #    ###|#    # # #   #|# ## #     ###|# ## # # #@###|#         ## #|# #  #  # ## #|#     $   .  #|##############|
+[ES STATS] Total Generations: 28 | Total Evals: 2374
+CB_REJECTIONS=923
+
+[TOP_FINAL_POPULATION]
+RANK_1;81.9161;##############|#  .  ## # ###|#### ##  $ ###|#   $ ## #   #|# ## #### #$##|#  # ###  $  #|#  #      # ##|#####$####   #|#      .   ###|# $ # #    ###|#    # # #   #|# ## #     ###|# ##.# # # ###|# .       ## #|# # .#  # ##@#|#         .  #|##############|
+RANK_2;81.6163;##############|#  .  ## # ###|#### ##  $ ###|#     ## #   #|# ## #### #$##|#  # ###  $  #|#  #      # ##|#####$####   #|#      .   ###|# $$# #    ###|#    # # #   #|# ## #     ###|# ##.# # # ###|#   . .   ## #|# #  #  # ##@#|#         .  #|##############|
+RANK_3;81.6163;##############|#     ## # ###|#### ##  $ ###|#   $ ## #   #|# ## ####@#$##|#  # ###  $  #|#  #   .  # ##|#####$####   #|#          ###|# $ # #  . ###|#    # # #   #|# ## #     ###|# ##.# # # ###|#     .   ## #|# # .#  # ## #|#         .  #|##############|
+-81.9161;16064557041988149938;##############|#  .  ## # ###|#### ##  $ ###|#   $ ## #   #|# ## #### #$##|#  # ###  $  #|#  #      # ##|#####$####   #|#      .   ###|# $ # #    ###|#    # # #   #|# ## #     ###|# ##.# # # ###|# .       ## #|# # .#  # ##@#|#         .  #|##############|
+Iniciando Flask...
+Ejecutando: ./build/experiment_runner ES FO1 42 levels/shell_1.sok --heuristic full_surrogate --timeLimit 10 --maxEvals 100000 --out_csv scratch/test_top_k.csv --mu 10 --lambda 126 --mutRate 0.7135 --stagLimit 899
+Flask detenido.

@@ -35,7 +35,6 @@ SHELLS = [1, 2, 3, 4, 5]
 CORES = [24]  # Solo variante paralela para ahorrar tiempo
 
 VARIANTS = [
-    ("A* verifica + Regresor (Baseline)", "hybrid_regressor", "FO1"),
     ("Full Surrogate Top-K=5", "full_surrogate", "FO1")
 ]
 
